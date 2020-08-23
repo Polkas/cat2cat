@@ -1,0 +1,27 @@
+Package: cat2cat
+Title: Transform a categorical variable according to a new encoding
+Version: 0.0.1
+Author@R: c(person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre")))
+Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
+Description: ...
+Depends: R (>= 3.6)
+License: GPL (>= 2)
+URL: https://github.com/Polkas/catTOcat
+BugReports: https://github.com/Polkas/catTOcat/issues
+Encoding: UTF-8
+Imports:
+	methods,
+	rlang,
+	caret,
+	Hmisc,
+	progress
+Suggests:
+  	dplyr,
+	  knitr,
+    rmarkdown,
+    pacman,
+    testthat,
+    magrittr
+VignetteBuilder: knitr
+LazyData: true
+RoxygenNote: 7.1.0
