@@ -29,6 +29,9 @@ cat2cat(
   mappings = list(trans = trans, direction = "backward")
 )
 
+# with informative features it might be usefull to run ml algorithm - currently only knn
+# where probability will be assessed as fraction of closest points.
+
 cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
@@ -54,9 +57,12 @@ agg_new <- data.frame(
   v_date = rep("2020-05-01", 11), stringsAsFactors = F
 )
 
+#
+
 agg = cat2cat_man(data = list(old = agg_old, 
                               new = agg_new, 
                               cat_var = "vertical", 
+                              time_var = "v_date",
                               freq_var = "counts"), 
                   Automotive %<% c(Automotive1, Automotive2),
                   c(Kids1, Kids2) %>% c(Kids),

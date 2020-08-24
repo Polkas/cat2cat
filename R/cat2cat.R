@@ -5,7 +5,16 @@
 ### Aggregat
 
 
-
+#'
+#' @description
+#' @param x data.frame with 2 columns
+#' @return list with 2 fields
+#' @examples
+#' data(trans)
+#'
+#' mappings <- get_mappings(trans)
+#' mappings$to_old[1:4]
+#' mappings$to_new[1:4]
 #' @export
 
 get_mappings <- function(x = data.frame()) {
@@ -13,8 +22,8 @@ get_mappings <- function(x = data.frame()) {
 
   x <- as.matrix(x)
 
-  x <- x[x[, 1] != "" &&
-           !is.na(x[, 1]) && x[, 2] != "" && !is.na(x[, 2]), ]
+  x <- x[(x[, 1] != "") &
+           (!is.na(x[, 1])) & (x[, 2] != "") & (!is.na(x[, 2])), ]
 
   ff <- x[, 1]
   ss <- x[, 2]
@@ -45,8 +54,26 @@ get_mappings <- function(x = data.frame()) {
   list(to_old = to_old, to_new = to_new)
 }
 
-
-
+#'
+#' @description
+#' @param to_x
+#' @param freqs
+#' @return
+#' @examples
+#' data(trans)
+#' data(occup)
+#'
+#' mappings <- get_mappings(trans)
+#'
+#' mappings$to_old[1:4]
+#' mappings$to_new[1:4]
+#'
+#' mapp_p <- cat_apply_freq(mappings$to_old,
+#'                          get_freqs(occup$code[occup$year == "2008"], occup$multipier[occup$year == "2008"]))
+#' data.frame(I(mappings$to_old), I(mapp_p)) %>% head()
+#' mapp_p <- cat_apply_freq(mappings$to_new,
+#'                         get_freqs(occup$code[occup$year == "2010"], occup$multipier[occup$year == "2010"]))
+#' data.frame(I(mappings$to_new), I(mapp_p)) %>% head()
 #' @export
 cat_apply_freq <- function(to_x, freqs) {
   stopifnot(ncol(freqs) == 2)
@@ -66,7 +93,20 @@ cat_apply_freq <- function(to_x, freqs) {
   res_out
 }
 
-
+#'
+#' @description
+#' @param x vector
+#' @param multpier vector
+#' @return
+#' @examples
+#' data(occup)
+#'
+#' get_freqs(occup$code[occup$year == "2008"])
+#' get_freqs(occup$code[occup$year == "2010"])
+#'
+#' get_freqs(occup$code[occup$year == "2008"], occup$multipier[occup$year == "2008"])
+#' get_freqs(occup$code[occup$year == "2010"], occup$multipier[occup$year == "2010"])
+#'
 #' @export
 
 get_freqs <- function(x, multipier = NULL) {
@@ -79,10 +119,52 @@ get_freqs <- function(x, multipier = NULL) {
   res
 }
 
+#' Automatic transforming of a categorical variable according to a new encoding
+#' @description
+#' @param data list with 4 or 5 named fileds `old` `new` `cat_var` `time_var` and optional `multipier_var`
+#' @param mappings list with 2 named fileds `trans` `direction`
+#' @param ml list with 3 named fields `method` `features` `args``
+#' @details
+#' data args
+#' \itemize{
+#'  \item{"old"}{ Stuff}
+#'  \item{"new"} {Stuff}
+#'  \item{"cat_var"}{ Stuff}
+#'  \item{"time_var"}{ Stuff}
+#'  \item{"multipier_var"}{ Stuff}
+#' }
+#' mappings args
+#' \itemize{
+#'  \item{"trans"}{ Stuff}
+#'  \item{"direction"}{ Stuff}
+#' }
+#' ml args
+#' \itemize{
+#'  \item{"method"}{ Stuff}
+#'  \item{"features"}{ Stuff}
+#'  \item{"args"}{ Stuff}
+#' }
+#' @return
 #' @importFrom progress progress_bar
 #' @importFrom caret knn3
 #' @importFrom Hmisc impute
-#' @importFrom hash hash
+#' @examples
+#' data(occup)
+#' data(trans)
+#'
+#' occup_old = occup[occup$year == 2008,]
+#' occup_new = occup[occup$year == 2010,]
+#'
+#' cat2cat(
+#'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+#'   mappings = list(trans = trans, direction = "forward")
+#'       )
+#'
+#' cat2cat(
+#'  data = list(old = occup_old ,new = occup_new, cat_var = "code", time_var = "year"),
+#'  mappings = list(trans = trans, direction = "forward")
+#'  ,ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
+#'  )
 #' @export
 
 cat2cat <-
@@ -115,10 +197,10 @@ cat2cat <-
         )
     )
 
-    d_to <- length(unique(data$old[[data$time_var]]))
-    d_from <- length(unique(data$new[[data$time_var]]))
+    d_old <- length(unique(data$old[[data$time_var]]))
+    d_new <- length(unique(data$new[[data$time_var]]))
 
-    stopifnot((d_to == 1) && (d_from == 1))
+    stopifnot((d_old == 1) && (d_new == 1))
 
     stopifnot(
       is.list(mappings) &&

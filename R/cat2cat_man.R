@@ -1,17 +1,37 @@
+#' Manual transforming of a categorical variable according to a new encoding
+#' @description
+#' @param data list with 5 named fileds `old` `new` `cat_var` `time_var` `freq_var`
+#' @param ... equations
+#' @details
+#' data args
+#' \itemize{
+#'  \item{"old"}{ Stuff}
+#'  \item{"new"}{ Stuff}
+#'  \item{"cat_var"}{ Stuff}
+#'  \item{"time_var"}{ Stuff}
+#'  \item{"freq_var"}{ Stuff}
+#' }
+#' ... equations
+#'
 #' @export
-cat2cat_man <- function(data = list(old = NULL, new = NULL, cat_var = NULL, freq_var = NULL), ...) {
-  # methods most frequent,proportional
+cat2cat_man <- function(data = list(old = NULL, new = NULL, cat_var = NULL, time_var = NULL, freq_var = NULL), ...) {
+  # methods most frequent, proportional
 
    stopifnot(
       is.list(data) &&
-                length(data) == 4 &&
+                length(data) == 5 &&
                 all(vapply(data, Negate(is.null), logical(1))) &&
         inherits(data$old, "data.frame") &&
         inherits(data$new, "data.frame") &&
-        all(c("old", "new", "cat_var", "freq_var") %in% names(data)) &&
+        all(c("old", "new", "cat_var", "time_var", "freq_var") %in% names(data)) &&
         all(c(data$cat_var, data$freq_var) %in% colnames(data$old)) &&
         all(c(data$cat_var, data$freq_var) %in% colnames(data$new))
    )
+
+    d_old <- length(unique(data$old[[data$time_var]]))
+    d_new <- length(unique(data$new[[data$time_var]]))
+
+    stopifnot((d_old == 1) && (d_new == 1))
 
   t <- enexprs(...)
 
