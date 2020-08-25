@@ -5,10 +5,10 @@
 ### Aggregat
 
 
-#'
-#' @description
+#' transforming table of mappings to list with keys
+#' @description transforming table of mappings to list with keys where first column is assumed to be an old encoding.
 #' @param x data.frame with 2 columns
-#' @return list with 2 fields
+#' @return list with 2 fields `to_old` `to_new`
 #' @examples
 #' data(trans)
 #'
@@ -54,10 +54,10 @@ get_mappings <- function(x = data.frame()) {
   list(to_old = to_old, to_new = to_new)
 }
 
-#'
-#' @description
-#' @param to_x
-#' @param freqs
+#' applying frequencies toobject returned by get_mappings
+#' @description applying frequencies to object returned by get_mappings
+#' @param to_x list object returned by get_mappings
+#' @param freqs vector object returned by get_freqs
 #' @return
 #' @examples
 #' data(trans)
@@ -70,10 +70,10 @@ get_mappings <- function(x = data.frame()) {
 #'
 #' mapp_p <- cat_apply_freq(mappings$to_old,
 #'                          get_freqs(occup$code[occup$year == "2008"], occup$multipier[occup$year == "2008"]))
-#' data.frame(I(mappings$to_old), I(mapp_p)) %>% head()
+#' head(data.frame(I(mappings$to_old), I(mapp_p)))
 #' mapp_p <- cat_apply_freq(mappings$to_new,
 #'                         get_freqs(occup$code[occup$year == "2010"], occup$multipier[occup$year == "2010"]))
-#' data.frame(I(mappings$to_new), I(mapp_p)) %>% head()
+#' head(data.frame(I(mappings$to_new), I(mapp_p)))
 #' @export
 cat_apply_freq <- function(to_x, freqs) {
   stopifnot(ncol(freqs) == 2)
@@ -93,11 +93,11 @@ cat_apply_freq <- function(to_x, freqs) {
   res_out
 }
 
-#'
-#' @description
+#' getting frequencies for a vector with an optional multipier argument
+#' @description getting frequencies for a vector with an optional multipier argument
 #' @param x vector
-#' @param multpier vector
-#' @return
+#' @param multipier vector how many times to repeat certain value
+#' @return named vector
 #' @examples
 #' data(occup)
 #'
@@ -120,31 +120,31 @@ get_freqs <- function(x, multipier = NULL) {
 }
 
 #' Automatic transforming of a categorical variable according to a new encoding
-#' @description
+#' @description Automatic transforming of a categorical variable according to a new encoding
 #' @param data list with 4 or 5 named fileds `old` `new` `cat_var` `time_var` and optional `multipier_var`
 #' @param mappings list with 2 named fileds `trans` `direction`
 #' @param ml list with 3 named fields `method` `features` `args``
 #' @details
 #' data args
 #' \itemize{
-#'  \item{"old"}{ Stuff}
-#'  \item{"new"} {Stuff}
-#'  \item{"cat_var"}{ Stuff}
-#'  \item{"time_var"}{ Stuff}
-#'  \item{"multipier_var"}{ Stuff}
+#'  \item{"old"}{ data.frame}
+#'  \item{"new"} { data.frame}
+#'  \item{"cat_var"}{ name of the caterogical variable}
+#'  \item{"time_var"}{ name of the time varaiable}
+#'  \item{"multipier_var"}{ name of the multipier variable - number of replication needed to reproduce the population}
 #' }
 #' mappings args
 #' \itemize{
-#'  \item{"trans"}{ Stuff}
-#'  \item{"direction"}{ Stuff}
+#'  \item{"trans"}{ data.frame with 2 columns - transition table}
+#'  \item{"direction"}{ direction - "backward or "forward"}
 #' }
 #' ml args
 #' \itemize{
-#'  \item{"method"}{ Stuff}
-#'  \item{"features"}{ Stuff}
-#'  \item{"args"}{ Stuff}
+#'  \item{"method"}{ character "knn"}
+#'  \item{"features"}{ vector of features names}
+#'  \item{"args"}{ k number of k nearest n}
 #' }
-#' @return
+#' @return list of 2 data.frames
 #' @importFrom progress progress_bar
 #' @importFrom caret knn3
 #' @importFrom Hmisc impute
@@ -303,12 +303,12 @@ cat2cat <-
               cat_final_rep_cat_c2c[[i]]$wei_ml_c2c = Hmisc::impute(as.vector(t(pp)), 0)
 
             } else {
-              cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- NA
+              cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- 1/cat_final_rep_cat_c2c[[i]]$rep_c2c
             }
           }
 
         }, error = function(e) {
-          cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- NA
+          cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- 1/cat_final_rep_cat_c2c[[i]]$rep_c2c
         })
       }
 

@@ -14,17 +14,20 @@ cat2cat_man(
 
 \item{...}{equations}
 }
+\value{
+list of data.frame objects
+}
 \description{
-Manual transforming of a categorical variable according to a new encoding
+Manual transforming of a categorical variable according to a new encoding where user suppling transsitions by equtions.
 }
 \details{
 data args
 \itemize{
- \item{"old"}{ Stuff}
- \item{"new"}{ Stuff}
- \item{"cat_var"}{ Stuff}
- \item{"time_var"}{ Stuff}
- \item{"freq_var"}{ Stuff}
+ \item{"old"}{ data.frame}
+ \item{"new"}{ data.frame}
+ \item{"cat_var"}{ name of the caterogical variable}
+ \item{"time_var"}{ name of time variable}
+ \item{"freq_var"}{ name of frequency variable}
 }
-... equations
+... equations where direction is set by `>`,`<`,`%>%`,`%<%`
 }

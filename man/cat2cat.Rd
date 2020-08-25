@@ -19,7 +19,7 @@ cat2cat(
 \item{ml}{list with 3 named fields `method` `features` `args``}
 }
 \value{
-
+list of 2 data.frames
 }
 \description{
 Automatic transforming of a categorical variable according to a new encoding
@@ -27,22 +27,22 @@ Automatic transforming of a categorical variable according to a new encoding
 \details{
 data args
 \itemize{
- \item{"old"}{ Stuff}
- \item{"new"} {Stuff}
- \item{"cat_var"}{ Stuff}
- \item{"time_var"}{ Stuff}
- \item{"multipier_var"}{ Stuff}
+ \item{"old"}{ data.frame}
+ \item{"new"} { data.frame}
+ \item{"cat_var"}{ name of the caterogical variable}
+ \item{"time_var"}{ name of the time varaiable}
+ \item{"multipier_var"}{ name of the multipier variable - number of replication needed to reproduce the population}
 }
 mappings args
 \itemize{
- \item{"trans"}{ Stuff}
- \item{"direction"}{ Stuff}
+ \item{"trans"}{ data.frame with 2 columns - transition table}
+ \item{"direction"}{ direction - "backward or "forward"}
 }
 ml args
 \itemize{
- \item{"method"}{ Stuff}
- \item{"features"}{ Stuff}
- \item{"args"}{ Stuff}
+ \item{"method"}{ character "knn"}
+ \item{"features"}{ vector of features names}
+ \item{"args"}{ k number of k nearest n}
 }
 }
 \examples{

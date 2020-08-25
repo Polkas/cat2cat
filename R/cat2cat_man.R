@@ -1,17 +1,18 @@
 #' Manual transforming of a categorical variable according to a new encoding
-#' @description
+#' @description Manual transforming of a categorical variable according to a new encoding where user suppling transsitions by equtions.
 #' @param data list with 5 named fileds `old` `new` `cat_var` `time_var` `freq_var`
 #' @param ... equations
+#' @return list of data.frame objects
 #' @details
 #' data args
 #' \itemize{
-#'  \item{"old"}{ Stuff}
-#'  \item{"new"}{ Stuff}
-#'  \item{"cat_var"}{ Stuff}
-#'  \item{"time_var"}{ Stuff}
-#'  \item{"freq_var"}{ Stuff}
+#'  \item{"old"}{ data.frame}
+#'  \item{"new"}{ data.frame}
+#'  \item{"cat_var"}{ name of the caterogical variable}
+#'  \item{"time_var"}{ name of time variable}
+#'  \item{"freq_var"}{ name of frequency variable}
 #' }
-#' ... equations
+#' ... equations where direction is set by `>`,`<`,`%>%`,`%<%`
 #'
 #' @export
 cat2cat_man <- function(data = list(old = NULL, new = NULL, cat_var = NULL, time_var = NULL, freq_var = NULL), ...) {

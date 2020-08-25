@@ -1,9 +1,20 @@
 # cat2cat
+
+[![R build status](https://github.com/polkas/cat2cat/workflows/R-CMD-check/badge.svg)](https://github.com/polkas/cat2cat/actions)
+[![codecov](https://codecov.io/gh/Polkas/cat2cat/branch/master/graph/badge.svg)](https://codecov.io/gh/Polkas/cat2cat)
+
 ## transform a categorical variable according to a new encoding
 
 In many projects where dataset contains a caterogical variable one of the biggest obstacle is that 
 the data provider during internal proceesses was changing an encoding of this variable during a time.
 Thus some categories were grouped and other were separated or a new one is added or an old one is removed.
+
+## Installation
+
+```r
+# install.packages("devtools")
+devtools::install_github("polkas/cat2cat")
+```
 
 There should be stated a 3 clear questions:
 
@@ -32,11 +43,25 @@ cat2cat(
 # with informative features it might be usefull to run ml algorithm - currently only knn
 # where probability will be assessed as fraction of closest points.
 
-cat2cat(
+occup_2 = cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
   ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
 )
+
+# Regression
+
+# we have to adjust size of stds as we artificialy enlarge degrees of freedom
+
+lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old, weights = multipier * wei_c2c)
+
+summary_c2c(lms, df_old = nrow(occup_old), df_new = nrow(occup_2$old))
+
+# orginal dataset 
+
+lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old, weights = multipier)
+
+summary(lms2)
 
 # Manual transitions
 
@@ -68,6 +93,7 @@ agg = cat2cat_man(data = list(old = agg_old,
                   c(Kids1, Kids2) %>% c(Kids),
                   Home %>% c(Home, Supermarket))
 
+# possible processing
 agg$old %>% 
 group_by(vertical) %>% 
 summarise(sales = sum(sales*prop), counts = sum(counts*prop), v_date = first(v_date))
@@ -75,4 +101,5 @@ summarise(sales = sum(sales*prop), counts = sum(counts*prop), v_date = first(v_d
 agg$new %>% 
 group_by(vertical) %>%
 summarise(sales = sum(sales*prop), counts = sum(counts*prop), v_date = first(v_date))
+
 ```
