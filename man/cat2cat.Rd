@@ -6,13 +6,13 @@
 \usage{
 cat2cat(
   data = list(old = NULL, new = NULL, cat_var = NULL, time_var = NULL, multipier_var =
-    NULL),
+    NULL, freqs_df = NULL),
   mappings = list(trans = NULL, direction = NULL),
   ml = list(method = NULL, features = NULL, args = NULL)
 )
 }
 \arguments{
-\item{data}{list with 4 or 5 named fileds `old` `new` `cat_var` `time_var` and optional `multipier_var`}
+\item{data}{list with 4, 5 or 6 named fileds `old` `new` `cat_var` `time_var` and optional `multipier_var`,`freq_df`}
 
 \item{mappings}{list with 2 named fileds `trans` `direction`}
 
@@ -32,6 +32,7 @@ data args
  \item{"cat_var"}{ name of the caterogical variable}
  \item{"time_var"}{ name of the time varaiable}
  \item{"multipier_var"}{ name of the multipier variable - number of replication needed to reproduce the population}
+ \item{"freqs_df"}{ data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
 }
 mappings args
 \itemize{
@@ -49,17 +50,17 @@ ml args
 data(occup)
 data(trans)
 
-occup_old = occup[occup$year == 2008,]
-occup_new = occup[occup$year == 2010,]
+occup_old <- occup[occup$year == 2008, ]
+occup_new <- occup[occup$year == 2010, ]
 
 cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "forward")
-      )
+)
 
 cat2cat(
- data = list(old = occup_old ,new = occup_new, cat_var = "code", time_var = "year"),
- mappings = list(trans = trans, direction = "forward")
- ,ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
- )
+  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "forward"),
+  ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
+)
 }

@@ -55,7 +55,7 @@ occup_2 = cat2cat(
 
 lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old, weights = multipier * wei_c2c)
 
-summary_c2c(lms, df_old = nrow(occup_old), df_new = nrow(occup_2$old))
+summary_c2c(lms, df_old = nrow(occup_old), df_new = sum(occup_2$old$wei_c2c > 0))
 
 # orginal dataset 
 

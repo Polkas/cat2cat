@@ -23,7 +23,7 @@ get_mappings <- function(x = data.frame()) {
   x <- as.matrix(x)
 
   x <- x[(x[, 1] != "") &
-           (!is.na(x[, 1])) & (x[, 2] != "") & (!is.na(x[, 2])), ]
+    (!is.na(x[, 1])) & (x[, 2] != "") & (!is.na(x[, 2])), ]
 
   ff <- x[, 1]
   ss <- x[, 2]
@@ -68,27 +68,41 @@ get_mappings <- function(x = data.frame()) {
 #' mappings$to_old[1:4]
 #' mappings$to_new[1:4]
 #'
-#' mapp_p <- cat_apply_freq(mappings$to_old,
-#'                          get_freqs(occup$code[occup$year == "2008"], occup$multipier[occup$year == "2008"]))
+#' mapp_p <- cat_apply_freq(
+#'   mappings$to_old,
+#'   get_freqs(
+#'     occup$code[occup$year == "2008"],
+#'     occup$multipier[occup$year == "2008"]
+#'   )
+#' )
 #' head(data.frame(I(mappings$to_old), I(mapp_p)))
-#' mapp_p <- cat_apply_freq(mappings$to_new,
-#'                         get_freqs(occup$code[occup$year == "2010"], occup$multipier[occup$year == "2010"]))
+#' mapp_p <- cat_apply_freq(
+#'   mappings$to_new,
+#'   get_freqs(
+#'     occup$code[occup$year == "2010"],
+#'     occup$multipier[occup$year == "2010"]
+#'   )
+#' )
 #' head(data.frame(I(mappings$to_new), I(mapp_p)))
 #' @export
 cat_apply_freq <- function(to_x, freqs) {
   stopifnot(ncol(freqs) == 2)
-  res <- lapply(to_x,
-                function(x) {
-                  alls <- freqs[, 2][match(x, freqs[, 1])]
-                  ff <- alls / sum(alls, na.rm = T)
-                  # NA to 0
-                  ifelse(is.na(ff) | is.nan(ff), 0, ff)
-                })
+  res <- lapply(
+    to_x,
+    function(x) {
+      alls <- freqs[, 2][match(x, freqs[, 1])]
+      ff <- alls / sum(alls, na.rm = T)
+      # NA to 0
+      ifelse(is.na(ff) | is.nan(ff), 0, ff)
+    }
+  )
   # all equal to zero so proportional probability
-  res_out <- lapply(res,
-                    function(x) {
-                      ifelse(rep(all(x == 0), length(x)), 1 / length(x), x)
-                    })
+  res_out <- lapply(
+    res,
+    function(x) {
+      ifelse(rep(all(x == 0), length(x)), 1 / length(x), x)
+    }
+  )
   names(res_out) <- names(to_x)
   res_out
 }
@@ -97,7 +111,7 @@ cat_apply_freq <- function(to_x, freqs) {
 #' @description getting frequencies for a vector with an optional multipier argument
 #' @param x vector
 #' @param multipier vector how many times to repeat certain value
-#' @return named vector
+#' @return data.frame with two columns `input` `Freq`
 #' @examples
 #' data(occup)
 #'
@@ -106,7 +120,6 @@ cat_apply_freq <- function(to_x, freqs) {
 #'
 #' get_freqs(occup$code[occup$year == "2008"], occup$multipier[occup$year == "2008"])
 #' get_freqs(occup$code[occup$year == "2010"], occup$multipier[occup$year == "2010"])
-#'
 #' @export
 
 get_freqs <- function(x, multipier = NULL) {
@@ -121,7 +134,7 @@ get_freqs <- function(x, multipier = NULL) {
 
 #' Automatic transforming of a categorical variable according to a new encoding
 #' @description Automatic transforming of a categorical variable according to a new encoding
-#' @param data list with 4 or 5 named fileds `old` `new` `cat_var` `time_var` and optional `multipier_var`
+#' @param data list with 4, 5 or 6 named fileds `old` `new` `cat_var` `time_var` and optional `multipier_var`,`freq_df`
 #' @param mappings list with 2 named fileds `trans` `direction`
 #' @param ml list with 3 named fields `method` `features` `args``
 #' @details
@@ -132,6 +145,7 @@ get_freqs <- function(x, multipier = NULL) {
 #'  \item{"cat_var"}{ name of the caterogical variable}
 #'  \item{"time_var"}{ name of the time varaiable}
 #'  \item{"multipier_var"}{ name of the multipier variable - number of replication needed to reproduce the population}
+#'  \item{"freqs_df"}{ data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
 #' }
 #' mappings args
 #' \itemize{
@@ -152,36 +166,39 @@ get_freqs <- function(x, multipier = NULL) {
 #' data(occup)
 #' data(trans)
 #'
-#' occup_old = occup[occup$year == 2008,]
-#' occup_new = occup[occup$year == 2010,]
+#' occup_old <- occup[occup$year == 2008, ]
+#' occup_new <- occup[occup$year == 2010, ]
 #'
 #' cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "forward")
-#'       )
+#' )
 #'
 #' cat2cat(
-#'  data = list(old = occup_old ,new = occup_new, cat_var = "code", time_var = "year"),
-#'  mappings = list(trans = trans, direction = "forward")
-#'  ,ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
-#'  )
+#'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+#'   mappings = list(trans = trans, direction = "forward"),
+#'   ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
+#' )
 #' @export
 
 cat2cat <-
   function(data = list(
-    old = NULL,
-    new = NULL,
-    cat_var = NULL,
-    time_var = NULL,
-    multipier_var = NULL
-  ),
-  mappings = list(trans = NULL, direction = NULL),
-  ml = list(method = NULL,
-            features = NULL,
-            args = NULL)) {
+             old = NULL,
+             new = NULL,
+             cat_var = NULL,
+             time_var = NULL,
+             multipier_var = NULL,
+             freqs_df = NULL
+           ),
+           mappings = list(trans = NULL, direction = NULL),
+           ml = list(
+             method = NULL,
+             features = NULL,
+             args = NULL
+           )) {
     stopifnot(
       is.list(data) &&
-        length(data) %in% c(4, 5) &&
+        length(data) %in% c(4, 5, 6) &&
         inherits(data$old, "data.frame") &&
         inherits(data$new, "data.frame") &&
         all(c("old", "new", "cat_var", "time_var") %in% names(data)) &&
@@ -196,6 +213,8 @@ cat2cat <-
             data$multipier_var %in% colnames(data$old)
         )
     )
+
+    stopifnot(is.null(data$freqs_df) || (ncol(data$freqs_df) == 2))
 
     d_old <- length(unique(data$old[[data$time_var]]))
     d_new <- length(unique(data$new[[data$time_var]]))
@@ -217,24 +236,32 @@ cat2cat <-
       cat_base_year <- data$old
       cat_final_year <- data$new
       mapp <- mapps$to_old
-      res_ord  <- c(1, 2)
+      res_ord <- c(1, 2)
     } else if (mappings$direction == "backward") {
       cat_base_year <- data$new
       cat_final_year <- data$old
       mapp <- mapps$to_new
-      res_ord  <- c(2, 1)
+      res_ord <- c(2, 1)
     }
 
     cats_base <- cat_base_year[[data$cat_var]]
     cats_final <- cat_final_year[[data$cat_var]]
-    multi_base <-
-      if (!is.null(data$multipier_var)) {
-        cat_final_year[[data$multipier_var]]
-      } else {
-        data$multipier_var
-      }
-    freqs_2 <-
-      cat_apply_freq(mapp, get_freqs(cats_base, multi_base))
+
+    multi_base <- if (!is.null(data$multipier_var)) {
+      cat_base_year[[data$multipier_var]]
+    } else {
+      NULL
+    }
+
+    stopifnot(is.null(data$freq_df) || all(data$freqs_df[, 1] %in% cats_base))
+
+    fre <- if (!is.null(data$freqs_df)) {
+      data$freqs_df
+    } else {
+      get_freqs(cats_base, multi_base)
+    }
+
+    freqs_2 <- cat_apply_freq(mapp, fre)
 
     g_vec <- mapp[cats_final]
     rep_vec <- lengths(g_vec)
@@ -245,7 +272,7 @@ cat2cat <-
     cat_final_rep$g_new_c2c <- unlist(g_vec)
     cat_final_rep$wei_c2c <- wei_vec
     cat_final_rep$rep_c2c <- rep(rep_vec, times = rep_vec)
-    cat_final_rep$wei_naive_c2c = 1 / cat_final_rep$rep_c2c
+    cat_final_rep$wei_naive_c2c <- 1 / cat_final_rep$rep_c2c
 
     cat_base_year$index_c2c <- 1:nrow(cat_base_year)
     cat_base_year$g_new_c2c <- cat_base_year[[data$cat_var]]
@@ -257,65 +284,66 @@ cat2cat <-
       stopifnot(all(ml$features %in% colnames(cat_final_rep)))
       stopifnot(ml$method %in% c("knn"))
 
-      uu = unique(cat_final_rep[[data$cat_var]])
+      uu <- unique(cat_final_rep[[data$cat_var]])
 
-      features  = ml$features
+      features <- ml$features
 
-      cat_base_year_g = split(cat_base_year, cat_base_year[[data$cat_var]])
+      cat_base_year_g <- split(cat_base_year, cat_base_year[[data$cat_var]])
 
-      cat_final_rep_cat_c2c = split(cat_final_rep, cat_final_rep[[data$cat_var]])
+      cat_final_rep_cat_c2c <- split(cat_final_rep, cat_final_rep[[data$cat_var]])
 
       pb <- progress_bar$new(total = length(uu))
 
       for (i in unique(uu)) {
         pb$tick()
 
-        tryCatch({
-          base = cat_final_rep_cat_c2c[[i]]
+        tryCatch(
+          {
+            base <- cat_final_rep_cat_c2c[[i]]
 
-          dis = do.call(rbind, cat_base_year_g[unique(base$g_new_c2c)])
+            dis <- do.call(rbind, cat_base_year_g[unique(base$g_new_c2c)])
 
-          if (ml$method == "knn") {
-            if (length(unique(base$g_new_c2c)) > 1 &&
+            if (ml$method == "knn") {
+              if (length(unique(base$g_new_c2c)) > 1 &&
                 length(unique(dis$code)) >= 1 &&
                 nrow(base) > 0 &&
                 any(base$g_new_c2c %in% names(cat_base_year_g))) {
+                kkk <- caret::knn3(
+                  x = dis[, features],
+                  y = factor(dis$code),
+                  k = min(ml$args$k, nrow(dis))
+                )
 
-              kkk = caret::knn3(
-                x = dis[, features],
-                y = factor(dis$code),
-                k = min(ml$args$k, nrow(dis))
-              )
+                pp <- as.data.frame(predict(kkk, unique(base[, features]), type = "prob"))
 
-              pp  =  as.data.frame(predict(kkk, unique(base[, features]), type = "prob"))
+                ll <- setdiff(unique(base$g_new_c2c), colnames(pp))
 
-              ll = setdiff(unique(base$g_new_c2c), colnames(pp))
+                if (ncol(pp) == 1 &&
+                  length(unique(dis$code)) == 1) {
+                  colnames(pp) <- unique(dis$code)
+                }
 
-              if (ncol(pp) == 1 &&
-                  length(unique(dis$code)) == 1)
-                colnames(pp) <- unique(dis$code)
+                if (length(ll)) {
+                  pp[ll] <- 0
+                }
 
-              if (length(ll))
-                pp[ll] <- 0
+                pp <- pp[, unique(base$g_new_c2c)]
 
-              pp = pp[, unique(base$g_new_c2c)]
-
-              cat_final_rep_cat_c2c[[i]]$wei_ml_c2c = Hmisc::impute(as.vector(t(pp)), 0)
-
-            } else {
-              cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- 1/cat_final_rep_cat_c2c[[i]]$rep_c2c
+                cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- Hmisc::impute(as.vector(t(pp)), 0)
+              } else {
+                cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- 1 / cat_final_rep_cat_c2c[[i]]$rep_c2c
+              }
             }
+          },
+          error = function(e) {
+            cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- 1 / cat_final_rep_cat_c2c[[i]]$rep_c2c
           }
-
-        }, error = function(e) {
-          cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- 1/cat_final_rep_cat_c2c[[i]]$rep_c2c
-        })
+        )
       }
 
       pb$terminate()
-      cat_final_rep = do.call(rbind, cat_final_rep_cat_c2c)
-      cat_final_rep = cat_final_rep[order(cat_final_rep$id), ]
-
+      cat_final_rep <- do.call(rbind, cat_final_rep_cat_c2c)
+      cat_final_rep <- cat_final_rep[order(cat_final_rep$id), ]
     }
 
     res <- list(cat_base_year, cat_final_rep)[res_ord]

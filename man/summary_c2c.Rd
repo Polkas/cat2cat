@@ -7,7 +7,7 @@
 summary_c2c(x, df_old, df_new)
 }
 \arguments{
-\item{x}{summary.lm object}
+\item{x}{lm object}
 
 \item{df_old}{integer number of d.f in orginal dataset}
 
@@ -23,13 +23,13 @@ transforming sumary.lm object according to real number of d.f.
 data(occup)
 data(trans)
 
-occup_old = occup[occup$year == 2008,]
-occup_new = occup[occup$year == 2010,]
+occup_old <- occup[occup$year == 2008, ]
+occup_new <- occup[occup$year == 2010, ]
 
-occup_2 = cat2cat(
- data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
- mappings = list(trans = trans, direction = "backward"),
- ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
+occup_2 <- cat2cat(
+  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "backward"),
+  ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
 )
 
 # Regression

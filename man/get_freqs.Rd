@@ -12,7 +12,7 @@ get_freqs(x, multipier = NULL)
 \item{multipier}{vector how many times to repeat certain value}
 }
 \value{
-named vector
+data.frame with two columns `input` `Freq`
 }
 \description{
 getting frequencies for a vector with an optional multipier argument
@@ -25,5 +25,4 @@ get_freqs(occup$code[occup$year == "2010"])
 
 get_freqs(occup$code[occup$year == "2008"], occup$multipier[occup$year == "2008"])
 get_freqs(occup$code[occup$year == "2010"], occup$multipier[occup$year == "2010"])
-
 }
