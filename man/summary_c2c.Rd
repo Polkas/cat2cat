@@ -29,11 +29,14 @@ occup_new <- occup[occup$year == 2010, ]
 occup_2 <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
-  ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
+  ml = list(method = "knn",
+            features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+            args = list(k = 10))
 )
 
 # Regression
 # we have to adjust size of std as we artificialy enlarge degrees of freedom
-lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old, weights = multipier * wei_c2c)
+lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old,
+          weights = multipier * wei_freq_c2c)
 summary_c2c(lms, df_old = nrow(occup_old), df_new = nrow(occup_2$old))
 }

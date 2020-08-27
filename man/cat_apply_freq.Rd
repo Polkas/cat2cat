@@ -12,7 +12,7 @@ cat_apply_freq(to_x, freqs)
 \item{freqs}{vector object returned by get_freqs}
 }
 \value{
-
+list
 }
 \description{
 applying frequencies to object returned by get_mappings

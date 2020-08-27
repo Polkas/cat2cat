@@ -15,7 +15,11 @@
 #' ... equations where direction is set by `>`,`<`,`%>%`,`%<%`
 #'
 #' @export
-cat2cat_man <- function(data = list(old = NULL, new = NULL, cat_var = NULL, time_var = NULL, freq_var = NULL), ...) {
+cat2cat_man <- function(data = list(old = NULL,
+                                    new = NULL,
+                                    cat_var = NULL,
+                                    time_var = NULL,
+                                    freq_var = NULL), ...) {
   # methods most frequent, proportional
 
   stopifnot(

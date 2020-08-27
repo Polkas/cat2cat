@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 ^.*/R/preproc_data\.R$
 ^vigniettes
+.github
+.git

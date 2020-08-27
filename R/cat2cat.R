@@ -58,7 +58,7 @@ get_mappings <- function(x = data.frame()) {
 #' @description applying frequencies to object returned by get_mappings
 #' @param to_x list object returned by get_mappings
 #' @param freqs vector object returned by get_freqs
-#' @return
+#' @return list
 #' @examples
 #' data(trans)
 #' data(occup)
@@ -177,7 +177,9 @@ get_freqs <- function(x, multipier = NULL) {
 #' cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "forward"),
-#'   ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
+#'   ml = list(method = "knn",
+#'             features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+#'             args = list(k = 10))
 #' )
 #' @export
 
@@ -270,13 +272,13 @@ cat2cat <-
     cat_final_rep <-
       cat_final_year[rep(1:nrow(cat_final_year), times = rep_vec), ]
     cat_final_rep$g_new_c2c <- unlist(g_vec)
-    cat_final_rep$wei_c2c <- wei_vec
+    cat_final_rep$wei_freq_c2c <- wei_vec
     cat_final_rep$rep_c2c <- rep(rep_vec, times = rep_vec)
     cat_final_rep$wei_naive_c2c <- 1 / cat_final_rep$rep_c2c
 
     cat_base_year$index_c2c <- 1:nrow(cat_base_year)
     cat_base_year$g_new_c2c <- cat_base_year[[data$cat_var]]
-    cat_base_year$wei_c2c <- 1
+    cat_base_year$wei_freq_c2c <- 1
     cat_base_year$rep_c2c <- 1
 
     if (sum(vapply(ml, Negate(is.null), logical(1))) >= 2) {
@@ -350,3 +352,55 @@ cat2cat <-
     names(res) <- c("old", "new")
     res
   }
+
+#' A set of prune methods which will be usefull after transition process
+#'
+#' @description user could specify one from four methods to prune replications
+#'
+#' @param df data.frame
+#' @param index character default wei_freq_c2c
+#' @param column character default index_c2c
+#' @param method character one of four available methods "nonzero", "highest", "highest1", "morethan"
+#' @param percent integer from 0 to 99
+#' @return data.frame
+#' @examples
+#' data(occup)
+#' data(trans)
+#'
+#' occup_old <- occup[occup$year == 2008, ]
+#' occup_new <- occup[occup$year == 2010, ]
+#'
+#'
+#' occup_2 <- cat2cat(
+#'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+#'   mappings = list(trans = trans, direction = "backward"),
+#'   ml = list(method = "knn",
+#'             features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+#'             args = list(k = 10))
+#' )
+#'
+#' prune_cat2cat(occup_2$old, method = "nonzero")
+#' prune_cat2cat(occup_2$old, method = "highest")
+#' prune_cat2cat(occup_2$old, method = "highest1")
+#' prune_cat2cat(occup_2$old, method = "morethan", percent = 90)
+#'
+#' prune_cat2cat(occup_2$old, column = "wei_ml_c2c", method = "nonzero")
+#' @export
+prune_cat2cat <- function(df, index = "index_c2c" , column = "wei_freq_c2c", method = "nonzero", percent = 50) {
+
+stopifnot(inherits(df, "data.frame") &&
+            all(c(index, column) %in% colnames(df)) &&
+            method %in% c("nonzero", "highest", "highest1", "morethan") &&
+            length(percent) == 1 &&
+            percent >= 0 &&
+            percent < 100)
+
+df = df[order(df$index_c2c), ]
+
+switch(method,
+         nonzero = df[df[[column]] > 0, ],
+         highest1 = df[unlist(tapply(df[[column]], df[[index]], function(x) seq_along(x) == which.max(x))), ],
+         highest = df[unlist(tapply(df[[column]], df[[index]], function(x) x == max(x))), ],
+         morethan = df[df[[column]] > percent / 100, ])
+
+}

@@ -253,7 +253,7 @@ occup_3 <- cat2cat(
 
 notice : if the ml model is failing then NA is returnd so 
 
-cor(occup_3$old$wei_ml_c2c, occup_3$old$wei_c2c, use = "complete.obs")
+cor(occup_3$old$wei_ml_c2c, occup_3$old$wei_freq_c2c, use = "complete.obs")
 
 
 ```{r}
@@ -263,13 +263,13 @@ occup_3 %>% glimpse()
 New freqs for potential next step:
 
 ```{r}
-get_freqs(x = occup_3$new$g_new_c2c, multipier = floor(occup_3$new$multipier * occup_3$new$wei_c2c)) %>% head()
+get_freqs(x = occup_3$new$g_new_c2c, multipier = floor(occup_3$new$multipier * occup_3$new$wei_freq_c2c)) %>% head()
 ```
 
 or backward:
 
 ```{r}
-get_freqs(x = occup_2$old$g_new_c2c, multipier = floor(occup_2$old$multipier * occup_2$old$wei_c2c))%>% head()
+get_freqs(x = occup_2$old$g_new_c2c, multipier = floor(occup_2$old$multipier * occup_2$old$wei_freq_c2c))%>% head()
 ```
 
 \newpage

@@ -5,8 +5,14 @@
 
 ## transform a categorical variable according to a new encoding
 
-In many projects where dataset contains a caterogical variable one of the biggest obstacle is that 
-the data provider during internal proceesses was changing an encoding of this variable during a time.
+Why cat2cat:
+- stop removing variables for ml models because categories are not the same across time
+- use a statistical modelling to join datasets from different time points and retain caterogical variable structure
+- visualize any factor variable across time
+- universal algorithm which could be used in different science fields
+
+In many projects where dataset contains a categorical variable one of the biggest obstacle is that 
+the data provider during internal processes was changing an encoding of this variable during a time.
 Thus some categories were grouped and other were separated or a new one is added or an old one is removed.
 
 ## Installation
@@ -22,50 +28,16 @@ There should be stated a 3 clear questions:
 2. Type of the data - panel balanced or unbalanced or aggregate data vs individual data.
 3. Direction of a transition, forward or backward - use a new or an old encoding
 
-For more advance usage check the vigniette.
+For more advance usage check the vignette.
 
 Quick intro:
 
 ```r
-data(occup)
-data(trans)
-
-occup_old = occup[occup$year == 2008,]
-occup_new = occup[occup$year == 2010,]
-
-# Automatic using trans table
-
-cat2cat(
-  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
-  mappings = list(trans = trans, direction = "backward")
-)
-
-# with informative features it might be usefull to run ml algorithm - currently only knn
-# where probability will be assessed as fraction of closest points.
-
-occup_2 = cat2cat(
-  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
-  mappings = list(trans = trans, direction = "backward"),
-  ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
-)
-
-# Regression
-
-# we have to adjust size of stds as we artificialy enlarge degrees of freedom
-
-lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old, weights = multipier * wei_c2c)
-
-summary_c2c(lms, df_old = nrow(occup_old), df_new = sum(occup_2$old$wei_c2c > 0))
-
-# orginal dataset 
-
-lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old, weights = multipier)
-
-summary(lms2)
+library(cat2cat)
 
 # Manual transitions
 
-## Simulate dataset
+## Simulate datasets
 agg_old <- data.frame(
   vertical = c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
                "Clothes", "Home", "Fashion", "Health", "Sport"),
@@ -94,6 +66,8 @@ agg = cat2cat_man(data = list(old = agg_old,
                   Home %>% c(Home, Supermarket))
 
 # possible processing
+library(dplyr)
+  
 agg$old %>% 
 group_by(vertical) %>% 
 summarise(sales = sum(sales*prop), counts = sum(counts*prop), v_date = first(v_date))
@@ -101,5 +75,45 @@ summarise(sales = sum(sales*prop), counts = sum(counts*prop), v_date = first(v_d
 agg$new %>% 
 group_by(vertical) %>%
 summarise(sales = sum(sales*prop), counts = sum(counts*prop), v_date = first(v_date))
+
+#
+
+data(occup)
+data(trans)
+
+occup_old = occup[occup$year == 2008,]
+occup_new = occup[occup$year == 2010,]
+
+# Automatic using trans table
+
+cat2cat(
+  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "backward")
+)
+
+# with informative features it might be usefull to run ml algorithm - currently only knn
+# where probability will be assessed as fraction of closest points.
+
+occup_2 = cat2cat(
+  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "backward"),
+  ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
+)
+
+occup_old_2 <- occup_2$old %>% prune_cat2cat(method = "nonzero") #many prune methods like highest
+
+# Regression
+
+# we have to adjust size of stds as we artificialy enlarge degrees of freedom
+
+lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old, weights = multipier * wei_freq_c2c)
+
+summary_c2c(lms, df_old = nrow(occup_old), df_new = nrow(occup_old_2))
+
+# orginal dataset 
+
+lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old, weights = multipier)
+
+summary(lms2)
 
 ```
