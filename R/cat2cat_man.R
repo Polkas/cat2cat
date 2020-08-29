@@ -15,11 +15,13 @@
 #' ... equations where direction is set by `>`,`<`,`%>%`,`%<%`
 #'
 #' @export
-cat2cat_man <- function(data = list(old = NULL,
-                                    new = NULL,
-                                    cat_var = NULL,
-                                    time_var = NULL,
-                                    freq_var = NULL), ...) {
+cat2cat_man <- function(data = list(
+                          old = NULL,
+                          new = NULL,
+                          cat_var = NULL,
+                          time_var = NULL,
+                          freq_var = NULL
+                        ), ...) {
   # methods most frequent, proportional
 
   stopifnot(
@@ -57,31 +59,31 @@ cat2cat_man <- function(data = list(old = NULL,
     stopifnot(((length(i[[2]]) == 1) || (length(i[[3]]) == 1)))
 
     if (i$direction == "forward") {
-      base <- df_new[!(df_new[, 1] %in% i[[3]]), ]
-      base_rm <- df_new[df_new[, 1] %in% i[[3]], ]
+      base <- df_new[!(df_new[, data$cat_var] %in% i[[3]]), ]
+      base_rm <- df_new[df_new[, data$cat_var] %in% i[[3]], ]
 
       # dd = df_old[df_old[,1] %in% i[[2]],]
 
       if (length(i[[2]]) > 1) {
         base_rm <- base_rm[rep(1, length(i[[2]])), ]
-        base_rm[, 1] <- i[[2]]
-        base_rm$prop <- prop.table(df_old[df_old[, 1] %in% i[[2]], 2])
+        base_rm[, data$cat_var] <- i[[2]]
+        base_rm$prop <- prop.table(df_old[df_old[, data$cat_var] %in% i[[2]], data$freq_var])
       } else {
-        base_rm[, 1] <- i[[2]]
+        base_rm[, data$cat_var] <- i[[2]]
         base_rm$prop <- 1
       }
 
       df_new <- rbind(base, base_rm)
     } else if (i$direction == "backword") {
-      base <- df_old[!(df_old[, 1] %in% i[[2]]), ]
-      base_rm <- df_old[df_old[, 1] %in% i[[2]], ]
+      base <- df_old[!(df_old[, data$cat_var] %in% i[[2]]), ]
+      base_rm <- df_old[df_old[, data$cat_var] %in% i[[2]], ]
 
       if (length(i[[3]]) > 1) {
         base_rm <- base_rm[rep(1, length(i[[3]])), ]
-        base_rm[, 1] <- i[[3]]
-        base_rm$prop <- prop.table(df_new[df_new[, 1] %in% i[[3]], 2])
+        base_rm[, data$cat_var] <- i[[3]]
+        base_rm$prop <- prop.table(df_new[df_new[, data$cat_var] %in% i[[3]], data$freq_var])
       } else {
-        base_rm[, 1] <- i[[3]]
+        base_rm[, data$cat_var] <- i[[3]]
         base_rm$prop <- 1
       }
 

@@ -61,8 +61,10 @@ cat2cat(
 cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "forward"),
-  ml = list(method = "knn",
-            features = c("age", "sex", "edu", "exp", "parttime", "salary"),
-            args = list(k = 10))
+  ml = list(
+    method = "knn",
+    features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+    args = list(k = 10)
+  )
 )
 }

@@ -40,3 +40,70 @@
 #' @details transition table for occupations where first column contains old encodings and second one a new encoding
 #'
 "trans"
+
+#' verticals dataset
+#'
+#' @usage verticals
+#'
+#' @format A data frame with 21 observations and 4 variables.
+#' \describe{
+#' \item{vertical}{	character an certain sales vertical}
+#' \item{sales}{	numeric a size of sale}
+#' \item{counts}{	integer counts size}
+#' \item{v_date}{	character Date}
+#' }
+#' @details random data
+#' @examples
+#' \dontrun{
+#'agg_old <- data.frame(
+#'  vertical = c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
+#'               "Clothes", "Home", "Fashion", "Health", "Sport"),
+#'  sales = rnorm(10, 100, 10),
+#'  counts = rgeom(10, 0.0001),
+#'  v_date = rep("2020-04-01", 10), stringsAsFactors = F
+#')
+#'
+#'agg_new <- data.frame(
+#'  vertical = c("Electronics", "Supermarket", "Kids", "Automotive1",
+#'               "Automotive2", "Books", "Clothes", "Home", "Fashion", "Health", "Sport"),
+#'  sales = rnorm(11, 100, 10),
+#'  counts = rgeom(11, 0.0001),
+#'  v_date = rep("2020-05-01", 11), stringsAsFactors = F
+#')
+#'verticals <- rbind(agg_old, agg_new)
+#'}
+"verticals"
+
+#' verticals2 dataset
+#'
+#' @usage verticals2
+#'
+#' @format A data frame with 1000 observations and 4 variables.
+#' \describe{
+#' \item{ean}{ product ean}
+#' \item{vertical}{	character an certain sales vertical}
+#' \item{sales}{	numeric a size of sale}
+#' \item{v_date}{	character Date}
+#' }
+#' @details random data
+#' @examples
+#' \dontrun{
+#' vert_old <- data.frame(
+#'  ean = 90000001:90000500,
+#'  vertical = sample(c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
+#'               "Clothes", "Home", "Fashion", "Health", "Sport"), 500, replace = TRUE),
+#'  sales = rnorm(500, 100, 10),
+#'  v_date = rep("2020-04-01", 500), stringsAsFactors = F
+#')
+#'
+#' vert_new <- vert_old
+#' vert_new$v_date <- "2020-05-01"
+#' vert_new$vertical[vert_new$vertical %in% c("Kids1", "Kids2")] <- "Kids"
+#' vert_new$vertical[vert_new$vertical %in% c("Automotive")] <-
+#' sample(c("Automotive1", "Automotive2"), sum(vert_new$vertical %in% c("Automotive")), replace = TRUE)
+#' vert_new$vertical[vert_new$vertical %in% c("Home")] <-
+#' sample(c("Home", "Supermarket"), sum(vert_new$vertical %in% c("Home")), replace = TRUE)
+#'
+#'verticals2 <- rbind(vert_old, vert_new)
+#'}
+"verticals2"

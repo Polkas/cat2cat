@@ -177,9 +177,11 @@ get_freqs <- function(x, multipier = NULL) {
 #' cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "forward"),
-#'   ml = list(method = "knn",
-#'             features = c("age", "sex", "edu", "exp", "parttime", "salary"),
-#'             args = list(k = 10))
+#'   ml = list(
+#'     method = "knn",
+#'     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+#'     args = list(k = 10)
+#'   )
 #' )
 #' @export
 
@@ -280,6 +282,7 @@ cat2cat <-
     cat_base_year$g_new_c2c <- cat_base_year[[data$cat_var]]
     cat_base_year$wei_freq_c2c <- 1
     cat_base_year$rep_c2c <- 1
+    cat_base_year$wei_naive_c2c <- 1
 
     if (sum(vapply(ml, Negate(is.null), logical(1))) >= 2) {
       stopifnot(all(c("method", "features") %in% names(ml)))
@@ -346,6 +349,7 @@ cat2cat <-
       pb$terminate()
       cat_final_rep <- do.call(rbind, cat_final_rep_cat_c2c)
       cat_final_rep <- cat_final_rep[order(cat_final_rep$id), ]
+      cat_base_year$wei_ml_c2c <- 1
     }
 
     res <- list(cat_base_year, cat_final_rep)[res_ord]
@@ -360,9 +364,17 @@ cat2cat <-
 #' @param df data.frame
 #' @param index character default wei_freq_c2c
 #' @param column character default index_c2c
-#' @param method character one of four available methods "nonzero", "highest", "highest1", "morethan"
+#' @param method character one of four available methods: default "nonzero", "highest", "highest1", "morethan"
 #' @param percent integer from 0 to 99
 #' @return data.frame
+#' @details
+#' method - specify method to reduce number of replications
+#' \itemize{
+#'  \item{"nonzero"}{ remove nonzero probabilities}
+#'  \item{"highest"} { leave only highest probabilities for each subject- accepting ties}
+#'  \item{"highest1"} { leave only highest probabilities for each subject- not accepting ties so always one is returned}
+#'  \item{"morethan"}{ leave rows where a probability is hgher than value specify by percent argument }
+#' }
 #' @examples
 #' data(occup)
 #' data(trans)
@@ -374,9 +386,11 @@ cat2cat <-
 #' occup_2 <- cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "backward"),
-#'   ml = list(method = "knn",
-#'             features = c("age", "sex", "edu", "exp", "parttime", "salary"),
-#'             args = list(k = 10))
+#'   ml = list(
+#'     method = "knn",
+#'     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+#'     args = list(k = 10)
+#'   )
 #' )
 #'
 #' prune_cat2cat(occup_2$old, method = "nonzero")
@@ -386,21 +400,37 @@ cat2cat <-
 #'
 #' prune_cat2cat(occup_2$old, column = "wei_ml_c2c", method = "nonzero")
 #' @export
-prune_cat2cat <- function(df, index = "index_c2c" , column = "wei_freq_c2c", method = "nonzero", percent = 50) {
+prune_cat2cat <- function(df, index = "index_c2c", column = "wei_freq_c2c", method = "nonzero", percent = 50) {
+  stopifnot(inherits(df, "data.frame") &&
+    all(c(index, column) %in% colnames(df)) &&
+    method %in% c("nonzero", "highest", "highest1", "morethan") &&
+    length(percent) == 1 &&
+    percent >= 0 &&
+    percent < 100)
 
-stopifnot(inherits(df, "data.frame") &&
-            all(c(index, column) %in% colnames(df)) &&
-            method %in% c("nonzero", "highest", "highest1", "morethan") &&
-            length(percent) == 1 &&
-            percent >= 0 &&
-            percent < 100)
+  df <- df[order(df[[column]]), ]
 
-df = df[order(df$index_c2c), ]
+  switch(method,
+    nonzero = df[df[[column]] > 0, ],
+    highest1 = df[unlist(tapply(df[[column]], df[[index]], function(x) seq_along(x) == which.max(x))), ],
+    highest = df[unlist(tapply(df[[column]], df[[index]], function(x) x == max(x))), ],
+    morethan = df[df[[column]] > percent / 100, ]
+  )
+}
 
-switch(method,
-         nonzero = df[df[[column]] > 0, ],
-         highest1 = df[unlist(tapply(df[[column]], df[[index]], function(x) seq_along(x) == which.max(x))), ],
-         highest = df[unlist(tapply(df[[column]], df[[index]], function(x) x == max(x))), ],
-         morethan = df[df[[column]] > percent / 100, ])
+#' a funtion to make a combination of weights from different methods
+#'
+#' @description adding additional column which is a mix of weights columns
+#'
+#' @param df data.frame
+#' @param cols character vector default c("wei_freq_c2c", "wei_naive_c2c", "wei_ml_c2c")
+#' @param weis numeric vector c(1/3,1/3,1/3)
+#' @return data.frame with an additional column
+#' @export
+cross_cat2cat <- function(df, cols = c("wei_freq_c2c", "wei_naive_c2c", "wei_ml_c2c"), weis = c(1 / 3, 1 / 3, 1 / 3)) {
+  stopifnot(inherits(df, "data.frame"))
 
+  df[["wei_cross_c2c"]] <- as.vector(as.matrix(df[, cols]) %*% weis)
+
+  df
 }

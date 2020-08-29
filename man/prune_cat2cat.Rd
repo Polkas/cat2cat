@@ -19,7 +19,7 @@ prune_cat2cat(
 
 \item{column}{character default index_c2c}
 
-\item{method}{character one of four available methods "nonzero", "highest", "highest1", "morethan"}
+\item{method}{character one of four available methods: default "nonzero", "highest", "highest1", "morethan"}
 
 \item{percent}{integer from 0 to 99}
 }
@@ -28,6 +28,15 @@ data.frame
 }
 \description{
 user could specify one from four methods to prune replications
+}
+\details{
+method - specify method to reduce number of replications
+\itemize{
+ \item{"nonzero"}{ remove nonzero probabilities}
+ \item{"highest"} { leave only highest probabilities for each subject- accepting ties}
+ \item{"highest1"} { leave only highest probabilities for each subject- not accepting ties so always one is returned}
+ \item{"morethan"}{ leave rows where a probability is hgher than value specify by percent argument }
+}
 }
 \examples{
 data(occup)
@@ -40,9 +49,11 @@ occup_new <- occup[occup$year == 2010, ]
 occup_2 <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
-  ml = list(method = "knn",
-            features = c("age", "sex", "edu", "exp", "parttime", "salary"),
-            args = list(k = 10))
+  ml = list(
+    method = "knn",
+    features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+    args = list(k = 10)
+  )
 )
 
 prune_cat2cat(occup_2$old, method = "nonzero")

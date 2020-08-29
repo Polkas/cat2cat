@@ -5,11 +5,11 @@
 
 ## transform a categorical variable according to a new encoding
 
-Why cat2cat:
-- stop removing variables for ml models because categories are not the same across time
-- use a statistical modelling to join datasets from different time points and retain caterogical variable structure
-- visualize any factor variable across time
-- universal algorithm which could be used in different science fields
+Why cat2cat:  
+- universal algorithm which could be used in different science fields  
+- stop removing variables for ml models because variable categories are not the same across time  
+- use a statistical modelling to join datasets from different time points and retain caterogical variable structure  
+- visualize any factor variable across time  
 
 In many projects where dataset contains a categorical variable one of the biggest obstacle is that 
 the data provider during internal processes was changing an encoding of this variable during a time.
@@ -36,25 +36,13 @@ Quick intro:
 library(cat2cat)
 
 # Manual transitions
+## Aggragate
+data(verticals)
+agg_old <- verticals[verticals$v_date == "2020-04-01", ]
+agg_new <- verticals[verticals$v_date == "2020-05-01", ]
 
-## Simulate datasets
-agg_old <- data.frame(
-  vertical = c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
-               "Clothes", "Home", "Fashion", "Health", "Sport"),
-  sales = rnorm(10, 100, 10),
-  counts = rgeom(10, 0.0001),
-  v_date = rep("2020-04-01", 10), stringsAsFactors = F
-)
-
-agg_new <- data.frame(
-  vertical = c("Electronics", "Supermarket", "Kids", "Automotive1", 
-               "Automotive2", "Books", "Clothes", "Home", "Fashion", "Health", "Sport"),
-  sales = rnorm(11, 100, 10),
-  counts = rgeom(11, 0.0001),
-  v_date = rep("2020-05-01", 11), stringsAsFactors = F
-)
-
-#
+## cat2cat_man - could map in both directions at once although 
+## usually we want to have oold or new representation
 
 agg = cat2cat_man(data = list(old = agg_old, 
                               new = agg_new, 
@@ -64,8 +52,8 @@ agg = cat2cat_man(data = list(old = agg_old,
                   Automotive %<% c(Automotive1, Automotive2),
                   c(Kids1, Kids2) %>% c(Kids),
                   Home %>% c(Home, Supermarket))
-
-# possible processing
+            
+## possible processing
 library(dplyr)
   
 agg$old %>% 
@@ -77,43 +65,60 @@ group_by(vertical) %>%
 summarise(sales = sum(sales*prop), counts = sum(counts*prop), v_date = first(v_date))
 
 #
+data(verticals2)
+## get transitions table - dataset is sorted by ean and v_date
+trans_v <- tapply(verticals2$vertical, verticals2$ean, unique) %>% do.call(rbind,.) %>% unique()
 
+vert_old <- verticals2[verticals2$v_date == "2020-04-01", ]
+vert_new <- verticals2[verticals2$v_date == "2020-05-01", ]
+
+## cat2cat_man
+verts = cat2cat(
+  data = list(old = vert_old, new = vert_new, cat_var = "vertical", time_var = "v_date"),
+  mappings = list(trans = trans_v, direction = "backward")
+)
+                  
+# Automatic using trans table
 data(occup)
 data(trans)
 
 occup_old = occup[occup$year == 2008,]
 occup_new = occup[occup$year == 2010,]
 
-# Automatic using trans table
-
+## cat2cat
 cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward")
 )
 
-# with informative features it might be usefull to run ml algorithm - currently only knn
-# where probability will be assessed as fraction of closest points.
-
+## with informative features it might be usefull to run ml algorithm - currently only knn
+## where probability will be assessed as fraction of closest points.
 occup_2 = cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
-  ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
+  ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), 
+            args = list(k = 10))
 )
 
-occup_old_2 <- occup_2$old %>% prune_cat2cat(method = "nonzero") #many prune methods like highest
-
 # Regression
-
-# we have to adjust size of stds as we artificialy enlarge degrees of freedom
-
-lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old, weights = multipier * wei_freq_c2c)
-
-summary_c2c(lms, df_old = nrow(occup_old), df_new = nrow(occup_old_2))
-
-# orginal dataset 
-
+## orginal dataset 
 lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old, weights = multipier)
-
 summary(lms2)
+
+## using one highest cross weighs
+## cross_cat2cat to cross differen methods weighs
+## prune_cat2cat - highest1 leave only one the highest probability obs for each subject
+occup_old_2 <- occup_2$old %>% 
+                cross_cat2cat(., c("wei_freq_c2c", "wei_ml_c2c"), c(1/2,1/2)) %>% 
+                prune_cat2cat(.,column = "wei_cross_c2c", method = "highest1") 
+lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_2, weights = multipier)
+summary(lms)
+
+## we have to adjust size of stds as we artificialy enlarge degrees of freedom
+occup_old_3 <- occup_2$old %>% 
+                prune_cat2cat(method = "nonzero") #many prune methods like highest
+lms1 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_3, weights = multipier * wei_freq_c2c)
+## summary_c2c
+summary_c2c(lms1, df_old = nrow(occup_old), df_new = nrow(occup_old_3))
 
 ```
