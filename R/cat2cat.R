@@ -134,7 +134,7 @@ get_freqs <- function(x, multipier = NULL) {
 
 #' Automatic transforming of a categorical variable according to a new encoding
 #' @description Automatic transforming of a categorical variable according to a new encoding
-#' @param data list with 4, 5 or 6 named fileds `old` `new` `cat_var` `time_var` and optional `multipier_var`,`freq_df`
+#' @param data list with 4, 5 or 6 named fileds `old` `new` `cat_var` `time_var` and optional `id_var`,`multipier_var`,`freq_df`
 #' @param mappings list with 2 named fileds `trans` `direction`
 #' @param ml list with 3 named fields `method` `features` `args``
 #' @details
@@ -142,6 +142,7 @@ get_freqs <- function(x, multipier = NULL) {
 #' \itemize{
 #'  \item{"old"}{ data.frame}
 #'  \item{"new"} { data.frame}
+#'  \item{"id_var"}{ name of the id variable}
 #'  \item{"cat_var"}{ name of the caterogical variable}
 #'  \item{"time_var"}{ name of the time varaiable}
 #'  \item{"multipier_var"}{ name of the multipier variable - number of replication needed to reproduce the population}
@@ -190,6 +191,7 @@ cat2cat <-
              old = NULL,
              new = NULL,
              cat_var = NULL,
+             id_var = NULL,
              time_var = NULL,
              multipier_var = NULL,
              freqs_df = NULL
@@ -200,9 +202,10 @@ cat2cat <-
              features = NULL,
              args = NULL
            )) {
+
     stopifnot(
       is.list(data) &&
-        length(data) %in% c(4, 5, 6) &&
+        length(data) %in% c(4, 5, 6, 7) &&
         inherits(data$old, "data.frame") &&
         inherits(data$new, "data.frame") &&
         all(c("old", "new", "cat_var", "time_var") %in% names(data)) &&
@@ -234,18 +237,49 @@ cat2cat <-
         ncol(mappings$trans) == 2
     )
 
+    stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) && (data$id_var %in% colnames(data$new))))
+
+    if (!is.null(data$id_var)) {
+
+    id_inner <- intersect(data$old[[data$id_var]], data$new[[data$id_var]])
+
+    tos <- merge(data$old[, c(data$id_var, data$cat_var)], data$new[, c(data$id_var, data$cat_var)],
+                 by = data$id_var)
+
+    colnames(tos) <- c(data$id_var, "cat_old", "cat_new")
+
+    if (mappings$direction == "forward") {
+    id_outer <- setdiff(data$new[[data$id_var]], data$old[[data$id_var]])
+    tos_df <- tos[,c(data$id_var, "cat_old")]
+    } else if (mappings$direction == "backward") {
+    id_outer <- setdiff(data$old[[data$id_var]], data$new[[data$id_var]])
+    tos_df <- tos[,c(data$id_var, "cat_new")]
+    }
+    colnames(tos_df) <- c("id","cat")
+    }
+
     mapps <- get_mappings(mappings$trans)
 
     if (mappings$direction == "forward") {
       cat_base_year <- data$old
-      cat_final_year <- data$new
+      cat_final_year <- if (is.null(data$id_var)) data$new else data$new[data$new[[data$id_var]] %in% id_outer, ]
+      cat_mid <- if (!is.null(data$id_var)) data$new[data$new[[data$id_var]] %in% id_inner,] else NULL
       mapp <- mapps$to_old
       res_ord <- c(1, 2)
     } else if (mappings$direction == "backward") {
       cat_base_year <- data$new
-      cat_final_year <- data$old
+      cat_final_year <- if (is.null(data$id_var)) data$old else data$old[data$old[[data$id_var]] %in% id_outer, ]
+      cat_mid <- if (!is.null(data$id_var)) data$old[data$old[[data$id_var]] %in% id_inner,] else NULL
       mapp <- mapps$to_new
       res_ord <- c(2, 1)
+    }
+
+    if (!is.null(data$id_var)) {
+    cat_mid$index_c2c <- 1:nrow(cat_mid)
+    cat_mid$g_new_c2c <- tos_df$cat[match(cat_mid[[data$id_var]], tos_df$id)]
+    cat_mid$wei_freq_c2c <- 1
+    cat_mid$rep_c2c <- 1
+    cat_mid$wei_naive_c2c <- 1
     }
 
     cats_base <- cat_base_year[[data$cat_var]]
@@ -350,9 +384,10 @@ cat2cat <-
       cat_final_rep <- do.call(rbind, cat_final_rep_cat_c2c)
       cat_final_rep <- cat_final_rep[order(cat_final_rep$id), ]
       cat_base_year$wei_ml_c2c <- 1
+      if (!is.null(data$id_var))  cat_mid$wei_ml_c2c <- 1
     }
 
-    res <- list(cat_base_year, cat_final_rep)[res_ord]
+    res <- list(cat_base_year, rbind(cat_final_rep, cat_mid))[res_ord]
     names(res) <- c("old", "new")
     res
   }

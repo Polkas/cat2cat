@@ -18,7 +18,7 @@ agg_new <- data.frame(
   v_date = rep("2020-05-01", 11), stringsAsFactors = F
 )
 
-agg <- cat2cat_man(
+agg <- cat2cat_agg(
   data = list(
     old = agg_old,
     new = agg_new,

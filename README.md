@@ -36,15 +36,15 @@ Quick intro:
 library(cat2cat)
 
 # Manual transitions
-## Aggragate
+## Aggragate dataset
 data(verticals)
 agg_old <- verticals[verticals$v_date == "2020-04-01", ]
 agg_new <- verticals[verticals$v_date == "2020-05-01", ]
 
-## cat2cat_man - could map in both directions at once although 
-## usually we want to have oold or new representation
+## cat2cat_agg - could map in both directions at once although 
+## usually we want to have old or new representation
 
-agg = cat2cat_man(data = list(old = agg_old, 
+agg = cat2cat_agg(data = list(old = agg_old, 
                               new = agg_new, 
                               cat_var = "vertical", 
                               time_var = "v_date",
@@ -64,21 +64,28 @@ agg$new %>%
 group_by(vertical) %>%
 summarise(sales = sum(sales*prop), counts = sum(counts*prop), v_date = first(v_date))
 
-#
+# Automatic using trans table
+## Balanced dataset
 data(verticals2)
-## get transitions table - dataset is sorted by ean and v_date
-trans_v <- tapply(verticals2$vertical, verticals2$ean, unique) %>% do.call(rbind,.) %>% unique()
 
 vert_old <- verticals2[verticals2$v_date == "2020-04-01", ]
 vert_new <- verticals2[verticals2$v_date == "2020-05-01", ]
 
-## cat2cat_man
+## get transitions table
+trans_v <- vert_old %>% 
+full_join(vert_new, by = "ean") %>%
+select(vertical.x, vertical.y) %>% distinct() %>% na.omit()
+
+# 
+## cat2cat
+## it is important to set id_var as then we merging categories 1 to 1 
+## for this identifier which exists in both periods.
 verts = cat2cat(
-  data = list(old = vert_old, new = vert_new, cat_var = "vertical", time_var = "v_date"),
+  data = list(old = vert_old, new = vert_new, id_var = "ean", cat_var = "vertical", time_var = "v_date"),
   mappings = list(trans = trans_v, direction = "backward")
 )
                   
-# Automatic using trans table
+## Unbalanced dataset
 data(occup)
 data(trans)
 

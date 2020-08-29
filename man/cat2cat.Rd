@@ -5,14 +5,14 @@
 \title{Automatic transforming of a categorical variable according to a new encoding}
 \usage{
 cat2cat(
-  data = list(old = NULL, new = NULL, cat_var = NULL, time_var = NULL, multipier_var =
-    NULL, freqs_df = NULL),
+  data = list(old = NULL, new = NULL, cat_var = NULL, id_var = NULL, time_var = NULL,
+    multipier_var = NULL, freqs_df = NULL),
   mappings = list(trans = NULL, direction = NULL),
   ml = list(method = NULL, features = NULL, args = NULL)
 )
 }
 \arguments{
-\item{data}{list with 4, 5 or 6 named fileds `old` `new` `cat_var` `time_var` and optional `multipier_var`,`freq_df`}
+\item{data}{list with 4, 5 or 6 named fileds `old` `new` `cat_var` `time_var` and optional `id_var`,`multipier_var`,`freq_df`}
 
 \item{mappings}{list with 2 named fileds `trans` `direction`}
 
@@ -29,6 +29,7 @@ data args
 \itemize{
  \item{"old"}{ data.frame}
  \item{"new"} { data.frame}
+ \item{"id_var"}{ name of the id variable}
  \item{"cat_var"}{ name of the caterogical variable}
  \item{"time_var"}{ name of the time varaiable}
  \item{"multipier_var"}{ name of the multipier variable - number of replication needed to reproduce the population}

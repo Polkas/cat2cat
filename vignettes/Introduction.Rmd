@@ -318,7 +318,7 @@ Moreover each analysis could requires specific aggregation process.
 
 ```{r}
 # old -> new,new, old-> old,new
-agg1 = cat2cat_man(data = list(old = agg_old, new = agg_new, cat_var = "vertical", time_var = "v_date",freq_var = "counts"),
+agg1 = cat2cat_agg(data = list(old = agg_old, new = agg_new, cat_var = "vertical", time_var = "v_date",freq_var = "counts"),
             Automotive %>% c(Automotive1, Automotive2), c(Kids1, Kids2) %>% c(Kids), Home %>% c(Home, Supermarket))
 
 agg1$old
@@ -331,7 +331,7 @@ agg1$new %>% group_by(vertical) %>% summarise(sales = sum(sales*prop), counts = 
 changes in both direction.
 
 ```{r}
-agg2 = cat2cat_man(data = list(old = agg_old, new = agg_new, cat_var = "vertical", time_var = "v_date", freq_var = "counts"), 
+agg2 = cat2cat_agg(data = list(old = agg_old, new = agg_new, cat_var = "vertical", time_var = "v_date", freq_var = "counts"), 
             Automotive %<% c(Automotive1, Automotive2), c(Kids1, Kids2) %>% c(Kids), Home %>% c(Home, Supermarket))
 ```
 
