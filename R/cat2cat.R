@@ -237,8 +237,10 @@ cat2cat <-
         ncol(mappings$trans) == 2
     )
 
-    stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) && (data$id_var %in% colnames(data$new))))
-
+    stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
+                                         (data$id_var %in% colnames(data$new)) &&
+                                         !anyDuplicated(data$old[[data$id_var]]) &&
+                                         !anyDuplicated(data$new[[data$id_var]])))
     if (!is.null(data$id_var)) {
 
     id_inner <- intersect(data$old[[data$id_var]], data$new[[data$id_var]])

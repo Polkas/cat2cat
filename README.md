@@ -1,4 +1,4 @@
-# cat2cat
+# cat2cat <a href='https://github.com/polkas/cat2cat'><img src='./docs/cat2cat_logo.png' align="right" height="200" /></a>
 
 [![R build status](https://github.com/polkas/cat2cat/workflows/R-CMD-check/badge.svg)](https://github.com/polkas/cat2cat/actions)
 [![codecov](https://codecov.io/gh/Polkas/cat2cat/branch/master/graph/badge.svg)](https://codecov.io/gh/Polkas/cat2cat)
@@ -25,7 +25,7 @@ devtools::install_github("polkas/cat2cat")
 There should be stated a 3 clear questions:
 
 1. Do i have a transition table. 
-2. Type of the data - panel balanced or unbalanced or aggregate data vs individual data.
+2. Type of the data - panel balanced vs unbalanced, aggregate data vs individual data.
 3. Direction of a transition, forward or backward - use a new or an old encoding
 
 For more advance usage check the vignette.
@@ -66,6 +66,7 @@ summarise(sales = sum(sales*prop), counts = sum(counts*prop), v_date = first(v_d
 
 # Automatic using trans table
 ## Balanced dataset
+## the ean variable is a unique identifier
 data(verticals2)
 
 vert_old <- verticals2[verticals2$v_date == "2020-04-01", ]
@@ -73,8 +74,8 @@ vert_new <- verticals2[verticals2$v_date == "2020-05-01", ]
 
 ## get transitions table
 trans_v <- vert_old %>% 
-full_join(vert_new, by = "ean") %>%
-select(vertical.x, vertical.y) %>% distinct() %>% na.omit()
+inner_join(vert_new, by = "ean") %>%
+select(vertical.x, vertical.y) %>% distinct()
 
 # 
 ## cat2cat
