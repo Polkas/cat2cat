@@ -5,6 +5,9 @@
 
 ## transform a categorical variable according to a new encoding
 
+**main rule is to replicate the observation if it could be assign to a few categories**
+**then using simple freqencies or ml model to approximate probabilities of being assign to each categorie.**
+
 Why cat2cat:  
 - universal algorithm which could be used in different science fields  
 - stop removing variables for ml models because variable categories are not the same across time  
@@ -113,8 +116,8 @@ occup_2 = cat2cat(
 lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old, weights = multipier)
 summary(lms2)
 
-## using one highest cross weighs
-## cross_cat2cat to cross differen methods weighs
+## using one highest cross weights
+## cross_cat2cat to cross differen methods weights
 ## prune_cat2cat - highest1 leave only one the highest probability obs for each subject
 occup_old_2 <- occup_2$old %>% 
                 cross_cat2cat(., c("wei_freq_c2c", "wei_ml_c2c"), c(1/2,1/2)) %>% 
