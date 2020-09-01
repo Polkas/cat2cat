@@ -89,6 +89,7 @@
 <div id="transform-a-categorical-variable-according-to-a-new-encoding" class="section level2">
 <h2 class="hasAnchor">
 <a href="#transform-a-categorical-variable-according-to-a-new-encoding" class="anchor"></a>transform a categorical variable according to a new encoding</h2>
+<p><strong>main rule is to replicate the observation if it could be assign to a few categories</strong> <strong>then using simple freqencies or ml model to approximate probabilities of being assign to each categorie.</strong></p>
 <p>Why cat2cat:</p>
 <ul>
 <li>universal algorithm which could be used in different science fields<br>
@@ -197,8 +198,8 @@
 <span class="kw">lms2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="kw">salary</span>)) <span class="op">~</span> <span class="kw">age</span> <span class="op">+</span> <span class="kw">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">edu</span>) <span class="op">+</span> <span class="kw">parttime</span> <span class="op">+</span> <span class="kw">exp</span>, <span class="kw">occup_old</span>, weights = <span class="kw">multipier</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">lms2</span>)
 
-<span class="co">## using one highest cross weighs</span>
-<span class="co">## cross_cat2cat to cross differen methods weighs</span>
+<span class="co">## using one highest cross weights</span>
+<span class="co">## cross_cat2cat to cross differen methods weights</span>
 <span class="co">## prune_cat2cat - highest1 leave only one the highest probability obs for each subject</span>
 <span class="kw">occup_old_2</span> <span class="op">&lt;-</span> <span class="kw">occup_2</span><span class="op">$</span><span class="kw">old</span> <span class="op">%&gt;%</span> 
                 <span class="fu"><a href="reference/cross_cat2cat.html">cross_cat2cat</a></span>(<span class="kw">.</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"wei_freq_c2c"</span>, <span class="st">"wei_ml_c2c"</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span><span class="op">/</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">/</span><span class="fl">2</span>)) <span class="op">%&gt;%</span> 
