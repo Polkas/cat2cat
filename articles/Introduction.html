@@ -61,7 +61,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/Polkas/catTOcat/">
+  <a href="https://github.com/Polkas/cat2cat/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -82,9 +82,9 @@
       <h1 data-toc-skip>cat2cat - Introduction</h1>
                         <h4 class="author">Maciej Nasinski</h4>
             
-            <h4 class="date">2020-09-01</h4>
+            <h4 class="date">2020-09-05</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/Polkas/catTOcat/blob/master/vignettes/Introduction.Rmd"><code>vignettes/Introduction.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Polkas/cat2cat/blob/master/vignettes/Introduction.Rmd"><code>vignettes/Introduction.Rmd</code></a></small>
       <div class="hidden name"><code>Introduction.Rmd</code></div>
 
     </div>
@@ -93,8 +93,7 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(scipen = <span class="fl">999</span>)
-<span class="kw">pacman</span>::<span class="fu"><a href="https://rdrr.io/pkg/pacman/man/p_load.html">p_load</a></span>(<span class="kw">cat2cat</span>, <span class="kw">dplyr</span>)
-</pre></div>
+<span class="kw">pacman</span>::<span class="fu"><a href="https://rdrr.io/pkg/pacman/man/p_load.html">p_load</a></span>(<span class="kw">cat2cat</span>, <span class="kw">dplyr</span>)</pre></div>
 <div id="in-development---transform-a-categorical-variable-according-to-a-new-encoding" class="section level1">
 <h1 class="hasAnchor">
 <a href="#in-development---transform-a-categorical-variable-according-to-a-new-encoding" class="anchor"></a>IN DEVELOPMENT - transform a categorical variable according to a new encoding</h1>
@@ -201,20 +200,17 @@ $`1311`
 <div class="sourceCode" id="cb4"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">occup</span>)
 
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">trans</span>)
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">trans</span>)</pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="kw">occup</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span>()
-</pre></div>
+<span class="kw">occup</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span>()</pre></div>
 <pre><code>## Rows: 68,370
-## Columns: 13
+## Columns: 12
 ## $ id        &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, …
 ## $ age       &lt;dbl&gt; 49.29183, 33.95678, 30.98335, 55.26238, 34.05539, 35.23543,…
 ## $ sex       &lt;lgl&gt; FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, …
 ## $ edu       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 4, 1, 1, 3, 2, 1, 1,…
 ## $ exp       &lt;dbl&gt; 26.461835, 7.536783, 7.483355, 24.762377, 10.055385, 11.235…
 ## $ district  &lt;int&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
-## $ sector    &lt;chr&gt; "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O",…
 ## $ parttime  &lt;dbl&gt; 1.0000000, 1.0000000, 0.3333333, 1.0000000, 1.0000000, 1.00…
 ## $ salary    &lt;dbl&gt; 94730.94, 67619.39, 17862.90, 261882.46, 84540.17, 94002.69…
 ## $ code      &lt;chr&gt; "2471", "2471", "2471", "1112", "2471", "2479", "3431", "11…
@@ -223,8 +219,7 @@ $`1311`
 ## $ code4     &lt;chr&gt; "2471", "2471", "2471", "1112", "2471", "2479", "3431", "11…</code></pre>
 <p>trans dataset containing transitions between old (2008) and new (2010) occupational codes.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="kw">trans</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span>()
-</pre></div>
+<span class="kw">trans</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span>()</pre></div>
 <pre><code>## Rows: 2,666
 ## Columns: 2
 ## $ old &lt;chr&gt; "1111", "1111", "1111", "1112", "1112", "1112", "1121", "1122", "…
@@ -237,8 +232,7 @@ $`1311`
 <div class="sourceCode" id="cb9"><pre class="downlit">
 <span class="kw">mappings</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_mappings.html">get_mappings</a></span>(<span class="kw">trans</span>)
 
-<span class="kw">mappings</span><span class="op">$</span><span class="kw">to_old</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">4</span>]
-</pre></div>
+<span class="kw">mappings</span><span class="op">$</span><span class="kw">to_old</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">4</span>]</pre></div>
 <pre><code>## $`111101`
 ## [1] "1111"
 ## 
@@ -251,8 +245,7 @@ $`1311`
 ## $`111201`
 ## [1] "1112"</code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="kw">mappings</span><span class="op">$</span><span class="kw">to_new</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">4</span>]
-</pre></div>
+<span class="kw">mappings</span><span class="op">$</span><span class="kw">to_new</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">4</span>]</pre></div>
 <pre><code>## $`1111`
 ## [1] "111101" "111102" "111103"
 ## 
@@ -267,8 +260,7 @@ $`1311`
 <div class="sourceCode" id="cb13"><pre class="downlit">
 <span class="kw">mapp_p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_apply_freq.html">cat_apply_freq</a></span>(<span class="kw">mappings</span><span class="op">$</span><span class="kw">to_old</span>, <span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span>(<span class="kw">occup</span><span class="op">$</span><span class="kw">code4</span>[<span class="kw">occup</span><span class="op">$</span><span class="kw">year</span> <span class="op">==</span> <span class="st">"2008"</span>], <span class="kw">occup</span><span class="op">$</span><span class="kw">multipier</span>[<span class="kw">occup</span><span class="op">$</span><span class="kw">year</span> <span class="op">==</span> <span class="st">"2008"</span>]))
 
-<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">mappings</span><span class="op">$</span><span class="kw">to_old</span>), <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">mapp_p</span>)) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">mappings</span><span class="op">$</span><span class="kw">to_old</span>), <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">mapp_p</span>)) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></div>
 <pre><code>##        mappings.to_old mapp_p
 ## 111101            1111      1
 ## 111102            1111      1
@@ -279,8 +271,7 @@ $`1311`
 <div class="sourceCode" id="cb15"><pre class="downlit">
 <span class="kw">mapp_p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_apply_freq.html">cat_apply_freq</a></span>(<span class="kw">mappings</span><span class="op">$</span><span class="kw">to_new</span>, <span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span>(<span class="kw">occup</span><span class="op">$</span><span class="kw">code4</span>[<span class="kw">occup</span><span class="op">$</span><span class="kw">year</span> <span class="op">==</span> <span class="st">"2010"</span>], <span class="kw">occup</span><span class="op">$</span><span class="kw">multipier</span>[<span class="kw">occup</span><span class="op">$</span><span class="kw">year</span> <span class="op">==</span> <span class="st">"2010"</span>]))
 
-<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">mappings</span><span class="op">$</span><span class="kw">to_new</span>), <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">mapp_p</span>)) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">mappings</span><span class="op">$</span><span class="kw">to_new</span>), <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="kw">mapp_p</span>)) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></div>
 <pre><code>##      mappings.to_new       mapp_p
 ## 1111    111101, .... 0.333333....
 ## 1112    111201, .... 0.333333....
@@ -296,50 +287,46 @@ $`1311`
 <p>splitting the data</p>
 <div class="sourceCode" id="cb17"><pre class="downlit">
 <span class="kw">occup_old</span> <span class="op">=</span> <span class="kw">occup</span>[<span class="kw">occup</span><span class="op">$</span><span class="kw">year</span> <span class="op">==</span> <span class="fl">2008</span>,]
-<span class="kw">occup_new</span> <span class="op">=</span> <span class="kw">occup</span>[<span class="kw">occup</span><span class="op">$</span><span class="kw">year</span> <span class="op">==</span> <span class="fl">2010</span>,]
-</pre></div>
+<span class="kw">occup_new</span> <span class="op">=</span> <span class="kw">occup</span>[<span class="kw">occup</span><span class="op">$</span><span class="kw">year</span> <span class="op">==</span> <span class="fl">2010</span>,]</pre></div>
 <p>simple model where probabilities will be taken from a category freqency.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit">
 <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span>(
   data = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(old = <span class="kw">occup_old</span> ,new = <span class="kw">occup_new</span>, cat_var = <span class="st">"code"</span>, time_var = <span class="st">"year"</span>),
   mappings = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(trans = <span class="kw">trans</span>, direction = <span class="st">"forward"</span>)
-  )
-</pre></div>
+  )</pre></div>
 <pre><code>## $old
-## # A tibble: 34,176 x 18
-##       id   age sex     edu   exp district sector parttime salary code  multipier
-##    &lt;int&gt; &lt;dbl&gt; &lt;lgl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;int&gt; &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;
-##  1     1  49.3 FALSE     1 26.5         8 O         1     9.47e4 2471       223.
-##  2     2  34.0 FALSE     1  7.54        8 O         1     6.76e4 2471       279.
-##  3     3  31.0 TRUE      1  7.48        8 O         0.333 1.79e4 2471       240.
-##  4     4  55.3 TRUE      1 24.8         8 O         1     2.62e5 1112       234.
-##  5     5  34.1 TRUE      1 10.1         8 O         1     8.45e4 2471       254.
-##  6     6  35.2 FALSE     1 11.2         8 O         1     9.40e4 2479       262.
-##  7     7  32.4 FALSE     1  8.50        8 O         1     6.53e4 3431       256.
-##  8     8  48.0 TRUE      1 24.5         8 O         1     2.62e5 1112       251.
-##  9     9  51.0 FALSE     4 32.0         8 O         1     4.95e4 3431       259.
-## 10    10  69.6 FALSE     1 44.6         8 O         1     1.75e5 2422       245.
-## # … with 34,166 more rows, and 7 more variables: year &lt;int&gt;, code4 &lt;chr&gt;,
-## #   index_c2c &lt;int&gt;, g_new_c2c &lt;chr&gt;, wei_freq_c2c &lt;dbl&gt;, rep_c2c &lt;dbl&gt;,
-## #   wei_naive_c2c &lt;dbl&gt;
+## # A tibble: 34,176 x 17
+##       id   age sex     edu   exp district parttime salary code  multipier  year
+##    &lt;int&gt; &lt;dbl&gt; &lt;lgl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;int&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;int&gt;
+##  1     1  49.3 FALSE     1 26.5         8    1     9.47e4 2471       223.  2008
+##  2     2  34.0 FALSE     1  7.54        8    1     6.76e4 2471       279.  2008
+##  3     3  31.0 TRUE      1  7.48        8    0.333 1.79e4 2471       240.  2008
+##  4     4  55.3 TRUE      1 24.8         8    1     2.62e5 1112       234.  2008
+##  5     5  34.1 TRUE      1 10.1         8    1     8.45e4 2471       254.  2008
+##  6     6  35.2 FALSE     1 11.2         8    1     9.40e4 2479       262.  2008
+##  7     7  32.4 FALSE     1  8.50        8    1     6.53e4 3431       256.  2008
+##  8     8  48.0 TRUE      1 24.5         8    1     2.62e5 1112       251.  2008
+##  9     9  51.0 FALSE     4 32.0         8    1     4.95e4 3431       259.  2008
+## 10    10  69.6 FALSE     1 44.6         8    1     1.75e5 2422       245.  2008
+## # … with 34,166 more rows, and 6 more variables: code4 &lt;chr&gt;, index_c2c &lt;int&gt;,
+## #   g_new_c2c &lt;chr&gt;, wei_freq_c2c &lt;dbl&gt;, rep_c2c &lt;dbl&gt;, wei_naive_c2c &lt;dbl&gt;
 ## 
 ## $new
-## # A tibble: 36,850 x 18
-##       id   age sex     edu   exp district sector parttime salary code  multipier
-##    &lt;int&gt; &lt;dbl&gt; &lt;lgl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;int&gt; &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;
-##  1 34177  52.5 TRUE      1 29.5         8 O          1    9.39e4 1213…      240.
-##  2 34178  56.1 FALSE     6 35.7         8 O          0.67 2.81e4 9112…      265.
-##  3 34179  28.4 FALSE     1  6.36        8 O          1    4.35e4 4226…      232.
-##  4 34180  43.7 FALSE     5 23.0         8 O          1    3.37e4 9112…      225.
-##  5 34181  55.0 TRUE      6 34.6         6 O          1    7.27e4 8322…      230.
-##  6 34182  54.1 FALSE     4 27.9         8 O          1    4.73e4 3343…      215.
-##  7 34183  62.6 FALSE     8 24.6         8 O          1    2.15e4 9112…      221.
-##  8 34184  31.2 FALSE     1  6.37        8 O          1    7.53e4 2611…      202.
-##  9 34185  40.6 TRUE      1 18.9         8 O          1    1.02e5 2611…      255.
-## 10 34186  25.0 TRUE      5  5.82        8 O          1    2.11e4 9629…      226.
-## # … with 36,840 more rows, and 7 more variables: year &lt;int&gt;, code4 &lt;chr&gt;,
-## #   index_c2c &lt;int&gt;, g_new_c2c &lt;chr&gt;, wei_freq_c2c &lt;dbl&gt;, rep_c2c &lt;int&gt;,
-## #   wei_naive_c2c &lt;dbl&gt;</code></pre>
+## # A tibble: 36,850 x 17
+##       id   age sex     edu   exp district parttime salary code  multipier  year
+##    &lt;int&gt; &lt;dbl&gt; &lt;lgl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;int&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;int&gt;
+##  1 34177  52.5 TRUE      1 29.5         8     1    9.39e4 1213…      240.  2010
+##  2 34178  56.1 FALSE     6 35.7         8     0.67 2.81e4 9112…      265.  2010
+##  3 34179  28.4 FALSE     1  6.36        8     1    4.35e4 4226…      232.  2010
+##  4 34180  43.7 FALSE     5 23.0         8     1    3.37e4 9112…      225.  2010
+##  5 34181  55.0 TRUE      6 34.6         6     1    7.27e4 8322…      230.  2010
+##  6 34182  54.1 FALSE     4 27.9         8     1    4.73e4 3343…      215.  2010
+##  7 34183  62.6 FALSE     8 24.6         8     1    2.15e4 9112…      221.  2010
+##  8 34184  31.2 FALSE     1  6.37        8     1    7.53e4 2611…      202.  2010
+##  9 34185  40.6 TRUE      1 18.9         8     1    1.02e5 2611…      255.  2010
+## 10 34186  25.0 TRUE      5  5.82        8     1    2.11e4 9629…      226.  2010
+## # … with 36,840 more rows, and 6 more variables: code4 &lt;chr&gt;, index_c2c &lt;int&gt;,
+## #   g_new_c2c &lt;chr&gt;, wei_freq_c2c &lt;dbl&gt;, rep_c2c &lt;int&gt;, wei_naive_c2c &lt;dbl&gt;</code></pre>
 </div>
 <div id="ml-module-1" class="section level3">
 <h3 class="hasAnchor">
@@ -350,20 +337,17 @@ $`1311`
   data = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(old = <span class="kw">occup_old</span> ,new = <span class="kw">occup_new</span>, cat_var = <span class="st">"code"</span>, time_var = <span class="st">"year"</span>),
   mappings = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(trans = <span class="kw">trans</span>, direction = <span class="st">"forward"</span>)
   ,ml = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(method = <span class="st">"knn"</span>, features = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"edu"</span>, <span class="st">"exp"</span>, <span class="st">"parttime"</span>, <span class="st">"salary"</span>), args = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(k = <span class="fl">10</span>))
-  )
-</pre></div>
+  )</pre></div>
 <div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="kw">occup_2</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span>()
-</pre></div>
+<span class="kw">occup_2</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span>()</pre></div>
 <pre><code>## List of 2
-##  $ old: tibble [34,176 × 19] (S3: tbl_df/tbl/data.frame)
+##  $ old: tibble [34,176 × 18] (S3: tbl_df/tbl/data.frame)
 ##   ..$ id           : int [1:34176] 1 2 3 4 5 6 7 8 9 10 ...
 ##   ..$ age          : num [1:34176] 49.3 34 31 55.3 34.1 ...
 ##   ..$ sex          : logi [1:34176] FALSE FALSE TRUE TRUE TRUE FALSE ...
 ##   ..$ edu          : int [1:34176] 1 1 1 1 1 1 1 1 4 1 ...
 ##   ..$ exp          : num [1:34176] 26.46 7.54 7.48 24.76 10.06 ...
 ##   ..$ district     : int [1:34176] 8 8 8 8 8 8 8 8 8 8 ...
-##   ..$ sector       : chr [1:34176] "O" "O" "O" "O" ...
 ##   ..$ parttime     : num [1:34176] 1 1 0.333 1 1 ...
 ##   ..$ salary       : num [1:34176] 94731 67619 17863 261882 84540 ...
 ##   ..$ code         : chr [1:34176] "2471" "2471" "2471" "1112" ...
@@ -376,14 +360,13 @@ $`1311`
 ##   ..$ rep_c2c      : num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ wei_naive_c2c: num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ wei_ml_c2c   : num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...
-##  $ new: tibble [36,850 × 19] (S3: tbl_df/tbl/data.frame)
+##  $ new: tibble [36,850 × 18] (S3: tbl_df/tbl/data.frame)
 ##   ..$ id           : int [1:36850] 34177 34178 34179 34180 34181 34182 34183 34184 34185 34186 ...
 ##   ..$ age          : num [1:36850] 52.5 56.1 28.4 43.7 55 ...
 ##   ..$ sex          : logi [1:36850] TRUE FALSE FALSE FALSE TRUE FALSE ...
 ##   ..$ edu          : int [1:36850] 1 6 1 5 6 4 8 1 1 5 ...
 ##   ..$ exp          : num [1:36850] 29.49 35.73 6.36 23 34.6 ...
 ##   ..$ district     : int [1:36850] 8 8 8 8 6 8 8 8 8 8 ...
-##   ..$ sector       : chr [1:36850] "O" "O" "O" "O" ...
 ##   ..$ parttime     : num [1:36850] 1 0.67 1 1 1 1 1 1 1 1 ...
 ##   ..$ salary       : num [1:36850] 93946 28062 43532 33682 72680 ...
 ##   ..$ code         : chr [1:36850] "121303" "911207" "422602" "911290" ...
@@ -400,28 +383,25 @@ $`1311`
 ##   ..$ wei_naive_c2c: Named num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...
 ##   .. ..- attr(*, "names")= chr [1:36850] "121303" "911207" "422602" "911290" ...
 ##   ..$ wei_ml_c2c   : Named num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...
-##   .. ..- attr(*, "names")= chr [1:36850] "121303" "911207" "422602" "911290" ...</code></pre>
+##   .. ..- attr(*, "names")= chr [1:36850] "" "" "" "" ...</code></pre>
 <div class="sourceCode" id="cb23"><pre class="downlit">
 <span class="kw">occup_3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span>(
   data = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(old = <span class="kw">occup_old</span>, new = <span class="kw">occup_new</span>, cat_var = <span class="st">"code"</span>, time_var = <span class="st">"year"</span>),
   mappings = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(trans = <span class="kw">trans</span>, direction = <span class="st">"backward"</span>),
   ml = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(method = <span class="st">"knn"</span>, features = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"edu"</span>, <span class="st">"exp"</span>, <span class="st">"parttime"</span>, <span class="st">"salary"</span>), args = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(k = <span class="fl">10</span>))
-)
-</pre></div>
+)</pre></div>
 <p>notice : if the ml model is failing then NA is returnd so</p>
 <p>cor(occup_3<span class="math inline">\(old\)</span>wei_ml_c2c, occup_3<span class="math inline">\(old\)</span>wei_freq_c2c, use = “complete.obs”)</p>
 <div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="kw">occup_3</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span>()
-</pre></div>
+<span class="kw">occup_3</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span>()</pre></div>
 <pre><code>## List of 2
-##  $ old: tibble [451,670 × 19] (S3: tbl_df/tbl/data.frame)
+##  $ old: tibble [451,670 × 18] (S3: tbl_df/tbl/data.frame)
 ##   ..$ id           : int [1:451670] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ age          : num [1:451670] 49.3 49.3 49.3 49.3 49.3 ...
 ##   ..$ sex          : logi [1:451670] FALSE FALSE FALSE FALSE FALSE FALSE ...
 ##   ..$ edu          : int [1:451670] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ exp          : num [1:451670] 26.5 26.5 26.5 26.5 26.5 ...
 ##   ..$ district     : int [1:451670] 8 8 8 8 8 8 8 8 8 8 ...
-##   ..$ sector       : chr [1:451670] "O" "O" "O" "O" ...
 ##   ..$ parttime     : num [1:451670] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ salary       : num [1:451670] 94731 94731 94731 94731 94731 ...
 ##   ..$ code         : chr [1:451670] "2471" "2471" "2471" "2471" ...
@@ -438,15 +418,14 @@ $`1311`
 ##   ..$ wei_naive_c2c: Named num [1:451670] 0.0909 0.0909 0.0909 0.0909 0.0909 ...
 ##   .. ..- attr(*, "names")= chr [1:451670] "2471" "2471" "2471" "2471" ...
 ##   ..$ wei_ml_c2c   : Named num [1:451670] 0.2 0.4 0 0.2 0 0 0 0 0 0 ...
-##   .. ..- attr(*, "names")= chr [1:451670] "" "" "" "" ...
-##  $ new: tibble [34,194 × 19] (S3: tbl_df/tbl/data.frame)
+##   .. ..- attr(*, "names")= chr [1:451670] NA NA NA NA ...
+##  $ new: tibble [34,194 × 18] (S3: tbl_df/tbl/data.frame)
 ##   ..$ id           : int [1:34194] 34177 34178 34179 34180 34181 34182 34183 34184 34185 34186 ...
 ##   ..$ age          : num [1:34194] 52.5 56.1 28.4 43.7 55 ...
 ##   ..$ sex          : logi [1:34194] TRUE FALSE FALSE FALSE TRUE FALSE ...
 ##   ..$ edu          : int [1:34194] 1 6 1 5 6 4 8 1 1 5 ...
 ##   ..$ exp          : num [1:34194] 29.49 35.73 6.36 23 34.6 ...
 ##   ..$ district     : int [1:34194] 8 8 8 8 6 8 8 8 8 8 ...
-##   ..$ sector       : chr [1:34194] "O" "O" "O" "O" ...
 ##   ..$ parttime     : num [1:34194] 1 0.67 1 1 1 1 1 1 1 1 ...
 ##   ..$ salary       : num [1:34194] 93946 28062 43532 33682 72680 ...
 ##   ..$ code         : chr [1:34194] "121303" "911207" "422602" "911290" ...
@@ -461,8 +440,7 @@ $`1311`
 ##   ..$ wei_ml_c2c   : num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
 <p>New freqs for potential next step:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit">
-<span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span>(x = <span class="kw">occup_3</span><span class="op">$</span><span class="kw">new</span><span class="op">$</span><span class="kw">g_new_c2c</span>, multipier = <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="kw">occup_3</span><span class="op">$</span><span class="kw">new</span><span class="op">$</span><span class="kw">multipier</span> <span class="op">*</span> <span class="kw">occup_3</span><span class="op">$</span><span class="kw">new</span><span class="op">$</span><span class="kw">wei_freq_c2c</span>)) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()
-</pre></div>
+<span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span>(x = <span class="kw">occup_3</span><span class="op">$</span><span class="kw">new</span><span class="op">$</span><span class="kw">g_new_c2c</span>, multipier = <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="kw">occup_3</span><span class="op">$</span><span class="kw">new</span><span class="op">$</span><span class="kw">multipier</span> <span class="op">*</span> <span class="kw">occup_3</span><span class="op">$</span><span class="kw">new</span><span class="op">$</span><span class="kw">wei_freq_c2c</span>)) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></div>
 <pre><code>##    input  Freq
 ## 1 111102   228
 ## 2 111103  3517
@@ -472,8 +450,7 @@ $`1311`
 ## 6 112001  4741</code></pre>
 <p>or backward:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit">
-<span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span>(x = <span class="kw">occup_2</span><span class="op">$</span><span class="kw">old</span><span class="op">$</span><span class="kw">g_new_c2c</span>, multipier = <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="kw">occup_2</span><span class="op">$</span><span class="kw">old</span><span class="op">$</span><span class="kw">multipier</span> <span class="op">*</span> <span class="kw">occup_2</span><span class="op">$</span><span class="kw">old</span><span class="op">$</span><span class="kw">wei_freq_c2c</span>))<span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()
-</pre></div>
+<span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span>(x = <span class="kw">occup_2</span><span class="op">$</span><span class="kw">old</span><span class="op">$</span><span class="kw">g_new_c2c</span>, multipier = <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="kw">occup_2</span><span class="op">$</span><span class="kw">old</span><span class="op">$</span><span class="kw">multipier</span> <span class="op">*</span> <span class="kw">occup_2</span><span class="op">$</span><span class="kw">old</span><span class="op">$</span><span class="kw">wei_freq_c2c</span>))<span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></div>
 <pre><code>##   input   Freq
 ## 1  1112  12977
 ## 2  1123   1268
@@ -508,11 +485,9 @@ $`1311`
   sales = <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span>(<span class="fl">11</span>, <span class="fl">100</span>, <span class="fl">10</span>),
   counts = <span class="fu"><a href="https://rdrr.io/r/stats/Geometric.html">rgeom</a></span>(<span class="fl">11</span>, <span class="fl">0.0001</span>),
   v_date = <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">"2020-05-01"</span>, <span class="fl">11</span>), stringsAsFactors = <span class="kw">F</span>
-)
-</pre></div>
+)</pre></div>
 <div class="sourceCode" id="cb31"><pre class="downlit">
-<span class="kw">agg_old</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span>()
-</pre></div>
+<span class="kw">agg_old</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span>()</pre></div>
 <pre><code>## Rows: 10
 ## Columns: 4
 ## $ vertical &lt;chr&gt; "Electronics", "Kids1", "Kids2", "Automotive", "Books", "Clo…
@@ -520,8 +495,7 @@ $`1311`
 ## $ counts   &lt;int&gt; 9544, 17686, 32349, 135, 7489, 1078, 2414, 7399, 16102, 4957
 ## $ v_date   &lt;chr&gt; "2020-04-01", "2020-04-01", "2020-04-01", "2020-04-01", "202…</code></pre>
 <div class="sourceCode" id="cb33"><pre class="downlit">
-<span class="kw">agg_old</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span>()
-</pre></div>
+<span class="kw">agg_old</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span>()</pre></div>
 <pre><code>## Rows: 10
 ## Columns: 4
 ## $ vertical &lt;chr&gt; "Electronics", "Kids1", "Kids2", "Automotive", "Books", "Clo…
@@ -534,8 +508,7 @@ $`1311`
 <span class="kw">agg1</span> <span class="op">=</span> <span class="fu"><a href="../reference/cat2cat_agg.html">cat2cat_agg</a></span>(data = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(old = <span class="kw">agg_old</span>, new = <span class="kw">agg_new</span>, cat_var = <span class="st">"vertical"</span>, time_var = <span class="st">"v_date"</span>,freq_var = <span class="st">"counts"</span>),
             <span class="kw">Automotive</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">Automotive1</span>, <span class="kw">Automotive2</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">Kids1</span>, <span class="kw">Kids2</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">Kids</span>), <span class="kw">Home</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">Home</span>, <span class="kw">Supermarket</span>))
 
-<span class="kw">agg1</span><span class="op">$</span><span class="kw">old</span>
-</pre></div>
+<span class="kw">agg1</span><span class="op">$</span><span class="kw">old</span></pre></div>
 <pre><code>##       vertical     sales counts     v_date prop
 ## 1  Electronics  87.92934   9544 2020-04-01    1
 ## 2        Kids1 102.77429  17686 2020-04-01    1
@@ -548,8 +521,7 @@ $`1311`
 ## 9       Health  94.35548  16102 2020-04-01    1
 ## 10       Sport  91.09962   4957 2020-04-01    1</code></pre>
 <div class="sourceCode" id="cb37"><pre class="downlit">
-<span class="kw">agg1</span><span class="op">$</span><span class="kw">new</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="kw">vertical</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(sales = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">sales</span><span class="op">*</span><span class="kw">prop</span>), counts = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">counts</span><span class="op">*</span><span class="kw">prop</span>), v_date = <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html">first</a></span>(<span class="kw">v_date</span>))
-</pre></div>
+<span class="kw">agg1</span><span class="op">$</span><span class="kw">new</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="kw">vertical</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(sales = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">sales</span><span class="op">*</span><span class="kw">prop</span>), counts = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">counts</span><span class="op">*</span><span class="kw">prop</span>), v_date = <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html">first</a></span>(<span class="kw">v_date</span>))</pre></div>
 <pre><code>## # A tibble: 10 x 4
 ##    vertical    sales counts v_date    
 ##    &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     
@@ -566,11 +538,9 @@ $`1311`
 <p>changes in both direction.</p>
 <div class="sourceCode" id="cb39"><pre class="downlit">
 <span class="kw">agg2</span> <span class="op">=</span> <span class="fu"><a href="../reference/cat2cat_agg.html">cat2cat_agg</a></span>(data = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(old = <span class="kw">agg_old</span>, new = <span class="kw">agg_new</span>, cat_var = <span class="st">"vertical"</span>, time_var = <span class="st">"v_date"</span>, freq_var = <span class="st">"counts"</span>), 
-            <span class="kw">Automotive</span> <span class="op">%&lt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">Automotive1</span>, <span class="kw">Automotive2</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">Kids1</span>, <span class="kw">Kids2</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">Kids</span>), <span class="kw">Home</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">Home</span>, <span class="kw">Supermarket</span>))
-</pre></div>
+            <span class="kw">Automotive</span> <span class="op">%&lt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">Automotive1</span>, <span class="kw">Automotive2</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">Kids1</span>, <span class="kw">Kids2</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">Kids</span>), <span class="kw">Home</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">Home</span>, <span class="kw">Supermarket</span>))</pre></div>
 <div class="sourceCode" id="cb40"><pre class="downlit">
-<span class="kw">agg2</span><span class="op">$</span><span class="kw">old</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="kw">vertical</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(sales = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">sales</span><span class="op">*</span><span class="kw">prop</span>), counts = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">counts</span><span class="op">*</span><span class="kw">prop</span>), v_date = <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html">first</a></span>(<span class="kw">v_date</span>))
-</pre></div>
+<span class="kw">agg2</span><span class="op">$</span><span class="kw">old</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="kw">vertical</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(sales = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">sales</span><span class="op">*</span><span class="kw">prop</span>), counts = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">counts</span><span class="op">*</span><span class="kw">prop</span>), v_date = <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html">first</a></span>(<span class="kw">v_date</span>))</pre></div>
 <pre><code>## # A tibble: 11 x 4
 ##    vertical    sales  counts v_date    
 ##    &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;     
@@ -586,8 +556,7 @@ $`1311`
 ## 10 Kids2       111.  32349   2020-04-01
 ## 11 Sport        91.1  4957   2020-04-01</code></pre>
 <div class="sourceCode" id="cb42"><pre class="downlit">
-<span class="kw">agg2</span><span class="op">$</span><span class="kw">new</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="kw">vertical</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(sales = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">sales</span><span class="op">*</span><span class="kw">prop</span>), counts = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">counts</span><span class="op">*</span><span class="kw">prop</span>), v_date = <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html">first</a></span>(<span class="kw">v_date</span>))
-</pre></div>
+<span class="kw">agg2</span><span class="op">$</span><span class="kw">new</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="kw">vertical</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(sales = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">sales</span><span class="op">*</span><span class="kw">prop</span>), counts = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">counts</span><span class="op">*</span><span class="kw">prop</span>), v_date = <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html">first</a></span>(<span class="kw">v_date</span>))</pre></div>
 <pre><code>## # A tibble: 11 x 4
 ##    vertical    sales counts v_date    
 ##    &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     

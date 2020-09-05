@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>a funtion to make a combination of weights from different methods — cross_cat2cat • cat2cat</title>
+<title>a funtion to make a combination of weights from different methods by each row — cross_cat2cat • cat2cat</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="a funtion to make a combination of weights from different methods — cross_cat2cat" />
-<meta property="og:description" content="adding additional column which is a mix of weights columns" />
+<meta property="og:title" content="a funtion to make a combination of weights from different methods by each row — cross_cat2cat" />
+<meta property="og:description" content="adding additional column which is a mix of weights columns by each row" />
 
 
 
@@ -102,7 +102,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/Polkas/catTOcat/">
+  <a href="https://github.com/Polkas/cat2cat/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -120,19 +120,20 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>a funtion to make a combination of weights from different methods</h1>
-    <small class="dont-index">Source: <a href='https://github.com/Polkas/catTOcat/blob/master/R/cat2cat.R'><code>R/cat2cat.R</code></a></small>
+    <h1>a funtion to make a combination of weights from different methods by each row</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Polkas/cat2cat/blob/master/R/cat2cat.R'><code>R/cat2cat.R</code></a></small>
     <div class="hidden name"><code>cross_cat2cat.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>adding additional column which is a mix of weights columns</p>
+    <p>adding additional column which is a mix of weights columns by each row</p>
     </div>
 
     <pre class="usage"><span class='fu'>cross_cat2cat</span>(
   <span class='kw'>df</span>,
   cols = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"wei_freq_c2c"</span>, <span class='st'>"wei_naive_c2c"</span>, <span class='st'>"wei_ml_c2c"</span>),
-  weis = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span>)
+  weis = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>3</span>),
+  na.rm = <span class='fl'>TRUE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -150,11 +151,15 @@
       <th>weis</th>
       <td><p>numeric vector c(1/3,1/3,1/3)</p></td>
     </tr>
+    <tr>
+      <th>na.rm</th>
+      <td><p>logical if NA should be skipped, Dafault TRUE</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>data.frame with an additional column</p>
+    <p>data.frame with an additional column wei_cross_c2c</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
