@@ -12,39 +12,42 @@ cat2cat(
 )
 }
 \arguments{
-\item{data}{list with 4, 5 or 6 named fileds `old` `new` `cat_var` `time_var` and optional `id_var`,`multipier_var`,`freq_df`}
+\item{data}{list with 4, 5, 6 or 7 named fileds `old` `new` `cat_var` `time_var` and optional `id_var`,`multipier_var`,`freq_df`}
 
 \item{mappings}{list with 2 named fileds `trans` `direction`}
 
-\item{ml}{list with 3 named fields `method` `features` `args``}
+\item{ml}{list with 3 named fields `method` `features` `args`}
 }
 \value{
-list of 2 data.frames
+named list with 2 fileds old an new - 2 data.frames. There will be added addition al columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c.
+Additional columns will be informative only for one data.frame as we always have a changes to one direction.
 }
 \description{
-Automatic transforming of a categorical variable according to a new encoding
+Automatic transforming of a categorical variable according to a new encoding.
+This function might seems to be a complex at the first glance though it is built to offer a wide range of applications for complex tasks.
 }
 \details{
 data args
 \itemize{
- \item{"old"}{ data.frame}
+ \item{"old"}{ data.frame }
  \item{"new"} { data.frame}
  \item{"id_var"}{ name of the id variable}
  \item{"cat_var"}{ name of the caterogical variable}
  \item{"time_var"}{ name of the time varaiable}
  \item{"multipier_var"}{ name of the multipier variable - number of replication needed to reproduce the population}
- \item{"freqs_df"}{ data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
+ \item{"freqs_df"}{ notice it is for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
 }
 mappings args
 \itemize{
- \item{"trans"}{ data.frame with 2 columns - transition table}
- \item{"direction"}{ direction - "backward or "forward"}
+ \item{"trans"}{ data.frame with 2 columns - transition table - all categories for cat_var in old and new datasets have to be included.
+  First column contains an old encodind and second a new one.}
+ \item{"direction"}{ direction - "backward" or "forward"}
 }
 ml args
 \itemize{
- \item{"method"}{ character "knn"}
+ \item{"method"}{ character "knn" k-NearestNeighbors or "rf" Random Forest }
  \item{"features"}{ vector of features names}
- \item{"args"}{ k number of k nearest n}
+ \item{"args"}{ list knn paramters: k ; rf: ntree }
 }
 }
 \examples{
@@ -54,10 +57,6 @@ data(trans)
 occup_old <- occup[occup$year == 2008, ]
 occup_new <- occup[occup$year == 2010, ]
 
-cat2cat(
-  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
-  mappings = list(trans = trans, direction = "forward")
-)
 
 cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
@@ -66,6 +65,16 @@ cat2cat(
     method = "knn",
     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
     args = list(k = 10)
+  )
+)
+
+cat2cat(
+  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "forward"),
+  ml = list(
+    method = "rf",
+    features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+    args = list(ntree = 100)
   )
 )
 }

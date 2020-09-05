@@ -2,7 +2,7 @@
 % Please edit documentation in R/cat2cat.R
 \name{get_freqs}
 \alias{get_freqs}
-\title{getting frequencies for a vector with an optional multipier argument}
+\title{Getting frequencies for a vector with an optional multipier argument}
 \usage{
 get_freqs(x, multipier = NULL)
 }

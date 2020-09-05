@@ -13,13 +13,12 @@ A data frame with around 70000 observations and 12 variables.
 \item{edu}{ integer edu level of education of a subject where lower means higher - 1 for at least master degree}
 \item{exp}{ numeric exp number of experience years for a subject}
 \item{district}{ integer district}
-\item{sector}{ character sector}
 \item{parttime}{ numeric contract type regards time where 1 mean full-time (work a whole week)}
 \item{salary}{ numeric salary per year}
 \item{code}{ character code - occupational code}
-\item{code4}{ character code - occupational code - first 4 digits}
 \item{multipier}{ numeric multipier for the subject to reproduce a population - how many of such subjects in population}
 \item{year}{integer year}
+\item{code4}{ character code - occupational code - first 4 digits}
 }
 }
 \usage{

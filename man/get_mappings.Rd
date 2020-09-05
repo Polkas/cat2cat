@@ -2,18 +2,21 @@
 % Please edit documentation in R/cat2cat.R
 \name{get_mappings}
 \alias{get_mappings}
-\title{transforming table of mappings to list with keys}
+\title{Transforming table of mappings to a list with keys}
 \usage{
 get_mappings(x = data.frame())
 }
 \arguments{
-\item{x}{data.frame with 2 columns}
+\item{x}{data.frame or matrix with 2 columns}
 }
 \value{
 list with 2 fields `to_old` `to_new`
 }
 \description{
 transforming table of mappings to list with keys where first column is assumed to be an old encoding.
+}
+\details{
+the named list will be a more effcient solution than hash map as we are not expecting more than a few thousand keys.
 }
 \examples{
 data(trans)

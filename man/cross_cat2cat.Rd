@@ -2,12 +2,13 @@
 % Please edit documentation in R/cat2cat.R
 \name{cross_cat2cat}
 \alias{cross_cat2cat}
-\title{a funtion to make a combination of weights from different methods}
+\title{a funtion to make a combination of weights from different methods by each row}
 \usage{
 cross_cat2cat(
   df,
   cols = c("wei_freq_c2c", "wei_naive_c2c", "wei_ml_c2c"),
-  weis = c(1/3, 1/3, 1/3)
+  weis = c(1/3, 1/3, 1/3),
+  na.rm = TRUE
 )
 }
 \arguments{
@@ -16,10 +17,12 @@ cross_cat2cat(
 \item{cols}{character vector default c("wei_freq_c2c", "wei_naive_c2c", "wei_ml_c2c")}
 
 \item{weis}{numeric vector c(1/3,1/3,1/3)}
+
+\item{na.rm}{logical if NA should be skipped, Dafault TRUE}
 }
 \value{
-data.frame with an additional column
+data.frame with an additional column wei_cross_c2c
 }
 \description{
-adding additional column which is a mix of weights columns
+adding additional column which is a mix of weights columns by each row
 }

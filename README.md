@@ -3,10 +3,10 @@
 [![R build status](https://github.com/polkas/cat2cat/workflows/R-CMD-check/badge.svg)](https://github.com/polkas/cat2cat/actions)
 [![codecov](https://codecov.io/gh/Polkas/cat2cat/branch/master/graph/badge.svg)](https://codecov.io/gh/Polkas/cat2cat)
 
-## transform a categorical variable according to a new encoding
+## Mapping of a categorical variable according to a new encoding
 
-**main rule is to replicate the observation if it could be assign to a few categories**
-**then using simple freqencies or ml model to approximate probabilities of being assign to each categorie.**
+**The main rule is to replicate the observation if it could be assign to a few categories**
+**then using simple freqencies or ml model to approximate probabilities of being assign to each of them.**
 
 Why cat2cat:  
 - universal algorithm which could be used in different science fields  
@@ -35,11 +35,11 @@ For more advance usage check the vignette.
 
 Quick intro:
 
+# Manual transitions
+## Aggragate dataset
 ```r
 library(cat2cat)
 
-# Manual transitions
-## Aggragate dataset
 data(verticals)
 agg_old <- verticals[verticals$v_date == "2020-04-01", ]
 agg_new <- verticals[verticals$v_date == "2020-05-01", ]
@@ -66,9 +66,10 @@ summarise(sales = sum(sales*prop), counts = sum(counts*prop), v_date = first(v_d
 agg$new %>% 
 group_by(vertical) %>%
 summarise(sales = sum(sales*prop), counts = sum(counts*prop), v_date = first(v_date))
-
-# Automatic using trans table
-## Balanced dataset
+```
+## Automatic using trans table
+## Dataset with unique identifiers
+```r
 ## the ean variable is a unique identifier
 data(verticals2)
 
@@ -88,8 +89,9 @@ verts = cat2cat(
   data = list(old = vert_old, new = vert_new, id_var = "ean", cat_var = "vertical", time_var = "v_date"),
   mappings = list(trans = trans_v, direction = "backward")
 )
-                  
-## Unbalanced dataset
+```
+## Dataset without unique identifiers
+```r
 data(occup)
 data(trans)
 
@@ -102,7 +104,7 @@ cat2cat(
   mappings = list(trans = trans, direction = "backward")
 )
 
-## with informative features it might be usefull to run ml algorithm - currently only knn
+## with informative features it might be usefull to run ml algorithm - currently only knn or rf (randomForest)
 ## where probability will be assessed as fraction of closest points.
 occup_2 = cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
@@ -110,8 +112,9 @@ occup_2 = cat2cat(
   ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), 
             args = list(k = 10))
 )
-
-# Regression
+```
+## Regression
+```r
 ## orginal dataset 
 lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old, weights = multipier)
 summary(lms2)

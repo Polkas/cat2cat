@@ -5,9 +5,10 @@
 ### Aggregat
 
 
-#' transforming table of mappings to list with keys
+#' Transforming table of mappings to a list with keys
 #' @description transforming table of mappings to list with keys where first column is assumed to be an old encoding.
-#' @param x data.frame with 2 columns
+#' @param x data.frame or matrix with 2 columns
+#' @details the named list will be a more effcient solution than hash map as we are not expecting more than a few thousand keys.
 #' @return list with 2 fields `to_old` `to_new`
 #' @examples
 #' data(trans)
@@ -54,7 +55,7 @@ get_mappings <- function(x = data.frame()) {
   list(to_old = to_old, to_new = to_new)
 }
 
-#' applying frequencies toobject returned by get_mappings
+#' Applying frequencies to object returned by get_mappings
 #' @description applying frequencies to object returned by get_mappings
 #' @param to_x list object returned by get_mappings
 #' @param freqs vector object returned by get_freqs
@@ -107,7 +108,7 @@ cat_apply_freq <- function(to_x, freqs) {
   res_out
 }
 
-#' getting frequencies for a vector with an optional multipier argument
+#' Getting frequencies for a vector with an optional multipier argument
 #' @description getting frequencies for a vector with an optional multipier argument
 #' @param x vector
 #' @param multipier vector how many times to repeat certain value
@@ -123,8 +124,10 @@ cat_apply_freq <- function(to_x, freqs) {
 #' @export
 
 get_freqs <- function(x, multipier = NULL) {
+  stopifnot( is.null(multipier) || length(x) == length(multipier))
+
   input <- if (!is.null(multipier)) {
-    rep(x, times = multipier)
+    rep(x, times = as.numeric(multipier))
   } else {
     x
   }
@@ -133,36 +136,42 @@ get_freqs <- function(x, multipier = NULL) {
 }
 
 #' Automatic transforming of a categorical variable according to a new encoding
-#' @description Automatic transforming of a categorical variable according to a new encoding
-#' @param data list with 4, 5 or 6 named fileds `old` `new` `cat_var` `time_var` and optional `id_var`,`multipier_var`,`freq_df`
+#' @description Automatic transforming of a categorical variable according to a new encoding.
+#' This function might seems to be a complex at the first glance though it is built to offer a wide range of applications for complex tasks.
+#' @param data list with 4, 5, 6 or 7 named fileds `old` `new` `cat_var` `time_var` and optional `id_var`,`multipier_var`,`freq_df`
 #' @param mappings list with 2 named fileds `trans` `direction`
-#' @param ml list with 3 named fields `method` `features` `args``
+#' @param ml list with 3 named fields `method` `features` `args`
 #' @details
 #' data args
 #' \itemize{
-#'  \item{"old"}{ data.frame}
+#'  \item{"old"}{ data.frame }
 #'  \item{"new"} { data.frame}
 #'  \item{"id_var"}{ name of the id variable}
 #'  \item{"cat_var"}{ name of the caterogical variable}
 #'  \item{"time_var"}{ name of the time varaiable}
 #'  \item{"multipier_var"}{ name of the multipier variable - number of replication needed to reproduce the population}
-#'  \item{"freqs_df"}{ data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
+#'  \item{"freqs_df"}{ notice it is for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
 #' }
 #' mappings args
 #' \itemize{
-#'  \item{"trans"}{ data.frame with 2 columns - transition table}
-#'  \item{"direction"}{ direction - "backward or "forward"}
+#'  \item{"trans"}{ data.frame with 2 columns - transition table - all categories for cat_var in old and new datasets have to be included.
+#'   First column contains an old encodind and second a new one.}
+#'  \item{"direction"}{ direction - "backward" or "forward"}
 #' }
 #' ml args
 #' \itemize{
-#'  \item{"method"}{ character "knn"}
+#'  \item{"method"}{ character "knn" k-NearestNeighbors or "rf" Random Forest }
 #'  \item{"features"}{ vector of features names}
-#'  \item{"args"}{ k number of k nearest n}
+#'  \item{"args"}{ list knn paramters: k ; rf: ntree }
 #' }
-#' @return list of 2 data.frames
+#' @details
+#' @return named list with 2 fileds old an new - 2 data.frames. There will be added addition al columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c.
+#' Additional columns will be informative only for one data.frame as we always have a changes to one direction.
 #' @importFrom progress progress_bar
-#' @importFrom caret knn3
-#' @importFrom Hmisc impute
+#' @importFrom caret knn3 predict.train
+#' @importFrom tidyr gather
+#' @importFrom stats predict complete.cases
+#' @importFrom randomForest randomForest
 #' @examples
 #' data(occup)
 #' data(trans)
@@ -170,10 +179,6 @@ get_freqs <- function(x, multipier = NULL) {
 #' occup_old <- occup[occup$year == 2008, ]
 #' occup_new <- occup[occup$year == 2010, ]
 #'
-#' cat2cat(
-#'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
-#'   mappings = list(trans = trans, direction = "forward")
-#' )
 #'
 #' cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
@@ -182,6 +187,16 @@ get_freqs <- function(x, multipier = NULL) {
 #'     method = "knn",
 #'     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
 #'     args = list(k = 10)
+#'   )
+#' )
+#'
+#' cat2cat(
+#'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+#'   mappings = list(trans = trans, direction = "forward"),
+#'   ml = list(
+#'     method = "rf",
+#'     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+#'     args = list(ntree = 100)
 #'   )
 #' )
 #' @export
@@ -203,21 +218,19 @@ cat2cat <-
              args = NULL
            )) {
 
-    stopifnot(
-      is.list(data) &&
-        length(data) %in% c(4, 5, 6, 7) &&
-        inherits(data$old, "data.frame") &&
-        inherits(data$new, "data.frame") &&
-        all(c("old", "new", "cat_var", "time_var") %in% names(data)) &&
-        all(c(data$cat_var, data$time_var) %in% colnames(data$old)) &&
-        all(c(data$cat_var, data$time_var) %in% colnames(data$new))
-    )
+    stopifnot(is.list(data))
+    stopifnot(length(data) %in% c(4, 5, 6, 7))
+    stopifnot(inherits(data$old, "data.frame"))
+    stopifnot(inherits(data$new, "data.frame"))
+    stopifnot(all(c("old", "new", "cat_var", "time_var") %in% names(data)))
+    stopifnot(all(c(data$cat_var, data$time_var) %in% colnames(data$old)))
+    stopifnot(all(c(data$cat_var, data$time_var) %in% colnames(data$new)))
 
     stopifnot(
       is.null(data$multipier_var) ||
         (
           data$multipier_var %in% colnames(data$new) &&
-            data$multipier_var %in% colnames(data$old)
+          data$multipier_var %in% colnames(data$old)
         )
     )
 
@@ -228,14 +241,12 @@ cat2cat <-
 
     stopifnot((d_old == 1) && (d_new == 1))
 
-    stopifnot(
-      is.list(mappings) &&
-        length(mappings) == 2 &&
-        all(c("trans", "direction") %in% names(mappings)) &&
-        mappings$direction %in% c("forward", "backward") &&
-        all(vapply(mappings, Negate(is.null), logical(1))) &&
-        ncol(mappings$trans) == 2
-    )
+    stopifnot(is.list(mappings))
+    stopifnot(length(mappings) == 2)
+    stopifnot(all(c("trans", "direction") %in% names(mappings)))
+    stopifnot(mappings$direction %in% c("forward", "backward"))
+    stopifnot(all(vapply(mappings, Negate(is.null), logical(1))))
+    stopifnot(ncol(mappings$trans) == 2)
 
     stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
                                          (data$id_var %in% colnames(data$new)) &&
@@ -323,7 +334,8 @@ cat2cat <-
     if (sum(vapply(ml, Negate(is.null), logical(1))) >= 2) {
       stopifnot(all(c("method", "features") %in% names(ml)))
       stopifnot(all(ml$features %in% colnames(cat_final_rep)))
-      stopifnot(ml$method %in% c("knn"))
+      stopifnot(all(vapply(cat_final_rep[, ml$features], function(x) is.numeric(x) || is.logical(x), logical(1))))
+      stopifnot(ml$method %in% c("knn", "rf"))
 
       uu <- unique(cat_final_rep[[data$cat_var]])
 
@@ -336,55 +348,83 @@ cat2cat <-
       pb <- progress_bar$new(total = length(uu))
 
       for (i in unique(uu)) {
+
         pb$tick()
 
-        tryCatch(
+        cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- NA
+
+        try(
           {
             base <- cat_final_rep_cat_c2c[[i]]
 
             dis <- do.call(rbind, cat_base_year_g[unique(base$g_new_c2c)])
 
-            if (ml$method == "knn") {
+            udc <- unique(dis$code)
+
+            if (length(udc) == 1) {
+               cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <-  as.integer(base$g_new_c2c == udc)
+               next
+            }
+
               if (length(unique(base$g_new_c2c)) > 1 &&
-                length(unique(dis$code)) >= 1 &&
+                length(udc) >= 1 &&
                 nrow(base) > 0 &&
-                any(base$g_new_c2c %in% names(cat_base_year_g))) {
+                any(base$g_new_c2c %in% names(cat_base_year_g))
+                ) {
+
+              if (ml$method == "knn") {
                 kkk <- caret::knn3(
                   x = dis[, features],
                   y = factor(dis$code),
                   k = min(ml$args$k, nrow(dis))
                 )
+              } else if (ml$method == "rf") {
+                 kkk <- randomForest(
+                                     y = factor(dis$code),
+                                     x = dis[, features],
+                                     ntree = ml$args$ntree
+                                     )
+              }
 
-                pp <- as.data.frame(predict(kkk, unique(base[, features]), type = "prob"))
+                base_ml <- base[!duplicated(base[["index_c2c"]]), c("index_c2c", features)]
+
+                cc <- complete.cases(base_ml[, features])
+
+                type <- switch(ml$method, knn = "prob", rf = "prob")
+
+                pp <- as.data.frame(stats::predict(kkk, base_ml[cc, features], type = type))
 
                 ll <- setdiff(unique(base$g_new_c2c), colnames(pp))
 
                 if (ncol(pp) == 1 &&
-                  length(unique(dis$code)) == 1) {
-                  colnames(pp) <- unique(dis$code)
+                  length(udc) == 1) {
+                  colnames(pp) <- udc
                 }
-
+                # imputing rest of the class to zero prob
                 if (length(ll)) {
                   pp[ll] <- 0
                 }
 
-                pp <- pp[, unique(base$g_new_c2c)]
+                pp[['index_c2c']] <- base_ml[['index_c2c']][cc]
 
-                cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- Hmisc::impute(as.vector(t(pp)), 0)
+                res <- tidyr::gather(pp, g_new_c2c, val, -index_c2c)
+
+                ress <- merge(base[,c("index_c2c", "g_new_c2c")], res, by = c("index_c2c", "g_new_c2c"), all.x = TRUE, sort = FALSE)
+
+                cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- ress[order(ress$index_c2c), "val"]
+
               } else {
-                cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- 1 / cat_final_rep_cat_c2c[[i]]$rep_c2c
+                cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- cat_final_rep_cat_c2c[[i]]$wei_naive_c2c
               }
-            }
-          },
-          error = function(e) {
-            cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- 1 / cat_final_rep_cat_c2c[[i]]$rep_c2c
-          }
+          }, silent = TRUE
         )
       }
 
       pb$terminate()
+
       cat_final_rep <- do.call(rbind, cat_final_rep_cat_c2c)
       cat_final_rep <- cat_final_rep[order(cat_final_rep$id), ]
+
       cat_base_year$wei_ml_c2c <- 1
       if (!is.null(data$id_var))  cat_mid$wei_ml_c2c <- 1
     }
@@ -438,14 +478,13 @@ cat2cat <-
 #' prune_cat2cat(occup_2$old, column = "wei_ml_c2c", method = "nonzero")
 #' @export
 prune_cat2cat <- function(df, index = "index_c2c", column = "wei_freq_c2c", method = "nonzero", percent = 50) {
-  stopifnot(inherits(df, "data.frame") &&
-    all(c(index, column) %in% colnames(df)) &&
-    method %in% c("nonzero", "highest", "highest1", "morethan") &&
-    length(percent) == 1 &&
-    percent >= 0 &&
-    percent < 100)
+    stopifnot(inherits(df, "data.frame"))
+    stopifnot(all(c(index, column) %in% colnames(df)))
+    stopifnot(method %in% c("nonzero", "highest", "highest1", "morethan"))
+    stopifnot(length(percent) == 1)
+    stopifnot(percent >= 0 && percent < 100)
 
-  df <- df[order(df[[column]]), ]
+  df <- df[order(df[[index]]), ]
 
   switch(method,
     nonzero = df[df[[column]] > 0, ],
@@ -455,19 +494,25 @@ prune_cat2cat <- function(df, index = "index_c2c", column = "wei_freq_c2c", meth
   )
 }
 
-#' a funtion to make a combination of weights from different methods
+#' a funtion to make a combination of weights from different methods by each row
 #'
-#' @description adding additional column which is a mix of weights columns
+#' @description adding additional column which is a mix of weights columns by each row
 #'
 #' @param df data.frame
 #' @param cols character vector default c("wei_freq_c2c", "wei_naive_c2c", "wei_ml_c2c")
 #' @param weis numeric vector c(1/3,1/3,1/3)
-#' @return data.frame with an additional column
+#' @param na.rm logical if NA should be skipped, Dafault TRUE
+#' @return data.frame with an additional column wei_cross_c2c
 #' @export
-cross_cat2cat <- function(df, cols = c("wei_freq_c2c", "wei_naive_c2c", "wei_ml_c2c"), weis = c(1 / 3, 1 / 3, 1 / 3)) {
+cross_cat2cat <- function(df, cols = c("wei_freq_c2c", "wei_naive_c2c", "wei_ml_c2c"), weis = c(1 / 3, 1 / 3, 1 / 3), na.rm = TRUE) {
   stopifnot(inherits(df, "data.frame"))
+  stopifnot(all(cols %in% colnames(df)))
+  stopifnot(length(weis) == length(cols))
+  stopifnot(is.logical(na.rm))
 
-  df[["wei_cross_c2c"]] <- as.vector(as.matrix(df[, cols]) %*% weis)
+  weis <- weis/sum(weis)
+
+  df[["wei_cross_c2c"]] <- as.vector(rowSums(t(t(as.matrix(df[, cols])) * weis), na.rm = na.rm))
 
   df
 }

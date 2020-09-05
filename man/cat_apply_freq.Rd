@@ -2,7 +2,7 @@
 % Please edit documentation in R/cat2cat.R
 \name{cat_apply_freq}
 \alias{cat_apply_freq}
-\title{applying frequencies toobject returned by get_mappings}
+\title{Applying frequencies to object returned by get_mappings}
 \usage{
 cat_apply_freq(to_x, freqs)
 }

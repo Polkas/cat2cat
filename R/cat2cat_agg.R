@@ -40,7 +40,7 @@ cat2cat_agg <- function(data = list(
   # methods most frequent, proportional
 
   stopifnot(
-    is.list(data) &&
+      is.list(data) &&
       length(data) == 5 &&
       all(vapply(data, Negate(is.null), logical(1))) &&
       inherits(data$old, "data.frame") &&
@@ -54,6 +54,8 @@ cat2cat_agg <- function(data = list(
   d_new <- length(unique(data$new[[data$time_var]]))
 
   stopifnot((d_old == 1) && (d_new == 1))
+
+  stopifnot(all(table(data$old[[data$cat_var]]) == 1) && all(table(data$new[[data$cat_var]]) == 1))
 
   t <- enexprs(...)
 
