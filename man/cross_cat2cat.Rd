@@ -6,17 +6,17 @@
 \usage{
 cross_cat2cat(
   df,
-  cols = c("wei_freq_c2c", "wei_naive_c2c", "wei_ml_c2c"),
-  weis = c(1/3, 1/3, 1/3),
+  cols = colnames(df)[grepl("^wei_.*_c2c$", colnames(df))],
+  weis = rep(1/length(cols), length(cols)),
   na.rm = TRUE
 )
 }
 \arguments{
 \item{df}{data.frame}
 
-\item{cols}{character vector default c("wei_freq_c2c", "wei_naive_c2c", "wei_ml_c2c")}
+\item{cols}{character vector default all columns follow regex like "wei_.*_c2c"}
 
-\item{weis}{numeric vector c(1/3,1/3,1/3)}
+\item{weis}{numeric vector  Default vector the same lenght as cols and with equally spaced values summing to 1.}
 
 \item{na.rm}{logical if NA should be skipped, Dafault TRUE}
 }
@@ -25,4 +25,25 @@ data.frame with an additional column wei_cross_c2c
 }
 \description{
 adding additional column which is a mix of weights columns by each row
+}
+\examples{
+data(occup)
+data(trans)
+
+occup_old = occup[occup$year == 2008,]
+occup_new = occup[occup$year == 2010,]
+
+# mix of methods
+occup_2_mix = cat2cat(
+  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "backward"),
+  ml = list(method = c("knn", "rf", "lda"),
+            features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+            args = list(k = 10, ntree = 30))
+)
+# correlation between ml models
+cor(occup_2_mix$old[, c("wei_knn_c2c", "wei_rf_c2c", "wei_lda_c2c", "wei_freq_c2c")])
+# cross all methods and subset one highest probability category for each subject
+occup_old_mix_highest1occup_2_mix <- prune_cat2cat(cross_cat2cat(occup_2_mix$old),
+                                                   column = "wei_cross_c2c", method = "highest1")
 }

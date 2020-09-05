@@ -35,10 +35,11 @@ For more advance usage check the vignette.
 
 Quick intro:
 
-# Manual transitions
+## Manual transitions
 ## Aggragate dataset
 ```r
 library(cat2cat)
+library(dplyr)
 
 data(verticals)
 agg_old <- verticals[verticals$v_date == "2020-04-01", ]
@@ -57,7 +58,6 @@ agg = cat2cat_agg(data = list(old = agg_old,
                   Home %>% c(Home, Supermarket))
             
 ## possible processing
-library(dplyr)
   
 agg$old %>% 
 group_by(vertical) %>% 
@@ -104,7 +104,8 @@ cat2cat(
   mappings = list(trans = trans, direction = "backward")
 )
 
-## with informative features it might be usefull to run ml algorithm - currently only knn or rf (randomForest)
+## with informative features it might be usefull to run ml algorithm
+## currently only knn, lda or rf (randomForest),  a few methods could be specified at once 
 ## where probability will be assessed as fraction of closest points.
 occup_2 = cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
@@ -112,6 +113,19 @@ occup_2 = cat2cat(
   ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), 
             args = list(k = 10))
 )
+# mix of methods
+occup_2_mix = cat2cat(
+  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "backward"),
+  ml = list(method = c("knn", "rf", "lda"), features = c("age", "sex", "edu", "exp", "parttime", "salary"), 
+            args = list(k = 10, ntree = 50))
+)
+# correlation between ml models and simple fequencies
+occup_2_mix$old %>% select(wei_knn_c2c, wei_rf_c2c, wei_lda_c2c, wei_freq_c2c) %>% cor()
+# cross all methods and subset one highest probability category for each subject
+occup_old_mix_highest1occup_2_mix <- occup_2_mix$old %>% 
+                cross_cat2cat(.) %>% 
+                prune_cat2cat(.,column = "wei_cross_c2c", method = "highest1") 
 ```
 ## Regression
 ```r
@@ -123,7 +137,7 @@ summary(lms2)
 ## cross_cat2cat to cross differen methods weights
 ## prune_cat2cat - highest1 leave only one the highest probability obs for each subject
 occup_old_2 <- occup_2$old %>% 
-                cross_cat2cat(., c("wei_freq_c2c", "wei_ml_c2c"), c(1/2,1/2)) %>% 
+                cross_cat2cat(., c("wei_freq_c2c", "wei_knn_c2c"), c(1/2,1/2)) %>% 
                 prune_cat2cat(.,column = "wei_cross_c2c", method = "highest1") 
 lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_2, weights = multipier)
 summary(lms)

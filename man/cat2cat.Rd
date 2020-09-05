@@ -19,8 +19,9 @@ cat2cat(
 \item{ml}{list with 3 named fields `method` `features` `args`}
 }
 \value{
-named list with 2 fileds old an new - 2 data.frames. There will be added addition al columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c.
-Additional columns will be informative only for one data.frame as we always have a changes to one direction.
+named list with 2 fileds old an new - 2 data.frames.
+There will be added addition al columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_*_c2c.
+Additional columns will be informative only for one data.frame as we always make a changes to one direction.
 }
 \description{
 Automatic transforming of a categorical variable according to a new encoding.
@@ -45,10 +46,12 @@ mappings args
 }
 ml args
 \itemize{
- \item{"method"}{ character "knn" k-NearestNeighbors or "rf" Random Forest }
+ \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination, "rf" Random Forest }
  \item{"features"}{ vector of features names}
- \item{"args"}{ list knn paramters: k ; rf: ntree }
+ \item{"args"}{ list knn paramters: k ; rf: ntree  }
 }
+
+When ml model is broken then weights from simple frequencies are taken.
 }
 \examples{
 data(occup)
@@ -56,7 +59,6 @@ data(trans)
 
 occup_old <- occup[occup$year == 2008, ]
 occup_new <- occup[occup$year == 2010, ]
-
 
 cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
@@ -74,7 +76,24 @@ cat2cat(
   ml = list(
     method = "rf",
     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
-    args = list(ntree = 100)
+    args = list(ntree = 50)
   )
+)
+
+cat2cat(
+  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "forward"),
+  ml = list(
+    method = "lda",
+    features = c("age", "sex", "edu", "exp", "parttime", "salary")
+  )
+)
+
+occup_2_mix = cat2cat(
+ data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+ mappings = list(trans = trans, direction = "backward"),
+ ml = list(method = c("knn", "rf", "lda"),
+           features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+           args = list(k = 10, ntree = 30))
 )
 }

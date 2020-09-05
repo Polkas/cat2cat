@@ -20,9 +20,10 @@ Imports:
 	progress,
 	tidyr,
 	magrittr,
-	randomForest
+	randomForest,
+	MASS,
+	dplyr
 Suggests:
-  	dplyr,
 	  knitr,
     rmarkdown,
     pacman,

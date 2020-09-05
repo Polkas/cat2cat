@@ -160,25 +160,26 @@ get_freqs <- function(x, multipier = NULL) {
 #' }
 #' ml args
 #' \itemize{
-#'  \item{"method"}{ character "knn" k-NearestNeighbors or "rf" Random Forest }
+#'  \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination, "rf" Random Forest }
 #'  \item{"features"}{ vector of features names}
-#'  \item{"args"}{ list knn paramters: k ; rf: ntree }
+#'  \item{"args"}{ list knn paramters: k ; rf: ntree  }
 #' }
-#' @details
-#' @return named list with 2 fileds old an new - 2 data.frames. There will be added addition al columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c.
-#' Additional columns will be informative only for one data.frame as we always have a changes to one direction.
+#' @return named list with 2 fileds old an new - 2 data.frames.
+#' There will be added addition al columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_*_c2c.
+#' Additional columns will be informative only for one data.frame as we always make a changes to one direction.
 #' @importFrom progress progress_bar
 #' @importFrom caret knn3 predict.train
-#' @importFrom tidyr gather
+#' @importFrom tidyr pivot_longer
 #' @importFrom stats predict complete.cases
 #' @importFrom randomForest randomForest
+#' @importFrom MASS lda
+#' @details When ml model is broken then weights from simple frequencies are taken.
 #' @examples
 #' data(occup)
 #' data(trans)
 #'
 #' occup_old <- occup[occup$year == 2008, ]
 #' occup_new <- occup[occup$year == 2010, ]
-#'
 #'
 #' cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
@@ -196,9 +197,26 @@ get_freqs <- function(x, multipier = NULL) {
 #'   ml = list(
 #'     method = "rf",
 #'     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
-#'     args = list(ntree = 100)
+#'     args = list(ntree = 50)
 #'   )
 #' )
+#'
+#' cat2cat(
+#'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+#'   mappings = list(trans = trans, direction = "forward"),
+#'   ml = list(
+#'     method = "lda",
+#'     features = c("age", "sex", "edu", "exp", "parttime", "salary")
+#'   )
+#' )
+#'
+#' occup_2_mix = cat2cat(
+#'  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+#'  mappings = list(trans = trans, direction = "backward"),
+#'  ml = list(method = c("knn", "rf", "lda"),
+#'            features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+#'            args = list(k = 10, ntree = 30))
+#')
 #' @export
 
 cat2cat <-
@@ -335,23 +353,33 @@ cat2cat <-
       stopifnot(all(c("method", "features") %in% names(ml)))
       stopifnot(all(ml$features %in% colnames(cat_final_rep)))
       stopifnot(all(vapply(cat_final_rep[, ml$features], function(x) is.numeric(x) || is.logical(x), logical(1))))
-      stopifnot(ml$method %in% c("knn", "rf"))
+      stopifnot(all(ml$method %in% c("knn", "rf", "lda")))
 
       uu <- unique(cat_final_rep[[data$cat_var]])
 
       features <- ml$features
 
+      methods <- unique(ml$method)
+
       cat_base_year_g <- split(cat_base_year, cat_base_year[[data$cat_var]])
 
       cat_final_rep_cat_c2c <- split(cat_final_rep, cat_final_rep[[data$cat_var]])
 
-      pb <- progress_bar$new(total = length(uu))
+      pb <- progress_bar$new(total = length(uu) * length(methods))
+
+      for (m in methods) {
+
+      ml_name <- paste0("wei_",m,"_c2c")
+
+      cat_base_year[[ml_name]] <- 1
+
+      if (!is.null(data$id_var))  cat_mid[[ml_name]] <- 1
 
       for (i in unique(uu)) {
 
         pb$tick()
 
-        cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- NA
+        cat_final_rep_cat_c2c[[i]][[ml_name]] <- cat_final_rep_cat_c2c[[i]][["wei_freq_c2c"]]
 
         try(
           {
@@ -362,7 +390,7 @@ cat2cat <-
             udc <- unique(dis$code)
 
             if (length(udc) == 1) {
-               cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <-  as.integer(base$g_new_c2c == udc)
+               cat_final_rep_cat_c2c[[i]][[ml_name]] <-  as.integer(base$g_new_c2c == udc)
                next
             }
 
@@ -372,34 +400,36 @@ cat2cat <-
                 any(base$g_new_c2c %in% names(cat_base_year_g))
                 ) {
 
-              if (ml$method == "knn") {
-                kkk <- caret::knn3(
+              base_ml <- base[!duplicated(base[["index_c2c"]]), c("index_c2c", features)]
+
+              cc <- complete.cases(base_ml[, features])
+
+              if (m == "knn") {
+                kkk <- suppressWarnings(caret::knn3(
                   x = dis[, features],
                   y = factor(dis$code),
-                  k = min(ml$args$k, nrow(dis))
-                )
-              } else if (ml$method == "rf") {
-                 kkk <- randomForest(
+                  k = min(ml$args$k, ceiling(nrow(dis)/4))
+                ))
+
+                pp <- as.data.frame(stats::predict(kkk, base_ml[cc, features], type = "prob"))
+              } else if (m == "rf") {
+                 kkk <- suppressWarnings(randomForest(
                                      y = factor(dis$code),
                                      x = dis[, features],
-                                     ntree = ml$args$ntree
-                                     )
+                                     ntree = min(ml$args$ntree, 100)
+                                     ))
+
+                 pp <- as.data.frame(stats::predict(kkk, base_ml[cc, features], type = "prob"))
+
+              } else if (m == "lda") {
+                kkk = suppressWarnings(MASS::lda(grouping = factor(dis$code),
+                                x = as.matrix(dis[, features])))
+
+                pp <- as.data.frame(stats::predict(kkk, as.matrix(base_ml[cc, features]))$posterior)
               }
-
-                base_ml <- base[!duplicated(base[["index_c2c"]]), c("index_c2c", features)]
-
-                cc <- complete.cases(base_ml[, features])
-
-                type <- switch(ml$method, knn = "prob", rf = "prob")
-
-                pp <- as.data.frame(stats::predict(kkk, base_ml[cc, features], type = type))
 
                 ll <- setdiff(unique(base$g_new_c2c), colnames(pp))
 
-                if (ncol(pp) == 1 &&
-                  length(udc) == 1) {
-                  colnames(pp) <- udc
-                }
                 # imputing rest of the class to zero prob
                 if (length(ll)) {
                   pp[ll] <- 0
@@ -407,26 +437,25 @@ cat2cat <-
 
                 pp[['index_c2c']] <- base_ml[['index_c2c']][cc]
 
-                res <- tidyr::gather(pp, g_new_c2c, val, -index_c2c)
+                res <- tidyr::pivot_longer(pp, -"index_c2c", names_to = "g_new_c2c", values_to = "val")
 
                 ress <- merge(base[,c("index_c2c", "g_new_c2c")], res, by = c("index_c2c", "g_new_c2c"), all.x = TRUE, sort = FALSE)
 
-                cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- ress[order(ress$index_c2c), "val"]
+                cat_final_rep_cat_c2c[[i]][[ml_name]] <- ress[order(ress$index_c2c), "val"]
 
               } else {
-                cat_final_rep_cat_c2c[[i]]$wei_ml_c2c <- cat_final_rep_cat_c2c[[i]]$wei_naive_c2c
+                cat_final_rep_cat_c2c[[i]][[ml_name]] <- cat_final_rep_cat_c2c[[i]]$wei_naive_c2c
               }
           }, silent = TRUE
         )
+      }
       }
 
       pb$terminate()
 
       cat_final_rep <- do.call(rbind, cat_final_rep_cat_c2c)
-      cat_final_rep <- cat_final_rep[order(cat_final_rep$id), ]
+      cat_final_rep <- cat_final_rep[order(cat_final_rep[["index_c2c"]]), ]
 
-      cat_base_year$wei_ml_c2c <- 1
-      if (!is.null(data$id_var))  cat_mid$wei_ml_c2c <- 1
     }
 
     res <- list(cat_base_year, rbind(cat_final_rep, cat_mid))[res_ord]
@@ -475,7 +504,7 @@ cat2cat <-
 #' prune_cat2cat(occup_2$old, method = "highest1")
 #' prune_cat2cat(occup_2$old, method = "morethan", percent = 90)
 #'
-#' prune_cat2cat(occup_2$old, column = "wei_ml_c2c", method = "nonzero")
+#' prune_cat2cat(occup_2$old, column = "wei_knn_c2c", method = "nonzero")
 #' @export
 prune_cat2cat <- function(df, index = "index_c2c", column = "wei_freq_c2c", method = "nonzero", percent = 50) {
     stopifnot(inherits(df, "data.frame"))
@@ -499,12 +528,32 @@ prune_cat2cat <- function(df, index = "index_c2c", column = "wei_freq_c2c", meth
 #' @description adding additional column which is a mix of weights columns by each row
 #'
 #' @param df data.frame
-#' @param cols character vector default c("wei_freq_c2c", "wei_naive_c2c", "wei_ml_c2c")
-#' @param weis numeric vector c(1/3,1/3,1/3)
+#' @param cols character vector default all columns follow regex like "wei_.*_c2c"
+#' @param weis numeric vector  Default vector the same lenght as cols and with equally spaced values summing to 1.
 #' @param na.rm logical if NA should be skipped, Dafault TRUE
 #' @return data.frame with an additional column wei_cross_c2c
+#' @examples
+#' data(occup)
+#' data(trans)
+#'
+#' occup_old = occup[occup$year == 2008,]
+#' occup_new = occup[occup$year == 2010,]
+#'
+#' # mix of methods
+#' occup_2_mix = cat2cat(
+#'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+#'   mappings = list(trans = trans, direction = "backward"),
+#'   ml = list(method = c("knn", "rf", "lda"),
+#'             features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+#'             args = list(k = 10, ntree = 30))
+#' )
+#' # correlation between ml models
+#' cor(occup_2_mix$old[, c("wei_knn_c2c", "wei_rf_c2c", "wei_lda_c2c", "wei_freq_c2c")])
+#' # cross all methods and subset one highest probability category for each subject
+#' occup_old_mix_highest1occup_2_mix <- prune_cat2cat(cross_cat2cat(occup_2_mix$old),
+#'                                                    column = "wei_cross_c2c", method = "highest1")
 #' @export
-cross_cat2cat <- function(df, cols = c("wei_freq_c2c", "wei_naive_c2c", "wei_ml_c2c"), weis = c(1 / 3, 1 / 3, 1 / 3), na.rm = TRUE) {
+cross_cat2cat <- function(df, cols = colnames(df)[grepl("^wei_.*_c2c$", colnames(df))], weis = rep(1/length(cols), length(cols)), na.rm = TRUE) {
   stopifnot(inherits(df, "data.frame"))
   stopifnot(all(cols %in% colnames(df)))
   stopifnot(length(weis) == length(cols))

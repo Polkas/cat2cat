@@ -61,5 +61,5 @@ prune_cat2cat(occup_2$old, method = "highest")
 prune_cat2cat(occup_2$old, method = "highest1")
 prune_cat2cat(occup_2$old, method = "morethan", percent = 90)
 
-prune_cat2cat(occup_2$old, column = "wei_ml_c2c", method = "nonzero")
+prune_cat2cat(occup_2$old, column = "wei_knn_c2c", method = "nonzero")
 }

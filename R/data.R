@@ -109,14 +109,17 @@
 #' vert_new$v_date <- "2020-05-01"
 #' vert_new$vertical[vert_new$vertical %in% c("Kids1", "Kids2")] <- "Kids"
 #' vert_new$vertical[vert_new$vertical %in% c("Automotive")] <-
-#' sample(c("Automotive1", "Automotive2"), sum(vert_new$vertical %in% c("Automotive")), replace = TRUE)
+#' sample(c("Automotive1", "Automotive2"), sum(vert_new$vertical %in% c("Automotive")),
+#'        replace = TRUE)
 #' vert_new$vertical[vert_new$vertical %in% c("Home")] <-
 #' sample(c("Home", "Supermarket"), sum(vert_new$vertical %in% c("Home")), replace = TRUE)
 #'
 #' vert_new2 <- data.frame(
 #'  ean = 90000101:90000120,
 #'  vertical = sample(c("Electronics", "Supermarket", "Kids", "Automotive1",
-#'               "Automotive2", "Books", "Clothes", "Home", "Fashion", "Health", "Sport"), 20, replace = TRUE),
+#'                      "Automotive2", "Books", "Clothes", "Home",
+#'                       "Fashion", "Health", "Sport"), 20,
+#'                    replace = TRUE),
 #'  sales = rnorm(20, 100, 10),
 #'  v_date = rep("2020-05-01", 20), stringsAsFactors = F
 #')
