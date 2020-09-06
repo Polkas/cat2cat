@@ -2,7 +2,7 @@
 % Please edit documentation in R/cat2cat.R
 \name{cat2cat}
 \alias{cat2cat}
-\title{Automatic transforming of a categorical variable according to a new encoding}
+\title{Automatic mapping of a categorical variable in a panel dataset according to a new encoding}
 \usage{
 cat2cat(
   data = list(old = NULL, new = NULL, cat_var = NULL, id_var = NULL, time_var = NULL,
@@ -20,37 +20,40 @@ cat2cat(
 }
 \value{
 named list with 2 fileds old an new - 2 data.frames.
-There will be added addition al columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_*_c2c.
-Additional columns will be informative only for one data.frame as we always make a changes to one direction.
+There will be added addition al columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
+Additional columns will be informative only for a one data.frame as we always make a changes to one direction.
 }
 \description{
-Automatic transforming of a categorical variable according to a new encoding.
+This function is built to work for two time points at once.
+Thus for more periods some recurionis will be needed.
+The \code{prune_c2c} might be needed when we have many interations to limit growing number of relpications.
 This function might seems to be a complex at the first glance though it is built to offer a wide range of applications for complex tasks.
 }
 \details{
 data args
 \itemize{
- \item{"old"}{ data.frame }
- \item{"new"} { data.frame}
- \item{"id_var"}{ name of the id variable}
- \item{"cat_var"}{ name of the caterogical variable}
- \item{"time_var"}{ name of the time varaiable}
- \item{"multipier_var"}{ name of the multipier variable - number of replication needed to reproduce the population}
- \item{"freqs_df"}{ notice it is for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
+ \item{"old"}{ data.frame older time point in a panel}
+ \item{"new"} { data.frame more recent time point in a panel}
+ \item{"cat_var"}{ character name of the caterogical variable}
+ \item{"time_var"}{ character name of the time varaiable}
+ \item{"id_var"}{ character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
+ \item{"multipier_var"}{ character name of the multipier variable - number of replication needed to reproduce the population}
+ \item{"freqs_df"}{ only for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
 }
 mappings args
 \itemize{
  \item{"trans"}{ data.frame with 2 columns - transition table - all categories for cat_var in old and new datasets have to be included.
   First column contains an old encodind and second a new one.}
- \item{"direction"}{ direction - "backward" or "forward"}
+ \item{"direction"}{ character direction - "backward" or "forward"}
 }
 ml args
 \itemize{
  \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination, "rf" Random Forest }
- \item{"features"}{ vector of features names}
+ \item{"features"}{ character vector of features names where all have to be numeric or logical}
  \item{"args"}{ list knn paramters: k ; rf: ntree  }
 }
 
+Without ml section only simple frequencies are assesed.
 When ml model is broken then weights from simple frequencies are taken.
 }
 \examples{
@@ -59,6 +62,15 @@ data(trans)
 
 occup_old <- occup[occup$year == 2008, ]
 occup_new <- occup[occup$year == 2010, ]
+
+# default only simple frequencies
+
+cat2cat(
+  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "forward")
+)
+
+# additionaly add probabilities from knn
 
 cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
@@ -70,24 +82,7 @@ cat2cat(
   )
 )
 
-cat2cat(
-  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
-  mappings = list(trans = trans, direction = "forward"),
-  ml = list(
-    method = "rf",
-    features = c("age", "sex", "edu", "exp", "parttime", "salary"),
-    args = list(ntree = 50)
-  )
-)
-
-cat2cat(
-  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
-  mappings = list(trans = trans, direction = "forward"),
-  ml = list(
-    method = "lda",
-    features = c("age", "sex", "edu", "exp", "parttime", "salary")
-  )
-)
+# mix all ml methods
 
 occup_2_mix = cat2cat(
  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),

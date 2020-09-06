@@ -67,15 +67,6 @@ occup_4 <- cat2cat(
 
 expect_true(identical(occup_4$old$wei_freq_c2c, occup_1a$old$wei_freq_c2c))
 
-occup_5 <- cat2cat(
-  data = list(
-    old = occup_old, new = occup_new, cat_var = "code", time_var = "year",
-    freqs_df = as.data.frame(table(occup_new$code))
-  ),
-  mappings = list(trans = trans, direction = "backward")
-)
-
-
 ## the ean variable is a unique identifier
 data(verticals2)
 

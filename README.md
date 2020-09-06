@@ -3,7 +3,7 @@
 [![R build status](https://github.com/polkas/cat2cat/workflows/R-CMD-check/badge.svg)](https://github.com/polkas/cat2cat/actions)
 [![codecov](https://codecov.io/gh/Polkas/cat2cat/branch/master/graph/badge.svg)](https://codecov.io/gh/Polkas/cat2cat)
 
-## Mapping of a categorical variable according to a new encoding
+## Mapping of a categorical variable in a panel dataset according to a new encoding
 
 **The main rule is to replicate the observation if it could be assign to a few categories**
 **then using simple freqencies or ml model to approximate probabilities of being assign to each of them.**
@@ -18,6 +18,18 @@ In many projects where dataset contains a categorical variable one of the bigges
 the data provider during internal processes was changing an encoding of this variable during a time.
 Thus some categories were grouped and other were separated or a new one is added or an old one is removed.
 
+**Quick Reference Table** 
+
+|  Function | Description |
+|----------------------|----------------------|
+| `cat2cat` |  |
+| `cat2cat_agg`  |   |
+| `prune_cat2cat` |  |
+| `cross_cat2cat` |  |
+| `get_mappings` | |  
+| `cat_apply_freq` | |
+| `get_freqs` | |
+
 ## Installation
 
 ```r
@@ -28,7 +40,7 @@ devtools::install_github("polkas/cat2cat")
 There should be stated a 3 clear questions:
 
 1. Do i have a transition table. 
-2. Type of the data - panel balanced vs unbalanced, aggregate data vs individual data.
+2. Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers, aggregate data vs individual data.
 3. Direction of a transition, forward or backward - use a new or an old encoding
 
 For more advance usage check the vignette.

@@ -342,4 +342,10 @@ agg2$new %>% group_by(vertical) %>% summarise(sales = sum(sales*prop), counts = 
 
 ```
 
+# what if there are a many time points to map
+
+then cat2cat have to be used recursevly where the prune method might be needed to limit the problem of expotentialy growing replications.
+Thus a prune_c2c with highest1 or highest method could be used before setting a df to next iteration.
+However when only 3 perionds have to be map then the middle one might be the base one.
+
 

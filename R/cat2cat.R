@@ -4,7 +4,6 @@
 #######################################
 ### Aggregat
 
-
 #' Transforming table of mappings to a list with keys
 #' @description transforming table of mappings to list with keys where first column is assumed to be an old encoding.
 #' @param x data.frame or matrix with 2 columns
@@ -135,8 +134,10 @@ get_freqs <- function(x, multipier = NULL) {
   res
 }
 
-#' Automatic transforming of a categorical variable according to a new encoding
-#' @description Automatic transforming of a categorical variable according to a new encoding.
+#' Automatic mapping of a categorical variable in a panel dataset according to a new encoding
+#' @description This function is built to work for two time points at once.
+#' Thus for more periods some recurionis will be needed.
+#' The \code{prune_c2c} might be needed when we have many interations to limit growing number of relpications.
 #' This function might seems to be a complex at the first glance though it is built to offer a wide range of applications for complex tasks.
 #' @param data list with 4, 5, 6 or 7 named fileds `old` `new` `cat_var` `time_var` and optional `id_var`,`multipier_var`,`freq_df`
 #' @param mappings list with 2 named fileds `trans` `direction`
@@ -144,42 +145,52 @@ get_freqs <- function(x, multipier = NULL) {
 #' @details
 #' data args
 #' \itemize{
-#'  \item{"old"}{ data.frame }
-#'  \item{"new"} { data.frame}
-#'  \item{"id_var"}{ name of the id variable}
-#'  \item{"cat_var"}{ name of the caterogical variable}
-#'  \item{"time_var"}{ name of the time varaiable}
-#'  \item{"multipier_var"}{ name of the multipier variable - number of replication needed to reproduce the population}
-#'  \item{"freqs_df"}{ notice it is for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
+#'  \item{"old"}{ data.frame older time point in a panel}
+#'  \item{"new"} { data.frame more recent time point in a panel}
+#'  \item{"cat_var"}{ character name of the caterogical variable}
+#'  \item{"time_var"}{ character name of the time varaiable}
+#'  \item{"id_var"}{ character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
+#'  \item{"multipier_var"}{ character name of the multipier variable - number of replication needed to reproduce the population}
+#'  \item{"freqs_df"}{ only for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
 #' }
 #' mappings args
 #' \itemize{
 #'  \item{"trans"}{ data.frame with 2 columns - transition table - all categories for cat_var in old and new datasets have to be included.
 #'   First column contains an old encodind and second a new one.}
-#'  \item{"direction"}{ direction - "backward" or "forward"}
+#'  \item{"direction"}{ character direction - "backward" or "forward"}
 #' }
 #' ml args
 #' \itemize{
 #'  \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination, "rf" Random Forest }
-#'  \item{"features"}{ vector of features names}
+#'  \item{"features"}{ character vector of features names where all have to be numeric or logical}
 #'  \item{"args"}{ list knn paramters: k ; rf: ntree  }
 #' }
 #' @return named list with 2 fileds old an new - 2 data.frames.
-#' There will be added addition al columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_*_c2c.
-#' Additional columns will be informative only for one data.frame as we always make a changes to one direction.
+#' There will be added addition al columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
+#' Additional columns will be informative only for a one data.frame as we always make a changes to one direction.
 #' @importFrom progress progress_bar
 #' @importFrom caret knn3 predict.train
 #' @importFrom tidyr pivot_longer
 #' @importFrom stats predict complete.cases
 #' @importFrom randomForest randomForest
 #' @importFrom MASS lda
-#' @details When ml model is broken then weights from simple frequencies are taken.
+#' @details Without ml section only simple frequencies are assesed.
+#' When ml model is broken then weights from simple frequencies are taken.
 #' @examples
 #' data(occup)
 #' data(trans)
 #'
 #' occup_old <- occup[occup$year == 2008, ]
 #' occup_new <- occup[occup$year == 2010, ]
+#'
+#' # default only simple frequencies
+#'
+#' cat2cat(
+#'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+#'   mappings = list(trans = trans, direction = "forward")
+#' )
+#'
+#' # additionaly add probabilities from knn
 #'
 #' cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
@@ -191,24 +202,7 @@ get_freqs <- function(x, multipier = NULL) {
 #'   )
 #' )
 #'
-#' cat2cat(
-#'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
-#'   mappings = list(trans = trans, direction = "forward"),
-#'   ml = list(
-#'     method = "rf",
-#'     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
-#'     args = list(ntree = 50)
-#'   )
-#' )
-#'
-#' cat2cat(
-#'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
-#'   mappings = list(trans = trans, direction = "forward"),
-#'   ml = list(
-#'     method = "lda",
-#'     features = c("age", "sex", "edu", "exp", "parttime", "salary")
-#'   )
-#' )
+#' # mix all ml methods
 #'
 #' occup_2_mix = cat2cat(
 #'  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
@@ -357,7 +351,7 @@ cat2cat <-
 
       uu <- unique(cat_final_rep[[data$cat_var]])
 
-      features <- ml$features
+      features <- unique(ml$features)
 
       methods <- unique(ml$method)
 

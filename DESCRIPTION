@@ -1,13 +1,12 @@
 Package: cat2cat
-Title: Mapping of a categorical variable according to a new encoding
+Title: Mapping of a categorical variable in a panel dataset according to a new encoding
 Version: 0.1.0
 Author: person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre"))
 Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
 Description: 
-  Transform a categorical variable according to a new encoding. 
+  There are offered automatic methods to map a certain category variable according to a specified encoding across different time points. 
   The main rule is to replicate the observation if it could be assign to a few categories.
   Then using simple freqencies or ml model to approximate probabilities of being assign to each of them.
-  There was offered an automatic method to map a certain category variable according to a specified encoding across different time points. 
 Depends: R (>= 3.6)
 License: GPL (>= 2)
 URL: https://github.com/Polkas/cat2cat
@@ -27,7 +26,7 @@ Suggests:
 	  knitr,
     rmarkdown,
     pacman,
-    testthat,
+    testthat
 VignetteBuilder: knitr
 LazyData: true
 RoxygenNote: 7.1.0

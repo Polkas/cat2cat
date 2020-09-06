@@ -1,16 +1,16 @@
-#' Aggragate dataset - Manual transforming of a categorical variable according to a new encoding
-#' @description Aggragate dataset - Manual transforming of a categorical variable according to a new encoding where user suppling transsitions by equtions.
+#' Aggragate panel dataset - Manual mapping of a categorical variable according to a new encoding
+#' @description Aggragate dataset - Manual mapping of a categorical variable according to a new encoding where user suppling transsitions by equtions.
 #' @param data list with 5 named fileds `old` `new` `cat_var` `time_var` `freq_var`
 #' @param ... equations
 #' @return list of data.frame objects
 #' @details
 #' data args
 #' \itemize{
-#'  \item{"old"}{ data.frame}
-#'  \item{"new"}{ data.frame}
-#'  \item{"cat_var"}{ name of the caterogical variable}
-#'  \item{"time_var"}{ name of time variable}
-#'  \item{"freq_var"}{ name of frequency variable}
+#'  \item{"old"}{ data.frame older time point}
+#'  \item{"new"} { data.frame more recent time point}
+#'  \item{"cat_var"}{ character name of the caterogical variable}
+#'  \item{"time_var"}{ character name of time variable}
+#'  \item{"freq_var"}{ character name of frequency variable}
 #' }
 #' ... equations where direction is set by `>`,`<`,`%>%`,`%<%`
 #' @examples
