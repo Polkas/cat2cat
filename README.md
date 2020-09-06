@@ -8,6 +8,8 @@
 **The main rule is to replicate the observation if it could be assign to a few categories**
 **then using simple freqencies or ml model to approximate probabilities of being assign to each of them.**
 
+[**pkgdown url**](https://polkas.github.io/cat2cat/)
+
 Why cat2cat:  
 - universal algorithm which could be used in different science fields  
 - stop removing variables for ml models because variable categories are not the same across time  
@@ -17,18 +19,6 @@ Why cat2cat:
 In many projects where dataset contains a categorical variable one of the biggest obstacle is that 
 the data provider during internal processes was changing an encoding of this variable during a time.
 Thus some categories were grouped and other were separated or a new one is added or an old one is removed.
-
-**Quick Reference Table** 
-
-|  Function | Description |
-|----------------------|----------------------|
-| `cat2cat` |  |
-| `cat2cat_agg`  |   |
-| `prune_cat2cat` |  |
-| `cross_cat2cat` |  |
-| `get_mappings` | |  
-| `cat_apply_freq` | |
-| `get_freqs` | |
 
 ## Installation
 
