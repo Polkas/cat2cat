@@ -6,7 +6,7 @@
 
 #' Transforming table of mappings to a list with keys
 #' @description transforming table of mappings to list with keys where first column is assumed to be an old encoding.
-#' @param x data.frame or matrix with 2 columns
+#' @param x data.frame or matrix with 2 columns where first column is assumed to be an old encoding.
 #' @details the named list will be a more effcient solution than hash map as we are not expecting more than a few thousand keys.
 #' @return list with 2 fields `to_old` `to_new`
 #' @examples
@@ -115,11 +115,13 @@ cat_apply_freq <- function(to_x, freqs) {
 #' @examples
 #' data(occup)
 #'
-#' get_freqs(occup$code[occup$year == "2008"])
-#' get_freqs(occup$code[occup$year == "2010"])
+#' head(get_freqs(occup$code[occup$year == "2008"]))
 #'
-#' get_freqs(occup$code[occup$year == "2008"], occup$multipier[occup$year == "2008"])
-#' get_freqs(occup$code[occup$year == "2010"], occup$multipier[occup$year == "2010"])
+#' head(get_freqs(occup$code[occup$year == "2010"]))
+#'
+#' head(get_freqs(occup$code[occup$year == "2008"], occup$multipier[occup$year == "2008"]))
+#'
+#' head(get_freqs(occup$code[occup$year == "2010"], occup$multipier[occup$year == "2010"]))
 #' @export
 
 get_freqs <- function(x, multipier = NULL) {
@@ -166,7 +168,7 @@ get_freqs <- function(x, multipier = NULL) {
 #'  \item{"args"}{ list knn paramters: k ; rf: ntree  }
 #' }
 #' @return named list with 2 fileds old an new - 2 data.frames.
-#' There will be added addition al columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
+#' There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
 #' Additional columns will be informative only for a one data.frame as we always make a changes to one direction.
 #' @importFrom progress progress_bar
 #' @importFrom caret knn3 predict.train
@@ -185,14 +187,14 @@ get_freqs <- function(x, multipier = NULL) {
 #'
 #' # default only simple frequencies
 #'
-#' cat2cat(
+#' occup_2 <- cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "forward")
 #' )
 #'
 #' # additionaly add probabilities from knn
 #'
-#' cat2cat(
+#' occup_3 <- cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "forward"),
 #'   ml = list(
@@ -204,7 +206,7 @@ get_freqs <- function(x, multipier = NULL) {
 #'
 #' # mix all ml methods
 #'
-#' occup_2_mix = cat2cat(
+#' occup_4_mix = cat2cat(
 #'  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'  mappings = list(trans = trans, direction = "backward"),
 #'  ml = list(method = c("knn", "rf", "lda"),

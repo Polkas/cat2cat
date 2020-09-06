@@ -84,7 +84,7 @@
 #' \item{sales}{	numeric a size of sale}
 #' \item{v_date}{	character Date}
 #' }
-#' @details random data - single product sales across e-commerce verticals
+#' @details random data - single products sales across e-commerce verticals
 #' @examples
 #' \dontrun{
 #'

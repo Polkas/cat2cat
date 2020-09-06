@@ -6,13 +6,13 @@
 #' @details
 #' data args
 #' \itemize{
-#'  \item{"old"}{ data.frame older time point}
-#'  \item{"new"} { data.frame more recent time point}
+#'  \item{"old"}{ data.frame older time point in the panel}
+#'  \item{"new"} { data.frame more recent time point in the panel}
 #'  \item{"cat_var"}{ character name of the caterogical variable}
 #'  \item{"time_var"}{ character name of time variable}
 #'  \item{"freq_var"}{ character name of frequency variable}
 #' }
-#' ... equations where direction is set by `>`,`<`,`%>%`,`%<%`
+#' ... equations where direction is set by ">","<","%>%","%<%"
 #' @examples
 #'data(verticals)
 #'agg_old <- verticals[verticals$v_date == "2020-04-01", ]
