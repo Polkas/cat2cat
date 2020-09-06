@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Aggragate dataset - Manual transforming of a categorical variable according to a new encoding — cat2cat_agg • cat2cat</title>
+<title>Aggragate panel dataset - Manual mapping of a categorical variable according to a new encoding — cat2cat_agg • cat2cat</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Aggragate dataset - Manual transforming of a categorical variable according to a new encoding — cat2cat_agg" />
-<meta property="og:description" content="Aggragate dataset - Manual transforming of a categorical variable according to a new encoding where user suppling transsitions by equtions." />
+<meta property="og:title" content="Aggragate panel dataset - Manual mapping of a categorical variable according to a new encoding — cat2cat_agg" />
+<meta property="og:description" content="Aggragate dataset - Manual mapping of a categorical variable according to a new encoding where user suppling transsitions by equtions." />
 
 
 
@@ -120,13 +120,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Aggragate dataset - Manual transforming of a categorical variable according to a new encoding</h1>
+    <h1>Aggragate panel dataset - Manual mapping of a categorical variable according to a new encoding</h1>
     <small class="dont-index">Source: <a href='https://github.com/Polkas/cat2cat/blob/master/R/cat2cat_agg.R'><code>R/cat2cat_agg.R</code></a></small>
     <div class="hidden name"><code>cat2cat_agg.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Aggragate dataset - Manual transforming of a categorical variable according to a new encoding where user suppling transsitions by equtions.</p>
+    <p>Aggragate dataset - Manual mapping of a categorical variable according to a new encoding where user suppling transsitions by equtions.</p>
     </div>
 
     <pre class="usage"><span class='fu'>cat2cat_agg</span>(
@@ -153,11 +153,11 @@
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>data args</p><ul>
-<li><p>"old" data.frame</p></li>
-<li><p>"new" data.frame</p></li>
-<li><p>"cat_var" name of the caterogical variable</p></li>
-<li><p>"time_var" name of time variable</p></li>
-<li><p>"freq_var" name of frequency variable</p></li>
+<li><p>"old" data.frame older time point</p></li>
+<li><p>"new"  data.frame more recent time point</p></li>
+<li><p>"cat_var" character name of the caterogical variable</p></li>
+<li><p>"time_var" character name of time variable</p></li>
+<li><p>"freq_var" character name of frequency variable</p></li>
 </ul><p>... equations where direction is set by `&gt;`,`&lt;`,`<!-- %&gt;%`,`%&lt;%` --></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
