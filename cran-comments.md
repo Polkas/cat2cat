@@ -10,4 +10,4 @@
   
   ## R CMD check results
   
-  There wwere no errors, warnings or notes
+  There were no errors, warnings or notes

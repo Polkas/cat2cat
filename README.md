@@ -2,7 +2,7 @@
 [![R build status](https://github.com/polkas/cat2cat/workflows/R-CMD-check/badge.svg)](https://github.com/polkas/cat2cat/actions)
 [![codecov](https://codecov.io/gh/Polkas/cat2cat/branch/master/graph/badge.svg)](https://codecov.io/gh/Polkas/cat2cat)
 
-## Mapping of a categorical variable in a panel dataset according to a new encoding
+## Mapping of a categorical variable in a panel dataset according to a chosen encoding
 
 **The main rule is to replicate the observation if it could be assign to a few categories**
 **then using simple frequencies or ml model to approximate probabilities of being assign to each of them.**
