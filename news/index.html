@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • cat2cat</title>
+<title>Changelog • cat2cat</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Changelog" />
 
 
 
@@ -58,7 +58,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-news">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -120,107 +120,24 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+      <h1 data-toc-skip>Changelog <small></small></h1>
+      <small>Source: <a href='https://github.com/Polkas/cat2cat/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <table class="ref-index">
-
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
-
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="cat2cat.html">cat2cat()</a></code> </p>
-        </td>
-        <td><p>Automatic mapping of a categorical variable in a panel dataset according to a new encoding</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cat2cat_agg.html">cat2cat_agg()</a></code> </p>
-        </td>
-        <td><p>Aggragate panel dataset - Manual mapping of a categorical variable according to a new encoding</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cat_apply_freq.html">cat_apply_freq()</a></code> </p>
-        </td>
-        <td><p>Applying frequencies to object returned by get_mappings</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cross_cat2cat.html">cross_cat2cat()</a></code> </p>
-        </td>
-        <td><p>a funtion to make a combination of weights from different methods by each row</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_freqs.html">get_freqs()</a></code> </p>
-        </td>
-        <td><p>Getting frequencies for a vector with an optional multipier argument</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_mappings.html">get_mappings()</a></code> </p>
-        </td>
-        <td><p>Transforming table of mappings to a list with keys</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="occup.html">occup</a></code> </p>
-        </td>
-        <td><p>Occupational dataset</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="prune_cat2cat.html">prune_cat2cat()</a></code> </p>
-        </td>
-        <td><p>A set of prune methods which will be usefull after transition process</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="summary_c2c.html">summary_c2c()</a></code> </p>
-        </td>
-        <td><p>Summary for data.frame with replicated rows</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="trans.html">trans</a></code> </p>
-        </td>
-        <td><p>trans dataset containing transitions between old (2008) and new (2010) occupational codes.
-this table could be used to map encodings in both directions.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="verticals.html">verticals</a></code> </p>
-        </td>
-        <td><p>verticals dataset</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="verticals2.html">verticals2</a></code> </p>
-        </td>
-        <td><p>verticals2 dataset</p></td>
-      </tr>
-    </tbody>
-    </table>
+    <div id="cat2cat-010" class="section level1">
+<h1 class="page-header" data-toc-text="0.1.0">
+<a href="#cat2cat-010" class="anchor"></a>cat2cat 0.1.0</h1>
+<ul>
+<li>More ml arg methods inside <code>cat2cat</code> function - “knn”, “rf”, “lda”.</li>
+<li>
+<code>prune_cat2cat</code> and <code>cross_cat2cat</code> to improve processing of results.</li>
+<li>Enable cat2cat for panel with unique identifier.</li>
+<li>Turn on github actions - covr, pkgdown, check.</li>
+<li>Preparation before R CRAN.</li>
+</ul>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -228,6 +145,7 @@ this table could be used to map encodings in both directions.</p></td>
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
+
 </div>
 
 

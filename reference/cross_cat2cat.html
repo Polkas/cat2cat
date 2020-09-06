@@ -99,6 +99,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -179,10 +182,10 @@
 <span class='co'># correlation between ml models</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span>(<span class='kw'>occup_2_mix</span><span class='op'>$</span><span class='kw'>old</span>[, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"wei_knn_c2c"</span>, <span class='st'>"wei_rf_c2c"</span>, <span class='st'>"wei_lda_c2c"</span>, <span class='st'>"wei_freq_c2c"</span>)])
 </div><div class='output co'>#&gt;              wei_knn_c2c wei_rf_c2c wei_lda_c2c wei_freq_c2c
-#&gt; wei_knn_c2c    1.0000000  0.8522919   0.8406724    0.8974173
-#&gt; wei_rf_c2c     0.8522919  1.0000000   0.8808740    0.8665705
-#&gt; wei_lda_c2c    0.8406724  0.8808740   1.0000000    0.8894577
-#&gt; wei_freq_c2c   0.8974173  0.8665705   0.8894577    1.0000000</div><div class='input'><span class='co'># cross all methods and subset one highest probability category for each subject</span>
+#&gt; wei_knn_c2c    1.0000000  0.8513018   0.8395457    0.8927482
+#&gt; wei_rf_c2c     0.8513018  1.0000000   0.8800756    0.8618755
+#&gt; wei_lda_c2c    0.8395457  0.8800756   1.0000000    0.8847568
+#&gt; wei_freq_c2c   0.8927482  0.8618755   0.8847568    1.0000000</div><div class='input'><span class='co'># cross all methods and subset one highest probability category for each subject</span>
 <span class='kw'>occup_old_mix_highest1occup_2_mix</span> <span class='op'>&lt;-</span> <span class='fu'><a href='prune_cat2cat.html'>prune_cat2cat</a></span>(<span class='fu'>cross_cat2cat</span>(<span class='kw'>occup_2_mix</span><span class='op'>$</span><span class='kw'>old</span>),
                                                    column = <span class='st'>"wei_cross_c2c"</span>, method = <span class='st'>"highest1"</span>)
 </div></pre>
