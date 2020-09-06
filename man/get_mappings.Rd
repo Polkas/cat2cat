@@ -7,7 +7,7 @@
 get_mappings(x = data.frame())
 }
 \arguments{
-\item{x}{data.frame or matrix with 2 columns}
+\item{x}{data.frame or matrix with 2 columns where first column is assumed to be an old encoding.}
 }
 \value{
 list with 2 fields `to_old` `to_new`
@@ -16,7 +16,7 @@ list with 2 fields `to_old` `to_new`
 transforming table of mappings to list with keys where first column is assumed to be an old encoding.
 }
 \details{
-the named list will be a more effcient solution than hash map as we are not expecting more than a few thousand keys.
+the named list will be a more efficient solution than hash map as we are not expecting more than a few thousand keys.
 }
 \examples{
 data(trans)

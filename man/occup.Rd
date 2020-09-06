@@ -16,7 +16,7 @@ A data frame with around 70000 observations and 12 variables.
 \item{parttime}{ numeric contract type regards time where 1 mean full-time (work a whole week)}
 \item{salary}{ numeric salary per year}
 \item{code}{ character code - occupational code}
-\item{multipier}{ numeric multipier for the subject to reproduce a population - how many of such subjects in population}
+\item{multiplier}{ numeric multiplier for the subject to reproduce a population - how many of such subjects in population}
 \item{year}{integer year}
 \item{code4}{ character code - occupational code - first 4 digits}
 }
@@ -29,7 +29,7 @@ Occupational dataset
 }
 \details{
 occup dataset is an example of unbalance panel dataset.
-This is a simulated data althought there are applied a real world characteristics from national statictics office survey.
+This is a simulated data although there are applied a real world characteristics from national statistical office survey.
 The orginal survey is anonymous and take place every two years.
 It is presenting a characteristics from randomly selected company and then using k step procedure employees are chosen.
 

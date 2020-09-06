@@ -2,7 +2,7 @@
 % Please edit documentation in R/cat2cat.R
 \name{prune_cat2cat}
 \alias{prune_cat2cat}
-\title{A set of prune methods which will be usefull after transition process}
+\title{A set of prune methods which will be useful after transition process}
 \usage{
 prune_cat2cat(
   df,
@@ -35,7 +35,7 @@ method - specify method to reduce number of replications
  \item{"nonzero"}{ remove nonzero probabilities}
  \item{"highest"} { leave only highest probabilities for each subject- accepting ties}
  \item{"highest1"} { leave only highest probabilities for each subject- not accepting ties so always one is returned}
- \item{"morethan"}{ leave rows where a probability is hgher than value specify by percent argument }
+ \item{"morethan"}{ leave rows where a probability is higher than value specify by percent argument }
 }
 }
 \examples{

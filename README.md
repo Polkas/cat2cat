@@ -5,14 +5,14 @@
 ## Mapping of a categorical variable in a panel dataset according to a new encoding
 
 **The main rule is to replicate the observation if it could be assign to a few categories**
-**then using simple freqencies or ml model to approximate probabilities of being assign to each of them.**
+**then using simple frequencies or ml model to approximate probabilities of being assign to each of them.**
 
 [**pkgdown url**](https://polkas.github.io/cat2cat/)
 
 Why cat2cat:  
 - universal algorithm which could be used in different science fields  
 - stop removing variables for ml models because variable categories are not the same across time  
-- use a statistical modelling to join datasets from different time points and retain caterogical variable structure  
+- use a statistical modelling to join datasets from different time points and retain categorical variable structure  
 - visualize any factor variable across time  
 
 In many projects where dataset contains a categorical variable one of the biggest obstacle is that 
@@ -131,7 +131,7 @@ occup_old_mix_highest1occup_2_mix <- occup_2_mix$old %>%
 ## Regression
 ```r
 ## orginal dataset 
-lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old, weights = multipier)
+lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old, weights = multiplier)
 summary(lms2)
 
 ## using one highest cross weights
@@ -140,13 +140,13 @@ summary(lms2)
 occup_old_2 <- occup_2$old %>% 
                 cross_cat2cat(., c("wei_freq_c2c", "wei_knn_c2c"), c(1/2,1/2)) %>% 
                 prune_cat2cat(.,column = "wei_cross_c2c", method = "highest1") 
-lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_2, weights = multipier)
+lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_2, weights = multiplier)
 summary(lms)
 
 ## we have to adjust size of stds as we artificialy enlarge degrees of freedom
 occup_old_3 <- occup_2$old %>% 
                 prune_cat2cat(method = "nonzero") #many prune methods like highest
-lms1 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_3, weights = multipier * wei_freq_c2c)
+lms1 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_3, weights = multiplier * wei_freq_c2c)
 ## summary_c2c
 summary_c2c(lms1, df_old = nrow(occup_old), df_new = nrow(occup_old_3))
 

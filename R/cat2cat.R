@@ -7,7 +7,7 @@
 #' Transforming table of mappings to a list with keys
 #' @description transforming table of mappings to list with keys where first column is assumed to be an old encoding.
 #' @param x data.frame or matrix with 2 columns where first column is assumed to be an old encoding.
-#' @details the named list will be a more effcient solution than hash map as we are not expecting more than a few thousand keys.
+#' @details the named list will be a more efficient solution than hash map as we are not expecting more than a few thousand keys.
 #' @return list with 2 fields `to_old` `to_new`
 #' @examples
 #' data(trans)
@@ -72,7 +72,7 @@ get_mappings <- function(x = data.frame()) {
 #'   mappings$to_old,
 #'   get_freqs(
 #'     occup$code[occup$year == "2008"],
-#'     occup$multipier[occup$year == "2008"]
+#'     occup$multiplier[occup$year == "2008"]
 #'   )
 #' )
 #' head(data.frame(I(mappings$to_old), I(mapp_p)))
@@ -80,7 +80,7 @@ get_mappings <- function(x = data.frame()) {
 #'   mappings$to_new,
 #'   get_freqs(
 #'     occup$code[occup$year == "2010"],
-#'     occup$multipier[occup$year == "2010"]
+#'     occup$multiplier[occup$year == "2010"]
 #'   )
 #' )
 #' head(data.frame(I(mappings$to_new), I(mapp_p)))
@@ -107,10 +107,10 @@ cat_apply_freq <- function(to_x, freqs) {
   res_out
 }
 
-#' Getting frequencies for a vector with an optional multipier argument
-#' @description getting frequencies for a vector with an optional multipier argument
+#' Getting frequencies for a vector with an optional multiplier argument
+#' @description getting frequencies for a vector with an optional multiplier argument
 #' @param x vector
-#' @param multipier vector how many times to repeat certain value
+#' @param multiplier vector how many times to repeat certain value
 #' @return data.frame with two columns `input` `Freq`
 #' @examples
 #' data(occup)
@@ -119,16 +119,16 @@ cat_apply_freq <- function(to_x, freqs) {
 #'
 #' head(get_freqs(occup$code[occup$year == "2010"]))
 #'
-#' head(get_freqs(occup$code[occup$year == "2008"], occup$multipier[occup$year == "2008"]))
+#' head(get_freqs(occup$code[occup$year == "2008"], occup$multiplier[occup$year == "2008"]))
 #'
-#' head(get_freqs(occup$code[occup$year == "2010"], occup$multipier[occup$year == "2010"]))
+#' head(get_freqs(occup$code[occup$year == "2010"], occup$multiplier[occup$year == "2010"]))
 #' @export
 
-get_freqs <- function(x, multipier = NULL) {
-  stopifnot( is.null(multipier) || length(x) == length(multipier))
+get_freqs <- function(x, multiplier = NULL) {
+  stopifnot( is.null(multiplier) || length(x) == length(multiplier))
 
-  input <- if (!is.null(multipier)) {
-    rep(x, times = as.numeric(multipier))
+  input <- if (!is.null(multiplier)) {
+    rep(x, times = as.numeric(multiplier))
   } else {
     x
   }
@@ -138,36 +138,36 @@ get_freqs <- function(x, multipier = NULL) {
 
 #' Automatic mapping of a categorical variable in a panel dataset according to a new encoding
 #' @description This function is built to work for two time points at once.
-#' Thus for more periods some recurionis will be needed.
-#' The \code{prune_c2c} might be needed when we have many interations to limit growing number of relpications.
+#' Thus for more periods some recursion will be needed.
+#' The \code{prune_c2c} might be needed when we have many interactions to limit growing number of replications.
 #' This function might seems to be a complex at the first glance though it is built to offer a wide range of applications for complex tasks.
-#' @param data list with 4, 5, 6 or 7 named fileds `old` `new` `cat_var` `time_var` and optional `id_var`,`multipier_var`,`freq_df`
-#' @param mappings list with 2 named fileds `trans` `direction`
+#' @param data list with 4, 5, 6 or 7 named fields `old` `new` `cat_var` `time_var` and optional `id_var`,`multiplier_var`,`freq_df`
+#' @param mappings list with 2 named fields `trans` `direction`
 #' @param ml list with 3 named fields `method` `features` `args`
 #' @details
 #' data args
 #' \itemize{
 #'  \item{"old"}{ data.frame older time point in a panel}
 #'  \item{"new"} { data.frame more recent time point in a panel}
-#'  \item{"cat_var"}{ character name of the caterogical variable}
-#'  \item{"time_var"}{ character name of the time varaiable}
+#'  \item{"cat_var"}{ character name of the categorical variable}
+#'  \item{"time_var"}{ character name of the time variable}
 #'  \item{"id_var"}{ character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
-#'  \item{"multipier_var"}{ character name of the multipier variable - number of replication needed to reproduce the population}
+#'  \item{"multiplier_var"}{ character name of the multiplier variable - number of replication needed to reproduce the population}
 #'  \item{"freqs_df"}{ only for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
 #' }
 #' mappings args
 #' \itemize{
 #'  \item{"trans"}{ data.frame with 2 columns - transition table - all categories for cat_var in old and new datasets have to be included.
-#'   First column contains an old encodind and second a new one.}
+#'   First column contains an old encoding and second a new one.}
 #'  \item{"direction"}{ character direction - "backward" or "forward"}
 #' }
 #' ml args
 #' \itemize{
 #'  \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination, "rf" Random Forest }
 #'  \item{"features"}{ character vector of features names where all have to be numeric or logical}
-#'  \item{"args"}{ list knn paramters: k ; rf: ntree  }
+#'  \item{"args"}{ list parameters: knn: k ; rf: ntree  }
 #' }
-#' @return named list with 2 fileds old an new - 2 data.frames.
+#' @return named list with 2 fields old an new - 2 data.frames.
 #' There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
 #' Additional columns will be informative only for a one data.frame as we always make a changes to one direction.
 #' @importFrom progress progress_bar
@@ -176,7 +176,7 @@ get_freqs <- function(x, multipier = NULL) {
 #' @importFrom stats predict complete.cases setNames
 #' @importFrom randomForest randomForest
 #' @importFrom MASS lda
-#' @details Without ml section only simple frequencies are assesed.
+#' @details Without ml section only simple frequencies are assessed.
 #' When ml model is broken then weights from simple frequencies are taken.
 #' @examples
 #' data(occup)
@@ -222,7 +222,7 @@ cat2cat <-
              cat_var = NULL,
              id_var = NULL,
              time_var = NULL,
-             multipier_var = NULL,
+             multiplier_var = NULL,
              freqs_df = NULL
            ),
            mappings = list(trans = NULL, direction = NULL),
@@ -241,10 +241,10 @@ cat2cat <-
     stopifnot(all(c(data$cat_var, data$time_var) %in% colnames(data$new)))
 
     stopifnot(
-      is.null(data$multipier_var) ||
+      is.null(data$multiplier_var) ||
         (
-          data$multipier_var %in% colnames(data$new) &&
-          data$multipier_var %in% colnames(data$old)
+          data$multiplier_var %in% colnames(data$new) &&
+          data$multiplier_var %in% colnames(data$old)
         )
     )
 
@@ -312,8 +312,8 @@ cat2cat <-
     cats_base <- cat_base_year[[data$cat_var]]
     cats_final <- cat_final_year[[data$cat_var]]
 
-    multi_base <- if (!is.null(data$multipier_var)) {
-      cat_base_year[[data$multipier_var]]
+    multi_base <- if (!is.null(data$multiplier_var)) {
+      cat_base_year[[data$multiplier_var]]
     } else {
       NULL
     }
@@ -461,7 +461,7 @@ cat2cat <-
     res
   }
 
-#' A set of prune methods which will be usefull after transition process
+#' A set of prune methods which will be useful after transition process
 #'
 #' @description user could specify one from four methods to prune replications
 #'
@@ -477,7 +477,7 @@ cat2cat <-
 #'  \item{"nonzero"}{ remove nonzero probabilities}
 #'  \item{"highest"} { leave only highest probabilities for each subject- accepting ties}
 #'  \item{"highest1"} { leave only highest probabilities for each subject- not accepting ties so always one is returned}
-#'  \item{"morethan"}{ leave rows where a probability is hgher than value specify by percent argument }
+#'  \item{"morethan"}{ leave rows where a probability is higher than value specify by percent argument }
 #' }
 #' @examples
 #' data(occup)
@@ -521,14 +521,14 @@ prune_cat2cat <- function(df, index = "index_c2c", column = "wei_freq_c2c", meth
   )
 }
 
-#' a funtion to make a combination of weights from different methods by each row
+#' a function to make a combination of weights from different methods by each row
 #'
 #' @description adding additional column which is a mix of weights columns by each row
 #'
 #' @param df data.frame
 #' @param cols character vector default all columns follow regex like "wei_.*_c2c"
-#' @param weis numeric vector  Default vector the same lenght as cols and with equally spaced values summing to 1.
-#' @param na.rm logical if NA should be skipped, Dafault TRUE
+#' @param weis numeric vector  Default vector the same length as cols and with equally spaced values summing to 1.
+#' @param na.rm logical if NA should be skipped, default TRUE
 #' @return data.frame with an additional column wei_cross_c2c
 #' @examples
 #' data(occup)

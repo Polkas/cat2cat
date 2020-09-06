@@ -14,10 +14,15 @@ summary_c2c(x, df_old, df_new)
 \item{df_new}{integer number of d.f in dataset with replicated rows}
 }
 \value{
-data.frame
+data.frame with additional columns over a regular summary.lm output like correct and statistics adjusted by it.
 }
 \description{
-transforming sumary.lm object according to real number of d.f.
+transforming summary.lm object according to real number of d.f.
+The standard errors, t statistics and p values have to be adjusted because of replicated rows.
+}
+\details{
+The size of the correction is equal to sqrt(df_new / df_old).
+Where standard errors are multiplied and t statistics divided by it.
 }
 \examples{
 data(occup)
@@ -39,7 +44,7 @@ occup_2 <- cat2cat(
 # Regression
 # we have to adjust size of std as we artificialy enlarge degrees of freedom
 lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old,
-  weights = multipier * wei_freq_c2c
+  weights = multiplier * wei_freq_c2c
 )
 summary_c2c(lms, df_old = nrow(occup_old), df_new = nrow(occup_2$old))
 }

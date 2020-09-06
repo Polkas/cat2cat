@@ -6,7 +6,7 @@ Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
 Description: 
   There are offered automatic methods to map a category variable according to a specific encoding across different time points. 
   The main rule is to replicate the observation if it could be assign to a few categories.
-  Then using simple freqencies or ml model to approximate probabilities of being assign to each of them.
+  Then using simple frequencies or ml model to approximate probabilities of being assign to each of them.
 Depends: R (>= 3.6)
 License: GPL (>= 2)
 URL: https://github.com/Polkas/cat2cat
@@ -17,16 +17,15 @@ Imports:
 	rlang,
 	caret,
 	progress,
-	tidyr,
 	magrittr,
 	randomForest,
 	MASS,
+	tidyr,
 	dplyr
 Suggests:
 	  knitr,
     rmarkdown,
     pacman,
     testthat
-VignetteBuilder: knitr
 LazyData: true
 RoxygenNote: 7.1.0

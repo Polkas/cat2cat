@@ -30,7 +30,7 @@ mapp_p <- cat_apply_freq(
   mappings$to_old,
   get_freqs(
     occup$code[occup$year == "2008"],
-    occup$multipier[occup$year == "2008"]
+    occup$multiplier[occup$year == "2008"]
   )
 )
 head(data.frame(I(mappings$to_old), I(mapp_p)))
@@ -38,7 +38,7 @@ mapp_p <- cat_apply_freq(
   mappings$to_new,
   get_freqs(
     occup$code[occup$year == "2010"],
-    occup$multipier[occup$year == "2010"]
+    occup$multiplier[occup$year == "2010"]
   )
 )
 head(data.frame(I(mappings$to_new), I(mapp_p)))

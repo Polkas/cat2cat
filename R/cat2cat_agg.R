@@ -1,6 +1,6 @@
-#' Aggragate panel dataset - Manual mapping of a categorical variable according to a new encoding
-#' @description Aggragate dataset - Manual mapping of a categorical variable according to a new encoding where user suppling transsitions by equtions.
-#' @param data list with 5 named fileds `old` `new` `cat_var` `time_var` `freq_var`
+#' Aggregate panel dataset - Manual mapping of a categorical variable according to a new encoding
+#' @description Aggregate dataset - Manual mapping of a categorical variable according to a new encoding where user supplying transitions by equations.
+#' @param data list with 5 named fields `old` `new` `cat_var` `time_var` `freq_var`
 #' @param ... equations
 #' @return list of data.frame objects
 #' @details
@@ -8,7 +8,7 @@
 #' \itemize{
 #'  \item{"old"}{ data.frame older time point in the panel}
 #'  \item{"new"} { data.frame more recent time point in the panel}
-#'  \item{"cat_var"}{ character name of the caterogical variable}
+#'  \item{"cat_var"}{ character name of the categorical variable}
 #'  \item{"time_var"}{ character name of time variable}
 #'  \item{"freq_var"}{ character name of frequency variable}
 #' }

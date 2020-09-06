@@ -2,7 +2,7 @@
 % Please edit documentation in R/cat2cat.R
 \name{cross_cat2cat}
 \alias{cross_cat2cat}
-\title{a funtion to make a combination of weights from different methods by each row}
+\title{a function to make a combination of weights from different methods by each row}
 \usage{
 cross_cat2cat(
   df,
@@ -16,9 +16,9 @@ cross_cat2cat(
 
 \item{cols}{character vector default all columns follow regex like "wei_.*_c2c"}
 
-\item{weis}{numeric vector  Default vector the same lenght as cols and with equally spaced values summing to 1.}
+\item{weis}{numeric vector  Default vector the same length as cols and with equally spaced values summing to 1.}
 
-\item{na.rm}{logical if NA should be skipped, Dafault TRUE}
+\item{na.rm}{logical if NA should be skipped, default TRUE}
 }
 \value{
 data.frame with an additional column wei_cross_c2c

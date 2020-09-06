@@ -1,6 +1,6 @@
 #' Summary for data.frame with replicated rows
-#' @description transforming sumary.lm object according to real number of d.f.
-#' The standard errors, t staticstics and p values have to be adjusted because of replicated rows.
+#' @description transforming summary.lm object according to real number of d.f.
+#' The standard errors, t statistics and p values have to be adjusted because of replicated rows.
 #' @param x lm object
 #' @param df_old integer number of d.f in orginal dataset
 #' @param df_new integer number of d.f in dataset with replicated rows
@@ -28,7 +28,7 @@
 #' # Regression
 #' # we have to adjust size of std as we artificialy enlarge degrees of freedom
 #' lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old,
-#'   weights = multipier * wei_freq_c2c
+#'   weights = multiplier * wei_freq_c2c
 #' )
 #' summary_c2c(lms, df_old = nrow(occup_old), df_new = nrow(occup_2$old))
 #' @export
