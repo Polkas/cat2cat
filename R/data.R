@@ -27,7 +27,7 @@
 "occup"
 
 #' trans dataset containing transitions between old (2008) and new (2010) occupational codes.
-#' this cold be used to translate encodings in both directions.
+#' this table could be used to map encodings in both directions.
 #'
 #' @usage trans
 #'
@@ -51,7 +51,7 @@
 #' \item{counts}{	integer counts size}
 #' \item{v_date}{	character Date}
 #' }
-#' @details random data
+#' @details random data - aggregate sales across e-commerce verticals
 #' @examples
 #' \dontrun{
 #'agg_old <- data.frame(
@@ -84,7 +84,7 @@
 #' \item{sales}{	numeric a size of sale}
 #' \item{v_date}{	character Date}
 #' }
-#' @details random data
+#' @details random data - single product sales across e-commerce verticals
 #' @examples
 #' \dontrun{
 #'

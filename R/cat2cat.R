@@ -171,7 +171,7 @@ get_freqs <- function(x, multipier = NULL) {
 #' @importFrom progress progress_bar
 #' @importFrom caret knn3 predict.train
 #' @importFrom tidyr pivot_longer
-#' @importFrom stats predict complete.cases
+#' @importFrom stats predict complete.cases setNames
 #' @importFrom randomForest randomForest
 #' @importFrom MASS lda
 #' @details Without ml section only simple frequencies are assesed.
@@ -327,12 +327,12 @@ cat2cat <-
     freqs_2 <- cat_apply_freq(mapp, fre)
 
     g_vec <- mapp[cats_final]
-    rep_vec <- lengths(g_vec)
-    wei_vec <- unlist(freqs_2[cats_final])
+    rep_vec <- unname(lengths(g_vec))
+    wei_vec <- freqs_2[cats_final]
+    wei_vec <- unlist(wei_vec, use.names = FALSE)
     cat_final_year$index_c2c <- 1:nrow(cat_final_year)
-    cat_final_rep <-
-      cat_final_year[rep(1:nrow(cat_final_year), times = rep_vec), ]
-    cat_final_rep$g_new_c2c <- unlist(g_vec)
+    cat_final_rep <- cat_final_year[rep(1:nrow(cat_final_year), times = rep_vec), ]
+    cat_final_rep$g_new_c2c <- unlist(g_vec, use.names = FALSE)
     cat_final_rep$wei_freq_c2c <- wei_vec
     cat_final_rep$rep_c2c <- rep(rep_vec, times = rep_vec)
     cat_final_rep$wei_naive_c2c <- 1 / cat_final_rep$rep_c2c
@@ -384,7 +384,7 @@ cat2cat <-
             udc <- unique(dis$code)
 
             if (length(udc) == 1) {
-               cat_final_rep_cat_c2c[[i]][[ml_name]] <-  as.integer(base$g_new_c2c == udc)
+               cat_final_rep_cat_c2c[[i]][[ml_name]] <-  base$wei_naive_c2c
                next
             }
 
@@ -435,7 +435,9 @@ cat2cat <-
 
                 ress <- merge(base[,c("index_c2c", "g_new_c2c")], res, by = c("index_c2c", "g_new_c2c"), all.x = TRUE, sort = FALSE)
 
-                cat_final_rep_cat_c2c[[i]][[ml_name]] <- ress[order(ress$index_c2c), "val"]
+                resso <- ress[order(ress$index_c2c), ]
+
+                cat_final_rep_cat_c2c[[i]][[ml_name]] <- resso$val
 
               } else {
                 cat_final_rep_cat_c2c[[i]][[ml_name]] <- cat_final_rep_cat_c2c[[i]]$wei_naive_c2c

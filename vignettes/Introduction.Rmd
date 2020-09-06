@@ -23,31 +23,30 @@ options(scipen = 999)
 pacman::p_load(cat2cat, dplyr)
 ```
 
-# IN DEVELOPMENT - transform a categorical variable according to a new encoding
+# Mapping of a categorical variable in a panel dataset according to a new encoding
 
-IN DEVELOPMENT
-IN DEVELOPMENT
-IN DEVELOPMENT
-IN DEVELOPMENT
-IN DEVELOPMENT
+This document is still in development
 
-In many projects where dataset contains a caterogical variable one of the biggest obstacle is that 
-the data provider during internal proceesses was changing an encoding of this variable during a time.
+**The main rule is to replicate the observation if it could be assign to a few categories**
+**then using simple freqencies or ml model to approximate probabilities of being assign to each of them.**
 
+Why cat2cat:  
+- universal algorithm which could be used in different science fields  
+- stop removing variables for ml models because variable categories are not the same across time  
+- use a statistical modelling to join datasets from different time points and retain caterogical variable structure  
+- visualize any factor variable across time  
+
+In many projects where dataset contains a categorical variable one of the biggest obstacle is that 
+the data provider during internal processes was changing an encoding of this variable during a time.
 Thus some categories were grouped and other were separated or a new one is added or an old one is removed.
 
-There should be stated a 3 clear questions:
+### Different types of panel data
+## panel dataset without unique identifier
 
-1. Do i have a transition table. 
-2. Type of the data - panel balanced or unbalanced or aggregate data vs individual data.
-3. Direction of a transition, forward or backward - use a new or an old encoding
-
-## panel unbalanced
-
-Here we could not observe what category have each observations across time:
-There is not a possibility to build automatically mapping
-We have to provide manually a mapping table - usually by a data provider like a country statistics office
-In worst case made it manually when supported by some officials directive.
+We could not observe what category have each observations across time.
+There is not a possibility to build automatically a mapping.
+We have to provide manually a mapping table - usually by a data provider like a national statistics office.
+In worst case somebody have to make it manually though supported by some officials directive.
 
 ID, name, code, date  
 uninformative anonymous carpenter 102 2020-02-10  
@@ -55,22 +54,34 @@ uninformative anonymous plumber 103 2020-02-10
 uninformative anonymous carpenter or plumber 121 2020-02-12  
 uninformative anonymous carpenter or plumber 121 2020-02-12  
 
+We want to map it 
 Here we artificially enlarge degrees of freedom  
- carpenter   121 2020-02-10  
- plumber  121 2020-02-10  
- carpenter 121 2020-02-12 50%  
- plumber 121 2020-02-12 50%  
- carpenter 121 2020-02-12 50%  
- plumber  121 2020-02-12 50%  
- 
-## panel balanced
 
-Here we could observe what category have each observation across time:
+ carpenter   102  2020-02-10  
+ plumber  103 2020-02-10  
+ carpenter 102  2020-02-12 50%  
+ plumber 103 2020-02-12 50%  
+ carpenter 102  2020-02-12 50%  
+ plumber 103 2020-02-12 50%  
+ 
+or
+
+carpenter or plumber  121 2020-02-10  50%  
+carpenter or plumber  121 2020-02-10  50%  
+carpenter or plumber 121 2020-02-10 50%  
+carpenter or plumber 121 2020-02-10 50%  
+carpenter or plumber 121 2020-02-12   
+carpenter or plumber  121 2020-02-12 
+ 
+## panel dataset with unique identifier
+
+Here we could observe what category have each subject across time
 There is a possibility to build a mapping automatically
 
 we could have new identifiers only in newest partition ...  
 or old identifiers which do not continue to participate in abandoned group
 
+000 Retire Jim carpenter 102 2020-02-10
 111 John Doe carpenter 102 2020-02-10  
 222 Jimmy Smith plumber 103 2020-02-10  
 111 John Doe carpenter or plumber 121 2020-02-12  
@@ -79,21 +90,21 @@ or old identifiers which do not continue to participate in abandoned group
 103,102 -> 121
 
 Here we want to adjust to a new encoding  
+000 Retire Jim carpenter or plumber 121 2020-02-10 some%
 111 John Doe carpenter or plumber  121 2020-02-10  
 222 Jimmy Smith carpenter or plumber  121 2020-02-10  
 111 John Doe carpenter or plumber 121 2020-02-12  
 222 Jimmy Smith carpenter or plumber 121 2020-02-12  
 
-Here we adjust to old encodingif we are sure that subjects have the same class.
-We have to assume that each person could not chenge the occupation which seems not reasonable.
-This assumption could be satste in other direction too for other example.
+Here we adjust to old encoding if we are sure that subjects have the same class.
+We have to assume that each person could not change the occupation which sometimes might seems not reasonable.
 
 111 John Doe carpenter 102 2020-02-10  
 222 Jimmy Smith plumber 103 2020-02-10  
 111 John Doe carpenter 102 2020-02-12  
 222 Jimmy Smith carpenter 103 2020-02-12  
 
-Thus the best solutioon could be build a transition table and use algoritm for ubalance data.
+Thus the best solutioon could be build a transition table and use algoritm for dataset without identifier.
 
 ### simple frequencies vs ML module 
 
@@ -102,7 +113,7 @@ We could get a few types of data:
 
 ML unsupervised to choose most probable categories, narrow number of possible categories
 
-#### Simple freqencies
+#### Simple frequencies
 
 The first hash table - transitions:
 
@@ -162,6 +173,8 @@ Logarithmic wages was regressed against individual characteristics relevant from
 
 ## Data
 
+###
+
 occup dataset is an example of unbalance panel dataset.
 It is presenting a characteristics from randomly selected company and then using k step procedure employees are chosen. 
 The survey is anonymous and take place every two years. Use ?occup for more details.
@@ -175,7 +188,6 @@ data(trans)
 ```{r}
 occup %>% glimpse()
 ```
-
 
 trans dataset containing transitions between old (2008) and new (2010) occupational codes.
 
@@ -216,7 +228,7 @@ occup_old = occup[occup$year == 2008,]
 occup_new = occup[occup$year == 2010,]
 ```
 
-simple model where probabilities will be taken from a category freqency.
+simple model where probabilities will be taken from a category frequency.
 
 ```{r}
 cat2cat(
@@ -227,7 +239,7 @@ cat2cat(
 
 ### ml module
 
-Curentlly only knn method is availble.
+Currently only knn method is available.
 
 ```{r}
 occup_2 = cat2cat(
@@ -251,7 +263,7 @@ occup_3 <- cat2cat(
 ```
 
 
-notice : if the ml model is failing then NA is returnd so 
+notice : if the ml model is failing then NA is returned so 
 
 cor(occup_3$old$wei_ml_c2c, occup_3$old$wei_freq_c2c, use = "complete.obs")
 
@@ -260,7 +272,7 @@ cor(occup_3$old$wei_ml_c2c, occup_3$old$wei_freq_c2c, use = "complete.obs")
 occup_3 %>% glimpse()
 ```
 
-New freqs for potential next step:
+New freqencies for potential next step:
 
 ```{r}
 get_freqs(x = occup_3$new$g_new_c2c, multipier = floor(occup_3$new$multipier * occup_3$new$wei_freq_c2c)) %>% head()
@@ -281,7 +293,7 @@ Remember to correct degrees of freedom
 
 ### providing mappings manually
 
-example of aggragate dataset where we want to specify transitions manually:
+example of aggregate dataset where we want to specify transitions manually:
 
 Simulate the data.
 
@@ -312,7 +324,8 @@ agg_old %>% glimpse()
 ```
 
 
-Remember that after that you have to aggrage the results in a proper way. 
+Remember that after that you have to aggragate the results in a proper way. 
+
 Moreover each analysis could requires specific aggregation process.
 
 
@@ -344,8 +357,8 @@ agg2$new %>% group_by(vertical) %>% summarise(sales = sum(sales*prop), counts = 
 
 # what if there are a many time points to map
 
-then cat2cat have to be used recursevly where the prune method might be needed to limit the problem of expotentialy growing replications.
+then cat2cat have to be used recursively where the prune method might be needed to limit the problem of exponentially growing replications.
 Thus a prune_c2c with highest1 or highest method could be used before setting a df to next iteration.
-However when only 3 perionds have to be map then the middle one might be the base one.
+However when only 3 periods have to be map then the middle one might be the base one.
 
 

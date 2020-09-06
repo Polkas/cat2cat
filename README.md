@@ -1,5 +1,4 @@
-# cat2cat <a href='https://github.com/polkas/cat2cat'><img src='./docs/cat2cat_logo.png' align="right" height="200" /></a>
-
+# cat2cat <a href='https://github.com/polkas/cat2cat'><img src='man/figures/cat2cat_logo.png' align="right" height="200" /></a>
 [![R build status](https://github.com/polkas/cat2cat/workflows/R-CMD-check/badge.svg)](https://github.com/polkas/cat2cat/actions)
 [![codecov](https://codecov.io/gh/Polkas/cat2cat/branch/master/graph/badge.svg)](https://codecov.io/gh/Polkas/cat2cat)
 
@@ -33,12 +32,12 @@ There should be stated a 3 clear questions:
 2. Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers, aggregate data vs individual data.
 3. Direction of a transition, forward or backward - use a new or an old encoding
 
-For more advance usage check the vignette.
+For advance usage check the vignette (in development).
 
 Quick intro:
 
 ## Manual transitions
-## Aggragate dataset
+## Aggregate dataset
 ```r
 library(cat2cat)
 library(dplyr)

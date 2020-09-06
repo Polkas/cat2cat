@@ -20,7 +20,7 @@ verticals2
 verticals2 dataset
 }
 \details{
-random data
+random data - single product sales across e-commerce verticals
 }
 \examples{
 \dontrun{
