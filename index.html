@@ -15,7 +15,7 @@
 <meta property="og:description" content="
   There are offered automatic methods to map a category variable according to a specific encoding across different time points. 
   The main rule is to replicate the observation if it could be assign to a few categories.
-  Then using simple freqencies or ml model to approximate probabilities of being assign to each of them.">
+  Then using simple frequencies or ml model to approximate probabilities of being assign to each of them.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -80,7 +80,7 @@
 <div id="mapping-of-a-categorical-variable-in-a-panel-dataset-according-to-a-new-encoding" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mapping-of-a-categorical-variable-in-a-panel-dataset-according-to-a-new-encoding" class="anchor"></a>Mapping of a categorical variable in a panel dataset according to a new encoding</h2>
-<p><strong>The main rule is to replicate the observation if it could be assign to a few categories</strong> <strong>then using simple freqencies or ml model to approximate probabilities of being assign to each of them.</strong></p>
+<p><strong>The main rule is to replicate the observation if it could be assign to a few categories</strong> <strong>then using simple frequencies or ml model to approximate probabilities of being assign to each of them.</strong></p>
 <p><a href="https://polkas.github.io/cat2cat/"><strong>pkgdown url</strong></a></p>
 <p>Why cat2cat:</p>
 <ul>
@@ -88,7 +88,7 @@
 </li>
 <li>stop removing variables for ml models because variable categories are not the same across time<br>
 </li>
-<li>use a statistical modelling to join datasets from different time points and retain caterogical variable structure<br>
+<li>use a statistical modelling to join datasets from different time points and retain categorical variable structure<br>
 </li>
 <li>visualize any factor variable across time</li>
 </ul>
@@ -218,7 +218,7 @@
 <a href="#regression" class="anchor"></a>Regression</h2>
 <div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="co">## orginal dataset </span>
-<span class="kw">lms2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="kw">salary</span>)) <span class="op">~</span> <span class="kw">age</span> <span class="op">+</span> <span class="kw">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">edu</span>) <span class="op">+</span> <span class="kw">parttime</span> <span class="op">+</span> <span class="kw">exp</span>, <span class="kw">occup_old</span>, weights = <span class="kw">multipier</span>)
+<span class="kw">lms2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="kw">salary</span>)) <span class="op">~</span> <span class="kw">age</span> <span class="op">+</span> <span class="kw">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">edu</span>) <span class="op">+</span> <span class="kw">parttime</span> <span class="op">+</span> <span class="kw">exp</span>, <span class="kw">occup_old</span>, weights = <span class="kw">multiplier</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">lms2</span>)
 
 <span class="co">## using one highest cross weights</span>
@@ -227,13 +227,13 @@
 <span class="kw">occup_old_2</span> <span class="op">&lt;-</span> <span class="kw">occup_2</span><span class="op">$</span><span class="kw">old</span> <span class="op">%&gt;%</span> 
                 <span class="fu"><a href="reference/cross_cat2cat.html">cross_cat2cat</a></span>(<span class="kw">.</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"wei_freq_c2c"</span>, <span class="st">"wei_knn_c2c"</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span><span class="op">/</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">/</span><span class="fl">2</span>)) <span class="op">%&gt;%</span> 
                 <span class="fu"><a href="reference/prune_cat2cat.html">prune_cat2cat</a></span>(<span class="kw">.</span>,column = <span class="st">"wei_cross_c2c"</span>, method = <span class="st">"highest1"</span>) 
-<span class="kw">lms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="kw">salary</span>)) <span class="op">~</span> <span class="kw">age</span> <span class="op">+</span> <span class="kw">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">edu</span>) <span class="op">+</span> <span class="kw">parttime</span> <span class="op">+</span> <span class="kw">exp</span>, <span class="kw">occup_old_2</span>, weights = <span class="kw">multipier</span>)
+<span class="kw">lms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="kw">salary</span>)) <span class="op">~</span> <span class="kw">age</span> <span class="op">+</span> <span class="kw">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">edu</span>) <span class="op">+</span> <span class="kw">parttime</span> <span class="op">+</span> <span class="kw">exp</span>, <span class="kw">occup_old_2</span>, weights = <span class="kw">multiplier</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">lms</span>)
 
 <span class="co">## we have to adjust size of stds as we artificialy enlarge degrees of freedom</span>
 <span class="kw">occup_old_3</span> <span class="op">&lt;-</span> <span class="kw">occup_2</span><span class="op">$</span><span class="kw">old</span> <span class="op">%&gt;%</span> 
                 <span class="fu"><a href="reference/prune_cat2cat.html">prune_cat2cat</a></span>(method = <span class="st">"nonzero"</span>) <span class="co">#many prune methods like highest</span>
-<span class="kw">lms1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="kw">salary</span>)) <span class="op">~</span> <span class="kw">age</span> <span class="op">+</span> <span class="kw">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">edu</span>) <span class="op">+</span> <span class="kw">parttime</span> <span class="op">+</span> <span class="kw">exp</span>, <span class="kw">occup_old_3</span>, weights = <span class="kw">multipier</span> <span class="op">*</span> <span class="kw">wei_freq_c2c</span>)
+<span class="kw">lms1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(<span class="kw">salary</span>)) <span class="op">~</span> <span class="kw">age</span> <span class="op">+</span> <span class="kw">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">edu</span>) <span class="op">+</span> <span class="kw">parttime</span> <span class="op">+</span> <span class="kw">exp</span>, <span class="kw">occup_old_3</span>, weights = <span class="kw">multiplier</span> <span class="op">*</span> <span class="kw">wei_freq_c2c</span>)
 <span class="co">## summary_c2c</span>
 <span class="fu"><a href="reference/summary_c2c.html">summary_c2c</a></span>(<span class="kw">lms1</span>, df_old = <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="kw">occup_old</span>), df_new = <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="kw">occup_old_3</span>))</pre></div>
 </div>
