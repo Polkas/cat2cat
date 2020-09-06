@@ -87,18 +87,6 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/Introduction.html">cat2cat - Introduction</a>
-    </li>
-  </ul>
-</li>
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
@@ -178,32 +166,32 @@
   weights = <span class='kw'>multipier</span> <span class='op'>*</span> <span class='kw'>wei_freq_c2c</span>
 )
 <span class='fu'>summary_c2c</span>(<span class='kw'>lms</span>, df_old = <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>occup_old</span>), df_new = <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>occup_2</span><span class='op'>$</span><span class='kw'>old</span>))
-</div><div class='output co'>#&gt;                  Estimate   Std. Error    t value      Pr(&gt;|t|)  std.error_c
-#&gt; (Intercept)   8.604993403 0.0055287709 1556.40261  0.000000e+00 0.0200991920
-#&gt; age          -0.002878253 0.0001433546  -20.07786  1.296837e-89 0.0005211486
-#&gt; sexTRUE       0.253953695 0.0015890854  159.81123  0.000000e+00 0.0057769319
-#&gt; factor(edu)2 -0.079911042 0.0030490685  -26.20835 3.004023e-151 0.0110845275
-#&gt; factor(edu)3 -0.357933538 0.0039190179  -91.33246  0.000000e+00 0.0142471257
-#&gt; factor(edu)4 -0.425272851 0.0022672906 -187.56874  0.000000e+00 0.0082424666
-#&gt; factor(edu)5 -0.405055098 0.0032012174 -126.53158  0.000000e+00 0.0116376469
-#&gt; factor(edu)6 -0.647379667 0.0022673015 -285.52870  0.000000e+00 0.0082425064
-#&gt; factor(edu)7 -0.529586026 0.0246296091  -21.50201 1.741074e-102 0.0895380283
-#&gt; factor(edu)8 -0.675164484 0.0034747932 -194.30350  0.000000e+00 0.0126321992
-#&gt; parttime      1.934251280 0.0035918181  538.51593  0.000000e+00 0.0130576295
-#&gt; exp           0.012846366 0.0001373618   93.52212  0.000000e+00 0.0004993625
-#&gt;              statistic_c    p.value_c
-#&gt; (Intercept)   428.126335 0.000000e+00
-#&gt; age            -5.522903 3.334435e-08
-#&gt; sexTRUE        43.959960 0.000000e+00
-#&gt; factor(edu)2   -7.209242 5.626610e-13
-#&gt; factor(edu)3  -25.123210 0.000000e+00
-#&gt; factor(edu)4  -51.595338 0.000000e+00
-#&gt; factor(edu)5  -34.805584 0.000000e+00
-#&gt; factor(edu)6  -78.541604 0.000000e+00
-#&gt; factor(edu)7   -5.914649 3.325837e-09
-#&gt; factor(edu)8  -53.447897 0.000000e+00
-#&gt; parttime      148.131885 0.000000e+00
-#&gt; exp            25.725531 0.000000e+00</div></pre>
+</div><div class='output co'>#&gt;                  Estimate   Std. Error    t value      Pr(&gt;|t|)  correct
+#&gt; (Intercept)   8.604993403 0.0055287709 1556.40261  0.000000e+00 3.635382
+#&gt; age          -0.002878253 0.0001433546  -20.07786  1.296837e-89 3.635382
+#&gt; sexTRUE       0.253953695 0.0015890854  159.81123  0.000000e+00 3.635382
+#&gt; factor(edu)2 -0.079911042 0.0030490685  -26.20835 3.004023e-151 3.635382
+#&gt; factor(edu)3 -0.357933538 0.0039190179  -91.33246  0.000000e+00 3.635382
+#&gt; factor(edu)4 -0.425272851 0.0022672906 -187.56874  0.000000e+00 3.635382
+#&gt; factor(edu)5 -0.405055098 0.0032012174 -126.53158  0.000000e+00 3.635382
+#&gt; factor(edu)6 -0.647379667 0.0022673015 -285.52870  0.000000e+00 3.635382
+#&gt; factor(edu)7 -0.529586026 0.0246296091  -21.50201 1.741074e-102 3.635382
+#&gt; factor(edu)8 -0.675164484 0.0034747932 -194.30350  0.000000e+00 3.635382
+#&gt; parttime      1.934251280 0.0035918181  538.51593  0.000000e+00 3.635382
+#&gt; exp           0.012846366 0.0001373618   93.52212  0.000000e+00 3.635382
+#&gt;               std.error_c statistic_c    p.value_c
+#&gt; (Intercept)  0.0200991920  428.126335 0.000000e+00
+#&gt; age          0.0005211486   -5.522903 3.334435e-08
+#&gt; sexTRUE      0.0057769319   43.959960 0.000000e+00
+#&gt; factor(edu)2 0.0110845275   -7.209242 5.626610e-13
+#&gt; factor(edu)3 0.0142471257  -25.123210 0.000000e+00
+#&gt; factor(edu)4 0.0082424666  -51.595338 0.000000e+00
+#&gt; factor(edu)5 0.0116376469  -34.805584 0.000000e+00
+#&gt; factor(edu)6 0.0082425064  -78.541604 0.000000e+00
+#&gt; factor(edu)7 0.0895380283   -5.914649 3.325837e-09
+#&gt; factor(edu)8 0.0126321992  -53.447897 0.000000e+00
+#&gt; parttime     0.0130576295  148.131885 0.000000e+00
+#&gt; exp          0.0004993625   25.725531 0.000000e+00</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
