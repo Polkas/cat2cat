@@ -75,7 +75,7 @@ This function might seems to be a complex at the first glance though it is built
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.2</span>
       </span>
     </div>
 
@@ -176,14 +176,16 @@ Additional columns will be informative only for a one data.frame as we always ma
 </ul>
 
 <p>Without ml section only simple frequencies are assessed.
-When ml model is broken then weights from simple frequencies are taken.</p>
+When ml model is broken then weights from simple frequencies are taken.
+Method knn is recommended for smaller datasets.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>occup</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>occup_small</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>occup</span>)
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>trans</span>)
 
-<span class='kw'>occup_old</span> <span class='op'>&lt;-</span> <span class='kw'>occup</span>[<span class='kw'>occup</span><span class='op'>$</span><span class='kw'>year</span> <span class='op'>==</span> <span class='fl'>2008</span>, ]
-<span class='kw'>occup_new</span> <span class='op'>&lt;-</span> <span class='kw'>occup</span>[<span class='kw'>occup</span><span class='op'>$</span><span class='kw'>year</span> <span class='op'>==</span> <span class='fl'>2010</span>, ]
+<span class='kw'>occup_old</span> <span class='op'>&lt;-</span> <span class='kw'>occup_small</span>[<span class='kw'>occup_small</span><span class='op'>$</span><span class='kw'>year</span> <span class='op'>==</span> <span class='fl'>2008</span>, ]
+<span class='kw'>occup_new</span> <span class='op'>&lt;-</span> <span class='kw'>occup_small</span>[<span class='kw'>occup_small</span><span class='op'>$</span><span class='kw'>year</span> <span class='op'>==</span> <span class='fl'>2010</span>, ]
 
 <span class='co'># default only simple frequencies</span>
 
@@ -204,15 +206,6 @@ When ml model is broken then weights from simple frequencies are taken.</p>
   )
 )
 
-<span class='co'># mix all ml methods</span>
-
-<span class='kw'>occup_4_mix</span> <span class='op'>=</span> <span class='fu'>cat2cat</span>(
- data = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(old = <span class='kw'>occup_old</span>, new = <span class='kw'>occup_new</span>, cat_var = <span class='st'>"code"</span>, time_var = <span class='st'>"year"</span>),
- mappings = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trans = <span class='kw'>trans</span>, direction = <span class='st'>"backward"</span>),
- ml = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(method = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"knn"</span>, <span class='st'>"rf"</span>, <span class='st'>"lda"</span>),
-           features = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"age"</span>, <span class='st'>"sex"</span>, <span class='st'>"edu"</span>, <span class='st'>"exp"</span>, <span class='st'>"parttime"</span>, <span class='st'>"salary"</span>),
-           args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(k = <span class='fl'>10</span>, ntree = <span class='fl'>30</span>))
-)
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -229,7 +222,7 @@ When ml model is broken then weights from simple frequencies are taken.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.9000.</p>
 </div>
 
       </footer>

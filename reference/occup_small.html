@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • cat2cat</title>
+<title>Occupational dataset - small one — occup_small • cat2cat</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,8 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Occupational dataset - small one — occup_small" />
+<meta property="og:description" content="Occupational dataset - small one" />
 
 
 
@@ -58,7 +59,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -108,115 +109,54 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Occupational dataset - small one</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Polkas/cat2cat/blob/master/R/data.R'><code>R/data.R</code></a></small>
+    <div class="hidden name"><code>occup_small.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Occupational dataset - small one</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='kw'>occup_small</span></pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="cat2cat.html">cat2cat()</a></code> </p>
-        </td>
-        <td><p>Automatic mapping of a categorical variable in a panel dataset according to a new encoding</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cat2cat_agg.html">cat2cat_agg()</a></code> </p>
-        </td>
-        <td><p>Aggregate panel dataset - Manual mapping of a categorical variable according to a new encoding</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cat_apply_freq.html">cat_apply_freq()</a></code> </p>
-        </td>
-        <td><p>Applying frequencies to object returned by get_mappings</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cross_cat2cat.html">cross_cat2cat()</a></code> </p>
-        </td>
-        <td><p>a function to make a combination of weights from different methods by each row</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_freqs.html">get_freqs()</a></code> </p>
-        </td>
-        <td><p>Getting frequencies for a vector with an optional multiplier argument</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_mappings.html">get_mappings()</a></code> </p>
-        </td>
-        <td><p>Transforming table of mappings to a list with keys</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="occup.html">occup</a></code> </p>
-        </td>
-        <td><p>Occupational dataset</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="occup_small.html">occup_small</a></code> </p>
-        </td>
-        <td><p>Occupational dataset - small one</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="prune_cat2cat.html">prune_cat2cat()</a></code> </p>
-        </td>
-        <td><p>A set of prune methods which will be useful after transition process</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="summary_c2c.html">summary_c2c()</a></code> </p>
-        </td>
-        <td><p>Summary for data.frame with replicated rows</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="trans.html">trans</a></code> </p>
-        </td>
-        <td><p>trans dataset containing transitions between old (2008) and new (2010) occupational codes.
-this table could be used to map encodings in both directions.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="verticals.html">verticals</a></code> </p>
-        </td>
-        <td><p>verticals dataset</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="verticals2.html">verticals2</a></code> </p>
-        </td>
-        <td><p>verticals2 dataset</p></td>
-      </tr>
-    </tbody>
-    </table>
+
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>A data frame with around 5000 observations and 12 variables.</p><dl>
+<dt>id</dt><dd><p>integer	id</p></dd>
+<dt>age</dt><dd><p>numeric age of a subject</p></dd>
+<dt>sex</dt><dd><p>numeric sex of a subject</p></dd>
+<dt>edu</dt><dd><p>integer edu level of education of a subject where lower means higher - 1 for at least master degree</p></dd>
+<dt>exp</dt><dd><p>numeric exp number of experience years for a subject</p></dd>
+<dt>district</dt><dd><p>integer district</p></dd>
+<dt>parttime</dt><dd><p>numeric contract type regards time where 1 mean full-time (work a whole week)</p></dd>
+<dt>salary</dt><dd><p>numeric salary per year</p></dd>
+<dt>code</dt><dd><p>character code - occupational code</p></dd>
+<dt>multiplier</dt><dd><p>numeric multiplier for the subject to reproduce a population - how many of such subjects in population</p></dd>
+<dt>year</dt><dd><p>integer year</p></dd>
+<dt>code4</dt><dd><p>character code - occupational code - first 4 digits</p></dd>
+
+</dl>
+
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>occup dataset is an example of unbalance panel dataset.
+This is a simulated data although there are applied a real world characteristics from national statistical office survey.
+The orginal survey is anonymous and take place every two years.
+It is presenting a characteristics from randomly selected company and then using k step procedure employees are chosen.</p>
+<p>occupational dataset</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1234</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>occup</span>)
+<span class='kw'>occup_small</span> <span class='op'>&lt;-</span> <span class='kw'>occup</span>[<span class='fu'><a href='https://rdrr.io/r/base/sort.html'>sort</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>occup</span>), <span class='fl'>5000</span>)), ]
+}
+</div></pre>
   </div>
-
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
