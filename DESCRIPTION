@@ -1,6 +1,6 @@
 Package: cat2cat
-Title: Mapping of a categorical variable in a panel dataset according to a chosen encoding
-Version: 0.1.0
+Title: Mapping of a Categorical Variable in a Panel Dataset According to a New Encoding
+Version: 0.1.2
 Authors@R: person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre"))
 Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
 Description: 
@@ -21,7 +21,8 @@ Imports:
 	randomForest,
 	MASS,
 	tidyr,
-	dplyr
+	dplyr,
+	data.table
 Suggests:
 	  knitr,
     rmarkdown,

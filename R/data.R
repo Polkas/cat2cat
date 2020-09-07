@@ -26,6 +26,39 @@
 #'
 "occup"
 
+#' Occupational dataset - small one
+#'
+#' @details occup dataset is an example of unbalance panel dataset.
+#' This is a simulated data although there are applied a real world characteristics from national statistical office survey.
+#' The orginal survey is anonymous and take place every two years.
+#' It is presenting a characteristics from randomly selected company and then using k step procedure employees are chosen.
+#'
+#' @usage occup_small
+#'
+#' @format A data frame with around 5000 observations and 12 variables.
+#' \describe{
+#' \item{id}{	integer	id}
+#' \item{age}{ numeric age of a subject}
+#' \item{sex}{ numeric sex of a subject}
+#' \item{edu}{ integer edu level of education of a subject where lower means higher - 1 for at least master degree}
+#' \item{exp}{ numeric exp number of experience years for a subject}
+#' \item{district}{ integer district}
+#' \item{parttime}{ numeric contract type regards time where 1 mean full-time (work a whole week)}
+#' \item{salary}{ numeric salary per year}
+#' \item{code}{ character code - occupational code}
+#' \item{multiplier}{ numeric multiplier for the subject to reproduce a population - how many of such subjects in population}
+#' \item{year}{integer year}
+#' \item{code4}{ character code - occupational code - first 4 digits}
+#' }
+#' @details occupational dataset
+#' @examples
+#' \dontrun{
+#' set.seed(1234)
+#' data(occup)
+#' occup_small <- occup[sort(sample(nrow(occup), 5000)), ]
+#' }
+"occup_small"
+
 #' trans dataset containing transitions between old (2008) and new (2010) occupational codes.
 #' this table could be used to map encodings in both directions.
 #'

@@ -25,11 +25,11 @@ The size of the correction is equal to sqrt(df_new / df_old).
 Where standard errors are multiplied and t statistics divided by it.
 }
 \examples{
-data(occup)
+data(occup_small)
 data(trans)
 
-occup_old <- occup[occup$year == 2008, ]
-occup_new <- occup[occup$year == 2010, ]
+occup_old <- occup_small[occup_small$year == 2008, ]
+occup_new <- occup_small[occup_small$year == 2010, ]
 
 occup_2 <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),

@@ -39,12 +39,12 @@ method - specify method to reduce number of replications
 }
 }
 \examples{
+data(occup_small)
 data(occup)
 data(trans)
 
-occup_old <- occup[occup$year == 2008, ]
-occup_new <- occup[occup$year == 2010, ]
-
+occup_old <- occup_small[occup_small$year == 2008, ]
+occup_new <- occup_small[occup_small$year == 2010, ]
 
 occup_2 <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),

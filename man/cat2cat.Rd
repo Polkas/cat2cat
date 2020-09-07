@@ -55,13 +55,15 @@ ml args
 
 Without ml section only simple frequencies are assessed.
 When ml model is broken then weights from simple frequencies are taken.
+Method knn is recommended for smaller datasets.
 }
 \examples{
+data(occup_small)
 data(occup)
 data(trans)
 
-occup_old <- occup[occup$year == 2008, ]
-occup_new <- occup[occup$year == 2010, ]
+occup_old <- occup_small[occup_small$year == 2008, ]
+occup_new <- occup_small[occup_small$year == 2010, ]
 
 # default only simple frequencies
 
@@ -82,13 +84,4 @@ occup_3 <- cat2cat(
   )
 )
 
-# mix all ml methods
-
-occup_4_mix = cat2cat(
- data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
- mappings = list(trans = trans, direction = "backward"),
- ml = list(method = c("knn", "rf", "lda"),
-           features = c("age", "sex", "edu", "exp", "parttime", "salary"),
-           args = list(k = 10, ntree = 30))
-)
 }
