@@ -2,16 +2,16 @@
 [![R build status](https://github.com/polkas/cat2cat/workflows/R-CMD-check/badge.svg)](https://github.com/polkas/cat2cat/actions)
 [![codecov](https://codecov.io/gh/Polkas/cat2cat/branch/master/graph/badge.svg)](https://codecov.io/gh/Polkas/cat2cat)
 
-## Mapping of a Categorical Variable in a Panel Dataset According to a New Encoding
+## Mapping of a Categorical Variable in a Panel Dataset
 
 **The main rule is to replicate the observation if it could be assign to a few categories**
-**then using simple frequencies or ml model to approximate probabilities of being assign to each of them.**
+**then using simple frequencies or statistical methods to approximate probabilities of being assign to each of them.**
 
 [**pkgdown url**](https://polkas.github.io/cat2cat/)
 
 Why cat2cat:  
 - universal algorithm which could be used in different science fields  
-- stop removing variables for ml models because variable categories are not the same across time  
+- stop removing variables for statistical models because variable categories are not the same across time  
 - use a statistical modelling to join datasets from different time points and retain categorical variable structure  
 - visualize any factor variable across time  
 

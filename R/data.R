@@ -52,11 +52,9 @@
 #' }
 #' @details occupational dataset
 #' @examples
-#' \dontrun{
 #' set.seed(1234)
 #' data(occup)
 #' occup_small <- occup[sort(sample(nrow(occup), 5000)), ]
-#' }
 "occup_small"
 
 #' trans dataset containing transitions between old (2008) and new (2010) occupational codes.
@@ -86,24 +84,22 @@
 #' }
 #' @details random data - aggregate sales across e-commerce verticals
 #' @examples
-#' \dontrun{
-#'agg_old <- data.frame(
+#' agg_old <- data.frame(
 #'  vertical = c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
 #'               "Clothes", "Home", "Fashion", "Health", "Sport"),
 #'  sales = rnorm(10, 100, 10),
 #'  counts = rgeom(10, 0.0001),
-#'  v_date = rep("2020-04-01", 10), stringsAsFactors = F
-#')
+#'  v_date = rep("2020-04-01", 10), stringsAsFactors = FALSE
+#' )
 #'
-#'agg_new <- data.frame(
+#' agg_new <- data.frame(
 #'  vertical = c("Electronics", "Supermarket", "Kids", "Automotive1",
 #'               "Automotive2", "Books", "Clothes", "Home", "Fashion", "Health", "Sport"),
 #'  sales = rnorm(11, 100, 10),
 #'  counts = rgeom(11, 0.0001),
-#'  v_date = rep("2020-05-01", 11), stringsAsFactors = F
-#')
-#'verticals <- rbind(agg_old, agg_new)
-#'}
+#'  v_date = rep("2020-05-01", 11), stringsAsFactors = FALSE
+#' )
+#' verticals <- rbind(agg_old, agg_new)
 "verticals"
 
 #' verticals2 dataset
@@ -119,14 +115,12 @@
 #' }
 #' @details random data - single products sales across e-commerce verticals
 #' @examples
-#' \dontrun{
-#'
 #' vert_old <- data.frame(
 #'  ean = 90000001:90000020,
 #'  vertical = sample(c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
 #'               "Clothes", "Home", "Fashion", "Health", "Sport"), 20, replace = TRUE),
 #'  sales = rnorm(20, 100, 10),
-#'  v_date = rep("2020-04-01", 20), stringsAsFactors = F
+#'  v_date = rep("2020-04-01", 20), stringsAsFactors = FALSE
 #')
 #'
 #' vert_old2 <- data.frame(
@@ -134,7 +128,7 @@
 #'  vertical = sample(c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
 #'               "Clothes", "Home", "Fashion", "Health", "Sport"), 80, replace = TRUE),
 #'  sales = rnorm(80, 100, 10),
-#'  v_date = rep("2020-04-01", 80), stringsAsFactors = F
+#'  v_date = rep("2020-04-01", 80), stringsAsFactors = FALSE
 #')
 #'
 #' vert_new <- vert_old2
@@ -154,11 +148,10 @@
 #'                       "Fashion", "Health", "Sport"), 20,
 #'                    replace = TRUE),
 #'  sales = rnorm(20, 100, 10),
-#'  v_date = rep("2020-05-01", 20), stringsAsFactors = F
+#'  v_date = rep("2020-05-01", 20), stringsAsFactors = FALSE
 #')
 #'
 #' verticals2 <- rbind(rbind(vert_old, vert_old2),
 #'                     rbind(vert_new, vert_new2))
 #' verticals2$vertical <- as.character(verticals2$vertical)
-#'}
 "verticals2"

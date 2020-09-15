@@ -23,14 +23,12 @@ verticals2 dataset
 random data - single products sales across e-commerce verticals
 }
 \examples{
-\dontrun{
-
 vert_old <- data.frame(
  ean = 90000001:90000020,
  vertical = sample(c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
               "Clothes", "Home", "Fashion", "Health", "Sport"), 20, replace = TRUE),
  sales = rnorm(20, 100, 10),
- v_date = rep("2020-04-01", 20), stringsAsFactors = F
+ v_date = rep("2020-04-01", 20), stringsAsFactors = FALSE
 )
 
 vert_old2 <- data.frame(
@@ -38,7 +36,7 @@ vert_old2 <- data.frame(
  vertical = sample(c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
               "Clothes", "Home", "Fashion", "Health", "Sport"), 80, replace = TRUE),
  sales = rnorm(80, 100, 10),
- v_date = rep("2020-04-01", 80), stringsAsFactors = F
+ v_date = rep("2020-04-01", 80), stringsAsFactors = FALSE
 )
 
 vert_new <- vert_old2
@@ -58,12 +56,11 @@ vert_new2 <- data.frame(
                       "Fashion", "Health", "Sport"), 20,
                    replace = TRUE),
  sales = rnorm(20, 100, 10),
- v_date = rep("2020-05-01", 20), stringsAsFactors = F
+ v_date = rep("2020-05-01", 20), stringsAsFactors = FALSE
 )
 
 verticals2 <- rbind(rbind(vert_old, vert_old2),
                     rbind(vert_new, vert_new2))
 verticals2$vertical <- as.character(verticals2$vertical)
-}
 }
 \keyword{datasets}

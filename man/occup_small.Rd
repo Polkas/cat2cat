@@ -36,10 +36,8 @@ It is presenting a characteristics from randomly selected company and then using
 occupational dataset
 }
 \examples{
-\dontrun{
 set.seed(1234)
 data(occup)
 occup_small <- occup[sort(sample(nrow(occup), 5000)), ]
-}
 }
 \keyword{datasets}

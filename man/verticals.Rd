@@ -23,13 +23,12 @@ verticals dataset
 random data - aggregate sales across e-commerce verticals
 }
 \examples{
-\dontrun{
 agg_old <- data.frame(
  vertical = c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
               "Clothes", "Home", "Fashion", "Health", "Sport"),
  sales = rnorm(10, 100, 10),
  counts = rgeom(10, 0.0001),
- v_date = rep("2020-04-01", 10), stringsAsFactors = F
+ v_date = rep("2020-04-01", 10), stringsAsFactors = FALSE
 )
 
 agg_new <- data.frame(
@@ -37,9 +36,8 @@ agg_new <- data.frame(
               "Automotive2", "Books", "Clothes", "Home", "Fashion", "Health", "Sport"),
  sales = rnorm(11, 100, 10),
  counts = rgeom(11, 0.0001),
- v_date = rep("2020-05-01", 11), stringsAsFactors = F
+ v_date = rep("2020-05-01", 11), stringsAsFactors = FALSE
 )
 verticals <- rbind(agg_old, agg_new)
-}
 }
 \keyword{datasets}

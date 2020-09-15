@@ -1,13 +1,19 @@
+# cat2cat 0.1.3
+
+* Title reduce to less than 65 characters.
+* doi of journal paper added to a description section in the DESCRIPTION file.
+* unnecessary dontrun in data.R were removed.
+  
 # cat2cat 0.1.2
 
 * `occup_small` dataset to pass checks in terms of computation time of examples.
-* data.table rbindlist
-* optimize for loop for ml models
+* data.table rbindlist.
+* optimize for loop for ml models.
 
 # cat2cat 0.1.1
 
-* Title format in Description file
-* spelling
+* Title format in Description file.
+* spelling.
 
 # cat2cat 0.1.0
 

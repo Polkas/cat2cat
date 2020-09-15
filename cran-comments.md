@@ -1,4 +1,10 @@
 ## Test environments
+
+  Resubmission:
+  
+  - Title reduce to less than 65 characters
+  - doi of jurnal paper added to decription section in DESCRIPTION file
+  - unnecessary dontrun in data.R were removed
   
   github actions:
   
