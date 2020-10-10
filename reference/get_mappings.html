@@ -79,12 +79,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li>
@@ -120,7 +114,7 @@
     <p>transforming table of mappings to list with keys where first column is assumed to be an old encoding.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_mappings</span>(x = <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>())</pre>
+    <pre class="usage"><span class='fu'>get_mappings</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,10 +133,10 @@
     <p>the named list will be a more efficient solution than hash map as we are not expecting more than a few thousand keys.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='kw'>trans</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>trans</span><span class='op'>)</span>
 
-<span class='kw'>mappings</span> <span class='op'>&lt;-</span> <span class='fu'>get_mappings</span>(<span class='kw'>trans</span>)
-<span class='kw'>mappings</span><span class='op'>$</span><span class='kw'>to_old</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>]
+<span class='va'>mappings</span> <span class='op'>&lt;-</span> <span class='fu'>get_mappings</span><span class='op'>(</span><span class='va'>trans</span><span class='op'>)</span>
+<span class='va'>mappings</span><span class='op'>$</span><span class='va'>to_old</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span>
 </div><div class='output co'>#&gt; $`111101`
 #&gt; [1] "1111"
 #&gt; 
@@ -154,7 +148,7 @@
 #&gt; 
 #&gt; $`111201`
 #&gt; [1] "1112"
-#&gt; </div><div class='input'><span class='kw'>mappings</span><span class='op'>$</span><span class='kw'>to_new</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>]
+#&gt; </div><div class='input'><span class='va'>mappings</span><span class='op'>$</span><span class='va'>to_new</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span>
 </div><div class='output co'>#&gt; $`1111`
 #&gt; [1] "111101" "111102" "111103"
 #&gt; 
