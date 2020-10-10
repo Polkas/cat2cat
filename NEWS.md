@@ -1,3 +1,7 @@
+# 0.1.4
+
+* remove the unnecessery imports in the DESCRIPTION file
+
 # cat2cat 0.1.3
 
 * Title reduce to less than 65 characters.

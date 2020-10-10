@@ -1,6 +1,8 @@
 # cat2cat <a href='https://github.com/polkas/cat2cat'><img src='man/figures/cat2cat_logo.png' align="right" height="200" /></a>
 [![R build status](https://github.com/polkas/cat2cat/workflows/R-CMD-check/badge.svg)](https://github.com/polkas/cat2cat/actions)
+[![CRAN](http://www.r-pkg.org/badges/version/cat2cat)](https://cran.r-project.org/package=cat2cat)
 [![codecov](https://codecov.io/gh/Polkas/cat2cat/branch/master/graph/badge.svg)](https://codecov.io/gh/Polkas/cat2cat)
+[![Downloads](http://cranlogs.r-pkg.org/badges/grand-total/cat2cat?color=brightgreen)](http://www.r-pkg.org/pkg/cat2cat)
 
 ## Mapping of a Categorical Variable in a Panel Dataset
 
