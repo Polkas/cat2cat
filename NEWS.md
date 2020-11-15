@@ -1,6 +1,6 @@
 # 0.1.4
 
-* remove the unnecessery imports in the DESCRIPTION file
+* remove the unnecessary imports in the DESCRIPTION file
 
 # cat2cat 0.1.3
 
