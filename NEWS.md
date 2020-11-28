@@ -1,3 +1,14 @@
+# 0.1.6
+
+* basic vignette
+* rm .internal.selfref attr for mapped df
+* assertthat instead of stopifnot
+
+# 0.1.5
+
+* data.R adding set.seed
+* lack of a one bracket in description file
+
 # 0.1.4
 
 * remove the unnecessary imports in the DESCRIPTION file

@@ -23,6 +23,7 @@ verticals dataset
 random data - aggregate sales across e-commerce verticals
 }
 \examples{
+set.seed(1234)
 agg_old <- data.frame(
  vertical = c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
               "Clothes", "Home", "Fashion", "Health", "Sport"),

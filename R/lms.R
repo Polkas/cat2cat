@@ -2,7 +2,7 @@
 #' @description transforming summary.lm object according to real number of d.f.
 #' The standard errors, t statistics and p values have to be adjusted because of replicated rows.
 #' @param x lm object
-#' @param df_old integer number of d.f in orginal dataset
+#' @param df_old integer number of d.f in original dataset
 #' @param df_new integer number of d.f in dataset with replicated rows
 #' @return data.frame with additional columns over a regular summary.lm output like correct and statistics adjusted by it.
 #' @details The size of the correction is equal to sqrt(df_new / df_old).

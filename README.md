@@ -2,9 +2,10 @@
 [![R build status](https://github.com/polkas/cat2cat/workflows/R-CMD-check/badge.svg)](https://github.com/polkas/cat2cat/actions)
 [![CRAN](http://www.r-pkg.org/badges/version/cat2cat)](https://cran.r-project.org/package=cat2cat)
 [![codecov](https://codecov.io/gh/Polkas/cat2cat/branch/master/graph/badge.svg)](https://codecov.io/gh/Polkas/cat2cat)
-[![Downloads](http://cranlogs.r-pkg.org/badges/grand-total/cat2cat?color=brightgreen)](http://www.r-pkg.org/pkg/cat2cat)
 
 ## Mapping of a Categorical Variable in a Panel Dataset
+
+**This algorithm was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <doi:10.24425/cejeme.2020.134747>).**
 
 **The main rule is to replicate the observation if it could be assign to a few categories**
 **then using simple frequencies or statistical methods to approximate probabilities of being assign to each of them.**
@@ -16,10 +17,12 @@ Why cat2cat:
 - stop removing variables for statistical models because variable categories are not the same across time  
 - use a statistical modelling to join datasets from different time points and retain categorical variable structure  
 - visualize any factor variable across time  
+- real world datasets like `occup`
 
 In many projects where dataset contains a categorical variable one of the biggest obstacle is that 
 the data provider during internal processes was changing an encoding of this variable during a time.
 Thus some categories were grouped and other were separated or a new one is added or an old one is removed.
+The main objective is to merge a few surveys published by some data provider over the years.
 
 ## Installation
 
@@ -30,11 +33,9 @@ devtools::install_github("polkas/cat2cat")
 
 There should be stated a 3 clear questions:
 
-1. Do i have a transition table. 
-2. Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers, aggregate data vs individual data.
-3. Direction of a transition, forward or backward - use a new or an old encoding
-
-For advance usage check the vignette (in development).
+1. Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers, aggregate data vs individual data.
+2. Do i have a transition table. 
+3. Direction of a transition, forward or backward - use a new or an old encoding.
 
 Quick intro:
 
@@ -130,7 +131,9 @@ occup_old_mix_highest1occup_2_mix <- occup_2_mix$old %>%
                 cross_cat2cat(.) %>% 
                 prune_cat2cat(.,column = "wei_cross_c2c", method = "highest1") 
 ```
+
 ## Regression
+
 ```r
 ## orginal dataset 
 lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old, weights = multiplier)
@@ -151,5 +154,4 @@ occup_old_3 <- occup_2$old %>%
 lms1 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_3, weights = multiplier * wei_freq_c2c)
 ## summary_c2c
 summary_c2c(lms1, df_old = nrow(occup_old), df_new = nrow(occup_old_3))
-
 ```

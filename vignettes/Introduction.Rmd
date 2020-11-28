@@ -1,0 +1,294 @@
+---
+title: "cat2cat - Introduction"
+author: "Maciej Nasinski"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{miceFast - Introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T)
+knitr::opts_chunk$set(size = "tiny")
+knitr::opts_chunk$set(message = F)
+knitr::opts_chunk$set(warning = F)
+```
+
+```{r}
+options(scipen = 999)
+pacman::p_load(cat2cat, dplyr)
+```
+
+# Mapping of a Categorical Variable in a Panel Dataset
+
+**This algorithm was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <doi:10.24425/cejeme.2020.134747>).**
+
+**The main rule is to replicate the observation if it could be assign to a few categories**
+**then using simple frequencies or statistical methods to approximate probabilities of being assign to each of them.**
+
+Why cat2cat:  
+- universal algorithm which could be used in different science fields  
+- stop removing variables for ml models because variable categories are not the same across time  
+- use a statistical modelling to join datasets from different time points and retain categorical variable structure  
+- visualize any factor variable across time  
+- real world datasets like `occup`
+
+In many projects where dataset contains a categorical variable one of the biggest obstacle is that 
+the data provider during internal processes was changing an encoding of this variable during a time.
+Thus some categories were grouped and other were separated or a new one is added or an old one is removed.
+The main objective is to merge a few surveys published by some data provider over the years.
+
+
+## Many Time Points To Map
+
+cat2cat have to be used recursively where the prune methods (`prune_cat2cat`) might be needed to limit the problem of exponentially growing replications.
+Thus a prune_c2c with highest1 or highest method could be used before transferring a data.frame to the next iteration.
+However when only 3 periods have to be map then the middle one might be used as the base one.
+
+## Different Types Of Panel Data
+### Panel Dataset Without Unique Identifier
+
+We could not observe each subject category across time.
+There is not possible to build automatically a mapping table.
+We have to provide manually a mapping table - usually provided by a data provider like a national statistics office.
+In worst case somebody have to make it manually though supported by some official directives.
+
+|ID | occup| code| date|
+|---|------|-----|-----
+|uninformative anonymous| carpenter| 102| 2020-02-10  
+|uninformative anonymous| plumber| 103| 2020-02-10  
+|uninformative anonymous |carpenter or plumber| 121| 2020-02-12  
+|uninformative anonymous| carpenter or plumber| 121| 2020-02-12  
+
+Notice: New categories might appeared in a new partition or same old categories are depreciated.
+
+### Panel Dataset With Unique Identifier
+
+Here we could observe each subject category across time.
+There is a possibility to build a mapping automatically.
+
+|ID | name | occup| code| date|
+|---|------|-----|-----|-------
+|000| Retire Jim| carpenter| 102| 2020-02-10|
+|111| John Doe| carpenter| 102| 2020-02-10  |
+|222| Jimmy Smith| plumber| 103| 2020-02-10  |
+|111| John Doe| carpenter or plumber| 121| 2020-02-12 |  
+|222| Jimmy Smith| carpenter or plumber| 121| 2020-02-12|  
+
+Here we adjust to old encoding if we are sure that subjects have the same category.
+We have to assume that each person could not change the occupation which sometimes might seems not reasonable.
+Thus the best solution might to build a transition table and treat it as dataset without identifier.
+
+Notice: We could have new identifiers in a new partition or old identifiers which do not continue to participate.
+Notice: New categories might appeared in a new partition or same old categories are depraciated.
+
+### Simple Frequencies and ml Methods
+
+We could use simple frequencies or statistical/ml methods to approximate probabilities of being assign to each of possible categories.
+The probabilities might be used in further statistical models as a weights or to narrow the number of possible categories for each subject.
+
+Each new observation has some probability of existence because of the fact that it could be assign to a few groups.
+Probabilities were calculated using frequencies of subjects in each group/category at the previous survey/period. 
+More advanced users might specify custom per group probabilities.
+This should be obvious that for each observations which was replicated a few times probabilities have to sum to one. 
+There were made some assumptions about cases such as when there were no such groups in the previous period - some or all.
+When there is no frequencies the probabilities are allocated equally.
+
+Finally we get the dataset which has additional rows which comes from a replication process and at least 3 supplementary variables - new group, probability and number of replications. There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c. 
+
+For statistical models like linear regression its results should be adjusted because of a replication process which  artificially enlarge the number of degree of freedom. 
+Another solution might be using the prune_cat2cat function to remove additional rows and leave only categories with highest probabilities.
+
+### ISCO Classification- Dataset Without Unique Identifier - Application
+
+Rearrangement of the old ISCO classification into the new one
+To rearrange the old classification into the new one, an associative array that maps keys to values was used. More precisely, an association list was used which is a linked list in which each list element is comprised of a key and value. An association list where unique four digits COS group codes from 2010 are keys and matching groups from 2008 are values was constructed. There are around 500 unique four-digit COS group codes, so searching an association list is not less preferable than searching a binary search tree or hash table. We were able to build the association list because of existence of a transition table provided by CSO. Transition table convey information needed for matching different COS coding in time.
+The first association list – transitions:
+
+```
+> head(get_mappings(...))
+$‘1111‘
+[1] "1111"
+$‘1112‘
+[1] "1112"
+$‘1113‘
+[1] "1112"
+$‘1114‘
+[1] "1121" "1122" "1123"
+$‘1120‘
+[1] "1211" "1212"
+$‘1311‘
+[1] "1221" "1311"
+```
+
+For the surveys published after 2008, each observation was replicated in accordance with the COS association list. However, each new observation has some probability of existence because it can be assigned to several groups. Therefore, we built a next association list, which provides probabilities of attendance in each group. Probabilities were calculated using frequencies of workers in each group in the previous survey. It should be obvious that for each observation that was replicated, the probabilities have to add up to one. We also made some assumptions about cases where some occupational groups were lacking in previous surveys.
+
+The second association list – probabilities:
+```
+> head(cat_apply_freq(...))
+$‘1111‘
+[1] 1
+$‘1112‘
+[1] 1
+$‘1113‘
+[1] 1
+$‘1114‘
+[1] 0.3333333 0.3333333 0.3333333
+$‘1120‘
+[1] 0.8343979 0.1656021
+$‘1311‘
+[1] 0.95471934 0.04528066
+```
+
+Finally, we get the dataset that has additional rows from a replication process and three supplementary variables – new group, probability, and number of replications. This dataset was built from five SWS surveys published biannually between 2006 and 2014. It contains over 5 million observations and 70 variables.
+
+\newpage
+
+### ISCO classification - Dataset Without Unique Identifier - Example
+
+occup dataset is an example of panel dataset without unique identifier.
+It is presenting a characteristics from randomly selected company and then using k step procedure employees sample are chosen.
+The survey is anonymous and take place every two years. Use `?occup` for more details.
+trans dataset containing transitions between old (2008) and new (2010) occupational codes.
+
+```{r}
+data(occup)
+
+data(trans)
+```
+
+```{r}
+occup %>% glimpse()
+```
+
+```{r}
+trans %>% glimpse()
+```
+
+\newpage
+
+### Mappings - utils
+
+If you are interested in the utils functions here are presented some of them.
+
+Processing of the mapping table and deriving simple frequencies.
+
+```{r}
+mappings <- get_mappings(trans)
+
+mappings$to_old[1:4]
+
+mappings$to_new[1:4]
+
+# occup$multiplier part inside get_freqs is optional
+# this variable specifying how many times to replicate each observation to get reliable population
+mapp_p <- cat_apply_freq(mappings$to_old, get_freqs(occup$code4[occup$year == "2008"], occup$multiplier[occup$year == "2008"]))
+
+data.frame(I(mappings$to_old), I(mapp_p)) %>% head()
+
+mapp_p <- cat_apply_freq(mappings$to_new, get_freqs(occup$code4[occup$year == "2010"], occup$multiplier[occup$year == "2010"]))
+
+data.frame(I(mappings$to_new), I(mapp_p)) %>% head()
+```
+
+\newpage
+### Mappings - Application
+
+Splitting the data
+
+```{r}
+occup_old = occup[occup$year == 2008,]
+occup_new = occup[occup$year == 2010,]
+```
+
+Simple model where probabilities will be taken from categories frequencies.
+
+```{r}
+cat2cat(
+  data = list(old = occup_old ,new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "forward")
+  )
+```
+
+### ml Argument
+
+Currently knn/rf/lda methods are available to approximate probabilities of being assign to each of categories.
+
+```{r}
+occup_2 = cat2cat(
+  data = list(old = occup_old ,new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "forward"),
+  ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
+  )
+```
+
+```{r}
+occup_2 %>% glimpse()
+```
+
+
+```{r, size="tiny"}
+occup_3 <- cat2cat(
+  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "backward"),
+  ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
+)
+```
+
+Without ml subsection only simple frequencies are assessed. When ml model is broken then weights from simple frequencies are taken. Method knn is recommended for smaller datasets.
+
+```{r}
+cor(occup_3$old$wei_knn_c2c, occup_3$old$wei_freq_c2c, use = "complete.obs")
+```
+
+```{r}
+occup_3 %>% glimpse()
+```
+
+New frequencies for potential next step might be derived manually and then used in next iteration by `freqs_df` argument (data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities). This might be useful for advanced users. 
+Optional multiplier part specifying how many times to replicate each observation to get reliable population
+
+```{r}
+get_freqs(x = occup_3$new$g_new_c2c, multiplier = floor(occup_3$new$multiplier  * occup_3$new$wei_freq_c2c)) %>% head()
+```
+
+or backward:
+
+```{r}
+get_freqs(x = occup_2$old$g_new_c2c, multiplier  = floor(occup_2$old$multiplier  * occup_2$old$wei_freq_c2c))  %>% head()
+```
+
+\newpage
+
+### Linear Regressions - Example:
+
+Remember to adjust results (`summary_c2c`) because of artificially enlarge degrees of freedom.
+The first weights might be surprising although they are multipliers which help to replicate the true population.
+
+#### Regression
+
+```r
+## orginal dataset 
+lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old, weights = multiplier)
+summary(lms2)
+
+## using one highest cross weights
+## cross_cat2cat to cross differen methods weights
+## prune_cat2cat - highest1 leave only one the highest probability obs for each subject
+occup_old_2 <- occup_2$old %>% 
+                cross_cat2cat(., c("wei_freq_c2c", "wei_knn_c2c"), c(1/2,1/2)) %>% 
+                prune_cat2cat(.,column = "wei_cross_c2c", method = "highest1") 
+lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_2, weights = multiplier)
+summary(lms)
+
+## we have to adjust size of stds as we artificialy enlarge degrees of freedom
+occup_old_3 <- occup_2$old %>% 
+                prune_cat2cat(method = "nonzero") #many prune methods like highest
+lms1 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_3, weights = multiplier * wei_freq_c2c)
+## summary_c2c
+summary_c2c(lms1, df_old = nrow(occup_old), df_new = nrow(occup_old_3))
+```

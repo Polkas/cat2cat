@@ -39,7 +39,7 @@ cat2cat_agg <- function(data = list(
                         ), ...) {
   # methods most frequent, proportional
 
-  stopifnot(
+  assert_that(
       is.list(data) &&
       length(data) == 5 &&
       all(vapply(data, Negate(is.null), logical(1))) &&
@@ -53,9 +53,9 @@ cat2cat_agg <- function(data = list(
   d_old <- length(unique(data$old[[data$time_var]]))
   d_new <- length(unique(data$new[[data$time_var]]))
 
-  stopifnot((d_old == 1) && (d_new == 1))
+  assert_that((d_old == 1) && (d_new == 1))
 
-  stopifnot(all(table(data$old[[data$cat_var]]) == 1) && all(table(data$new[[data$cat_var]]) == 1))
+  assert_that(all(table(data$old[[data$cat_var]]) == 1) && all(table(data$new[[data$cat_var]]) == 1))
 
   t <- enexprs(...)
 
@@ -70,10 +70,10 @@ cat2cat_agg <- function(data = list(
 
   col_df_new <- colnames(df_new)
 
-  stopifnot(identical(col_df_old, col_df_new))
+  assert_that(identical(col_df_old, col_df_new))
 
   for (i in trans_map) {
-    stopifnot(((length(i[[2]]) == 1) || (length(i[[3]]) == 1)))
+    assert_that(((length(i[[2]]) == 1) || (length(i[[3]]) == 1)))
 
     if (i$direction == "forward") {
       base <- df_new[!(df_new[, data$cat_var] %in% i[[3]]), ]

@@ -30,7 +30,7 @@ Occupational dataset - small one
 \details{
 occup dataset is an example of unbalance panel dataset.
 This is a simulated data although there are applied a real world characteristics from national statistical office survey.
-The orginal survey is anonymous and take place every two years.
+The original survey is anonymous and take place every two years.
 It is presenting a characteristics from randomly selected company and then using k step procedure employees are chosen.
 
 occupational dataset

@@ -1,6 +1,6 @@
 Package: cat2cat
 Title: Mapping of a Categorical Variable in a Panel Dataset
-Version: 0.1.3
+Version: 0.1.6
 Authors@R: person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre"))
 Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
 Description: 
@@ -21,7 +21,8 @@ Imports:
 	MASS,
 	tidyr,
 	dplyr,
-	data.table
+	data.table,
+	assertthat
 Suggests:
 	  knitr,
     rmarkdown,
@@ -29,4 +30,5 @@ Suggests:
     testthat,
     magrittr
 LazyData: true
-RoxygenNote: 7.1.0
+VignetteBuilder: knitr
+RoxygenNote: 7.1.1

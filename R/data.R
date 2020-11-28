@@ -2,7 +2,7 @@
 #'
 #' @details occup dataset is an example of unbalance panel dataset.
 #' This is a simulated data although there are applied a real world characteristics from national statistical office survey.
-#' The orginal survey is anonymous and take place every two years.
+#' The original survey is anonymous and take place every two years.
 #' It is presenting a characteristics from randomly selected company and then using k step procedure employees are chosen.
 #'
 #' @usage occup
@@ -30,7 +30,7 @@
 #'
 #' @details occup dataset is an example of unbalance panel dataset.
 #' This is a simulated data although there are applied a real world characteristics from national statistical office survey.
-#' The orginal survey is anonymous and take place every two years.
+#' The original survey is anonymous and take place every two years.
 #' It is presenting a characteristics from randomly selected company and then using k step procedure employees are chosen.
 #'
 #' @usage occup_small
@@ -84,6 +84,7 @@
 #' }
 #' @details random data - aggregate sales across e-commerce verticals
 #' @examples
+#' set.seed(1234)
 #' agg_old <- data.frame(
 #'  vertical = c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
 #'               "Clothes", "Home", "Fashion", "Health", "Sport"),
@@ -115,6 +116,7 @@
 #' }
 #' @details random data - single products sales across e-commerce verticals
 #' @examples
+#' set.seed(1234)
 #' vert_old <- data.frame(
 #'  ean = 90000001:90000020,
 #'  vertical = sample(c("Electronics", "Kids1", "Kids2", "Automotive", "Books",

@@ -9,7 +9,7 @@ summary_c2c(x, df_old, df_new)
 \arguments{
 \item{x}{lm object}
 
-\item{df_old}{integer number of d.f in orginal dataset}
+\item{df_old}{integer number of d.f in original dataset}
 
 \item{df_new}{integer number of d.f in dataset with replicated rows}
 }

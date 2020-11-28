@@ -18,7 +18,7 @@
 #' @export
 
 get_mappings <- function(x = data.frame()) {
-  stopifnot(ncol(x) == 2)
+  assert_that(ncol(x) == 2)
 
   x <- as.matrix(x)
 
@@ -86,7 +86,7 @@ get_mappings <- function(x = data.frame()) {
 #' head(data.frame(I(mappings$to_new), I(mapp_p)))
 #' @export
 cat_apply_freq <- function(to_x, freqs) {
-  stopifnot(ncol(freqs) == 2)
+  assert_that(ncol(freqs) == 2)
   res <- lapply(
     to_x,
     function(x) {
@@ -125,7 +125,7 @@ cat_apply_freq <- function(to_x, freqs) {
 #' @export
 
 get_freqs <- function(x, multiplier = NULL) {
-  stopifnot(is.null(multiplier) || length(x) == length(multiplier))
+  assert_that(is.null(multiplier) || length(x) == length(multiplier))
 
   input <- if (!is.null(multiplier)) {
     rep(x, times = as.numeric(multiplier))
@@ -178,6 +178,7 @@ get_freqs <- function(x, multiplier = NULL) {
 #' @importFrom randomForest randomForest
 #' @importFrom MASS lda
 #' @importFrom data.table rbindlist
+#' @importFrom assertthat assert_that
 #' @details Without ml section only simple frequencies are assessed.
 #' When ml model is broken then weights from simple frequencies are taken.
 #' Method knn is recommended for smaller datasets.
@@ -210,246 +211,231 @@ get_freqs <- function(x, multiplier = NULL) {
 #'
 #' @export
 
-cat2cat <-
-  function(data = list(
-             old = NULL,
-             new = NULL,
-             cat_var = NULL,
-             id_var = NULL,
-             time_var = NULL,
-             multiplier_var = NULL,
-             freqs_df = NULL
-           ),
-           mappings = list(trans = NULL, direction = NULL),
-           ml = list(
-             method = NULL,
-             features = NULL,
-             args = NULL
-           )) {
-    stopifnot(is.list(data))
-    stopifnot(length(data) %in% c(4, 5, 6, 7))
-    stopifnot(inherits(data$old, "data.frame"))
-    stopifnot(inherits(data$new, "data.frame"))
-    stopifnot(all(c("old", "new", "cat_var", "time_var") %in% names(data)))
-    stopifnot(all(c(data$cat_var, data$time_var) %in% colnames(data$old)))
-    stopifnot(all(c(data$cat_var, data$time_var) %in% colnames(data$new)))
+cat2cat <- function(
+                    data = list(
+                      old = NULL,
+                      new = NULL,
+                      cat_var = NULL,
+                      id_var = NULL,
+                      time_var = NULL,
+                      multiplier_var = NULL,
+                      freqs_df = NULL
+                    ),
+                    mappings = list(trans = NULL, direction = NULL),
+                    ml = list(
+                      method = NULL,
+                      features = NULL,
+                      args = NULL
+                    )) {
+  assert_that(is.list(data))
+  assert_that(length(data) %in% c(4, 5, 6, 7))
+  assert_that(inherits(data$old, "data.frame"))
+  assert_that(inherits(data$new, "data.frame"))
+  assert_that(all(c("old", "new", "cat_var", "time_var") %in% names(data)))
+  assert_that(all(c(data$cat_var, data$time_var) %in% colnames(data$old)))
+  assert_that(all(c(data$cat_var, data$time_var) %in% colnames(data$new)))
 
-    stopifnot(
-      is.null(data$multiplier_var) ||
-        (
-          data$multiplier_var %in% colnames(data$new) &&
-            data$multiplier_var %in% colnames(data$old)
-        )
+  assert_that(
+    is.null(data$multiplier_var) ||
+      (
+        data$multiplier_var %in% colnames(data$new) &&
+          data$multiplier_var %in% colnames(data$old)
+      )
+  )
+
+  assert_that(is.null(data$freqs_df) || (ncol(data$freqs_df) == 2))
+
+  d_old <- length(unique(data$old[[data$time_var]]))
+  d_new <- length(unique(data$new[[data$time_var]]))
+
+  assert_that((d_old == 1) && (d_new == 1))
+
+  assert_that(is.list(mappings))
+  assert_that(length(mappings) == 2)
+  assert_that(all(c("trans", "direction") %in% names(mappings)))
+  assert_that(mappings$direction %in% c("forward", "backward"))
+  assert_that(all(vapply(mappings, Negate(is.null), logical(1))))
+  assert_that(ncol(mappings$trans) == 2)
+
+  assert_that(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
+    (data$id_var %in% colnames(data$new)) &&
+    !anyDuplicated(data$old[[data$id_var]]) &&
+    !anyDuplicated(data$new[[data$id_var]])))
+  if (!is.null(data$id_var)) {
+    id_inner <- intersect(data$old[[data$id_var]], data$new[[data$id_var]])
+
+    tos <- merge(data$old[, c(data$id_var, data$cat_var)], data$new[, c(data$id_var, data$cat_var)],
+      by = data$id_var
     )
 
-    stopifnot(is.null(data$freqs_df) || (ncol(data$freqs_df) == 2))
-
-    d_old <- length(unique(data$old[[data$time_var]]))
-    d_new <- length(unique(data$new[[data$time_var]]))
-
-    stopifnot((d_old == 1) && (d_new == 1))
-
-    stopifnot(is.list(mappings))
-    stopifnot(length(mappings) == 2)
-    stopifnot(all(c("trans", "direction") %in% names(mappings)))
-    stopifnot(mappings$direction %in% c("forward", "backward"))
-    stopifnot(all(vapply(mappings, Negate(is.null), logical(1))))
-    stopifnot(ncol(mappings$trans) == 2)
-
-    stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
-      (data$id_var %in% colnames(data$new)) &&
-      !anyDuplicated(data$old[[data$id_var]]) &&
-      !anyDuplicated(data$new[[data$id_var]])))
-    if (!is.null(data$id_var)) {
-      id_inner <- intersect(data$old[[data$id_var]], data$new[[data$id_var]])
-
-      tos <- merge(data$old[, c(data$id_var, data$cat_var)], data$new[, c(data$id_var, data$cat_var)],
-        by = data$id_var
-      )
-
-      colnames(tos) <- c(data$id_var, "cat_old", "cat_new")
-
-      if (mappings$direction == "forward") {
-        id_outer <- setdiff(data$new[[data$id_var]], data$old[[data$id_var]])
-        tos_df <- tos[, c(data$id_var, "cat_old")]
-      } else if (mappings$direction == "backward") {
-        id_outer <- setdiff(data$old[[data$id_var]], data$new[[data$id_var]])
-        tos_df <- tos[, c(data$id_var, "cat_new")]
-      }
-      colnames(tos_df) <- c("id", "cat")
-    }
-
-    mapps <- get_mappings(mappings$trans)
+    colnames(tos) <- c(data$id_var, "cat_old", "cat_new")
 
     if (mappings$direction == "forward") {
-      cat_base_year <- data$old
-      cat_final_year <- if (is.null(data$id_var)) data$new else data$new[data$new[[data$id_var]] %in% id_outer, ]
-      cat_mid <- if (!is.null(data$id_var)) data$new[data$new[[data$id_var]] %in% id_inner, ] else NULL
-      mapp <- mapps$to_old
-      res_ord <- c(1, 2)
+      id_outer <- setdiff(data$new[[data$id_var]], data$old[[data$id_var]])
+      tos_df <- tos[, c(data$id_var, "cat_old")]
     } else if (mappings$direction == "backward") {
-      cat_base_year <- data$new
-      cat_final_year <- if (is.null(data$id_var)) data$old else data$old[data$old[[data$id_var]] %in% id_outer, ]
-      cat_mid <- if (!is.null(data$id_var)) data$old[data$old[[data$id_var]] %in% id_inner, ] else NULL
-      mapp <- mapps$to_new
-      res_ord <- c(2, 1)
+      id_outer <- setdiff(data$old[[data$id_var]], data$new[[data$id_var]])
+      tos_df <- tos[, c(data$id_var, "cat_new")]
     }
-
-    if (!is.null(data$id_var)) {
-      cat_mid$index_c2c <- 1:nrow(cat_mid)
-      cat_mid$g_new_c2c <- tos_df$cat[match(cat_mid[[data$id_var]], tos_df$id)]
-      cat_mid$wei_freq_c2c <- 1
-      cat_mid$rep_c2c <- 1
-      cat_mid$wei_naive_c2c <- 1
-    }
-
-    cats_base <- cat_base_year[[data$cat_var]]
-    cats_final <- cat_final_year[[data$cat_var]]
-
-    multi_base <- if (!is.null(data$multiplier_var)) {
-      cat_base_year[[data$multiplier_var]]
-    } else {
-      NULL
-    }
-
-    stopifnot(is.null(data$freq_df) || all(data$freqs_df[, 1] %in% cats_base))
-
-    fre <- if (!is.null(data$freqs_df)) {
-      data$freqs_df
-    } else {
-      get_freqs(cats_base, multi_base)
-    }
-
-    freqs_2 <- cat_apply_freq(mapp, fre)
-
-    g_vec <- mapp[cats_final]
-    rep_vec <- unname(lengths(g_vec))
-    wei_vec <- freqs_2[cats_final]
-    wei_vec <- unlist(wei_vec, use.names = FALSE)
-    cat_final_year$index_c2c <- 1:nrow(cat_final_year)
-    cat_final_rep <- cat_final_year[rep(1:nrow(cat_final_year), times = rep_vec), ]
-    cat_final_rep$g_new_c2c <- unlist(g_vec, use.names = FALSE)
-    cat_final_rep$wei_freq_c2c <- wei_vec
-    cat_final_rep$rep_c2c <- rep(rep_vec, times = rep_vec)
-    cat_final_rep$wei_naive_c2c <- 1 / cat_final_rep$rep_c2c
-
-    cat_base_year$index_c2c <- 1:nrow(cat_base_year)
-    cat_base_year$g_new_c2c <- cat_base_year[[data$cat_var]]
-    cat_base_year$wei_freq_c2c <- 1
-    cat_base_year$rep_c2c <- 1
-    cat_base_year$wei_naive_c2c <- 1
-
-    if (sum(vapply(ml, Negate(is.null), logical(1))) >= 2) {
-      stopifnot(all(c("method", "features") %in% names(ml)))
-      stopifnot(all(ml$features %in% colnames(cat_final_rep)))
-      stopifnot(all(vapply(cat_final_rep[, ml$features], function(x) is.numeric(x) || is.logical(x), logical(1))))
-      stopifnot(all(ml$method %in% c("knn", "rf", "lda")))
-
-      uu <- unique(cat_final_rep[[data$cat_var]])
-
-      features <- unique(ml$features)
-
-      methods <- unique(ml$method)
-
-      ml_names <- paste0("wei_", methods, "_c2c")
-
-      cat_base_year[, ml_names] <- 1
-
-      if (!is.null(data$id_var)) cat_mid[, ml_names] <- 1
-
-      cat_final_rep[, ml_names] <- cat_final_rep["wei_freq_c2c"]
-
-      cat_base_year_g <- split(cat_base_year, cat_base_year[[data$cat_var]])
-
-      cat_final_rep_cat_c2c <- split(cat_final_rep, cat_final_rep[[data$cat_var]])
-
-      pb <- progress_bar$new(total = length(uu))
-
-      for (i in unique(uu)) {
-        pb$tick()
-
-        try(
-          {
-            base <- cat_final_rep_cat_c2c[[i]]
-
-            dis <- do.call(rbind, cat_base_year_g[unique(base$g_new_c2c)])
-
-            udc <- unique(dis$code)
-
-            if (length(udc) == 1) {
-              cat_final_rep_cat_c2c[[i]][ml_names] <- base$wei_naive_c2c
-              next
-            }
-
-            if (length(unique(base$g_new_c2c)) > 1 &&
-              length(udc) >= 1 &&
-              nrow(base) > 0 &&
-              any(base$g_new_c2c %in% names(cat_base_year_g))
-            ) {
-              base_ml <- base[!duplicated(base[["index_c2c"]]), c("index_c2c", features)]
-
-              cc <- complete.cases(base_ml[, features])
-
-              for (m in methods) {
-                ml_name <- paste0("wei_", m, "_c2c")
-                if (m == "knn") {
-                  kkk <- suppressWarnings(caret::knn3(
-                    x = dis[, features],
-                    y = factor(dis$code),
-                    k = min(ml$args$k, ceiling(nrow(dis) / 4))
-                  ))
-
-                  pp <- as.data.frame(stats::predict(kkk, base_ml[cc, features], type = "prob"))
-                } else if (m == "rf") {
-                  kkk <- suppressWarnings(randomForest(
-                    y = factor(dis$code),
-                    x = dis[, features],
-                    ntree = min(ml$args$ntree, 100)
-                  ))
-
-                  pp <- as.data.frame(stats::predict(kkk, base_ml[cc, features], type = "prob"))
-                } else if (m == "lda") {
-                  kkk <- suppressWarnings(MASS::lda(
-                    grouping = factor(dis$code),
-                    x = as.matrix(dis[, features])
-                  ))
-
-                  pp <- as.data.frame(stats::predict(kkk, as.matrix(base_ml[cc, features]))$posterior)
-                }
-
-                ll <- setdiff(unique(base$g_new_c2c), colnames(pp))
-
-                # imputing rest of the class to zero prob
-                if (length(ll)) {
-                  pp[ll] <- 0
-                }
-
-                pp[["index_c2c"]] <- base_ml[["index_c2c"]][cc]
-
-                res <- tidyr::pivot_longer(pp, -"index_c2c", names_to = "g_new_c2c", values_to = "val")
-
-                ress <- merge(base[, c("index_c2c", "g_new_c2c")], res, by = c("index_c2c", "g_new_c2c"), all.x = TRUE, sort = FALSE)
-
-                resso <- ress[order(ress$index_c2c), ]
-
-                cat_final_rep_cat_c2c[[i]][[ml_name]] <- resso$val
-              }
-            }
-          },
-          silent = TRUE
-        )
-      }
-
-      pb$terminate()
-
-      cat_final_rep <- tibble(data.table::rbindlist(cat_final_rep_cat_c2c))
-      cat_final_rep <- cat_final_rep[order(cat_final_rep[["index_c2c"]]), ]
-    }
-
-    res <- list(tibble(cat_base_year), rbind(cat_final_rep, tibble(cat_mid)))[res_ord]
-    names(res) <- c("old", "new")
-    res
+    colnames(tos_df) <- c("id", "cat")
   }
+
+  mapps <- get_mappings(mappings$trans)
+
+  if (mappings$direction == "forward") {
+    cat_base_year <- data$old
+    cat_final_year <- if (is.null(data$id_var)) data$new else data$new[data$new[[data$id_var]] %in% id_outer, ]
+    cat_mid <- if (!is.null(data$id_var)) data$new[data$new[[data$id_var]] %in% id_inner, ] else NULL
+    mapp <- mapps$to_old
+    res_ord <- c(1, 2)
+  } else if (mappings$direction == "backward") {
+    cat_base_year <- data$new
+    cat_final_year <- if (is.null(data$id_var)) data$old else data$old[data$old[[data$id_var]] %in% id_outer, ]
+    cat_mid <- if (!is.null(data$id_var)) data$old[data$old[[data$id_var]] %in% id_inner, ] else NULL
+    mapp <- mapps$to_new
+    res_ord <- c(2, 1)
+  }
+
+  if (!is.null(data$id_var)) {
+    cat_mid$index_c2c <- 1:nrow(cat_mid)
+    cat_mid$g_new_c2c <- tos_df$cat[match(cat_mid[[data$id_var]], tos_df$id)]
+    cat_mid$wei_freq_c2c <- 1
+    cat_mid$rep_c2c <- 1
+    cat_mid$wei_naive_c2c <- 1
+  }
+
+  cats_base <- cat_base_year[[data$cat_var]]
+  cats_final <- cat_final_year[[data$cat_var]]
+
+  multi_base <- if (!is.null(data$multiplier_var)) {
+    cat_base_year[[data$multiplier_var]]
+  } else {
+    NULL
+  }
+
+  assert_that(is.null(data$freq_df) || all(data$freqs_df[, 1] %in% cats_base))
+
+  fre <- if (!is.null(data$freqs_df)) {
+    data$freqs_df
+  } else {
+    get_freqs(cats_base, multi_base)
+  }
+
+  freqs_2 <- cat_apply_freq(mapp, fre)
+
+  g_vec <- mapp[cats_final]
+  rep_vec <- unname(lengths(g_vec))
+  wei_vec <- freqs_2[cats_final]
+  wei_vec <- unlist(wei_vec, use.names = FALSE)
+  cat_final_year$index_c2c <- 1:nrow(cat_final_year)
+  cat_final_rep <- cat_final_year[rep(1:nrow(cat_final_year), times = rep_vec), ]
+  cat_final_rep$g_new_c2c <- unlist(g_vec, use.names = FALSE)
+  cat_final_rep$wei_freq_c2c <- wei_vec
+  cat_final_rep$rep_c2c <- rep(rep_vec, times = rep_vec)
+  cat_final_rep$wei_naive_c2c <- 1 / cat_final_rep$rep_c2c
+
+  cat_base_year$index_c2c <- 1:nrow(cat_base_year)
+  cat_base_year$g_new_c2c <- cat_base_year[[data$cat_var]]
+  cat_base_year$wei_freq_c2c <- 1
+  cat_base_year$rep_c2c <- 1
+  cat_base_year$wei_naive_c2c <- 1
+
+  if (sum(vapply(ml, Negate(is.null), logical(1))) >= 2) {
+    assert_that(all(c("method", "features") %in% names(ml)))
+    assert_that(all(ml$features %in% colnames(cat_final_rep)))
+    assert_that(all(vapply(cat_final_rep[, ml$features], function(x) is.numeric(x) || is.logical(x), logical(1))))
+    assert_that(all(ml$method %in% c("knn", "rf", "lda")))
+
+    uu <- unique(cat_final_rep[[data$cat_var]])
+
+    features <- unique(ml$features)
+
+    methods <- unique(ml$method)
+
+    ml_names <- paste0("wei_", methods, "_c2c")
+
+    cat_base_year[, ml_names] <- 1
+
+    if (!is.null(data$id_var)) cat_mid[, ml_names] <- 1
+
+    cat_final_rep[, ml_names] <- cat_final_rep["wei_freq_c2c"]
+
+    cat_base_year_g <- split(cat_base_year, cat_base_year[[data$cat_var]])
+
+    cat_final_rep_cat_c2c <- split(cat_final_rep, cat_final_rep[[data$cat_var]])
+
+    pb <- progress_bar$new(total = length(uu))
+
+    for (i in unique(uu)) {
+      pb$tick()
+
+      try(
+        {
+          base <- cat_final_rep_cat_c2c[[i]]
+          dis <- do.call(rbind, cat_base_year_g[unique(base$g_new_c2c)])
+          udc <- unique(dis$code)
+          if (length(udc) == 1) {
+            cat_final_rep_cat_c2c[[i]][ml_names] <- base$wei_naive_c2c
+            next
+          }
+          if (length(unique(base$g_new_c2c)) > 1 &&
+            length(udc) >= 1 &&
+            nrow(base) > 0 &&
+            any(base$g_new_c2c %in% names(cat_base_year_g))
+          ) {
+            base_ml <- base[!duplicated(base[["index_c2c"]]), c("index_c2c", features)]
+            cc <- complete.cases(base_ml[, features])
+            for (m in methods) {
+              ml_name <- paste0("wei_", m, "_c2c")
+              if (m == "knn") {
+                kkk <- suppressWarnings(caret::knn3(
+                  x = dis[, features],
+                  y = factor(dis$code),
+                  k = min(ml$args$k, ceiling(nrow(dis) / 4))
+                ))
+                pp <- as.data.frame(stats::predict(kkk, base_ml[cc, features], type = "prob"))
+              } else if (m == "rf") {
+                kkk <- suppressWarnings(randomForest(
+                  y = factor(dis$code),
+                  x = dis[, features],
+                  ntree = min(ml$args$ntree, 100)
+                ))
+                pp <- as.data.frame(stats::predict(kkk, base_ml[cc, features], type = "prob"))
+              } else if (m == "lda") {
+                kkk <- suppressWarnings(MASS::lda(
+                  grouping = factor(dis$code),
+                  x = as.matrix(dis[, features])
+                ))
+                pp <- as.data.frame(stats::predict(kkk, as.matrix(base_ml[cc, features]))$posterior)
+              }
+              ll <- setdiff(unique(base$g_new_c2c), colnames(pp))
+              # imputing rest of the class to zero prob
+              if (length(ll)) {
+                pp[ll] <- 0
+              }
+              pp[["index_c2c"]] <- base_ml[["index_c2c"]][cc]
+              res <- tidyr::pivot_longer(pp, -"index_c2c", names_to = "g_new_c2c", values_to = "val")
+              ress <- merge(base[, c("index_c2c", "g_new_c2c")], res, by = c("index_c2c", "g_new_c2c"), all.x = TRUE, sort = FALSE)
+              resso <- ress[order(ress$index_c2c), ]
+              cat_final_rep_cat_c2c[[i]][[ml_name]] <- resso$val
+            }
+          }
+        },
+        silent = TRUE
+      )
+    }
+
+    pb$terminate()
+
+    cat_final_rep <- tibble(data.table::rbindlist(cat_final_rep_cat_c2c))
+    cat_final_rep <- cat_final_rep[order(cat_final_rep[["index_c2c"]]), ]
+    attr(cat_final_rep, ".internal.selfref") <- NULL
+  }
+
+  res <- list(tibble(cat_base_year), rbind(cat_final_rep, tibble(cat_mid)))[res_ord]
+  names(res) <- c("old", "new")
+  res
+}
 
 #' A set of prune methods which will be useful after transition process
 #'
@@ -495,11 +481,11 @@ cat2cat <-
 #' prune_cat2cat(occup_2$old, column = "wei_knn_c2c", method = "nonzero")
 #' @export
 prune_cat2cat <- function(df, index = "index_c2c", column = "wei_freq_c2c", method = "nonzero", percent = 50) {
-  stopifnot(inherits(df, "data.frame"))
-  stopifnot(all(c(index, column) %in% colnames(df)))
-  stopifnot(method %in% c("nonzero", "highest", "highest1", "morethan"))
-  stopifnot(length(percent) == 1)
-  stopifnot(percent >= 0 && percent < 100)
+  assert_that(inherits(df, "data.frame"))
+  assert_that(all(c(index, column) %in% colnames(df)))
+  assert_that(method %in% c("nonzero", "highest", "highest1", "morethan"))
+  assert_that(length(percent) == 1)
+  assert_that(percent >= 0 && percent < 100)
 
   df <- df[order(df[[index]]), ]
 
@@ -546,11 +532,14 @@ prune_cat2cat <- function(df, index = "index_c2c", column = "wei_freq_c2c", meth
 #'   column = "wei_cross_c2c", method = "highest1"
 #' )
 #' @export
-cross_cat2cat <- function(df, cols = colnames(df)[grepl("^wei_.*_c2c$", colnames(df))], weis = rep(1 / length(cols), length(cols)), na.rm = TRUE) {
-  stopifnot(inherits(df, "data.frame"))
-  stopifnot(all(cols %in% colnames(df)))
-  stopifnot(length(weis) == length(cols))
-  stopifnot(is.logical(na.rm))
+cross_cat2cat <- function(df,
+                          cols = colnames(df)[grepl("^wei_.*_c2c$", colnames(df))],
+                          weis = rep(1 / length(cols),length(cols)),
+                          na.rm = TRUE) {
+  assert_that(inherits(df, "data.frame"))
+  assert_that(all(cols %in% colnames(df)))
+  assert_that(length(weis) == length(cols))
+  assert_that(is.logical(na.rm))
 
   weis <- weis / sum(weis)
 

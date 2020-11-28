@@ -23,6 +23,7 @@ verticals2 dataset
 random data - single products sales across e-commerce verticals
 }
 \examples{
+set.seed(1234)
 vert_old <- data.frame(
  ean = 90000001:90000020,
  vertical = sample(c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
