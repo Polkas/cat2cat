@@ -1,3 +1,7 @@
+# 0.1.7
+
+* URL for doi in vignettes
+
 # 0.1.6
 
 * basic vignette

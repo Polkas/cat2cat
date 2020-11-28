@@ -25,7 +25,7 @@ pacman::p_load(cat2cat, dplyr)
 
 # Mapping of a Categorical Variable in a Panel Dataset
 
-**This algorithm was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <doi:10.24425/cejeme.2020.134747>).**
+This algorithm was invented and implemented in the paper by [Nasinski, Majchrowska and Broniatowska (2020)](https://doi.org/10.24425/cejeme.2020.134747)
 
 **The main rule is to replicate the observation if it could be assign to a few categories**
 **then using simple frequencies or statistical methods to approximate probabilities of being assign to each of them.**
