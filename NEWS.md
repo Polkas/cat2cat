@@ -1,3 +1,7 @@
+# 0.1.8
+
+* VignetteIndexEntry
+
 # 0.1.7
 
 * URL for doi in vignettes
