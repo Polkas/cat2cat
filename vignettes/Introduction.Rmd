@@ -19,8 +19,7 @@ knitr::opts_chunk$set(warning = F)
 ```
 
 ```{r}
-options(scipen = 999)
-pacman::p_load(cat2cat, dplyr)
+pacman::p_load(cat2cat, dplyr, igraph)
 ```
 
 # Mapping of a Categorical Variable in a Panel Dataset
@@ -45,7 +44,7 @@ The main objective is to merge a few surveys published by some data provider ove
 
 ## Many Time Points To Map
 
-cat2cat have to be used recursively where the prune methods (`prune_cat2cat`) might be needed to limit the problem of exponentially growing replications.
+cat2cat have to be used recursively where the prune methods (`prune_c2c`) might be needed to limit the problem of exponentially growing replications.
 Thus a prune_c2c with highest1 or highest method could be used before transferring a data.frame to the next iteration.
 However when only 3 periods have to be map then the middle one might be used as the base one.
 
@@ -86,7 +85,7 @@ Thus the best solution might to build a transition table and treat it as dataset
 Notice: We could have new identifiers in a new partition or old identifiers which do not continue to participate.
 Notice: New categories might appeared in a new partition or same old categories are depraciated.
 
-### Simple Frequencies and ml Methods
+## Simple Frequencies and ml Methods
 
 We could use simple frequencies or statistical/ml methods to approximate probabilities of being assign to each of possible categories.
 The probabilities might be used in further statistical models as a weights or to narrow the number of possible categories for each subject.
@@ -101,9 +100,9 @@ When there is no frequencies the probabilities are allocated equally.
 Finally we get the dataset which has additional rows which comes from a replication process and at least 3 supplementary variables - new group, probability and number of replications. There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c. 
 
 For statistical models like linear regression its results should be adjusted because of a replication process which  artificially enlarge the number of degree of freedom. 
-Another solution might be using the prune_cat2cat function to remove additional rows and leave only categories with highest probabilities.
+Another solution might be using the prune_c2c function to remove additional rows and leave only categories with highest probabilities.
 
-### ISCO Classification- Dataset Without Unique Identifier - Application
+## ISCO Classification- Dataset Without Unique Identifier - Application
 
 Rearrangement of the old ISCO classification into the new one
 To rearrange the old classification into the new one, an associative array that maps keys to values was used. More precisely, an association list was used which is a linked list in which each list element is comprised of a key and value. An association list where unique four digits COS group codes from 2010 are keys and matching groups from 2008 are values was constructed. There are around 500 unique four-digit COS group codes, so searching an association list is not less preferable than searching a binary search tree or hash table. We were able to build the association list because of existence of a transition table provided by CSO. Transition table convey information needed for matching different COS coding in time.
@@ -148,7 +147,7 @@ Finally, we get the dataset that has additional rows from a replication process 
 
 \newpage
 
-### ISCO classification - Dataset Without Unique Identifier - Example
+## ISCO classification - Dataset Without Unique Identifier - Example
 
 occup dataset is an example of panel dataset without unique identifier.
 It is presenting a characteristics from randomly selected company and then using k step procedure employees sample are chosen.
@@ -167,6 +166,13 @@ occup %>% glimpse()
 
 ```{r}
 trans %>% glimpse()
+```
+
+graph for some mappings inside trans table:
+
+```{r}
+gg = graph_from_data_frame(trans[1:40, ])
+plot.igraph(gg)
 ```
 
 \newpage
@@ -239,10 +245,18 @@ occup_3 <- cat2cat(
 )
 ```
 
-Without ml subsection only simple frequencies are assessed. When ml model is broken then weights from simple frequencies are taken. Method knn is recommended for smaller datasets.
+Without ml subsection only simple frequencies are assessed. 
+When ml model is broken then weights from simple frequencies are taken. 
+`knn` method is recommended for smaller datasets.
 
 ```{r}
-cor(occup_3$old$wei_knn_c2c, occup_3$old$wei_freq_c2c, use = "complete.obs")
+cor(occup_3$old[, grepl("wei.*c2c", colnames(occup_3$old))], use = "complete.obs")
+```
+
+Summary plot:
+
+```{r}
+plot_c2c(occup_3$old, type = c("both"))
 ```
 
 ```{r}
@@ -271,23 +285,23 @@ The first weights might be surprising although they are multipliers which help t
 
 #### Regression
 
-```r
+```{r}
 ## orginal dataset 
 lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old, weights = multiplier)
 summary(lms2)
 
 ## using one highest cross weights
-## cross_cat2cat to cross differen methods weights
-## prune_cat2cat - highest1 leave only one the highest probability obs for each subject
-occup_old_2 <- occup_2$old %>% 
-                cross_cat2cat(., c("wei_freq_c2c", "wei_knn_c2c"), c(1/2,1/2)) %>% 
-                prune_cat2cat(.,column = "wei_cross_c2c", method = "highest1") 
-lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_2, weights = multiplier)
+## cross_c2c to cross different methods weights
+## prune_c2c - highest1 leave only one the highest probability obs for each subject
+occup_old_3 <- occup_3$old %>% 
+                cross_c2c(., c("wei_freq_c2c", "wei_knn_c2c"), c(1/2,1/2)) %>% 
+                prune_c2c(.,column = "wei_cross_c2c", method = "highest1") 
+lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_3, weights = multiplier)
 summary(lms)
 
-## we have to adjust size of stds as we artificialy enlarge degrees of freedom
-occup_old_3 <- occup_2$old %>% 
-                prune_cat2cat(method = "nonzero") #many prune methods like highest
+## we have to adjust size of stds as we artificially enlarge degrees of freedom
+occup_old_3 <- occup_3$old %>% 
+                prune_c2c(method = "nonzero") # many different prune methods like highest
 lms1 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_3, weights = multiplier * wei_freq_c2c)
 ## summary_c2c
 summary_c2c(lms1, df_old = nrow(occup_old), df_new = nrow(occup_old_3))

@@ -4,14 +4,14 @@
 \alias{summary_c2c}
 \title{Summary for data.frame with replicated rows}
 \usage{
-summary_c2c(x, df_old, df_new)
+summary_c2c(x, df_old, df_new = x$df.residual)
 }
 \arguments{
 \item{x}{lm object}
 
 \item{df_old}{integer number of d.f in original dataset}
 
-\item{df_new}{integer number of d.f in dataset with replicated rows}
+\item{df_new}{integer number of d.f in dataset with replicated rows, Default: x$df.residual}
 }
 \value{
 data.frame with additional columns over a regular summary.lm output like correct and statistics adjusted by it.

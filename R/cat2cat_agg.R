@@ -63,10 +63,10 @@ cat2cat_agg <- function(data = list(
   trans_map <- lapply(trans, format_trans)
 
   df_old <- data$old
-  df_old$prop <- 1
+  df_old$prop_c2c <- 1
   col_df_old <- colnames(df_old)
   df_new <- data$new
-  df_new$prop <- 1
+  df_new$prop_c2c <- 1
 
   col_df_new <- colnames(df_new)
 
@@ -79,15 +79,13 @@ cat2cat_agg <- function(data = list(
       base <- df_new[!(df_new[, data$cat_var] %in% i[[3]]), ]
       base_rm <- df_new[df_new[, data$cat_var] %in% i[[3]], ]
 
-      # dd = df_old[df_old[,1] %in% i[[2]],]
-
       if (length(i[[2]]) > 1) {
         base_rm <- base_rm[rep(1, length(i[[2]])), ]
         base_rm[, data$cat_var] <- i[[2]]
-        base_rm$prop <- prop.table(df_old[df_old[, data$cat_var] %in% i[[2]], data$freq_var])
+        base_rm$prop_c2c <- prop.table(df_old[df_old[, data$cat_var] %in% i[[2]], data$freq_var])
       } else {
         base_rm[, data$cat_var] <- i[[2]]
-        base_rm$prop <- 1
+        base_rm$prop_c2c <- 1
       }
 
       df_new <- rbind(base, base_rm)
@@ -98,10 +96,10 @@ cat2cat_agg <- function(data = list(
       if (length(i[[3]]) > 1) {
         base_rm <- base_rm[rep(1, length(i[[3]])), ]
         base_rm[, data$cat_var] <- i[[3]]
-        base_rm$prop <- prop.table(df_new[df_new[, data$cat_var] %in% i[[3]], data$freq_var])
+        base_rm$prop_c2c <- prop.table(df_new[df_new[, data$cat_var] %in% i[[3]], data$freq_var])
       } else {
         base_rm[, data$cat_var] <- i[[3]]
-        base_rm$prop <- 1
+        base_rm$prop_c2c <- 1
       }
 
       df_old <- rbind(base, base_rm)

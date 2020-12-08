@@ -473,14 +473,14 @@ cat2cat <- function(
 #'   )
 #' )
 #'
-#' prune_cat2cat(occup_2$old, method = "nonzero")
-#' prune_cat2cat(occup_2$old, method = "highest")
-#' prune_cat2cat(occup_2$old, method = "highest1")
-#' prune_cat2cat(occup_2$old, method = "morethan", percent = 90)
+#' prune_c2c(occup_2$old, method = "nonzero")
+#' prune_c2c(occup_2$old, method = "highest")
+#' prune_c2c(occup_2$old, method = "highest1")
+#' prune_c2c(occup_2$old, method = "morethan", percent = 90)
 #'
-#' prune_cat2cat(occup_2$old, column = "wei_knn_c2c", method = "nonzero")
+#' prune_c2c(occup_2$old, column = "wei_knn_c2c", method = "nonzero")
 #' @export
-prune_cat2cat <- function(df, index = "index_c2c", column = "wei_freq_c2c", method = "nonzero", percent = 50) {
+prune_c2c <- function(df, index = "index_c2c", column = "wei_freq_c2c", method = "nonzero", percent = 50) {
   assert_that(inherits(df, "data.frame"))
   assert_that(all(c(index, column) %in% colnames(df)))
   assert_that(method %in% c("nonzero", "highest", "highest1", "morethan"))
@@ -528,11 +528,11 @@ prune_cat2cat <- function(df, index = "index_c2c", column = "wei_freq_c2c", meth
 #' occup_mix_old <- occup_mix$old
 #' cor(occup_mix_old[occup_mix_old$rep_c2c != 1, c("wei_knn_c2c", "wei_rf_c2c", "wei_freq_c2c")])
 #' # cross all methods and subset one highest probability category for each subject
-#' occup_old_mix_highest1occup_mix <- prune_cat2cat(cross_cat2cat(occup_mix$old),
+#' occup_old_highest1_mix <- prune_c2c(cross_c2c(occup_mix$old),
 #'   column = "wei_cross_c2c", method = "highest1"
 #' )
 #' @export
-cross_cat2cat <- function(df,
+cross_c2c <- function(df,
                           cols = colnames(df)[grepl("^wei_.*_c2c$", colnames(df))],
                           weis = rep(1 / length(cols),length(cols)),
                           na.rm = TRUE) {

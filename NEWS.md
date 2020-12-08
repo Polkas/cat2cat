@@ -1,5 +1,14 @@
+# 0.2.0
+
+* plot_c2c
+
+# 0.1.9
+
+* vignette improvements
+
 # 0.1.8
 
+* pt inside summary_c2c
 * VignetteIndexEntry
 
 # 0.1.7

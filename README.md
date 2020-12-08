@@ -65,11 +65,11 @@ agg = cat2cat_agg(data = list(old = agg_old,
   
 agg$old %>% 
 group_by(vertical) %>% 
-summarise(sales = sum(sales*prop), counts = sum(counts*prop), v_date = first(v_date))
+summarise(sales = sum(sales*prop_c2c), counts = sum(counts*prop_c2c), v_date = first(v_date))
 
 agg$new %>% 
 group_by(vertical) %>%
-summarise(sales = sum(sales*prop), counts = sum(counts*prop), v_date = first(v_date))
+summarise(sales = sum(sales*prop_c2c), counts = sum(counts*prop_c2c), v_date = first(v_date))
 ```
 ## Automatic using trans table
 ## Dataset with unique identifiers
@@ -128,8 +128,8 @@ occup_2_mix = cat2cat(
 occup_2_mix$old %>% select(wei_knn_c2c, wei_rf_c2c, wei_lda_c2c, wei_freq_c2c) %>% cor()
 # cross all methods and subset one highest probability category for each subject
 occup_old_mix_highest1occup_2_mix <- occup_2_mix$old %>% 
-                cross_cat2cat(.) %>% 
-                prune_cat2cat(.,column = "wei_cross_c2c", method = "highest1") 
+                cross_c2c(.) %>% 
+                prune_c2c(.,column = "wei_cross_c2c", method = "highest1") 
 ```
 
 ## Regression
@@ -140,17 +140,17 @@ lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old,
 summary(lms2)
 
 ## using one highest cross weights
-## cross_cat2cat to cross differen methods weights
-## prune_cat2cat - highest1 leave only one the highest probability obs for each subject
+## cross_c2c to cross differen methods weights
+## prune_c2c - highest1 leave only one the highest probability obs for each subject
 occup_old_2 <- occup_2$old %>% 
-                cross_cat2cat(., c("wei_freq_c2c", "wei_knn_c2c"), c(1/2,1/2)) %>% 
-                prune_cat2cat(.,column = "wei_cross_c2c", method = "highest1") 
+                cross_c2c(., c("wei_freq_c2c", "wei_knn_c2c"), c(1/2,1/2)) %>% 
+                prune_c2c(.,column = "wei_cross_c2c", method = "highest1") 
 lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_2, weights = multiplier)
 summary(lms)
 
 ## we have to adjust size of stds as we artificialy enlarge degrees of freedom
 occup_old_3 <- occup_2$old %>% 
-                prune_cat2cat(method = "nonzero") #many prune methods like highest
+                prune_c2c(method = "nonzero") #many prune methods like highest
 lms1 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_3, weights = multiplier * wei_freq_c2c)
 ## summary_c2c
 summary_c2c(lms1, df_old = nrow(occup_old), df_new = nrow(occup_old_3))

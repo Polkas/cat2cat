@@ -31,7 +31,7 @@ agg <- cat2cat_agg(
   Home %>% c(Home, Supermarket)
 )
 
-expect_true(sum(agg$old$prop) == nrow(agg_old))
-expect_true(sum(agg$new$prop) == nrow(agg_new))
-expect_true(all(agg$new$prop >= 0 & agg$new$prop <= 1))
-expect_true(all(agg$old$prop >= 0 & agg$old$prop <= 1))
+expect_true(sum(agg$old$prop_c2c) == nrow(agg_old))
+expect_true(sum(agg$new$prop_c2c) == nrow(agg_new))
+expect_true(all(agg$new$prop_c2c >= 0 & agg$new$prop_c2c <= 1))
+expect_true(all(agg$old$prop_c2c >= 0 & agg$old$prop_c2c <= 1))

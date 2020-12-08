@@ -36,6 +36,10 @@ expect_true((all(occup_2$old$wei_lda_c2c <= 1 & occup_2$old$wei_lda_c2c >= 0)))
 
 expect_equal(sum((occup_2$old$wei_knn_c2c + occup_2$old$wei_freq_c2c + occup_2$old$wei_naive_c2c) / 3), nrow(occup_old))
 
+expect_equal(occup_2$old %>% cross_c2c(., c("wei_freq_c2c", "wei_knn_c2c"), c(1/2,1/2)) %>% pull("wei_cross_c2c"),
+             (occup_2$old$wei_knn_c2c + occup_2$old$wei_freq_c2c) / 2)
+
+
 lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old, weights = multiplier * wei_freq_c2c)
 
 ss_c2c <- summary_c2c(lms, df_old = nrow(occup_old), df_new = nrow(occup_2$old))
@@ -56,6 +60,8 @@ expect_equal(sum(occup_3$old$wei_freq_c2c), nrow(occup_old))
 expect_true((all(occup_3$old$wei_freq_c2c <= 1 & occup_3$old$wei_freq_c2c >= 0)))
 
 expect_false(identical(occup_3$old$wei_freq_c2c, occup_1a$old$wei_freq_c2c))
+
+expect_identical(nrow(occup_old), occup_3$old %>% prune_c2c(method = "highest1") %>% nrow())
 
 occup_4 <- cat2cat(
   data = list(
@@ -110,3 +116,5 @@ expect_equal(sum(verts2$old$wei_lda_c2c), nrow(vert_old))
 expect_true((all(verts2$old$wei_knn_c2c <= 1 & verts2$old$wei_knn_c2c >= 0)))
 expect_true((all(verts2$old$wei_rf_c2c <= 1 & verts2$old$wei_rf_c2c >= 0)))
 expect_true((all(verts2$old$wei_lda_c2c <= 1 & verts2$old$wei_lda_c2c >= 0)))
+
+
