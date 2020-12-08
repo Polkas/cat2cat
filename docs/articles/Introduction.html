@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -58,10 +58,13 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/Polkas/catTOcat/">
+  <a href="https://github.com/Polkas/cat2cat/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -76,159 +79,226 @@
 
       
 
-      </header><div class="row">
+      </header><script src="Introduction_files/header-attrs-2.5/header-attrs.js"></script><link href="Introduction_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="Introduction_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>cat2cat - Introduction</h1>
                         <h4 class="author">Maciej Nasinski</h4>
             
-            <h4 class="date">2020-08-30</h4>
+            <h4 class="date">2020-12-08</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/Polkas/catTOcat/blob/master/vignettes/Introduction.Rmd"><code>vignettes/Introduction.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Polkas/cat2cat/blob/master/vignettes/Introduction.Rmd"><code>vignettes/Introduction.Rmd</code></a></small>
       <div class="hidden name"><code>Introduction.Rmd</code></div>
 
     </div>
 
     
     
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="kw">scipen</span> <span class="kw">=</span> <span class="fl">999</span>)
-<span class="kw pkg">pacman</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/pacman/man/p_load.html">p_load</a></span>(<span class="no">cat2cat</span>, <span class="no">dplyr</span>)</pre></body></html></div>
-<div id="in-development---transform-a-categorical-variable-according-to-a-new-encoding" class="section level1">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">pacman</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pacman/man/p_load.html">p_load</a></span><span class="op">(</span><span class="va">cat2cat</span>, <span class="va">dplyr</span>, <span class="va">igraph</span><span class="op">)</span></code></pre></div>
+<div id="mapping-of-a-categorical-variable-in-a-panel-dataset" class="section level1">
 <h1 class="hasAnchor">
-<a href="#in-development---transform-a-categorical-variable-according-to-a-new-encoding" class="anchor"></a>IN DEVELOPMENT - transform a categorical variable according to a new encoding</h1>
-<p>IN DEVELOPMENT IN DEVELOPMENT IN DEVELOPMENT IN DEVELOPMENT IN DEVELOPMENT</p>
-<p>In many projects where dataset contains a caterogical variable one of the biggest obstacle is that the data provider during internal proceesses was changing an encoding of this variable during a time.</p>
-<p>Thus some categories were grouped and other were separated or a new one is added or an old one is removed.</p>
-<p>There should be stated a 3 clear questions:</p>
-<ol style="list-style-type: decimal">
-<li>Do i have a transition table.</li>
-<li>Type of the data - panel balanced or unbalanced or aggregate data vs individual data.</li>
-<li>Direction of a transition, forward or backward - use a new or an old encoding</li>
-</ol>
-<div id="panel-unbalanced" class="section level2">
+<a href="#mapping-of-a-categorical-variable-in-a-panel-dataset" class="anchor"></a>Mapping of a Categorical Variable in a Panel Dataset</h1>
+<p>This algorithm was invented and implemented in the paper by <a href="https://doi.org/10.24425/cejeme.2020.134747">Nasinski, Majchrowska and Broniatowska (2020)</a></p>
+<p><strong>The main rule is to replicate the observation if it could be assign to a few categories</strong> <strong>then using simple frequencies or statistical methods to approximate probabilities of being assign to each of them.</strong></p>
+<p>Why cat2cat:<br>
+- universal algorithm which could be used in different science fields<br>
+- stop removing variables for ml models because variable categories are not the same across time<br>
+- use a statistical modelling to join datasets from different time points and retain categorical variable structure<br>
+- visualize any factor variable across time<br>
+- real world datasets like <code>occup</code></p>
+<p>In many projects where dataset contains a categorical variable one of the biggest obstacle is that the data provider during internal processes was changing an encoding of this variable during a time. Thus some categories were grouped and other were separated or a new one is added or an old one is removed. The main objective is to merge a few surveys published by some data provider over the years.</p>
+<div id="many-time-points-to-map" class="section level2">
 <h2 class="hasAnchor">
-<a href="#panel-unbalanced" class="anchor"></a>panel unbalanced</h2>
-<p>Here we could not observe what category have each observations across time: There is not a possibility to build automatically mapping We have to provide manually a mapping table - usually by a data provider like a country statistics office In worst case made it manually when supported by some officials directive.</p>
-<p>ID, name, code, date<br>
-uninformative anonymous carpenter 102 2020-02-10<br>
-uninformative anonymous plumber 103 2020-02-10<br>
-uninformative anonymous carpenter or plumber 121 2020-02-12<br>
-uninformative anonymous carpenter or plumber 121 2020-02-12</p>
-<p>Here we artificially enlarge degrees of freedom<br>
-carpenter 121 2020-02-10<br>
-plumber 121 2020-02-10<br>
-carpenter 121 2020-02-12 50%<br>
-plumber 121 2020-02-12 50%<br>
-carpenter 121 2020-02-12 50%<br>
-plumber 121 2020-02-12 50%</p>
+<a href="#many-time-points-to-map" class="anchor"></a>Many Time Points To Map</h2>
+<p>cat2cat have to be used recursively where the prune methods (<code>prune_c2c</code>) might be needed to limit the problem of exponentially growing replications. Thus a prune_c2c with highest1 or highest method could be used before transferring a data.frame to the next iteration. However when only 3 periods have to be map then the middle one might be used as the base one.</p>
 </div>
-<div id="panel-balanced" class="section level2">
+<div id="different-types-of-panel-data" class="section level2">
 <h2 class="hasAnchor">
-<a href="#panel-balanced" class="anchor"></a>panel balanced</h2>
-<p>Here we could observe what category have each observation across time: There is a possibility to build a mapping automatically</p>
-<p>we could have new identifiers only in newest partition …<br>
-or old identifiers which do not continue to participate in abandoned group</p>
-<p>111 John Doe carpenter 102 2020-02-10<br>
-222 Jimmy Smith plumber 103 2020-02-10<br>
-111 John Doe carpenter or plumber 121 2020-02-12<br>
-222 Jimmy Smith carpenter or plumber 121 2020-02-12</p>
-<p>103,102 -&gt; 121</p>
-<p>Here we want to adjust to a new encoding<br>
-111 John Doe carpenter or plumber 121 2020-02-10<br>
-222 Jimmy Smith carpenter or plumber 121 2020-02-10<br>
-111 John Doe carpenter or plumber 121 2020-02-12<br>
-222 Jimmy Smith carpenter or plumber 121 2020-02-12</p>
-<p>Here we adjust to old encodingif we are sure that subjects have the same class. We have to assume that each person could not chenge the occupation which seems not reasonable. This assumption could be satste in other direction too for other example.</p>
-<p>111 John Doe carpenter 102 2020-02-10<br>
-222 Jimmy Smith plumber 103 2020-02-10<br>
-111 John Doe carpenter 102 2020-02-12<br>
-222 Jimmy Smith carpenter 103 2020-02-12</p>
-<p>Thus the best solutioon could be build a transition table and use algoritm for ubalance data.</p>
-<div id="simple-frequencies-vs-ml-module" class="section level3">
+<a href="#different-types-of-panel-data" class="anchor"></a>Different Types Of Panel Data</h2>
+<div id="panel-dataset-without-unique-identifier" class="section level3">
 <h3 class="hasAnchor">
-<a href="#simple-frequencies-vs-ml-module" class="anchor"></a>simple frequencies vs ML module</h3>
-<p>The main objective is to merge X surveys published by Y over the years. We could get a few types of data:</p>
-<p>ML unsupervised to choose most probable categories, narrow number of possible categories</p>
-<div id="simple-freqencies" class="section level4">
-<h4 class="hasAnchor">
-<a href="#simple-freqencies" class="anchor"></a>Simple freqencies</h4>
-<p>The first hash table - transitions:</p>
-<pre><code>&gt; head(...)
-$`1111`
-[1] "1111"
-$`1112`
-[1] "1112"
-$`1113`
-[1] "1112"
-$`1114`
-[1] "1121" "1122" "1123"
-$`1120`
-[1] "1211" "1212"
-$`1311`
-[1] "1221" "1311"</code></pre>
-<p>However each new observation has some probability of existence because of the fact that it could be assign to a few groups. Thus we built a next hash table which provide probabilities of attendance in each group. Probabilities were calculated using frequencies of people in each group at the previous survey. This should be obvious that for each observations which was replicated a few times probabilities have to sum to one. There were made some assumptions about cases such as when there was no the same group in the previous survey.</p>
-<p>The second hash table - probabilities:</p>
-<pre><code>&gt; head(cat_apply_freq(...) 
-$`1111`                                        
-[1] 1
-$`1112`
-[1] 1
-$`1113`
-[1] 1
-$`1114`
-[1] 0.3333333 0.3333333 0.3333333
-$`1120`
-[1] 0.8343979 0.1656021
-$`1311`
-[1] 0.95471934 0.04528066</code></pre>
-<p>Finally we get the dataset which has additional rows from a replication process and 3 supplementary variables - new group,probability and number of replications.</p>
-<p>Data should be preprocessed before building a regression model because of a high complexity. We implemented a deep explanatory analysis to understand data characteristics so right preprocessing decisions could be chosen.</p>
-<p>The extended Mincer equation was used to estimate this relation. Logarithmic wages was regressed against individual characteristics relevant from the perspective of the labour market</p>
+<a href="#panel-dataset-without-unique-identifier" class="anchor"></a>Panel Dataset Without Unique Identifier</h3>
+<p>We could not observe each subject category across time. There is not possible to build automatically a mapping table. We have to provide manually a mapping table - usually provided by a data provider like a national statistics office. In worst case somebody have to make it manually though supported by some official directives.</p>
+<table class="table">
+<thead><tr class="header">
+<th>ID</th>
+<th>occup</th>
+<th>code</th>
+<th>date</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>uninformative anonymous</td>
+<td>carpenter</td>
+<td>102</td>
+<td>2020-02-10</td>
+</tr>
+<tr class="even">
+<td>uninformative anonymous</td>
+<td>plumber</td>
+<td>103</td>
+<td>2020-02-10</td>
+</tr>
+<tr class="odd">
+<td>uninformative anonymous</td>
+<td>carpenter or plumber</td>
+<td>121</td>
+<td>2020-02-12</td>
+</tr>
+<tr class="even">
+<td>uninformative anonymous</td>
+<td>carpenter or plumber</td>
+<td>121</td>
+<td>2020-02-12</td>
+</tr>
+</tbody>
+</table>
+<p>Notice: New categories might appeared in a new partition or same old categories are depreciated.</p>
 </div>
-<div id="ml-module" class="section level4">
-<h4 class="hasAnchor">
-<a href="#ml-module" class="anchor"></a>ML module</h4>
+<div id="panel-dataset-with-unique-identifier" class="section level3">
+<h3 class="hasAnchor">
+<a href="#panel-dataset-with-unique-identifier" class="anchor"></a>Panel Dataset With Unique Identifier</h3>
+<p>Here we could observe each subject category across time. There is a possibility to build a mapping automatically.</p>
+<table class="table">
+<thead><tr class="header">
+<th>ID</th>
+<th>name</th>
+<th>occup</th>
+<th>code</th>
+<th>date</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>000</td>
+<td>Retire Jim</td>
+<td>carpenter</td>
+<td>102</td>
+<td>2020-02-10</td>
+</tr>
+<tr class="even">
+<td>111</td>
+<td>John Doe</td>
+<td>carpenter</td>
+<td>102</td>
+<td>2020-02-10</td>
+</tr>
+<tr class="odd">
+<td>222</td>
+<td>Jimmy Smith</td>
+<td>plumber</td>
+<td>103</td>
+<td>2020-02-10</td>
+</tr>
+<tr class="even">
+<td>111</td>
+<td>John Doe</td>
+<td>carpenter or plumber</td>
+<td>121</td>
+<td>2020-02-12</td>
+</tr>
+<tr class="odd">
+<td>222</td>
+<td>Jimmy Smith</td>
+<td>carpenter or plumber</td>
+<td>121</td>
+<td>2020-02-12</td>
+</tr>
+</tbody>
+</table>
+<p>Here we adjust to old encoding if we are sure that subjects have the same category. We have to assume that each person could not change the occupation which sometimes might seems not reasonable. Thus the best solution might to build a transition table and treat it as dataset without identifier.</p>
+<p>Notice: We could have new identifiers in a new partition or old identifiers which do not continue to participate. Notice: New categories might appeared in a new partition or same old categories are depraciated.</p>
+</div>
+</div>
+<div id="simple-frequencies-and-ml-methods" class="section level2">
+<h2 class="hasAnchor">
+<a href="#simple-frequencies-and-ml-methods" class="anchor"></a>Simple Frequencies and ml Methods</h2>
+<p>We could use simple frequencies or statistical/ml methods to approximate probabilities of being assign to each of possible categories. The probabilities might be used in further statistical models as a weights or to narrow the number of possible categories for each subject.</p>
+<p>Each new observation has some probability of existence because of the fact that it could be assign to a few groups. Probabilities were calculated using frequencies of subjects in each group/category at the previous survey/period. More advanced users might specify custom per group probabilities. This should be obvious that for each observations which was replicated a few times probabilities have to sum to one. There were made some assumptions about cases such as when there were no such groups in the previous period - some or all. When there is no frequencies the probabilities are allocated equally.</p>
+<p>Finally we get the dataset which has additional rows which comes from a replication process and at least 3 supplementary variables - new group, probability and number of replications. There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.</p>
+<p>For statistical models like linear regression its results should be adjusted because of a replication process which artificially enlarge the number of degree of freedom. Another solution might be using the prune_c2c function to remove additional rows and leave only categories with highest probabilities.</p>
+</div>
+<div id="isco-classification--dataset-without-unique-identifier---application" class="section level2">
+<h2 class="hasAnchor">
+<a href="#isco-classification--dataset-without-unique-identifier---application" class="anchor"></a>ISCO Classification- Dataset Without Unique Identifier - Application</h2>
+<p>Rearrangement of the old ISCO classification into the new one To rearrange the old classification into the new one, an associative array that maps keys to values was used. More precisely, an association list was used which is a linked list in which each list element is comprised of a key and value. An association list where unique four digits COS group codes from 2010 are keys and matching groups from 2008 are values was constructed. There are around 500 unique four-digit COS group codes, so searching an association list is not less preferable than searching a binary search tree or hash table. We were able to build the association list because of existence of a transition table provided by CSO. Transition table convey information needed for matching different COS coding in time. The first association list – transitions:</p>
+<pre><code>&gt; head(get_mappings(...))
+$‘1111‘
+[1] "1111"
+$‘1112‘
+[1] "1112"
+$‘1113‘
+[1] "1112"
+$‘1114‘
+[1] "1121" "1122" "1123"
+$‘1120‘
+[1] "1211" "1212"
+$‘1311‘
+[1] "1221" "1311"</code></pre>
+<p>For the surveys published after 2008, each observation was replicated in accordance with the COS association list. However, each new observation has some probability of existence because it can be assigned to several groups. Therefore, we built a next association list, which provides probabilities of attendance in each group. Probabilities were calculated using frequencies of workers in each group in the previous survey. It should be obvious that for each observation that was replicated, the probabilities have to add up to one. We also made some assumptions about cases where some occupational groups were lacking in previous surveys.</p>
+<p>The second association list – probabilities:</p>
+<pre><code>&gt; head(cat_apply_freq(...))
+$‘1111‘
+[1] 1
+$‘1112‘
+[1] 1
+$‘1113‘
+[1] 1
+$‘1114‘
+[1] 0.3333333 0.3333333 0.3333333
+$‘1120‘
+[1] 0.8343979 0.1656021
+$‘1311‘
+[1] 0.95471934 0.04528066</code></pre>
+<p>Finally, we get the dataset that has additional rows from a replication process and three supplementary variables – new group, probability, and number of replications. This dataset was built from five SWS surveys published biannually between 2006 and 2014. It contains over 5 million observations and 70 variables.</p>
 <div style="page-break-after: always;"></div>
 </div>
-</div>
-</div>
-<div id="data" class="section level2">
+<div id="isco-classification---dataset-without-unique-identifier---example" class="section level2">
 <h2 class="hasAnchor">
-<a href="#data" class="anchor"></a>Data</h2>
-<p>occup dataset is an example of unbalance panel dataset. It is presenting a characteristics from randomly selected company and then using k step procedure employees are chosen. The survey is anonymous and take place every two years. Use ?occup for more details.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">occup</span>)
+<a href="#isco-classification---dataset-without-unique-identifier---example" class="anchor"></a>ISCO classification - Dataset Without Unique Identifier - Example</h2>
+<p>occup dataset is an example of panel dataset without unique identifier. It is presenting a characteristics from randomly selected company and then using k step procedure employees sample are chosen. The survey is anonymous and take place every two years. Use <code><a href="../reference/occup.html">?occup</a></code> for more details. trans dataset containing transitions between old (2008) and new (2010) occupational codes.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">trans</span>)</pre></body></html></div>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">occup</span> <span class="kw">%&gt;%</span> <span class="fu">glimpse</span>()</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">occup</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## Rows: 68,370
-## Columns: 13
-## $ id        &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, …
-## $ age       &lt;dbl&gt; 49.29183, 33.95678, 30.98335, 55.26238, 34.05539, 35.23543,…
-## $ sex       &lt;lgl&gt; FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, …
-## $ edu       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 4, 1, 1, 3, 2, 1, 1,…
-## $ exp       &lt;dbl&gt; 26.461835, 7.536783, 7.483355, 24.762377, 10.055385, 11.235…
-## $ district  &lt;int&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
-## $ sector    &lt;chr&gt; "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O",…
-## $ parttime  &lt;dbl&gt; 1.0000000, 1.0000000, 0.3333333, 1.0000000, 1.0000000, 1.00…
-## $ salary    &lt;dbl&gt; 94730.94, 67619.39, 17862.90, 261882.46, 84540.17, 94002.69…
-## $ code      &lt;chr&gt; "2471", "2471", "2471", "1112", "2471", "2479", "3431", "11…
-## $ multipier &lt;dbl&gt; 223.2233, 279.4190, 240.4430, 233.9506, 254.0955, 261.7070,…
-## $ year      &lt;int&gt; 2008, 2008, 2008, 2008, 2008, 2008, 2008, 2008, 2008, 2008,…
-## $ code4     &lt;chr&gt; "2471", "2471", "2471", "1112", "2471", "2479", "3431", "11…</code></pre>
-<p>trans dataset containing transitions between old (2008) and new (2010) occupational codes.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">trans</span> <span class="kw">%&gt;%</span> <span class="fu">glimpse</span>()</pre></body></html></div>
+## Columns: 12
+## $ id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,…
+## $ age        &lt;dbl&gt; 49.29183, 33.95678, 30.98335, 55.26238, 34.05539, 35.23543…
+## $ sex        &lt;lgl&gt; FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, FALSE,…
+## $ edu        &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 4, 1, 1, 3, 2, 1, 1…
+## $ exp        &lt;dbl&gt; 26.461835, 7.536783, 7.483355, 24.762377, 10.055385, 11.23…
+## $ district   &lt;int&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8…
+## $ parttime   &lt;dbl&gt; 1.0000000, 1.0000000, 0.3333333, 1.0000000, 1.0000000, 1.0…
+## $ salary     &lt;dbl&gt; 94730.94, 67619.39, 17862.90, 261882.46, 84540.17, 94002.6…
+## $ code       &lt;chr&gt; "2471", "2471", "2471", "1112", "2471", "2479", "3431", "1…
+## $ multiplier &lt;dbl&gt; 223.2233, 279.4190, 240.4430, 233.9506, 254.0955, 261.7070…
+## $ year       &lt;int&gt; 2008, 2008, 2008, 2008, 2008, 2008, 2008, 2008, 2008, 2008…
+## $ code4      &lt;chr&gt; "2471", "2471", "2471", "1112", "2471", "2479", "3431", "1…</code></pre>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">trans</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## Rows: 2,666
 ## Columns: 2
 ## $ old &lt;chr&gt; "1111", "1111", "1111", "1112", "1112", "1112", "1121", "1122", "…
 ## $ new &lt;chr&gt; "111101", "111102", "111103", "111201", "111202", "111301", "1114…</code></pre>
+<p>graph for some mappings inside trans table:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">gg</span> <span class="op">=</span> <span class="fu">graph_from_data_frame</span><span class="op">(</span><span class="va">trans</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">40</span>, <span class="op">]</span><span class="op">)</span>
+<span class="fu">plot.igraph</span><span class="op">(</span><span class="va">gg</span><span class="op">)</span></code></pre></div>
+<p><img src="Introduction_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <div style="page-break-after: always;"></div>
-<div id="mappings" class="section level3">
+<div id="mappings---utils" class="section level3">
 <h3 class="hasAnchor">
-<a href="#mappings" class="anchor"></a>Mappings</h3>
-<p>If you are interested in the utils functions here are presented some</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">mappings</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/get_mappings.html">get_mappings</a></span>(<span class="no">trans</span>)
+<a href="#mappings---utils" class="anchor"></a>Mappings - utils</h3>
+<p>If you are interested in the utils functions here are presented some of them.</p>
+<p>Processing of the mapping table and deriving simple frequencies.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mappings</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_mappings.html">get_mappings</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span>
 
-<span class="no">mappings</span>$<span class="no">to_old</span>[<span class="fl">1</span>:<span class="fl">4</span>]</pre></body></html></div>
+<span class="va">mappings</span><span class="op">$</span><span class="va">to_old</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></code></pre></div>
 <pre><code>## $`111101`
 ## [1] "1111"
 ## 
@@ -240,7 +310,8 @@ $`1311`
 ## 
 ## $`111201`
 ## [1] "1112"</code></pre>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">mappings</span>$<span class="no">to_new</span>[<span class="fl">1</span>:<span class="fl">4</span>]</pre></body></html></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mappings</span><span class="op">$</span><span class="va">to_new</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></code></pre></div>
 <pre><code>## $`1111`
 ## [1] "111101" "111102" "111103"
 ## 
@@ -252,9 +323,12 @@ $`1311`
 ## 
 ## $`1122`
 ## [1] "111401" "111403" "111404"</code></pre>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">mapp_p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/cat_apply_freq.html">cat_apply_freq</a></span>(<span class="no">mappings</span>$<span class="no">to_old</span>, <span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span>(<span class="no">occup</span>$<span class="no">code4</span>[<span class="no">occup</span>$<span class="no">year</span> <span class="kw">==</span> <span class="st">"2008"</span>], <span class="no">occup</span>$<span class="no">multipier</span>[<span class="no">occup</span>$<span class="no">year</span> <span class="kw">==</span> <span class="st">"2008"</span>]))
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># occup$multiplier part inside get_freqs is optional</span>
+<span class="co"># this variable specifying how many times to replicate each observation to get reliable population</span>
+<span class="va">mapp_p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_apply_freq.html">cat_apply_freq</a></span><span class="op">(</span><span class="va">mappings</span><span class="op">$</span><span class="va">to_old</span>, <span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span><span class="op">(</span><span class="va">occup</span><span class="op">$</span><span class="va">code4</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2008"</span><span class="op">]</span>, <span class="va">occup</span><span class="op">$</span><span class="va">multiplier</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2008"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">mappings</span>$<span class="no">to_old</span>), <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">mapp_p</span>)) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">mappings</span><span class="op">$</span><span class="va">to_old</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">mapp_p</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>##        mappings.to_old mapp_p
 ## 111101            1111      1
 ## 111102            1111      1
@@ -262,9 +336,10 @@ $`1311`
 ## 111201            1112      1
 ## 111202            1112      1
 ## 111301            1112      1</code></pre>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">mapp_p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/cat_apply_freq.html">cat_apply_freq</a></span>(<span class="no">mappings</span>$<span class="no">to_new</span>, <span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span>(<span class="no">occup</span>$<span class="no">code4</span>[<span class="no">occup</span>$<span class="no">year</span> <span class="kw">==</span> <span class="st">"2010"</span>], <span class="no">occup</span>$<span class="no">multipier</span>[<span class="no">occup</span>$<span class="no">year</span> <span class="kw">==</span> <span class="st">"2010"</span>]))
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">mapp_p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_apply_freq.html">cat_apply_freq</a></span><span class="op">(</span><span class="va">mappings</span><span class="op">$</span><span class="va">to_new</span>, <span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span><span class="op">(</span><span class="va">occup</span><span class="op">$</span><span class="va">code4</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2010"</span><span class="op">]</span>, <span class="va">occup</span><span class="op">$</span><span class="va">multiplier</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2010"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">mappings</span>$<span class="no">to_new</span>), <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">mapp_p</span>)) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">mappings</span><span class="op">$</span><span class="va">to_new</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">mapp_p</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>##      mappings.to_new       mapp_p
 ## 1111    111101, .... 0.333333....
 ## 1112    111201, .... 0.333333....
@@ -274,76 +349,77 @@ $`1311`
 ## 1211    112007, .... 0.25, 0.....</code></pre>
 <div style="page-break-after: always;"></div>
 </div>
-<div id="cat2cat-applied-for-occup-data-panel" class="section level3">
+<div id="mappings---application" class="section level3">
 <h3 class="hasAnchor">
-<a href="#cat2cat-applied-for-occup-data-panel" class="anchor"></a>cat2cat applied for occup data panel</h3>
-<p>splitting the data</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">occup_old</span> <span class="kw">=</span> <span class="no">occup</span>[<span class="no">occup</span>$<span class="no">year</span> <span class="kw">==</span> <span class="fl">2008</span>,]
-<span class="no">occup_new</span> <span class="kw">=</span> <span class="no">occup</span>[<span class="no">occup</span>$<span class="no">year</span> <span class="kw">==</span> <span class="fl">2010</span>,]</pre></body></html></div>
-<p>simple model where probabilities will be taken from a category freqency.</p>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span>(
-  <span class="kw">data</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">old</span> <span class="kw">=</span> <span class="no">occup_old</span> ,<span class="kw">new</span> <span class="kw">=</span> <span class="no">occup_new</span>, <span class="kw">cat_var</span> <span class="kw">=</span> <span class="st">"code"</span>, <span class="kw">time_var</span> <span class="kw">=</span> <span class="st">"year"</span>),
-  <span class="kw">mappings</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">trans</span> <span class="kw">=</span> <span class="no">trans</span>, <span class="kw">direction</span> <span class="kw">=</span> <span class="st">"forward"</span>)
-  )</pre></body></html></div>
+<a href="#mappings---application" class="anchor"></a>Mappings - Application</h3>
+<p>Splitting the data</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">occup_old</span> <span class="op">=</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2008</span>,<span class="op">]</span>
+<span class="va">occup_new</span> <span class="op">=</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2010</span>,<span class="op">]</span></code></pre></div>
+<p>Simple model where probabilities will be taken from categories frequencies.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
+  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span> ,new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
+  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span>
+  <span class="op">)</span></code></pre></div>
 <pre><code>## $old
-## # A tibble: 34,176 x 18
-##       id   age sex     edu   exp district sector parttime salary code  multipier
-##    &lt;int&gt; &lt;dbl&gt; &lt;lgl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;int&gt; &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;
-##  1     1  49.3 FALSE     1 26.5         8 O         1     9.47e4 2471       223.
-##  2     2  34.0 FALSE     1  7.54        8 O         1     6.76e4 2471       279.
-##  3     3  31.0 TRUE      1  7.48        8 O         0.333 1.79e4 2471       240.
-##  4     4  55.3 TRUE      1 24.8         8 O         1     2.62e5 1112       234.
-##  5     5  34.1 TRUE      1 10.1         8 O         1     8.45e4 2471       254.
-##  6     6  35.2 FALSE     1 11.2         8 O         1     9.40e4 2479       262.
-##  7     7  32.4 FALSE     1  8.50        8 O         1     6.53e4 3431       256.
-##  8     8  48.0 TRUE      1 24.5         8 O         1     2.62e5 1112       251.
-##  9     9  51.0 FALSE     4 32.0         8 O         1     4.95e4 3431       259.
-## 10    10  69.6 FALSE     1 44.6         8 O         1     1.75e5 2422       245.
-## # … with 34,166 more rows, and 7 more variables: year &lt;int&gt;, code4 &lt;chr&gt;,
-## #   index_c2c &lt;int&gt;, g_new_c2c &lt;chr&gt;, wei_freq_c2c &lt;dbl&gt;, rep_c2c &lt;dbl&gt;,
-## #   wei_naive_c2c &lt;dbl&gt;
+## # A tibble: 34,176 x 17
+##       id   age sex     edu   exp district parttime salary code  multiplier  year
+##    &lt;int&gt; &lt;dbl&gt; &lt;lgl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;int&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;
+##  1     1  49.3 FALSE     1 26.5         8    1     9.47e4 2471        223.  2008
+##  2     2  34.0 FALSE     1  7.54        8    1     6.76e4 2471        279.  2008
+##  3     3  31.0 TRUE      1  7.48        8    0.333 1.79e4 2471        240.  2008
+##  4     4  55.3 TRUE      1 24.8         8    1     2.62e5 1112        234.  2008
+##  5     5  34.1 TRUE      1 10.1         8    1     8.45e4 2471        254.  2008
+##  6     6  35.2 FALSE     1 11.2         8    1     9.40e4 2479        262.  2008
+##  7     7  32.4 FALSE     1  8.50        8    1     6.53e4 3431        256.  2008
+##  8     8  48.0 TRUE      1 24.5         8    1     2.62e5 1112        251.  2008
+##  9     9  51.0 FALSE     4 32.0         8    1     4.95e4 3431        259.  2008
+## 10    10  69.6 FALSE     1 44.6         8    1     1.75e5 2422        245.  2008
+## # … with 34,166 more rows, and 6 more variables: code4 &lt;chr&gt;, index_c2c &lt;int&gt;,
+## #   g_new_c2c &lt;chr&gt;, wei_freq_c2c &lt;dbl&gt;, rep_c2c &lt;dbl&gt;, wei_naive_c2c &lt;dbl&gt;
 ## 
 ## $new
-## # A tibble: 36,850 x 18
-##       id   age sex     edu   exp district sector parttime salary code  multipier
-##    &lt;int&gt; &lt;dbl&gt; &lt;lgl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;int&gt; &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;
-##  1 34177  52.5 TRUE      1 29.5         8 O          1    9.39e4 1213…      240.
-##  2 34178  56.1 FALSE     6 35.7         8 O          0.67 2.81e4 9112…      265.
-##  3 34179  28.4 FALSE     1  6.36        8 O          1    4.35e4 4226…      232.
-##  4 34180  43.7 FALSE     5 23.0         8 O          1    3.37e4 9112…      225.
-##  5 34181  55.0 TRUE      6 34.6         6 O          1    7.27e4 8322…      230.
-##  6 34182  54.1 FALSE     4 27.9         8 O          1    4.73e4 3343…      215.
-##  7 34183  62.6 FALSE     8 24.6         8 O          1    2.15e4 9112…      221.
-##  8 34184  31.2 FALSE     1  6.37        8 O          1    7.53e4 2611…      202.
-##  9 34185  40.6 TRUE      1 18.9         8 O          1    1.02e5 2611…      255.
-## 10 34186  25.0 TRUE      5  5.82        8 O          1    2.11e4 9629…      226.
-## # … with 36,840 more rows, and 7 more variables: year &lt;int&gt;, code4 &lt;chr&gt;,
-## #   index_c2c &lt;int&gt;, g_new_c2c &lt;chr&gt;, wei_freq_c2c &lt;dbl&gt;, rep_c2c &lt;int&gt;,
-## #   wei_naive_c2c &lt;dbl&gt;</code></pre>
+## # A tibble: 36,850 x 17
+##       id   age sex     edu   exp district parttime salary code  multiplier  year
+##    &lt;int&gt; &lt;dbl&gt; &lt;lgl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;int&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;
+##  1 34177  52.5 TRUE      1 29.5         8     1    9.39e4 1213…       240.  2010
+##  2 34178  56.1 FALSE     6 35.7         8     0.67 2.81e4 9112…       265.  2010
+##  3 34179  28.4 FALSE     1  6.36        8     1    4.35e4 4226…       232.  2010
+##  4 34180  43.7 FALSE     5 23.0         8     1    3.37e4 9112…       225.  2010
+##  5 34181  55.0 TRUE      6 34.6         6     1    7.27e4 8322…       230.  2010
+##  6 34182  54.1 FALSE     4 27.9         8     1    4.73e4 3343…       215.  2010
+##  7 34183  62.6 FALSE     8 24.6         8     1    2.15e4 9112…       221.  2010
+##  8 34184  31.2 FALSE     1  6.37        8     1    7.53e4 2611…       202.  2010
+##  9 34185  40.6 TRUE      1 18.9         8     1    1.02e5 2611…       255.  2010
+## 10 34186  25.0 TRUE      5  5.82        8     1    2.11e4 9629…       226.  2010
+## # … with 36,840 more rows, and 6 more variables: code4 &lt;chr&gt;, index_c2c &lt;int&gt;,
+## #   g_new_c2c &lt;chr&gt;, wei_freq_c2c &lt;dbl&gt;, rep_c2c &lt;int&gt;, wei_naive_c2c &lt;dbl&gt;</code></pre>
 </div>
-<div id="ml-module-1" class="section level3">
+<div id="ml-argument" class="section level3">
 <h3 class="hasAnchor">
-<a href="#ml-module-1" class="anchor"></a>ml module</h3>
-<p>Curentlly only knn method is availble.</p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="no">occup_2</span> <span class="kw">=</span> <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span>(
-  <span class="kw">data</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">old</span> <span class="kw">=</span> <span class="no">occup_old</span> ,<span class="kw">new</span> <span class="kw">=</span> <span class="no">occup_new</span>, <span class="kw">cat_var</span> <span class="kw">=</span> <span class="st">"code"</span>, <span class="kw">time_var</span> <span class="kw">=</span> <span class="st">"year"</span>),
-  <span class="kw">mappings</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">trans</span> <span class="kw">=</span> <span class="no">trans</span>, <span class="kw">direction</span> <span class="kw">=</span> <span class="st">"forward"</span>)
-  ,<span class="kw">ml</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">method</span> <span class="kw">=</span> <span class="st">"knn"</span>, <span class="kw">features</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"edu"</span>, <span class="st">"exp"</span>, <span class="st">"parttime"</span>, <span class="st">"salary"</span>), <span class="kw">args</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">k</span> <span class="kw">=</span> <span class="fl">10</span>))
-  )</pre></body></html></div>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="no">occup_2</span> <span class="kw">%&gt;%</span> <span class="fu">glimpse</span>()</pre></body></html></div>
+<a href="#ml-argument" class="anchor"></a>ml Argument</h3>
+<p>Currently knn/rf/lda methods are available to approximate probabilities of being assign to each of categories.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">occup_2</span> <span class="op">=</span> <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
+  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span> ,new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
+  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span>,
+  ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"knn"</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"edu"</span>, <span class="st">"exp"</span>, <span class="st">"parttime"</span>, <span class="st">"salary"</span><span class="op">)</span>, args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">occup_2</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## List of 2
-##  $ old: tibble [34,176 × 19] (S3: tbl_df/tbl/data.frame)
+##  $ old: tibble [34,176 × 18] (S3: tbl_df/tbl/data.frame)
 ##   ..$ id           : int [1:34176] 1 2 3 4 5 6 7 8 9 10 ...
 ##   ..$ age          : num [1:34176] 49.3 34 31 55.3 34.1 ...
 ##   ..$ sex          : logi [1:34176] FALSE FALSE TRUE TRUE TRUE FALSE ...
 ##   ..$ edu          : int [1:34176] 1 1 1 1 1 1 1 1 4 1 ...
 ##   ..$ exp          : num [1:34176] 26.46 7.54 7.48 24.76 10.06 ...
 ##   ..$ district     : int [1:34176] 8 8 8 8 8 8 8 8 8 8 ...
-##   ..$ sector       : chr [1:34176] "O" "O" "O" "O" ...
 ##   ..$ parttime     : num [1:34176] 1 1 0.333 1 1 ...
 ##   ..$ salary       : num [1:34176] 94731 67619 17863 261882 84540 ...
 ##   ..$ code         : chr [1:34176] "2471" "2471" "2471" "1112" ...
-##   ..$ multipier    : num [1:34176] 223 279 240 234 254 ...
+##   ..$ multiplier   : num [1:34176] 223 279 240 234 254 ...
 ##   ..$ year         : int [1:34176] 2008 2008 2008 2008 2008 2008 2008 2008 2008 2008 ...
 ##   ..$ code4        : chr [1:34176] "2471" "2471" "2471" "1112" ...
 ##   ..$ index_c2c    : int [1:34176] 1 2 3 4 5 6 7 8 9 10 ...
@@ -351,78 +427,76 @@ $`1311`
 ##   ..$ wei_freq_c2c : num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ rep_c2c      : num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ wei_naive_c2c: num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ wei_ml_c2c   : num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...
-##  $ new: tibble [36,850 × 19] (S3: tbl_df/tbl/data.frame)
+##   ..$ wei_knn_c2c  : num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ new: tibble [36,850 × 18] (S3: tbl_df/tbl/data.frame)
 ##   ..$ id           : int [1:36850] 34177 34178 34179 34180 34181 34182 34183 34184 34185 34186 ...
 ##   ..$ age          : num [1:36850] 52.5 56.1 28.4 43.7 55 ...
 ##   ..$ sex          : logi [1:36850] TRUE FALSE FALSE FALSE TRUE FALSE ...
 ##   ..$ edu          : int [1:36850] 1 6 1 5 6 4 8 1 1 5 ...
 ##   ..$ exp          : num [1:36850] 29.49 35.73 6.36 23 34.6 ...
 ##   ..$ district     : int [1:36850] 8 8 8 8 6 8 8 8 8 8 ...
-##   ..$ sector       : chr [1:36850] "O" "O" "O" "O" ...
 ##   ..$ parttime     : num [1:36850] 1 0.67 1 1 1 1 1 1 1 1 ...
 ##   ..$ salary       : num [1:36850] 93946 28062 43532 33682 72680 ...
 ##   ..$ code         : chr [1:36850] "121303" "911207" "422602" "911290" ...
-##   ..$ multipier    : num [1:36850] 240 265 232 225 230 ...
+##   ..$ multiplier   : num [1:36850] 240 265 232 225 230 ...
 ##   ..$ year         : int [1:36850] 2010 2010 2010 2010 2010 2010 2010 2010 2010 2010 ...
 ##   ..$ code4        : chr [1:36850] "1213" "9112" "4226" "9112" ...
 ##   ..$ index_c2c    : int [1:36850] 1 2 3 4 5 6 7 8 9 10 ...
-##   ..$ g_new_c2c    : Named chr [1:36850] "1239" "9132" "4222" "9132" ...
-##   .. ..- attr(*, "names")= chr [1:36850] "121303" "911207" "422602" "911290" ...
-##   ..$ wei_freq_c2c : Named num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...
-##   .. ..- attr(*, "names")= chr [1:36850] "121303" "911207" "422602" "911290" ...
-##   ..$ rep_c2c      : Named int [1:36850] 1 1 1 1 1 1 1 1 1 1 ...
-##   .. ..- attr(*, "names")= chr [1:36850] "121303" "911207" "422602" "911290" ...
-##   ..$ wei_naive_c2c: Named num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...
-##   .. ..- attr(*, "names")= chr [1:36850] "121303" "911207" "422602" "911290" ...
-##   ..$ wei_ml_c2c   : Named num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...
-##   .. ..- attr(*, "names")= chr [1:36850] "121303" "911207" "422602" "911290" ...</code></pre>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">occup_3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span>(
-  <span class="kw">data</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">old</span> <span class="kw">=</span> <span class="no">occup_old</span>, <span class="kw">new</span> <span class="kw">=</span> <span class="no">occup_new</span>, <span class="kw">cat_var</span> <span class="kw">=</span> <span class="st">"code"</span>, <span class="kw">time_var</span> <span class="kw">=</span> <span class="st">"year"</span>),
-  <span class="kw">mappings</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">trans</span> <span class="kw">=</span> <span class="no">trans</span>, <span class="kw">direction</span> <span class="kw">=</span> <span class="st">"backward"</span>),
-  <span class="kw">ml</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">method</span> <span class="kw">=</span> <span class="st">"knn"</span>, <span class="kw">features</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"edu"</span>, <span class="st">"exp"</span>, <span class="st">"parttime"</span>, <span class="st">"salary"</span>), <span class="kw">args</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">k</span> <span class="kw">=</span> <span class="fl">10</span>))
-)</pre></body></html></div>
-<p>notice : if the ml model is failing then NA is returnd so</p>
-<p>cor(occup_3<span class="math inline">\(old\)</span>wei_ml_c2c, occup_3<span class="math inline">\(old\)</span>wei_freq_c2c, use = “complete.obs”)</p>
-<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="no">occup_3</span> <span class="kw">%&gt;%</span> <span class="fu">glimpse</span>()</pre></body></html></div>
+##   ..$ g_new_c2c    : chr [1:36850] "1239" "9132" "4222" "9132" ...
+##   ..$ wei_freq_c2c : num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ rep_c2c      : int [1:36850] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ wei_naive_c2c: num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ wei_knn_c2c  : num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">occup_3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
+  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
+  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>,
+  ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"knn"</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"edu"</span>, <span class="st">"exp"</span>, <span class="st">"parttime"</span>, <span class="st">"salary"</span><span class="op">)</span>, args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span>
+<span class="op">)</span></code></pre></div>
+<p>Without ml subsection only simple frequencies are assessed. When ml model is broken then weights from simple frequencies are taken. <code>knn</code> method is recommended for smaller datasets.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">occup_3</span><span class="op">$</span><span class="va">old</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html">grepl</a></span><span class="op">(</span><span class="st">"wei.*c2c"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">occup_3</span><span class="op">$</span><span class="va">old</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>, use <span class="op">=</span> <span class="st">"complete.obs"</span><span class="op">)</span></code></pre></div>
+<pre><code>##               wei_freq_c2c wei_naive_c2c wei_knn_c2c
+## wei_freq_c2c     1.0000000     0.5631527   0.8927482
+## wei_naive_c2c    0.5631527     1.0000000   0.5074644
+## wei_knn_c2c      0.8927482     0.5074644   1.0000000</code></pre>
+<p>Summary plot:</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_c2c.html">plot_c2c</a></span><span class="op">(</span><span class="va">occup_3</span><span class="op">$</span><span class="va">old</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"both"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="Introduction_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">occup_3</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## List of 2
-##  $ old: tibble [451,670 × 19] (S3: tbl_df/tbl/data.frame)
+##  $ old: tibble [451,670 × 18] (S3: tbl_df/tbl/data.frame)
 ##   ..$ id           : int [1:451670] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ age          : num [1:451670] 49.3 49.3 49.3 49.3 49.3 ...
 ##   ..$ sex          : logi [1:451670] FALSE FALSE FALSE FALSE FALSE FALSE ...
 ##   ..$ edu          : int [1:451670] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ exp          : num [1:451670] 26.5 26.5 26.5 26.5 26.5 ...
 ##   ..$ district     : int [1:451670] 8 8 8 8 8 8 8 8 8 8 ...
-##   ..$ sector       : chr [1:451670] "O" "O" "O" "O" ...
 ##   ..$ parttime     : num [1:451670] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ salary       : num [1:451670] 94731 94731 94731 94731 94731 ...
 ##   ..$ code         : chr [1:451670] "2471" "2471" "2471" "2471" ...
-##   ..$ multipier    : num [1:451670] 223 223 223 223 223 ...
+##   ..$ multiplier   : num [1:451670] 223 223 223 223 223 ...
 ##   ..$ year         : int [1:451670] 2008 2008 2008 2008 2008 2008 2008 2008 2008 2008 ...
 ##   ..$ code4        : chr [1:451670] "2471" "2471" "2471" "2471" ...
 ##   ..$ index_c2c    : int [1:451670] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ g_new_c2c    : Named chr [1:451670] "335101" "242209" "242212" "242214" ...
-##   .. ..- attr(*, "names")= chr [1:451670] "24711" "24712" "24713" "24714" ...
-##   ..$ wei_freq_c2c : Named num [1:451670] 0.2124 0.0674 0.0155 0.0415 0.0466 ...
-##   .. ..- attr(*, "names")= chr [1:451670] "24711" "24712" "24713" "24714" ...
-##   ..$ rep_c2c      : Named int [1:451670] 11 11 11 11 11 11 11 11 11 11 ...
-##   .. ..- attr(*, "names")= chr [1:451670] "2471" "2471" "2471" "2471" ...
-##   ..$ wei_naive_c2c: Named num [1:451670] 0.0909 0.0909 0.0909 0.0909 0.0909 ...
-##   .. ..- attr(*, "names")= chr [1:451670] "2471" "2471" "2471" "2471" ...
-##   ..$ wei_ml_c2c   : Named num [1:451670] 0.2 0.4 0 0.2 0 0 0 0 0 0 ...
-##   .. ..- attr(*, "names")= chr [1:451670] "" "" "" "" ...
-##  $ new: tibble [34,194 × 19] (S3: tbl_df/tbl/data.frame)
+##   ..$ g_new_c2c    : chr [1:451670] "335101" "242209" "242212" "242214" ...
+##   ..$ wei_freq_c2c : num [1:451670] 0.2124 0.0674 0.0155 0.0415 0.0466 ...
+##   ..$ rep_c2c      : int [1:451670] 11 11 11 11 11 11 11 11 11 11 ...
+##   ..$ wei_naive_c2c: num [1:451670] 0.0909 0.0909 0.0909 0.0909 0.0909 ...
+##   ..$ wei_knn_c2c  : num [1:451670] 0.2 0.4 0 0.2 0 0 0 0 0 0 ...
+##  $ new: tibble [34,194 × 18] (S3: tbl_df/tbl/data.frame)
 ##   ..$ id           : int [1:34194] 34177 34178 34179 34180 34181 34182 34183 34184 34185 34186 ...
 ##   ..$ age          : num [1:34194] 52.5 56.1 28.4 43.7 55 ...
 ##   ..$ sex          : logi [1:34194] TRUE FALSE FALSE FALSE TRUE FALSE ...
 ##   ..$ edu          : int [1:34194] 1 6 1 5 6 4 8 1 1 5 ...
 ##   ..$ exp          : num [1:34194] 29.49 35.73 6.36 23 34.6 ...
 ##   ..$ district     : int [1:34194] 8 8 8 8 6 8 8 8 8 8 ...
-##   ..$ sector       : chr [1:34194] "O" "O" "O" "O" ...
 ##   ..$ parttime     : num [1:34194] 1 0.67 1 1 1 1 1 1 1 1 ...
 ##   ..$ salary       : num [1:34194] 93946 28062 43532 33682 72680 ...
 ##   ..$ code         : chr [1:34194] "121303" "911207" "422602" "911290" ...
-##   ..$ multipier    : num [1:34194] 240 265 232 225 230 ...
+##   ..$ multiplier   : num [1:34194] 240 265 232 225 230 ...
 ##   ..$ year         : int [1:34194] 2010 2010 2010 2010 2010 2010 2010 2010 2010 2010 ...
 ##   ..$ code4        : chr [1:34194] "1213" "9112" "4226" "9112" ...
 ##   ..$ index_c2c    : int [1:34194] 1 2 3 4 5 6 7 8 9 10 ...
@@ -430,9 +504,10 @@ $`1311`
 ##   ..$ wei_freq_c2c : num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ rep_c2c      : num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ wei_naive_c2c: num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ wei_ml_c2c   : num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
-<p>New freqs for potential next step:</p>
-<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">occup_3</span>$<span class="no">new</span>$<span class="no">g_new_c2c</span>, <span class="kw">multipier</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="no">occup_3</span>$<span class="no">new</span>$<span class="no">multipier</span> * <span class="no">occup_3</span>$<span class="no">new</span>$<span class="no">wei_freq_c2c</span>)) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></body></html></div>
+##   ..$ wei_knn_c2c  : num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<p>New frequencies for potential next step might be derived manually and then used in next iteration by <code>freqs_df</code> argument (data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities). This might be useful for advanced users. Optional multiplier part specifying how many times to replicate each observation to get reliable population</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">occup_3</span><span class="op">$</span><span class="va">new</span><span class="op">$</span><span class="va">g_new_c2c</span>, multiplier <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span><span class="op">(</span><span class="va">occup_3</span><span class="op">$</span><span class="va">new</span><span class="op">$</span><span class="va">multiplier</span>  <span class="op">*</span> <span class="va">occup_3</span><span class="op">$</span><span class="va">new</span><span class="op">$</span><span class="va">wei_freq_c2c</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>##    input  Freq
 ## 1 111102   228
 ## 2 111103  3517
@@ -441,7 +516,8 @@ $`1311`
 ## 5 111405  1028
 ## 6 112001  4741</code></pre>
 <p>or backward:</p>
-<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">occup_2</span>$<span class="no">old</span>$<span class="no">g_new_c2c</span>, <span class="kw">multipier</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span>(<span class="no">occup_2</span>$<span class="no">old</span>$<span class="no">multipier</span> * <span class="no">occup_2</span>$<span class="no">old</span>$<span class="no">wei_freq_c2c</span>))<span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">occup_2</span><span class="op">$</span><span class="va">old</span><span class="op">$</span><span class="va">g_new_c2c</span>, multiplier  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span><span class="op">(</span><span class="va">occup_2</span><span class="op">$</span><span class="va">old</span><span class="op">$</span><span class="va">multiplier</span>  <span class="op">*</span> <span class="va">occup_2</span><span class="op">$</span><span class="va">old</span><span class="op">$</span><span class="va">wei_freq_c2c</span><span class="op">)</span><span class="op">)</span>  <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>##   input   Freq
 ## 1  1112  12977
 ## 2  1123   1268
@@ -451,109 +527,118 @@ $`1311`
 ## 6  1222  11668</code></pre>
 <div style="page-break-after: always;"></div>
 </div>
-<div id="example---linear-regressions" class="section level3">
+<div id="linear-regressions---example" class="section level3">
 <h3 class="hasAnchor">
-<a href="#example---linear-regressions" class="anchor"></a>Example - linear regressions:</h3>
-<p>Remember to correct degrees of freedom</p>
+<a href="#linear-regressions---example" class="anchor"></a>Linear Regressions - Example:</h3>
+<p>Remember to adjust results (<code>summary_c2c</code>) because of artificially enlarge degrees of freedom. The first weights might be surprising although they are multipliers which help to replicate the true population.</p>
+<div id="regression" class="section level4">
+<h4 class="hasAnchor">
+<a href="#regression" class="anchor"></a>Regression</h4>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## orginal dataset </span>
+<span class="va">lms2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">salary</span><span class="op">)</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">edu</span><span class="op">)</span> <span class="op">+</span> <span class="va">parttime</span> <span class="op">+</span> <span class="va">exp</span>, <span class="va">occup_old</span>, weights <span class="op">=</span> <span class="va">multiplier</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">lms2</span><span class="op">)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = I(log(salary)) ~ age + sex + factor(edu) + parttime + 
+##     exp, data = occup_old, weights = multiplier)
+## 
+## Weighted Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -41.649  -4.154  -0.170   4.134  94.979 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   8.6049934  0.0175898 489.203  &lt; 2e-16 ***
+## age          -0.0028783  0.0004561  -6.311 2.81e-10 ***
+## sexTRUE       0.2539537  0.0050557  50.231  &lt; 2e-16 ***
+## factor(edu)2 -0.0799110  0.0097006  -8.238  &lt; 2e-16 ***
+## factor(edu)3 -0.3579335  0.0124684 -28.707  &lt; 2e-16 ***
+## factor(edu)4 -0.4252729  0.0072134 -58.956  &lt; 2e-16 ***
+## factor(edu)5 -0.4050551  0.0101847 -39.771  &lt; 2e-16 ***
+## factor(edu)6 -0.6473797  0.0072134 -89.746  &lt; 2e-16 ***
+## factor(edu)7 -0.5295860  0.0783593  -6.758 1.42e-11 ***
+## factor(edu)8 -0.6751645  0.0110551 -61.073  &lt; 2e-16 ***
+## parttime      1.9342513  0.0114274 169.264  &lt; 2e-16 ***
+## exp           0.0128464  0.0004370  29.396  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.302 on 34164 degrees of freedom
+## Multiple R-squared:  0.5797, Adjusted R-squared:  0.5796 
+## F-statistic:  4284 on 11 and 34164 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## using one highest cross weights</span>
+<span class="co">## cross_c2c to cross different methods weights</span>
+<span class="co">## prune_c2c - highest1 leave only one the highest probability obs for each subject</span>
+<span class="va">occup_old_3</span> <span class="op">&lt;-</span> <span class="va">occup_3</span><span class="op">$</span><span class="va">old</span> <span class="op">%&gt;%</span> 
+                <span class="fu"><a href="../reference/cross_c2c.html">cross_c2c</a></span><span class="op">(</span><span class="va">.</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"wei_freq_c2c"</span>, <span class="st">"wei_knn_c2c"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+                <span class="fu"><a href="../reference/prune_c2c.html">prune_c2c</a></span><span class="op">(</span><span class="va">.</span>,column <span class="op">=</span> <span class="st">"wei_cross_c2c"</span>, method <span class="op">=</span> <span class="st">"highest1"</span><span class="op">)</span> 
+<span class="va">lms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">salary</span><span class="op">)</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">edu</span><span class="op">)</span> <span class="op">+</span> <span class="va">parttime</span> <span class="op">+</span> <span class="va">exp</span>, <span class="va">occup_old_3</span>, weights <span class="op">=</span> <span class="va">multiplier</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">lms</span><span class="op">)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = I(log(salary)) ~ age + sex + factor(edu) + parttime + 
+##     exp, data = occup_old_3, weights = multiplier)
+## 
+## Weighted Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -41.649  -4.154  -0.170   4.134  94.979 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   8.6049934  0.0175898 489.203  &lt; 2e-16 ***
+## age          -0.0028783  0.0004561  -6.311 2.81e-10 ***
+## sexTRUE       0.2539537  0.0050557  50.231  &lt; 2e-16 ***
+## factor(edu)2 -0.0799110  0.0097006  -8.238  &lt; 2e-16 ***
+## factor(edu)3 -0.3579335  0.0124684 -28.707  &lt; 2e-16 ***
+## factor(edu)4 -0.4252729  0.0072134 -58.956  &lt; 2e-16 ***
+## factor(edu)5 -0.4050551  0.0101847 -39.771  &lt; 2e-16 ***
+## factor(edu)6 -0.6473797  0.0072134 -89.746  &lt; 2e-16 ***
+## factor(edu)7 -0.5295860  0.0783593  -6.758 1.42e-11 ***
+## factor(edu)8 -0.6751645  0.0110551 -61.073  &lt; 2e-16 ***
+## parttime      1.9342513  0.0114274 169.264  &lt; 2e-16 ***
+## exp           0.0128464  0.0004370  29.396  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.302 on 34164 degrees of freedom
+## Multiple R-squared:  0.5797, Adjusted R-squared:  0.5796 
+## F-statistic:  4284 on 11 and 34164 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## we have to adjust size of stds as we artificially enlarge degrees of freedom</span>
+<span class="va">occup_old_3</span> <span class="op">&lt;-</span> <span class="va">occup_3</span><span class="op">$</span><span class="va">old</span> <span class="op">%&gt;%</span> 
+                <span class="fu"><a href="../reference/prune_c2c.html">prune_c2c</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"nonzero"</span><span class="op">)</span> <span class="co"># many different prune methods like highest</span>
+<span class="va">lms1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">salary</span><span class="op">)</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">edu</span><span class="op">)</span> <span class="op">+</span> <span class="va">parttime</span> <span class="op">+</span> <span class="va">exp</span>, <span class="va">occup_old_3</span>, weights <span class="op">=</span> <span class="va">multiplier</span> <span class="op">*</span> <span class="va">wei_freq_c2c</span><span class="op">)</span>
+<span class="co">## summary_c2c</span>
+<span class="fu"><a href="../reference/summary_c2c.html">summary_c2c</a></span><span class="op">(</span><span class="va">lms1</span>, df_old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">occup_old</span><span class="op">)</span>, df_new <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">occup_old_3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>##                  Estimate   Std. Error    t value      Pr(&gt;|t|)  correct
+## (Intercept)   8.604993403 0.0055287709 1556.40261  0.000000e+00 3.181006
+## age          -0.002878253 0.0001433546  -20.07786  1.296837e-89 3.181006
+## sexTRUE       0.253953695 0.0015890854  159.81123  0.000000e+00 3.181006
+## factor(edu)2 -0.079911042 0.0030490685  -26.20835 3.004023e-151 3.181006
+## factor(edu)3 -0.357933538 0.0039190179  -91.33246  0.000000e+00 3.181006
+## factor(edu)4 -0.425272851 0.0022672906 -187.56874  0.000000e+00 3.181006
+## factor(edu)5 -0.405055098 0.0032012174 -126.53158  0.000000e+00 3.181006
+## factor(edu)6 -0.647379667 0.0022673015 -285.52870  0.000000e+00 3.181006
+## factor(edu)7 -0.529586026 0.0246296091  -21.50201 1.741074e-102 3.181006
+## factor(edu)8 -0.675164484 0.0034747932 -194.30350  0.000000e+00 3.181006
+## parttime      1.934251280 0.0035918181  538.51593  0.000000e+00 3.181006
+## exp           0.012846366 0.0001373618   93.52212  0.000000e+00 3.181006
+##               std.error_c statistic_c     p.value_c
+## (Intercept)  0.0175870513  489.280055  0.000000e+00
+## age          0.0004560117   -6.311797  2.791937e-10
+## sexTRUE      0.0050548897   50.239216  0.000000e+00
+## factor(edu)2 0.0096991040   -8.239013  1.797590e-16
+## factor(edu)3 0.0124664180  -28.711819 3.664679e-179
+## factor(edu)4 0.0072122641  -58.965235  0.000000e+00
+## factor(edu)5 0.0101830905  -39.777226  0.000000e+00
+## factor(edu)6 0.0072122990  -89.760515  0.000000e+00
+## factor(edu)7 0.0783469253   -6.759500  1.406909e-11
+## factor(edu)8 0.0110533366  -61.082414  0.000000e+00
+## parttime     0.0114255936  169.291097  0.000000e+00
+## exp          0.0004369486   29.400175 1.194504e-187</code></pre>
 </div>
-<div id="providing-mappings-manually" class="section level3">
-<h3 class="hasAnchor">
-<a href="#providing-mappings-manually" class="anchor"></a>providing mappings manually</h3>
-<p>example of aggragate dataset where we want to specify transitions manually:</p>
-<p>Simulate the data.</p>
-<div class="sourceCode" id="cb30"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">1234</span>)
-
-<span class="no">agg_old</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(
-  <span class="kw">vertical</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Electronics"</span>, <span class="st">"Kids1"</span>, <span class="st">"Kids2"</span>, <span class="st">"Automotive"</span>, <span class="st">"Books"</span>, <span class="st">"Clothes"</span>, <span class="st">"Home"</span>, <span class="st">"Fashion"</span>, <span class="st">"Health"</span>, <span class="st">"Sport"</span>),
-  <span class="kw">sales</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span>(<span class="fl">10</span>, <span class="fl">100</span>, <span class="fl">10</span>),
-  <span class="kw">counts</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Geometric.html">rgeom</a></span>(<span class="fl">10</span>, <span class="fl">0.0001</span>),
-  <span class="kw">v_date</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">"2020-04-01"</span>, <span class="fl">10</span>), <span class="kw">stringsAsFactors</span> <span class="kw">=</span> <span class="no">F</span>
-)
-
-<span class="no">agg_new</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(
-  <span class="kw">vertical</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Electronics"</span>, <span class="st">"Supermarket"</span>, <span class="st">"Kids"</span>, <span class="st">"Automotive1"</span>, <span class="st">"Automotive2"</span>, <span class="st">"Books"</span>, <span class="st">"Clothes"</span>, <span class="st">"Home"</span>, <span class="st">"Fashion"</span>, <span class="st">"Health"</span>, <span class="st">"Sport"</span>),
-  <span class="kw">sales</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span>(<span class="fl">11</span>, <span class="fl">100</span>, <span class="fl">10</span>),
-  <span class="kw">counts</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Geometric.html">rgeom</a></span>(<span class="fl">11</span>, <span class="fl">0.0001</span>),
-  <span class="kw">v_date</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">"2020-05-01"</span>, <span class="fl">11</span>), <span class="kw">stringsAsFactors</span> <span class="kw">=</span> <span class="no">F</span>
-)</pre></body></html></div>
-<div class="sourceCode" id="cb31"><html><body><pre class="r"><span class="no">agg_old</span> <span class="kw">%&gt;%</span> <span class="fu">glimpse</span>()</pre></body></html></div>
-<pre><code>## Rows: 10
-## Columns: 4
-## $ vertical &lt;chr&gt; "Electronics", "Kids1", "Kids2", "Automotive", "Books", "Clo…
-## $ sales    &lt;dbl&gt; 87.92934, 102.77429, 110.84441, 76.54302, 104.29125, 105.060…
-## $ counts   &lt;int&gt; 9544, 17686, 32349, 135, 7489, 1078, 2414, 7399, 16102, 4957
-## $ v_date   &lt;chr&gt; "2020-04-01", "2020-04-01", "2020-04-01", "2020-04-01", "202…</code></pre>
-<div class="sourceCode" id="cb33"><html><body><pre class="r"><span class="no">agg_old</span> <span class="kw">%&gt;%</span> <span class="fu">glimpse</span>()</pre></body></html></div>
-<pre><code>## Rows: 10
-## Columns: 4
-## $ vertical &lt;chr&gt; "Electronics", "Kids1", "Kids2", "Automotive", "Books", "Clo…
-## $ sales    &lt;dbl&gt; 87.92934, 102.77429, 110.84441, 76.54302, 104.29125, 105.060…
-## $ counts   &lt;int&gt; 9544, 17686, 32349, 135, 7489, 1078, 2414, 7399, 16102, 4957
-## $ v_date   &lt;chr&gt; "2020-04-01", "2020-04-01", "2020-04-01", "2020-04-01", "202…</code></pre>
-<p>Remember that after that you have to aggrage the results in a proper way. Moreover each analysis could requires specific aggregation process.</p>
-<div class="sourceCode" id="cb35"><html><body><pre class="r"><span class="co"># old -&gt; new,new, old-&gt; old,new</span>
-<span class="no">agg1</span> <span class="kw">=</span> <span class="fu"><a href="../reference/cat2cat_agg.html">cat2cat_agg</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">old</span> <span class="kw">=</span> <span class="no">agg_old</span>, <span class="kw">new</span> <span class="kw">=</span> <span class="no">agg_new</span>, <span class="kw">cat_var</span> <span class="kw">=</span> <span class="st">"vertical"</span>, <span class="kw">time_var</span> <span class="kw">=</span> <span class="st">"v_date"</span>,<span class="kw">freq_var</span> <span class="kw">=</span> <span class="st">"counts"</span>),
-            <span class="no">Automotive</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Automotive1</span>, <span class="no">Automotive2</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Kids1</span>, <span class="no">Kids2</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Kids</span>), <span class="no">Home</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Home</span>, <span class="no">Supermarket</span>))
-
-<span class="no">agg1</span>$<span class="no">old</span></pre></body></html></div>
-<pre><code>##       vertical     sales counts     v_date prop
-## 1  Electronics  87.92934   9544 2020-04-01    1
-## 2        Kids1 102.77429  17686 2020-04-01    1
-## 3        Kids2 110.84441  32349 2020-04-01    1
-## 4   Automotive  76.54302    135 2020-04-01    1
-## 5        Books 104.29125   7489 2020-04-01    1
-## 6      Clothes 105.06056   1078 2020-04-01    1
-## 7         Home  94.25260   2414 2020-04-01    1
-## 8      Fashion  94.53368   7399 2020-04-01    1
-## 9       Health  94.35548  16102 2020-04-01    1
-## 10       Sport  91.09962   4957 2020-04-01    1</code></pre>
-<div class="sourceCode" id="cb37"><html><body><pre class="r"><span class="no">agg1</span>$<span class="no">new</span> <span class="kw">%&gt;%</span> <span class="fu">group_by</span>(<span class="no">vertical</span>) <span class="kw">%&gt;%</span> <span class="fu">summarise</span>(<span class="kw">sales</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">sales</span>*<span class="no">prop</span>), <span class="kw">counts</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">counts</span>*<span class="no">prop</span>), <span class="kw">v_date</span> <span class="kw">=</span> <span class="fu">first</span>(<span class="no">v_date</span>))</pre></body></html></div>
-<pre><code>## # A tibble: 10 x 4
-##    vertical    sales counts v_date    
-##    &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     
-##  1 Automotive  202.  56492  2020-05-01
-##  2 Books       112.  14239  2020-05-01
-##  3 Clothes     108.  27185  2020-05-01
-##  4 Electronics  82.7   859  2020-05-01
-##  5 Fashion      85.2  4981  2020-05-01
-##  6 Health      104.   1934  2020-05-01
-##  7 Home        178.  29375  2020-05-01
-##  8 Kids1        37.3   309. 2020-05-01
-##  9 Kids2        68.2   565. 2020-05-01
-## 10 Sport        99.3  9843  2020-05-01</code></pre>
-<p>changes in both direction.</p>
-<div class="sourceCode" id="cb39"><html><body><pre class="r"><span class="no">agg2</span> <span class="kw">=</span> <span class="fu"><a href="../reference/cat2cat_agg.html">cat2cat_agg</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">old</span> <span class="kw">=</span> <span class="no">agg_old</span>, <span class="kw">new</span> <span class="kw">=</span> <span class="no">agg_new</span>, <span class="kw">cat_var</span> <span class="kw">=</span> <span class="st">"vertical"</span>, <span class="kw">time_var</span> <span class="kw">=</span> <span class="st">"v_date"</span>, <span class="kw">freq_var</span> <span class="kw">=</span> <span class="st">"counts"</span>),
-            <span class="no">Automotive</span> <span class="kw">%&lt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Automotive1</span>, <span class="no">Automotive2</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Kids1</span>, <span class="no">Kids2</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Kids</span>), <span class="no">Home</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">Home</span>, <span class="no">Supermarket</span>))</pre></body></html></div>
-<div class="sourceCode" id="cb40"><html><body><pre class="r"><span class="no">agg2</span>$<span class="no">old</span> <span class="kw">%&gt;%</span> <span class="fu">group_by</span>(<span class="no">vertical</span>) <span class="kw">%&gt;%</span> <span class="fu">summarise</span>(<span class="kw">sales</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">sales</span>*<span class="no">prop</span>), <span class="kw">counts</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">counts</span>*<span class="no">prop</span>), <span class="kw">v_date</span> <span class="kw">=</span> <span class="fu">first</span>(<span class="no">v_date</span>))</pre></body></html></div>
-<pre><code>## # A tibble: 11 x 4
-##    vertical    sales  counts v_date    
-##    &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;     
-##  1 Automotive1  49.4    87.1 2020-04-01
-##  2 Automotive2  27.2    47.9 2020-04-01
-##  3 Books       104.   7489   2020-04-01
-##  4 Clothes     105.   1078   2020-04-01
-##  5 Electronics  87.9  9544   2020-04-01
-##  6 Fashion      94.5  7399   2020-04-01
-##  7 Health       94.4 16102   2020-04-01
-##  8 Home         94.3  2414   2020-04-01
-##  9 Kids1       103.  17686   2020-04-01
-## 10 Kids2       111.  32349   2020-04-01
-## 11 Sport        91.1  4957   2020-04-01</code></pre>
-<div class="sourceCode" id="cb42"><html><body><pre class="r"><span class="no">agg2</span>$<span class="no">new</span> <span class="kw">%&gt;%</span> <span class="fu">group_by</span>(<span class="no">vertical</span>) <span class="kw">%&gt;%</span> <span class="fu">summarise</span>(<span class="kw">sales</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">sales</span>*<span class="no">prop</span>), <span class="kw">counts</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">counts</span>*<span class="no">prop</span>), <span class="kw">v_date</span> <span class="kw">=</span> <span class="fu">first</span>(<span class="no">v_date</span>))</pre></body></html></div>
-<pre><code>## # A tibble: 11 x 4
-##    vertical    sales counts v_date    
-##    &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     
-##  1 Automotive1 100.  36453  2020-05-01
-##  2 Automotive2 102.  20039  2020-05-01
-##  3 Books       112.  14239  2020-05-01
-##  4 Clothes     108.  27185  2020-05-01
-##  5 Electronics  82.7   859  2020-05-01
-##  6 Fashion      85.2  4981  2020-05-01
-##  7 Health      104.   1934  2020-05-01
-##  8 Home        178.  29375  2020-05-01
-##  9 Kids1        37.3   309. 2020-05-01
-## 10 Kids2        68.2   565. 2020-05-01
-## 11 Sport        99.3  9843  2020-05-01</code></pre>
 </div>
 </div>
 </div>
@@ -574,7 +659,7 @@ $`1311`
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

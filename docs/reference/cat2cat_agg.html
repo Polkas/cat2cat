@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Aggragate dataset - Manual transforming of a categorical variable according to a new encoding — cat2cat_agg • cat2cat</title>
+<title>Aggregate panel dataset - Manual mapping of a categorical variable according to a new encoding — cat2cat_agg • cat2cat</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Aggragate dataset - Manual transforming of a categorical variable according to a new encoding — cat2cat_agg" />
-<meta property="og:description" content="Aggragate dataset - Manual transforming of a categorical variable according to a new encoding where user suppling transsitions by equtions." />
+<meta property="og:title" content="Aggregate panel dataset - Manual mapping of a categorical variable according to a new encoding — cat2cat_agg" />
+<meta property="og:description" content="Aggregate dataset - Manual mapping of a categorical variable according to a new encoding where user supplying transitions by equations." />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -99,10 +99,13 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/Polkas/catTOcat/">
+  <a href="https://github.com/Polkas/cat2cat/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -120,26 +123,26 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Aggragate dataset - Manual transforming of a categorical variable according to a new encoding</h1>
-    <small class="dont-index">Source: <a href='https://github.com/Polkas/catTOcat/blob/master/R/cat2cat_agg.R'><code>R/cat2cat_agg.R</code></a></small>
+    <h1>Aggregate panel dataset - Manual mapping of a categorical variable according to a new encoding</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Polkas/cat2cat/blob/master/R/cat2cat_agg.R'><code>R/cat2cat_agg.R</code></a></small>
     <div class="hidden name"><code>cat2cat_agg.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Aggragate dataset - Manual transforming of a categorical variable according to a new encoding where user suppling transsitions by equtions.</p>
+    <p>Aggregate dataset - Manual mapping of a categorical variable according to a new encoding where user supplying transitions by equations.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cat2cat_agg</span>(
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>old</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>new</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cat_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>time_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>freq_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>),
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>cat2cat_agg</span><span class='op'>(</span>
+  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>old <span class='op'>=</span> <span class='cn'>NULL</span>, new <span class='op'>=</span> <span class='cn'>NULL</span>, cat_var <span class='op'>=</span> <span class='cn'>NULL</span>, time_var <span class='op'>=</span> <span class='cn'>NULL</span>, freq_var <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>list with 5 named fileds `old` `new` `cat_var` `time_var` `freq_var`</p></td>
+      <td><p>list with 5 named fields `old` `new` `cat_var` `time_var` `freq_var`</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -153,29 +156,30 @@
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>data args</p><ul>
-<li><p>"old" data.frame</p></li>
-<li><p>"new" data.frame</p></li>
-<li><p>"cat_var" name of the caterogical variable</p></li>
-<li><p>"time_var" name of time variable</p></li>
-<li><p>"freq_var" name of frequency variable</p></li>
-</ul><p>... equations where direction is set by `&gt;`,`&lt;`,`<!-- %&gt;%`,`%&lt;%` --></p>
+<li><p>"old" data.frame older time point in the panel</p></li>
+<li><p>"new"  data.frame more recent time point in the panel</p></li>
+<li><p>"cat_var" character name of the categorical variable</p></li>
+<li><p>"time_var" character name of time variable</p></li>
+<li><p>"freq_var" character name of frequency variable</p></li>
+</ul><p>... equations where direction is set by "&gt;","&lt;","<!-- %&gt;%","%&lt;%" --></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>verticals</span>)
-<span class='no'>agg_old</span> <span class='kw'>&lt;-</span> <span class='no'>verticals</span>[<span class='no'>verticals</span>$<span class='no'>v_date</span> <span class='kw'>==</span> <span class='st'>"2020-04-01"</span>, ]
-<span class='no'>agg_new</span> <span class='kw'>&lt;-</span> <span class='no'>verticals</span>[<span class='no'>verticals</span>$<span class='no'>v_date</span> <span class='kw'>==</span> <span class='st'>"2020-05-01"</span>, ]
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>verticals</span><span class='op'>)</span>
+<span class='va'>agg_old</span> <span class='op'>&lt;-</span> <span class='va'>verticals</span><span class='op'>[</span><span class='va'>verticals</span><span class='op'>$</span><span class='va'>v_date</span> <span class='op'>==</span> <span class='st'>"2020-04-01"</span>, <span class='op'>]</span>
+<span class='va'>agg_new</span> <span class='op'>&lt;-</span> <span class='va'>verticals</span><span class='op'>[</span><span class='va'>verticals</span><span class='op'>$</span><span class='va'>v_date</span> <span class='op'>==</span> <span class='st'>"2020-05-01"</span>, <span class='op'>]</span>
 
 <span class='co'>## cat2cat_man - could map in both directions at once although</span>
 <span class='co'>## usually we want to have oold or new representation</span>
 
-<span class='no'>agg</span> <span class='kw'>=</span> <span class='fu'>cat2cat_agg</span>(<span class='kw'>data</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>old</span> <span class='kw'>=</span> <span class='no'>agg_old</span>,
-                             <span class='kw'>new</span> <span class='kw'>=</span> <span class='no'>agg_new</span>,
-                             <span class='kw'>cat_var</span> <span class='kw'>=</span> <span class='st'>"vertical"</span>,
-                             <span class='kw'>time_var</span> <span class='kw'>=</span> <span class='st'>"v_date"</span>,
-                             <span class='kw'>freq_var</span> <span class='kw'>=</span> <span class='st'>"counts"</span>),
-                 <span class='no'>Automotive</span> <span class='kw'>%&lt;%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>Automotive1</span>, <span class='no'>Automotive2</span>),
-                 <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>Kids1</span>, <span class='no'>Kids2</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>Kids</span>),
-                 <span class='no'>Home</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>Home</span>, <span class='no'>Supermarket</span>))</div></pre>
+<span class='va'>agg</span> <span class='op'>=</span> <span class='fu'>cat2cat_agg</span><span class='op'>(</span>data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>old <span class='op'>=</span> <span class='va'>agg_old</span>,
+                             new <span class='op'>=</span> <span class='va'>agg_new</span>,
+                             cat_var <span class='op'>=</span> <span class='st'>"vertical"</span>,
+                             time_var <span class='op'>=</span> <span class='st'>"v_date"</span>,
+                             freq_var <span class='op'>=</span> <span class='st'>"counts"</span><span class='op'>)</span>,
+                 <span class='va'>Automotive</span> <span class='op'>%&lt;%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>Automotive1</span>, <span class='va'>Automotive2</span><span class='op'>)</span>,
+                 <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>Kids1</span>, <span class='va'>Kids2</span><span class='op'>)</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>Kids</span><span class='op'>)</span>,
+                 <span class='va'>Home</span> <span class='op'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>Home</span>, <span class='va'>Supermarket</span><span class='op'>)</span><span class='op'>)</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -191,7 +195,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

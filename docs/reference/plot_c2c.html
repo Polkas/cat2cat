@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>applying frequencies toobject returned by get_mappings — cat_apply_freq • cat2cat</title>
+<title>Summary plots for cat2cat results. — plot_c2c • cat2cat</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="applying frequencies toobject returned by get_mappings — cat_apply_freq" />
-<meta property="og:description" content="applying frequencies to object returned by get_mappings" />
+<meta property="og:title" content="Summary plots for cat2cat results. — plot_c2c" />
+<meta property="og:description" content="This function" />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -99,10 +99,13 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/Polkas/catTOcat/">
+  <a href="https://github.com/Polkas/cat2cat/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -120,90 +123,56 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>applying frequencies toobject returned by get_mappings</h1>
-    <small class="dont-index">Source: <a href='https://github.com/Polkas/catTOcat/blob/master/R/cat2cat.R'><code>R/cat2cat.R</code></a></small>
-    <div class="hidden name"><code>cat_apply_freq.Rd</code></div>
+    <h1>Summary plots for cat2cat results.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Polkas/cat2cat/blob/master/R/plot_cat2cat.R'><code>R/plot_cat2cat.R</code></a></small>
+    <div class="hidden name"><code>plot_c2c.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>applying frequencies to object returned by get_mappings</p>
+    <p>This function</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cat_apply_freq</span>(<span class='no'>to_x</span>, <span class='no'>freqs</span>)</pre>
+    <pre class="usage"><span class='fu'>plot_c2c</span><span class='op'>(</span><span class='va'>data</span>, weis <span class='op'>=</span> <span class='st'>"wei_freq_c2c"</span>, type <span class='op'>=</span> <span class='st'>"both"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>to_x</th>
-      <td><p>list object returned by get_mappings</p></td>
+      <th>data</th>
+      <td><p>data.frame</p></td>
     </tr>
     <tr>
-      <th>freqs</th>
-      <td><p>vector object returned by get_freqs</p></td>
+      <th>weis</th>
+      <td><p>character</p></td>
+    </tr>
+    <tr>
+      <th>type</th>
+      <td><p>character</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>list</p>
+    <p>base plot graphics</p>
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>It will work only for data.frame produced by cat2cat function additionally only for this</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>trans</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>occup</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>occup_small</span><span class='op'>)</span>
+<span class='va'>occup_old</span> <span class='op'>&lt;-</span> <span class='va'>occup_small</span><span class='op'>[</span><span class='va'>occup_small</span><span class='op'>$</span><span class='va'>year</span> <span class='op'>==</span> <span class='fl'>2008</span>, <span class='op'>]</span>
+<span class='va'>occup_new</span> <span class='op'>&lt;-</span> <span class='va'>occup_small</span><span class='op'>[</span><span class='va'>occup_small</span><span class='op'>$</span><span class='va'>year</span> <span class='op'>==</span> <span class='fl'>2010</span>, <span class='op'>]</span>
 
-<span class='no'>mappings</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='get_mappings.html'>get_mappings</a></span>(<span class='no'>trans</span>)
+<span class='va'>occup_2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='cat2cat.html'>cat2cat</a></span><span class='op'>(</span>
+data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>old <span class='op'>=</span> <span class='va'>occup_old</span>, new <span class='op'>=</span> <span class='va'>occup_new</span>, cat_var <span class='op'>=</span> <span class='st'>"code"</span>, time_var <span class='op'>=</span> <span class='st'>"year"</span><span class='op'>)</span>,
+mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trans <span class='op'>=</span> <span class='va'>trans</span>, direction <span class='op'>=</span> <span class='st'>"backward"</span><span class='op'>)</span>
+<span class='op'>)</span>
 
-<span class='no'>mappings</span>$<span class='no'>to_old</span>[<span class='fl'>1</span>:<span class='fl'>4</span>]</div><div class='output co'>#&gt; $`111101`
-#&gt; [1] "1111"
-#&gt; 
-#&gt; $`111102`
-#&gt; [1] "1111"
-#&gt; 
-#&gt; $`111103`
-#&gt; [1] "1111"
-#&gt; 
-#&gt; $`111201`
-#&gt; [1] "1112"
-#&gt; </div><div class='input'><span class='no'>mappings</span>$<span class='no'>to_new</span>[<span class='fl'>1</span>:<span class='fl'>4</span>]</div><div class='output co'>#&gt; $`1111`
-#&gt; [1] "111101" "111102" "111103"
-#&gt; 
-#&gt; $`1112`
-#&gt; [1] "111201" "111202" "111301"
-#&gt; 
-#&gt; $`1121`
-#&gt; [1] "111402"
-#&gt; 
-#&gt; $`1122`
-#&gt; [1] "111401" "111403" "111404"
-#&gt; </div><div class='input'>
-<span class='no'>mapp_p</span> <span class='kw'>&lt;-</span> <span class='fu'>cat_apply_freq</span>(
-  <span class='no'>mappings</span>$<span class='no'>to_old</span>,
-  <span class='fu'><a href='get_freqs.html'>get_freqs</a></span>(
-    <span class='no'>occup</span>$<span class='no'>code</span>[<span class='no'>occup</span>$<span class='no'>year</span> <span class='kw'>==</span> <span class='st'>"2008"</span>],
-    <span class='no'>occup</span>$<span class='no'>multipier</span>[<span class='no'>occup</span>$<span class='no'>year</span> <span class='kw'>==</span> <span class='st'>"2008"</span>]
-  )
-)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>mappings</span>$<span class='no'>to_old</span>), <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>mapp_p</span>)))</div><div class='output co'>#&gt;        mappings.to_old mapp_p
-#&gt; 111101            1111      1
-#&gt; 111102            1111      1
-#&gt; 111103            1111      1
-#&gt; 111201            1112      1
-#&gt; 111202            1112      1
-#&gt; 111301            1112      1</div><div class='input'><span class='no'>mapp_p</span> <span class='kw'>&lt;-</span> <span class='fu'>cat_apply_freq</span>(
-  <span class='no'>mappings</span>$<span class='no'>to_new</span>,
-  <span class='fu'><a href='get_freqs.html'>get_freqs</a></span>(
-    <span class='no'>occup</span>$<span class='no'>code</span>[<span class='no'>occup</span>$<span class='no'>year</span> <span class='kw'>==</span> <span class='st'>"2010"</span>],
-    <span class='no'>occup</span>$<span class='no'>multipier</span>[<span class='no'>occup</span>$<span class='no'>year</span> <span class='kw'>==</span> <span class='st'>"2010"</span>]
-  )
-)
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>mappings</span>$<span class='no'>to_new</span>), <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>mapp_p</span>)))</div><div class='output co'>#&gt;      mappings.to_new       mapp_p
-#&gt; 1111    111101, .... 0, 0.060....
-#&gt; 1112    111201, .... 0.091912....
-#&gt; 1121          111402            1
-#&gt; 1122    111401, .... 0.333333....
-#&gt; 1123          111405            1
-#&gt; 1211    112007, .... 0.404858....</div></pre>
+<span class='fu'>plot_c2c</span><span class='op'>(</span><span class='va'>occup_2</span><span class='op'>$</span><span class='va'>old</span>, type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"both"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='img'><img src='plot_c2c-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_c2c</span><span class='op'>(</span><span class='va'>occup_2</span><span class='op'>$</span><span class='va'>old</span>, type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hist"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='img'><img src='plot_c2c-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_c2c</span><span class='op'>(</span><span class='va'>occup_2</span><span class='op'>$</span><span class='va'>old</span>, type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"bar"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='img'><img src='plot_c2c-3.png' alt='' width='700' height='433' /></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -219,7 +188,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

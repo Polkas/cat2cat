@@ -117,6 +117,10 @@ occup_2 = cat2cat(
   ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), 
             args = list(k = 10))
 )
+
+# summary_plot
+plot_c2c(occup_2$old, type = c("both"))
+
 # mix of methods
 occup_2_mix = cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
@@ -127,7 +131,7 @@ occup_2_mix = cat2cat(
 # correlation between ml models and simple fequencies
 occup_2_mix$old %>% select(wei_knn_c2c, wei_rf_c2c, wei_lda_c2c, wei_freq_c2c) %>% cor()
 # cross all methods and subset one highest probability category for each subject
-occup_old_mix_highest1occup_2_mix <- occup_2_mix$old %>% 
+occup_old_mix_highest1 <- occup_2_mix$old %>% 
                 cross_c2c(.) %>% 
                 prune_c2c(.,column = "wei_cross_c2c", method = "highest1") 
 ```

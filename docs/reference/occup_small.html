@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>trans dataset containing transitions between old (2008) and new (2010) occupational codes.
-this cold be used to translate encodings in both directions. — trans • cat2cat</title>
+<title>Occupational dataset - small one — occup_small • cat2cat</title>
 
 
 <!-- jquery -->
@@ -40,10 +39,8 @@ this cold be used to translate encodings in both directions. — trans • cat2c
 
 
 
-<meta property="og:title" content="trans dataset containing transitions between old (2008) and new (2010) occupational codes.
-this cold be used to translate encodings in both directions. — trans" />
-<meta property="og:description" content="trans dataset containing transitions between old (2008) and new (2010) occupational codes.
-this cold be used to translate encodings in both directions." />
+<meta property="og:title" content="Occupational dataset - small one — occup_small" />
+<meta property="og:description" content="Occupational dataset - small one" />
 
 
 
@@ -75,7 +72,7 @@ this cold be used to translate encodings in both directions." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -102,10 +99,13 @@ this cold be used to translate encodings in both directions." />
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/Polkas/catTOcat/">
+  <a href="https://github.com/Polkas/cat2cat/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -123,32 +123,49 @@ this cold be used to translate encodings in both directions." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>trans dataset containing transitions between old (2008) and new (2010) occupational codes.
-this cold be used to translate encodings in both directions.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/Polkas/catTOcat/blob/master/R/data.R'><code>R/data.R</code></a></small>
-    <div class="hidden name"><code>trans.Rd</code></div>
+    <h1>Occupational dataset - small one</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Polkas/cat2cat/blob/master/R/data.R'><code>R/data.R</code></a></small>
+    <div class="hidden name"><code>occup_small.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>trans dataset containing transitions between old (2008) and new (2010) occupational codes.
-this cold be used to translate encodings in both directions.</p>
+    <p>Occupational dataset - small one</p>
     </div>
 
-    <pre class="usage"><span class='no'>trans</span></pre>
+    <pre class="usage"><span class='va'>occup_small</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A data frame with 2693 observations and 2 variables.</p><dl'>
-<dt>old</dt><dd><p>character an old encoding of a certain occupation</p></dd>
-<dt>new</dt><dd><p>character a new encoding of a certain occupation</p></dd>
+    <p>A data frame with around 5000 observations and 12 variables.</p><dl>
+<dt>id</dt><dd><p>integer	id</p></dd>
+<dt>age</dt><dd><p>numeric age of a subject</p></dd>
+<dt>sex</dt><dd><p>numeric sex of a subject</p></dd>
+<dt>edu</dt><dd><p>integer edu level of education of a subject where lower means higher - 1 for at least master degree</p></dd>
+<dt>exp</dt><dd><p>numeric exp number of experience years for a subject</p></dd>
+<dt>district</dt><dd><p>integer district</p></dd>
+<dt>parttime</dt><dd><p>numeric contract type regards time where 1 mean full-time (work a whole week)</p></dd>
+<dt>salary</dt><dd><p>numeric salary per year</p></dd>
+<dt>code</dt><dd><p>character code - occupational code</p></dd>
+<dt>multiplier</dt><dd><p>numeric multiplier for the subject to reproduce a population - how many of such subjects in population</p></dd>
+<dt>year</dt><dd><p>integer year</p></dd>
+<dt>code4</dt><dd><p>character code - occupational code - first 4 digits</p></dd>
 
 </dl>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>transition table for occupations where first column contains old encodings and second one a new encoding</p>
+    <p>occup dataset is an example of unbalance panel dataset.
+This is a simulated data although there are applied a real world characteristics from national statistical office survey.
+The original survey is anonymous and take place every two years.
+It is presenting a characteristics from randomly selected company and then using k step procedure employees are chosen.</p>
+<p>occupational dataset</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>1234</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>occup</span><span class='op'>)</span>
+<span class='va'>occup_small</span> <span class='op'>&lt;-</span> <span class='va'>occup</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/sort.html'>sort</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>occup</span><span class='op'>)</span>, <span class='fl'>5000</span><span class='op'>)</span><span class='op'>)</span>, <span class='op'>]</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -164,7 +181,7 @@ this cold be used to translate encodings in both directions.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
