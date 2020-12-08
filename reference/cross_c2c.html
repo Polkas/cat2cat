@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Automatic mapping of a categorical variable in a panel dataset according to a new encoding — cat2cat • cat2cat</title>
+<title>a function to make a combination of weights from different methods by each row — cross_c2c • cat2cat</title>
 
 
 <!-- jquery -->
@@ -39,11 +39,8 @@
 
 
 
-<meta property="og:title" content="Automatic mapping of a categorical variable in a panel dataset according to a new encoding — cat2cat" />
-<meta property="og:description" content="This function is built to work for two time points at once.
-Thus for more periods some recursion will be needed.
-The prune_c2c might be needed when we have many interactions to limit growing number of replications.
-This function might seems to be a complex at the first glance though it is built to offer a wide range of applications for complex tasks." />
+<meta property="og:title" content="a function to make a combination of weights from different methods by each row — cross_c2c" />
+<meta property="og:description" content="adding additional column which is a mix of weights columns by each row" />
 
 
 
@@ -120,70 +117,46 @@ This function might seems to be a complex at the first glance though it is built
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Automatic mapping of a categorical variable in a panel dataset according to a new encoding</h1>
+    <h1>a function to make a combination of weights from different methods by each row</h1>
     <small class="dont-index">Source: <a href='https://github.com/Polkas/cat2cat/blob/master/R/cat2cat.R'><code>R/cat2cat.R</code></a></small>
-    <div class="hidden name"><code>cat2cat.Rd</code></div>
+    <div class="hidden name"><code>cross_c2c.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function is built to work for two time points at once.
-Thus for more periods some recursion will be needed.
-The <code>prune_c2c</code> might be needed when we have many interactions to limit growing number of replications.
-This function might seems to be a complex at the first glance though it is built to offer a wide range of applications for complex tasks.</p>
+    <p>adding additional column which is a mix of weights columns by each row</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cat2cat</span><span class='op'>(</span>
-  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>old <span class='op'>=</span> <span class='cn'>NULL</span>, new <span class='op'>=</span> <span class='cn'>NULL</span>, cat_var <span class='op'>=</span> <span class='cn'>NULL</span>, id_var <span class='op'>=</span> <span class='cn'>NULL</span>, time_var <span class='op'>=</span> <span class='cn'>NULL</span>,
-    multiplier_var <span class='op'>=</span> <span class='cn'>NULL</span>, freqs_df <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>,
-  mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trans <span class='op'>=</span> <span class='cn'>NULL</span>, direction <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>,
-  ml <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>method <span class='op'>=</span> <span class='cn'>NULL</span>, features <span class='op'>=</span> <span class='cn'>NULL</span>, args <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>cross_c2c</span><span class='op'>(</span>
+  <span class='va'>df</span>,
+  cols <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/grep.html'>grepl</a></span><span class='op'>(</span><span class='st'>"^wei_.*_c2c$"</span>, <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span><span class='op'>)</span><span class='op'>]</span>,
+  weis <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>cols</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>cols</span><span class='op'>)</span><span class='op'>)</span>,
+  na.rm <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>list with 4, 5, 6 or 7 named fields `old` `new` `cat_var` `time_var` and optional `id_var`,`multiplier_var`,`freq_df`</p></td>
+      <th>df</th>
+      <td><p>data.frame</p></td>
     </tr>
     <tr>
-      <th>mappings</th>
-      <td><p>list with 2 named fields `trans` `direction`</p></td>
+      <th>cols</th>
+      <td><p>character vector default all columns follow regex like "wei_.*_c2c"</p></td>
     </tr>
     <tr>
-      <th>ml</th>
-      <td><p>list with 3 named fields `method` `features` `args`</p></td>
+      <th>weis</th>
+      <td><p>numeric vector  Default vector the same length as cols and with equally spaced values summing to 1.</p></td>
+    </tr>
+    <tr>
+      <th>na.rm</th>
+      <td><p>logical if NA should be skipped, default TRUE</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>named list with 2 fields old an new - 2 data.frames.
-There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
-Additional columns will be informative only for a one data.frame as we always make a changes to one direction.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>data args</p><ul>
-<li><p>"old" data.frame older time point in a panel</p></li>
-<li><p>"new"  data.frame more recent time point in a panel</p></li>
-<li><p>"cat_var" character name of the categorical variable</p></li>
-<li><p>"time_var" character name of the time variable</p></li>
-<li><p>"id_var" character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.</p></li>
-<li><p>"multiplier_var" character name of the multiplier variable - number of replication needed to reproduce the population</p></li>
-<li><p>"freqs_df" only for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.</p></li>
-</ul><p>mappings args</p><ul>
-<li><p>"trans" data.frame with 2 columns - transition table - all categories for cat_var in old and new datasets have to be included.
-  First column contains an old encoding and second a new one.</p></li>
-<li><p>"direction" character direction - "backward" or "forward"</p></li>
-</ul><p>ml args</p><ul>
-<li><p>"method" character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination, "rf" Random Forest</p></li>
-<li><p>"features" character vector of features names where all have to be numeric or logical</p></li>
-<li><p>"args" list parameters: knn: k ; rf: ntree</p></li>
-</ul>
-
-<p>Without ml section only simple frequencies are assessed.
-When ml model is broken then weights from simple frequencies are taken.
-Method knn is recommended for smaller datasets.</p>
+    <p>data.frame with an additional column wei_cross_c2c</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>occup_small</span><span class='op'>)</span>
@@ -193,25 +166,26 @@ Method knn is recommended for smaller datasets.</p>
 <span class='va'>occup_old</span> <span class='op'>&lt;-</span> <span class='va'>occup_small</span><span class='op'>[</span><span class='va'>occup_small</span><span class='op'>$</span><span class='va'>year</span> <span class='op'>==</span> <span class='fl'>2008</span>, <span class='op'>]</span>
 <span class='va'>occup_new</span> <span class='op'>&lt;-</span> <span class='va'>occup_small</span><span class='op'>[</span><span class='va'>occup_small</span><span class='op'>$</span><span class='va'>year</span> <span class='op'>==</span> <span class='fl'>2010</span>, <span class='op'>]</span>
 
-<span class='co'># default only simple frequencies</span>
-
-<span class='va'>occup_2</span> <span class='op'>&lt;-</span> <span class='fu'>cat2cat</span><span class='op'>(</span>
-  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>old <span class='op'>=</span> <span class='va'>occup_old</span>, new <span class='op'>=</span> <span class='va'>occup_new</span>, cat_var <span class='op'>=</span> <span class='st'>"code"</span>, time_var <span class='op'>=</span> <span class='st'>"year"</span><span class='op'>)</span>,
-  mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trans <span class='op'>=</span> <span class='va'>trans</span>, direction <span class='op'>=</span> <span class='st'>"forward"</span><span class='op'>)</span>
-<span class='op'>)</span>
-
-<span class='co'># additionaly add probabilities from knn</span>
-
-<span class='va'>occup_3</span> <span class='op'>&lt;-</span> <span class='fu'>cat2cat</span><span class='op'>(</span>
+<span class='co'># mix of methods - forward direction, try out backward too</span>
+<span class='va'>occup_mix</span> <span class='op'>&lt;-</span> <span class='fu'><a href='cat2cat.html'>cat2cat</a></span><span class='op'>(</span>
   data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>old <span class='op'>=</span> <span class='va'>occup_old</span>, new <span class='op'>=</span> <span class='va'>occup_new</span>, cat_var <span class='op'>=</span> <span class='st'>"code"</span>, time_var <span class='op'>=</span> <span class='st'>"year"</span><span class='op'>)</span>,
   mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trans <span class='op'>=</span> <span class='va'>trans</span>, direction <span class='op'>=</span> <span class='st'>"forward"</span><span class='op'>)</span>,
   ml <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-    method <span class='op'>=</span> <span class='st'>"knn"</span>,
+    method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"knn"</span>, <span class='st'>"rf"</span><span class='op'>)</span>,
     features <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"age"</span>, <span class='st'>"sex"</span>, <span class='st'>"edu"</span>, <span class='st'>"exp"</span>, <span class='st'>"parttime"</span>, <span class='st'>"salary"</span><span class='op'>)</span>,
-    args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>k <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
+    args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>k <span class='op'>=</span> <span class='fl'>10</span>, ntree <span class='op'>=</span> <span class='fl'>20</span><span class='op'>)</span>
   <span class='op'>)</span>
 <span class='op'>)</span>
-
+<span class='co'># correlation between ml model</span>
+<span class='va'>occup_mix_old</span> <span class='op'>&lt;-</span> <span class='va'>occup_mix</span><span class='op'>$</span><span class='va'>old</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>occup_mix_old</span><span class='op'>[</span><span class='va'>occup_mix_old</span><span class='op'>$</span><span class='va'>rep_c2c</span> <span class='op'>!=</span> <span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"wei_knn_c2c"</span>, <span class='st'>"wei_rf_c2c"</span>, <span class='st'>"wei_freq_c2c"</span><span class='op'>)</span><span class='op'>]</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;              wei_knn_c2c wei_rf_c2c wei_freq_c2c
+#&gt; wei_knn_c2c           NA         NA           NA
+#&gt; wei_rf_c2c            NA         NA           NA
+#&gt; wei_freq_c2c          NA         NA           NA</div><div class='input'><span class='co'># cross all methods and subset one highest probability category for each subject</span>
+<span class='va'>occup_old_highest1_mix</span> <span class='op'>&lt;-</span> <span class='fu'><a href='prune_c2c.html'>prune_c2c</a></span><span class='op'>(</span><span class='fu'>cross_c2c</span><span class='op'>(</span><span class='va'>occup_mix</span><span class='op'>$</span><span class='va'>old</span><span class='op'>)</span>,
+  column <span class='op'>=</span> <span class='st'>"wei_cross_c2c"</span>, method <span class='op'>=</span> <span class='st'>"highest1"</span>
+<span class='op'>)</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

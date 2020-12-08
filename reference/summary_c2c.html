@@ -73,7 +73,7 @@ The standard errors, t statistics and p values have to be adjusted because of re
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@ The standard errors, t statistics and p values have to be adjusted because of re
 The standard errors, t statistics and p values have to be adjusted because of replicated rows.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>summary_c2c</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>df_old</span>, <span class='va'>df_new</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>summary_c2c</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>df_old</span>, df_new <span class='op'>=</span> <span class='va'>x</span><span class='op'>$</span><span class='va'>df.residual</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -143,7 +143,7 @@ The standard errors, t statistics and p values have to be adjusted because of re
     </tr>
     <tr>
       <th>df_new</th>
-      <td><p>integer number of d.f in dataset with replicated rows</p></td>
+      <td><p>integer number of d.f in dataset with replicated rows, Default: x$df.residual</p></td>
     </tr>
     </table>
 
@@ -191,19 +191,19 @@ Where standard errors are multiplied and t statistics divided by it.</p>
 #&gt; factor(edu)8 -0.671015647 0.0155771419 -43.076943  0.000000e+00 3.659981
 #&gt; parttime      1.948074658 0.0165225845 117.903749  0.000000e+00 3.659981
 #&gt; exp           0.009106280 0.0006293183  14.470072  3.677888e-47 3.659981
-#&gt;              std.error_c statistic_c    p.value_c
-#&gt; (Intercept)  0.092733424  90.9477032 0.000000e+00
-#&gt; age          0.002381265   0.9877279 3.232860e-01
-#&gt; sexTRUE      0.027306600   9.6168957 0.000000e+00
-#&gt; factor(edu)2 0.050655271  -2.1035632 3.541657e-02
-#&gt; factor(edu)3 0.063031789  -6.3117215 2.759486e-10
-#&gt; factor(edu)4 0.039399776 -10.0979339 0.000000e+00
-#&gt; factor(edu)5 0.054075255  -7.3277652 2.340350e-13
-#&gt; factor(edu)6 0.038210622 -16.6467973 0.000000e+00
-#&gt; factor(edu)7 0.874928125  -0.6664617 5.051160e-01
-#&gt; factor(edu)8 0.057012046 -11.7697171 0.000000e+00
-#&gt; parttime     0.060472348  32.2143052 0.000000e+00
-#&gt; exp          0.002303293   3.9535919 7.698667e-05</div></pre>
+#&gt;              std.error_c statistic_c     p.value_c
+#&gt; (Intercept)  0.092733424  90.9477032  0.000000e+00
+#&gt; age          0.002381265   0.9877279  3.233828e-01
+#&gt; sexTRUE      0.027306600   9.6168957  1.609262e-21
+#&gt; factor(edu)2 0.050655271  -2.1035632  3.551753e-02
+#&gt; factor(edu)3 0.063031789  -6.3117215  3.260955e-10
+#&gt; factor(edu)4 0.039399776 -10.0979339  1.604586e-23
+#&gt; factor(edu)5 0.054075255  -7.3277652  3.154461e-13
+#&gt; factor(edu)6 0.038210622 -16.6467973  4.700728e-59
+#&gt; factor(edu)7 0.874928125  -0.6664617  5.051783e-01
+#&gt; factor(edu)8 0.057012046 -11.7697171  3.742821e-31
+#&gt; parttime     0.060472348  32.2143052 2.302160e-190
+#&gt; exp          0.002303293   3.9535919  7.915184e-05</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
