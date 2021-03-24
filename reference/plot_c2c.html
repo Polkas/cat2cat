@@ -40,7 +40,9 @@
 
 
 <meta property="og:title" content="Summary plots for cat2cat results. — plot_c2c" />
-<meta property="og:description" content="This function" />
+<meta property="og:description" content="This function help to understand properties of cat2cat resuls and possibly before further preprocessing." />
+
+
 
 
 
@@ -56,9 +58,18 @@
 
 
 
+<!-- dependencies from examples -->
+
+
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -72,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
@@ -100,7 +111,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/Polkas/cat2cat/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -123,7 +134,7 @@
     </div>
 
     <div class="ref-description">
-    <p>This function</p>
+    <p>This function help to understand properties of cat2cat resuls and possibly before further preprocessing.</p>
     </div>
 
     <pre class="usage"><span class='fu'>plot_c2c</span><span class='op'>(</span><span class='va'>data</span>, weis <span class='op'>=</span> <span class='st'>"wei_freq_c2c"</span>, type <span class='op'>=</span> <span class='st'>"both"</span><span class='op'>)</span></pre>
@@ -137,11 +148,11 @@
     </tr>
     <tr>
       <th>weis</th>
-      <td><p>character</p></td>
+      <td><p>character - name of a certain wei_*_c2c column added by cat2cat function. Default wei_freq_c2c</p></td>
     </tr>
     <tr>
       <th>type</th>
-      <td><p>character</p></td>
+      <td><p>character - one of 3 types both, hist, bar</p></td>
     </tr>
     </table>
 
@@ -150,7 +161,7 @@
     <p>base plot graphics</p>
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>It will work only for data.frame produced by cat2cat function additionally only for this</p>
+    <p>It will work only for data.frame produced by cat2cat function.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>occup_small</span><span class='op'>)</span>
@@ -178,11 +189,11 @@ mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/b
 
       <footer>
       <div class="copyright">
-  <p>Developed by Maciej Nasinski.</p>
+  <p><p>Developed by Maciej Nasinski.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -190,6 +201,8 @@ mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/b
 
   
 
+
+  
 
   </body>
 </html>

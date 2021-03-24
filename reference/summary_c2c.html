@@ -46,6 +46,8 @@ The standard errors, t statistics and p values have to be adjusted because of re
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -57,9 +59,18 @@ The standard errors, t statistics and p values have to be adjusted because of re
 
 
 
+<!-- dependencies from examples -->
+
+
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -73,7 +84,7 @@ The standard errors, t statistics and p values have to be adjusted because of re
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
       </span>
     </div>
 
@@ -101,7 +112,7 @@ The standard errors, t statistics and p values have to be adjusted because of re
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/Polkas/cat2cat/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -139,7 +150,7 @@ The standard errors, t statistics and p values have to be adjusted because of re
     </tr>
     <tr>
       <th>df_old</th>
-      <td><p>integer number of d.f in original dataset</p></td>
+      <td><p>integer number of d.f in original dataset. For bigger datasets `nrow` should be sufficient.</p></td>
     </tr>
     <tr>
       <th>df_new</th>
@@ -153,7 +164,8 @@ The standard errors, t statistics and p values have to be adjusted because of re
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The size of the correction is equal to sqrt(df_new / df_old).
-Where standard errors are multiplied and t statistics divided by it.</p>
+Where standard errors are multiplied and t statistics divided by it.
+In most cases the default <code>df_new</code> value should be used.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>occup_small</span><span class='op'>)</span>
@@ -177,33 +189,34 @@ Where standard errors are multiplied and t statistics divided by it.</p>
 <span class='va'>lms</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>salary</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>sex</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>edu</span><span class='op'>)</span> <span class='op'>+</span> <span class='va'>parttime</span> <span class='op'>+</span> <span class='va'>exp</span>, <span class='va'>occup_2</span><span class='op'>$</span><span class='va'>old</span>,
   weights <span class='op'>=</span> <span class='va'>multiplier</span> <span class='op'>*</span> <span class='va'>wei_freq_c2c</span>
 <span class='op'>)</span>
-<span class='fu'>summary_c2c</span><span class='op'>(</span><span class='va'>lms</span>, df_old <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>occup_old</span><span class='op'>)</span>, df_new <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>occup_2</span><span class='op'>$</span><span class='va'>old</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;                  Estimate   Std. Error    t value      Pr(&gt;|t|)  correct
-#&gt; (Intercept)   8.433891931 0.0253371317 332.866878  0.000000e+00 3.659981
-#&gt; age           0.002352042 0.0006506223   3.615065  3.011795e-04 3.659981
-#&gt; sexTRUE       0.262604727 0.0074608582  35.197657 1.292765e-261 3.659981
-#&gt; factor(edu)2 -0.106556564 0.0138403094  -7.699002  1.449903e-14 3.659981
-#&gt; factor(edu)3 -0.397839093 0.0172218889 -23.100781 3.359280e-116 3.659981
-#&gt; factor(edu)4 -0.397856337 0.0107650217 -36.958248 3.567513e-287 3.659981
-#&gt; factor(edu)5 -0.396250768 0.0147747359 -26.819482 4.453055e-155 3.659981
-#&gt; factor(edu)6 -0.636084480 0.0104401145 -60.926964  0.000000e+00 3.659981
-#&gt; factor(edu)7 -0.583106106 0.2390526325  -2.439237  1.472892e-02 3.659981
-#&gt; factor(edu)8 -0.671015647 0.0155771419 -43.076943  0.000000e+00 3.659981
-#&gt; parttime      1.948074658 0.0165225845 117.903749  0.000000e+00 3.659981
-#&gt; exp           0.009106280 0.0006293183  14.470072  3.677888e-47 3.659981
+
+<span class='fu'>summary_c2c</span><span class='op'>(</span><span class='va'>lms</span>, df_old <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>occup_old</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;                  Estimate   Std. Error    t value      Pr(&gt;|t|) correct
+#&gt; (Intercept)   8.433891931 0.0253371317 332.866878  0.000000e+00 2.56638
+#&gt; age           0.002352042 0.0006506223   3.615065  3.011795e-04 2.56638
+#&gt; sexTRUE       0.262604727 0.0074608582  35.197657 1.292765e-261 2.56638
+#&gt; factor(edu)2 -0.106556564 0.0138403094  -7.699002  1.449903e-14 2.56638
+#&gt; factor(edu)3 -0.397839093 0.0172218889 -23.100781 3.359280e-116 2.56638
+#&gt; factor(edu)4 -0.397856337 0.0107650217 -36.958248 3.567513e-287 2.56638
+#&gt; factor(edu)5 -0.396250768 0.0147747359 -26.819482 4.453055e-155 2.56638
+#&gt; factor(edu)6 -0.636084480 0.0104401145 -60.926964  0.000000e+00 2.56638
+#&gt; factor(edu)7 -0.583106106 0.2390526325  -2.439237  1.472892e-02 2.56638
+#&gt; factor(edu)8 -0.671015647 0.0155771419 -43.076943  0.000000e+00 2.56638
+#&gt; parttime      1.948074658 0.0165225845 117.903749  0.000000e+00 2.56638
+#&gt; exp           0.009106280 0.0006293183  14.470072  3.677888e-47 2.56638
 #&gt;              std.error_c statistic_c     p.value_c
-#&gt; (Intercept)  0.092733424  90.9477032  0.000000e+00
-#&gt; age          0.002381265   0.9877279  3.233828e-01
-#&gt; sexTRUE      0.027306600   9.6168957  1.609262e-21
-#&gt; factor(edu)2 0.050655271  -2.1035632  3.551753e-02
-#&gt; factor(edu)3 0.063031789  -6.3117215  3.260955e-10
-#&gt; factor(edu)4 0.039399776 -10.0979339  1.604586e-23
-#&gt; factor(edu)5 0.054075255  -7.3277652  3.154461e-13
-#&gt; factor(edu)6 0.038210622 -16.6467973  4.700728e-59
-#&gt; factor(edu)7 0.874928125  -0.6664617  5.051783e-01
-#&gt; factor(edu)8 0.057012046 -11.7697171  3.742821e-31
-#&gt; parttime     0.060472348  32.2143052 2.302160e-190
-#&gt; exp          0.002303293   3.9535919  7.915184e-05</div></pre>
+#&gt; (Intercept)  0.065024700 129.7028961  0.000000e+00
+#&gt; age          0.001669744   1.4086245  1.590722e-01
+#&gt; sexTRUE      0.019147395  13.7149063  2.599874e-41
+#&gt; factor(edu)2 0.035519489  -2.9999464  2.727281e-03
+#&gt; factor(edu)3 0.044197906  -9.0013109  4.344982e-19
+#&gt; factor(edu)4 0.027627133 -14.4009274  3.295024e-45
+#&gt; factor(edu)5 0.037917582 -10.4503174  4.825268e-25
+#&gt; factor(edu)6 0.026793298 -23.7404326 2.186075e-112
+#&gt; factor(edu)7 0.613499820  -0.9504585  3.419724e-01
+#&gt; factor(edu)8 0.039976861 -16.7851011  5.848459e-60
+#&gt; parttime     0.042403225  45.9416624  0.000000e+00
+#&gt; exp          0.001615070   5.6383207  1.912665e-08</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -215,11 +228,11 @@ Where standard errors are multiplied and t statistics divided by it.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Maciej Nasinski.</p>
+  <p><p>Developed by Maciej Nasinski.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -227,6 +240,8 @@ Where standard errors are multiplied and t statistics divided by it.</p>
 
   
 
+
+  
 
   </body>
 </html>
