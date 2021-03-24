@@ -1,3 +1,8 @@
+# 0.2.1
+
+* usage of summary_c2c with the default df_new argument.
+* plot_c2c roxygen2
+
 # 0.2.0
 
 * plot_c2c

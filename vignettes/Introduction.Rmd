@@ -99,8 +99,7 @@ When there is no frequencies the probabilities are allocated equally.
 
 Finally we get the dataset which has additional rows which comes from a replication process and at least 3 supplementary variables - new group, probability and number of replications. There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c. 
 
-For statistical models like linear regression its results should be adjusted because of a replication process which  artificially enlarge the number of degree of freedom. 
-Another solution might be using the prune_c2c function to remove additional rows and leave only categories with highest probabilities.
+For statistical models like linear regression its results should be adjusted because of a replication process which artificially enlarge the number of degree of freedom. Another solution might be to use the prune_c2c function to remove additional rows and leave only an one observation with highest probability for each subject.
 
 ## ISCO Classification- Dataset Without Unique Identifier - Application
 
@@ -281,7 +280,7 @@ get_freqs(x = occup_2$old$g_new_c2c, multiplier  = floor(occup_2$old$multiplier 
 ### Linear Regressions - Example:
 
 Remember to adjust results (`summary_c2c`) because of artificially enlarge degrees of freedom.
-The first weights might be surprising although they are multipliers which help to replicate the true population.
+The first weights (`multiplier` variable) might be surprising although they are multipliers which help to replicate the true population.
 
 #### Regression
 
@@ -304,5 +303,5 @@ occup_old_3 <- occup_3$old %>%
                 prune_c2c(method = "nonzero") # many different prune methods like highest
 lms1 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_3, weights = multiplier * wei_freq_c2c)
 ## summary_c2c
-summary_c2c(lms1, df_old = nrow(occup_old), df_new = nrow(occup_old_3))
+summary_c2c(lms1, df_old = nrow(occup_old))
 ```

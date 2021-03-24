@@ -1,14 +1,12 @@
-
-
 #' Summary plots for cat2cat results.
-#' @description This function
+#' @description This function help to understand properties of cat2cat resuls and possibly before further preprocessing.
 #' @param data data.frame
-#' @param weis character
-#' @param type character
+#' @param weis character - name of a certain wei_*_c2c column added by cat2cat function. Default wei_freq_c2c
+#' @param type character - one of 3 types both, hist, bar
 #' @return base plot graphics
 #' @importFrom graphics hist barplot par
 #' @importFrom utils head
-#' @note It will work only for data.frame produced by cat2cat function additionally only for this
+#' @note It will work only for data.frame produced by cat2cat function.
 #' @export
 #' @examples
 #' data(occup_small)
@@ -31,7 +29,7 @@ plot_c2c <- function(data, weis = "wei_freq_c2c", type = "both") {
   assert_that(nrow(data) != sum(data[[weis]]), msg = "There are no replications. Probably you should switch between old/new period.")
   assert_that(length(type) == 1 && (type %in% c("both", "hist", "bar")))
 
-  if(type == "both") {
+  if (type == "both") {
     default_mfrow <- par("mfrow")
     par(mfrow = c(1,2))
     on.exit(par(mfrow = default_mfrow))

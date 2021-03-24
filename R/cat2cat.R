@@ -1,9 +1,3 @@
-# aggregated data sets
-
-# d.f/d.t
-#######################################
-### Aggregat
-
 #' Transforming table of mappings to a list with keys
 #' @description transforming table of mappings to list with keys where first column is assumed to be an old encoding.
 #' @param x data.frame or matrix with 2 columns where first column is assumed to be an old encoding.

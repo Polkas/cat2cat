@@ -9,7 +9,7 @@ summary_c2c(x, df_old, df_new = x$df.residual)
 \arguments{
 \item{x}{lm object}
 
-\item{df_old}{integer number of d.f in original dataset}
+\item{df_old}{integer number of d.f in original dataset. For bigger datasets `nrow` should be sufficient.}
 
 \item{df_new}{integer number of d.f in dataset with replicated rows, Default: x$df.residual}
 }
@@ -23,6 +23,7 @@ The standard errors, t statistics and p values have to be adjusted because of re
 \details{
 The size of the correction is equal to sqrt(df_new / df_old).
 Where standard errors are multiplied and t statistics divided by it.
+In most cases the default \code{df_new} value should be used.
 }
 \examples{
 data(occup_small)
@@ -46,5 +47,6 @@ occup_2 <- cat2cat(
 lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old,
   weights = multiplier * wei_freq_c2c
 )
-summary_c2c(lms, df_old = nrow(occup_old), df_new = nrow(occup_2$old))
+
+summary_c2c(lms, df_old = nrow(occup_old))
 }

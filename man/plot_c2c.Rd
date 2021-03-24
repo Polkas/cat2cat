@@ -9,18 +9,18 @@ plot_c2c(data, weis = "wei_freq_c2c", type = "both")
 \arguments{
 \item{data}{data.frame}
 
-\item{weis}{character}
+\item{weis}{character - name of a certain wei_*_c2c column added by cat2cat function. Default wei_freq_c2c}
 
-\item{type}{character}
+\item{type}{character - one of 3 types both, hist, bar}
 }
 \value{
 base plot graphics
 }
 \description{
-This function
+This function help to understand properties of cat2cat resuls and possibly before further preprocessing.
 }
 \note{
-It will work only for data.frame produced by cat2cat function additionally only for this
+It will work only for data.frame produced by cat2cat function.
 }
 \examples{
 data(occup_small)
