@@ -61,9 +61,6 @@ This function might seems to be a complex at the first glance though it is built
 
 
 
-<!-- dependencies from examples -->
-
-
   
 
   
@@ -143,12 +140,12 @@ The <code>prune_c2c</code> might be needed when we have many interactions to lim
 This function might seems to be a complex at the first glance though it is built to offer a wide range of applications for complex tasks.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cat2cat</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>cat2cat</span><span class='op'>(</span>
   data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>old <span class='op'>=</span> <span class='cn'>NULL</span>, new <span class='op'>=</span> <span class='cn'>NULL</span>, cat_var <span class='op'>=</span> <span class='cn'>NULL</span>, id_var <span class='op'>=</span> <span class='cn'>NULL</span>, time_var <span class='op'>=</span> <span class='cn'>NULL</span>,
     multiplier_var <span class='op'>=</span> <span class='cn'>NULL</span>, freqs_df <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>,
   mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trans <span class='op'>=</span> <span class='cn'>NULL</span>, direction <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>,
   ml <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>method <span class='op'>=</span> <span class='cn'>NULL</span>, features <span class='op'>=</span> <span class='cn'>NULL</span>, args <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -197,33 +194,33 @@ When ml model is broken then weights from simple frequencies are taken.
 Method knn is recommended for smaller datasets.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>occup_small</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>occup</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>trans</span><span class='op'>)</span>
-
-<span class='va'>occup_old</span> <span class='op'>&lt;-</span> <span class='va'>occup_small</span><span class='op'>[</span><span class='va'>occup_small</span><span class='op'>$</span><span class='va'>year</span> <span class='op'>==</span> <span class='fl'>2008</span>, <span class='op'>]</span>
-<span class='va'>occup_new</span> <span class='op'>&lt;-</span> <span class='va'>occup_small</span><span class='op'>[</span><span class='va'>occup_small</span><span class='op'>$</span><span class='va'>year</span> <span class='op'>==</span> <span class='fl'>2010</span>, <span class='op'>]</span>
-
-<span class='co'># default only simple frequencies</span>
-
-<span class='va'>occup_2</span> <span class='op'>&lt;-</span> <span class='fu'>cat2cat</span><span class='op'>(</span>
-  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>old <span class='op'>=</span> <span class='va'>occup_old</span>, new <span class='op'>=</span> <span class='va'>occup_new</span>, cat_var <span class='op'>=</span> <span class='st'>"code"</span>, time_var <span class='op'>=</span> <span class='st'>"year"</span><span class='op'>)</span>,
-  mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trans <span class='op'>=</span> <span class='va'>trans</span>, direction <span class='op'>=</span> <span class='st'>"forward"</span><span class='op'>)</span>
-<span class='op'>)</span>
-
-<span class='co'># additionaly add probabilities from knn</span>
-
-<span class='va'>occup_3</span> <span class='op'>&lt;-</span> <span class='fu'>cat2cat</span><span class='op'>(</span>
-  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>old <span class='op'>=</span> <span class='va'>occup_old</span>, new <span class='op'>=</span> <span class='va'>occup_new</span>, cat_var <span class='op'>=</span> <span class='st'>"code"</span>, time_var <span class='op'>=</span> <span class='st'>"year"</span><span class='op'>)</span>,
-  mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trans <span class='op'>=</span> <span class='va'>trans</span>, direction <span class='op'>=</span> <span class='st'>"forward"</span><span class='op'>)</span>,
-  ml <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-    method <span class='op'>=</span> <span class='st'>"knn"</span>,
-    features <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"age"</span>, <span class='st'>"sex"</span>, <span class='st'>"edu"</span>, <span class='st'>"exp"</span>, <span class='st'>"parttime"</span>, <span class='st'>"salary"</span><span class='op'>)</span>,
-    args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>k <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
-  <span class='op'>)</span>
-<span class='op'>)</span>
-
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>occup_small</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>occup</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>trans</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>occup_old</span> <span class='op'>&lt;-</span> <span class='va'>occup_small</span><span class='op'>[</span><span class='va'>occup_small</span><span class='op'>$</span><span class='va'>year</span> <span class='op'>==</span> <span class='fl'>2008</span>, <span class='op'>]</span></span>
+<span class='r-in'><span class='va'>occup_new</span> <span class='op'>&lt;-</span> <span class='va'>occup_small</span><span class='op'>[</span><span class='va'>occup_small</span><span class='op'>$</span><span class='va'>year</span> <span class='op'>==</span> <span class='fl'>2010</span>, <span class='op'>]</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># default only simple frequencies</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>occup_2</span> <span class='op'>&lt;-</span> <span class='fu'>cat2cat</span><span class='op'>(</span></span>
+<span class='r-in'>  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>old <span class='op'>=</span> <span class='va'>occup_old</span>, new <span class='op'>=</span> <span class='va'>occup_new</span>, cat_var <span class='op'>=</span> <span class='st'>"code"</span>, time_var <span class='op'>=</span> <span class='st'>"year"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trans <span class='op'>=</span> <span class='va'>trans</span>, direction <span class='op'>=</span> <span class='st'>"forward"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># additionaly add probabilities from knn</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>occup_3</span> <span class='op'>&lt;-</span> <span class='fu'>cat2cat</span><span class='op'>(</span></span>
+<span class='r-in'>  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>old <span class='op'>=</span> <span class='va'>occup_old</span>, new <span class='op'>=</span> <span class='va'>occup_new</span>, cat_var <span class='op'>=</span> <span class='st'>"code"</span>, time_var <span class='op'>=</span> <span class='st'>"year"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trans <span class='op'>=</span> <span class='va'>trans</span>, direction <span class='op'>=</span> <span class='st'>"forward"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  ml <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span></span>
+<span class='r-in'>    method <span class='op'>=</span> <span class='st'>"knn"</span>,</span>
+<span class='r-in'>    features <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"age"</span>, <span class='st'>"sex"</span>, <span class='st'>"edu"</span>, <span class='st'>"exp"</span>, <span class='st'>"parttime"</span>, <span class='st'>"salary"</span><span class='op'>)</span>,</span>
+<span class='r-in'>    args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>k <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -59,9 +59,6 @@ The standard errors, t statistics and p values have to be adjusted because of re
 
 
 
-<!-- dependencies from examples -->
-
-
   
 
   
@@ -139,7 +136,7 @@ The standard errors, t statistics and p values have to be adjusted because of re
 The standard errors, t statistics and p values have to be adjusted because of replicated rows.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>summary_c2c</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>df_old</span>, df_new <span class='op'>=</span> <span class='va'>x</span><span class='op'>$</span><span class='va'>df.residual</span><span class='op'>)</span></pre>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>summary_c2c</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>df_old</span>, df_new <span class='op'>=</span> <span class='va'>x</span><span class='op'>$</span><span class='va'>df.residual</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -168,55 +165,56 @@ Where standard errors are multiplied and t statistics divided by it.
 In most cases the default <code>df_new</code> value should be used.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>occup_small</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>trans</span><span class='op'>)</span>
-
-<span class='va'>occup_old</span> <span class='op'>&lt;-</span> <span class='va'>occup_small</span><span class='op'>[</span><span class='va'>occup_small</span><span class='op'>$</span><span class='va'>year</span> <span class='op'>==</span> <span class='fl'>2008</span>, <span class='op'>]</span>
-<span class='va'>occup_new</span> <span class='op'>&lt;-</span> <span class='va'>occup_small</span><span class='op'>[</span><span class='va'>occup_small</span><span class='op'>$</span><span class='va'>year</span> <span class='op'>==</span> <span class='fl'>2010</span>, <span class='op'>]</span>
-
-<span class='va'>occup_2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='cat2cat.html'>cat2cat</a></span><span class='op'>(</span>
-  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>old <span class='op'>=</span> <span class='va'>occup_old</span>, new <span class='op'>=</span> <span class='va'>occup_new</span>, cat_var <span class='op'>=</span> <span class='st'>"code"</span>, time_var <span class='op'>=</span> <span class='st'>"year"</span><span class='op'>)</span>,
-  mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trans <span class='op'>=</span> <span class='va'>trans</span>, direction <span class='op'>=</span> <span class='st'>"backward"</span><span class='op'>)</span>,
-  ml <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-    method <span class='op'>=</span> <span class='st'>"knn"</span>,
-    features <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"age"</span>, <span class='st'>"sex"</span>, <span class='st'>"edu"</span>, <span class='st'>"exp"</span>, <span class='st'>"parttime"</span>, <span class='st'>"salary"</span><span class='op'>)</span>,
-    args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>k <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
-  <span class='op'>)</span>
-<span class='op'>)</span>
-
-<span class='co'># Regression</span>
-<span class='co'># we have to adjust size of std as we artificialy enlarge degrees of freedom</span>
-<span class='va'>lms</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>salary</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>sex</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>edu</span><span class='op'>)</span> <span class='op'>+</span> <span class='va'>parttime</span> <span class='op'>+</span> <span class='va'>exp</span>, <span class='va'>occup_2</span><span class='op'>$</span><span class='va'>old</span>,
-  weights <span class='op'>=</span> <span class='va'>multiplier</span> <span class='op'>*</span> <span class='va'>wei_freq_c2c</span>
-<span class='op'>)</span>
-
-<span class='fu'>summary_c2c</span><span class='op'>(</span><span class='va'>lms</span>, df_old <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>occup_old</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;                  Estimate   Std. Error    t value      Pr(&gt;|t|) correct
-#&gt; (Intercept)   8.433891931 0.0253371317 332.866878  0.000000e+00 2.56638
-#&gt; age           0.002352042 0.0006506223   3.615065  3.011795e-04 2.56638
-#&gt; sexTRUE       0.262604727 0.0074608582  35.197657 1.292765e-261 2.56638
-#&gt; factor(edu)2 -0.106556564 0.0138403094  -7.699002  1.449903e-14 2.56638
-#&gt; factor(edu)3 -0.397839093 0.0172218889 -23.100781 3.359280e-116 2.56638
-#&gt; factor(edu)4 -0.397856337 0.0107650217 -36.958248 3.567513e-287 2.56638
-#&gt; factor(edu)5 -0.396250768 0.0147747359 -26.819482 4.453055e-155 2.56638
-#&gt; factor(edu)6 -0.636084480 0.0104401145 -60.926964  0.000000e+00 2.56638
-#&gt; factor(edu)7 -0.583106106 0.2390526325  -2.439237  1.472892e-02 2.56638
-#&gt; factor(edu)8 -0.671015647 0.0155771419 -43.076943  0.000000e+00 2.56638
-#&gt; parttime      1.948074658 0.0165225845 117.903749  0.000000e+00 2.56638
-#&gt; exp           0.009106280 0.0006293183  14.470072  3.677888e-47 2.56638
-#&gt;              std.error_c statistic_c     p.value_c
-#&gt; (Intercept)  0.065024700 129.7028961  0.000000e+00
-#&gt; age          0.001669744   1.4086245  1.590722e-01
-#&gt; sexTRUE      0.019147395  13.7149063  2.599874e-41
-#&gt; factor(edu)2 0.035519489  -2.9999464  2.727281e-03
-#&gt; factor(edu)3 0.044197906  -9.0013109  4.344982e-19
-#&gt; factor(edu)4 0.027627133 -14.4009274  3.295024e-45
-#&gt; factor(edu)5 0.037917582 -10.4503174  4.825268e-25
-#&gt; factor(edu)6 0.026793298 -23.7404326 2.186075e-112
-#&gt; factor(edu)7 0.613499820  -0.9504585  3.419724e-01
-#&gt; factor(edu)8 0.039976861 -16.7851011  5.848459e-60
-#&gt; parttime     0.042403225  45.9416624  0.000000e+00
-#&gt; exp          0.001615070   5.6383207  1.912665e-08</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>occup_small</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>trans</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>occup_old</span> <span class='op'>&lt;-</span> <span class='va'>occup_small</span><span class='op'>[</span><span class='va'>occup_small</span><span class='op'>$</span><span class='va'>year</span> <span class='op'>==</span> <span class='fl'>2008</span>, <span class='op'>]</span></span>
+<span class='r-in'><span class='va'>occup_new</span> <span class='op'>&lt;-</span> <span class='va'>occup_small</span><span class='op'>[</span><span class='va'>occup_small</span><span class='op'>$</span><span class='va'>year</span> <span class='op'>==</span> <span class='fl'>2010</span>, <span class='op'>]</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>occup_2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='cat2cat.html'>cat2cat</a></span><span class='op'>(</span></span>
+<span class='r-in'>  data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>old <span class='op'>=</span> <span class='va'>occup_old</span>, new <span class='op'>=</span> <span class='va'>occup_new</span>, cat_var <span class='op'>=</span> <span class='st'>"code"</span>, time_var <span class='op'>=</span> <span class='st'>"year"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>trans <span class='op'>=</span> <span class='va'>trans</span>, direction <span class='op'>=</span> <span class='st'>"backward"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  ml <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span></span>
+<span class='r-in'>    method <span class='op'>=</span> <span class='st'>"knn"</span>,</span>
+<span class='r-in'>    features <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"age"</span>, <span class='st'>"sex"</span>, <span class='st'>"edu"</span>, <span class='st'>"exp"</span>, <span class='st'>"parttime"</span>, <span class='st'>"salary"</span><span class='op'>)</span>,</span>
+<span class='r-in'>    args <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>k <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Regression</span></span>
+<span class='r-in'><span class='co'># we have to adjust size of std as we artificialy enlarge degrees of freedom</span></span>
+<span class='r-in'><span class='va'>lms</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='va'>salary</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>~</span> <span class='va'>age</span> <span class='op'>+</span> <span class='va'>sex</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='va'>edu</span><span class='op'>)</span> <span class='op'>+</span> <span class='va'>parttime</span> <span class='op'>+</span> <span class='va'>exp</span>, <span class='va'>occup_2</span><span class='op'>$</span><span class='va'>old</span>,</span>
+<span class='r-in'>  weights <span class='op'>=</span> <span class='va'>multiplier</span> <span class='op'>*</span> <span class='va'>wei_freq_c2c</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'>summary_c2c</span><span class='op'>(</span><span class='va'>lms</span>, df_old <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>occup_old</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  Estimate   Std. Error    t value      Pr(&gt;|t|) correct</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> (Intercept)   8.433891931 0.0253371317 332.866878  0.000000e+00 2.56638</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age           0.002352042 0.0006506223   3.615065  3.011795e-04 2.56638</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> sexTRUE       0.262604727 0.0074608582  35.197657 1.292765e-261 2.56638</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)2 -0.106556564 0.0138403094  -7.699002  1.449903e-14 2.56638</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)3 -0.397839093 0.0172218889 -23.100781 3.359280e-116 2.56638</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)4 -0.397856337 0.0107650217 -36.958248 3.567513e-287 2.56638</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)5 -0.396250768 0.0147747359 -26.819482 4.453055e-155 2.56638</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)6 -0.636084480 0.0104401145 -60.926964  0.000000e+00 2.56638</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)7 -0.583106106 0.2390526325  -2.439237  1.472892e-02 2.56638</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)8 -0.671015647 0.0155771419 -43.076943  0.000000e+00 2.56638</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> parttime      1.948074658 0.0165225845 117.903749  0.000000e+00 2.56638</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> exp           0.009106280 0.0006293183  14.470072  3.677888e-47 2.56638</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              std.error_c statistic_c     p.value_c</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> (Intercept)  0.065024700 129.7028961  0.000000e+00</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> age          0.001669744   1.4086245  1.590722e-01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> sexTRUE      0.019147395  13.7149063  2.599874e-41</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)2 0.035519489  -2.9999464  2.727281e-03</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)3 0.044197906  -9.0013109  4.344982e-19</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)4 0.027627133 -14.4009274  3.295024e-45</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)5 0.037917582 -10.4503174  4.825268e-25</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)6 0.026793298 -23.7404326 2.186075e-112</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)7 0.613499820  -0.9504585  3.419724e-01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> factor(edu)8 0.039976861 -16.7851011  5.848459e-60</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> parttime     0.042403225  45.9416624  0.000000e+00</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> exp          0.001615070   5.6383207  1.912665e-08</span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

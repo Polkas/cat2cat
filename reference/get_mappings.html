@@ -58,9 +58,6 @@
 
 
 
-<!-- dependencies from examples -->
-
-
   
 
   
@@ -137,7 +134,7 @@
     <p>transforming table of mappings to list with keys where first column is assumed to be an old encoding.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_mappings</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></pre>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>get_mappings</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -156,34 +153,36 @@
     <p>the named list will be a more efficient solution than hash map as we are not expecting more than a few thousand keys.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>trans</span><span class='op'>)</span>
-
-<span class='va'>mappings</span> <span class='op'>&lt;-</span> <span class='fu'>get_mappings</span><span class='op'>(</span><span class='va'>trans</span><span class='op'>)</span>
-<span class='va'>mappings</span><span class='op'>$</span><span class='va'>to_old</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; $`111101`
-#&gt; [1] "1111"
-#&gt; 
-#&gt; $`111102`
-#&gt; [1] "1111"
-#&gt; 
-#&gt; $`111103`
-#&gt; [1] "1111"
-#&gt; 
-#&gt; $`111201`
-#&gt; [1] "1112"
-#&gt; </div><div class='input'><span class='va'>mappings</span><span class='op'>$</span><span class='va'>to_new</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; $`1111`
-#&gt; [1] "111101" "111102" "111103"
-#&gt; 
-#&gt; $`1112`
-#&gt; [1] "111201" "111202" "111301"
-#&gt; 
-#&gt; $`1121`
-#&gt; [1] "111402"
-#&gt; 
-#&gt; $`1122`
-#&gt; [1] "111401" "111403" "111404"
-#&gt; </div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>trans</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>mappings</span> <span class='op'>&lt;-</span> <span class='fu'>get_mappings</span><span class='op'>(</span><span class='va'>trans</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>mappings</span><span class='op'>$</span><span class='va'>to_old</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $`111101`</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "1111"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $`111102`</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "1111"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $`111103`</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "1111"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $`111201`</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "1112"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='va'>mappings</span><span class='op'>$</span><span class='va'>to_new</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span><span class='op'>]</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $`1111`</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "111101" "111102" "111103"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $`1112`</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "111201" "111202" "111301"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $`1121`</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "111402"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $`1122`</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "111401" "111403" "111404"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
