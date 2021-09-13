@@ -1,37 +1,37 @@
-# 0.2.1
+# cat2cat 0.2.1
 
 * usage of summary_c2c with the default df_new argument.
 * plot_c2c roxygen2
 
-# 0.2.0
+# cat2cat 0.2.0
 
 * plot_c2c
 
-# 0.1.9
+# cat2cat 0.1.9
 
 * vignette improvements
 
-# 0.1.8
+# cat2cat 0.1.8
 
 * pt inside summary_c2c
 * VignetteIndexEntry
 
-# 0.1.7
+# cat2cat 0.1.7
 
 * URL for doi in vignettes
 
-# 0.1.6
+# cat2cat 0.1.6
 
 * basic vignette
 * rm .internal.selfref attr for mapped df
 * assertthat instead of stopifnot
 
-# 0.1.5
+# cat2cat 0.1.5
 
 * data.R adding set.seed
 * lack of a one bracket in description file
 
-# 0.1.4
+# cat2cat 0.1.4
 
 * remove the unnecessary imports in the DESCRIPTION file
 
