@@ -36,9 +36,9 @@ data args
  \item{"new"} { data.frame more recent time point in a panel}
  \item{"cat_var"}{ character name of the categorical variable}
  \item{"time_var"}{ character name of the time variable}
- \item{"id_var"}{ character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
- \item{"multiplier_var"}{ character name of the multiplier variable - number of replication needed to reproduce the population}
- \item{"freqs_df"}{ only for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
+ \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
+ \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}
+ \item{"freqs_df"}{ optional only for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
 }
 mappings args
 \itemize{
@@ -46,7 +46,7 @@ mappings args
   First column contains an old encoding and second a new one.}
  \item{"direction"}{ character direction - "backward" or "forward"}
 }
-ml args
+optional ml args
 \itemize{
  \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination, "rf" Random Forest }
  \item{"features"}{ character vector of features names where all have to be numeric or logical}
@@ -72,8 +72,8 @@ occup_2 <- cat2cat(
   mappings = list(trans = trans, direction = "forward")
 )
 
-# additionaly add probabilities from knn
-
+# additionally add probabilities from knn
+\dontrun{
 occup_3 <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "forward"),
@@ -83,5 +83,5 @@ occup_3 <- cat2cat(
     args = list(k = 10)
   )
 )
-
+}
 }

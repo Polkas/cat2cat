@@ -28,12 +28,11 @@ occup_old <- occup_small[occup_small$year == 2008, ]
 occup_new <- occup_small[occup_small$year == 2010, ]
 
 occup_2 <- cat2cat(
-data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
-mappings = list(trans = trans, direction = "backward")
+  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "backward")
 )
 
 plot_c2c(occup_2$old, type = c("both"))
 plot_c2c(occup_2$old, type = c("hist"))
 plot_c2c(occup_2$old, type = c("bar"))
-
 }

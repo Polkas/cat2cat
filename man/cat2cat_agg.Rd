@@ -39,12 +39,16 @@ agg_new <- verticals[verticals$v_date == "2020-05-01", ]
 ## cat2cat_man - could map in both directions at once although
 ## usually we want to have oold or new representation
 
-agg = cat2cat_agg(data = list(old = agg_old,
-                             new = agg_new,
-                             cat_var = "vertical",
-                             time_var = "v_date",
-                             freq_var = "counts"),
-                 Automotive \%<\% c(Automotive1, Automotive2),
-                 c(Kids1, Kids2) \%>\% c(Kids),
-                 Home \%>\% c(Home, Supermarket))
+agg <- cat2cat_agg(
+  data = list(
+    old = agg_old,
+    new = agg_new,
+    cat_var = "vertical",
+    time_var = "v_date",
+    freq_var = "counts"
+  ),
+  Automotive \%<\% c(Automotive1, Automotive2),
+  c(Kids1, Kids2) \%>\% c(Kids),
+  Home \%>\% c(Home, Supermarket)
+)
 }

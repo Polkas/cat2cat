@@ -25,19 +25,23 @@ random data - aggregate sales across e-commerce verticals
 \examples{
 set.seed(1234)
 agg_old <- data.frame(
- vertical = c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
-              "Clothes", "Home", "Fashion", "Health", "Sport"),
- sales = rnorm(10, 100, 10),
- counts = rgeom(10, 0.0001),
- v_date = rep("2020-04-01", 10), stringsAsFactors = FALSE
+  vertical = c(
+    "Electronics", "Kids1", "Kids2", "Automotive", "Books",
+    "Clothes", "Home", "Fashion", "Health", "Sport"
+  ),
+  sales = rnorm(10, 100, 10),
+  counts = rgeom(10, 0.0001),
+  v_date = rep("2020-04-01", 10), stringsAsFactors = FALSE
 )
 
 agg_new <- data.frame(
- vertical = c("Electronics", "Supermarket", "Kids", "Automotive1",
-              "Automotive2", "Books", "Clothes", "Home", "Fashion", "Health", "Sport"),
- sales = rnorm(11, 100, 10),
- counts = rgeom(11, 0.0001),
- v_date = rep("2020-05-01", 11), stringsAsFactors = FALSE
+  vertical = c(
+    "Electronics", "Supermarket", "Kids", "Automotive1",
+    "Automotive2", "Books", "Clothes", "Home", "Fashion", "Health", "Sport"
+  ),
+  sales = rnorm(11, 100, 10),
+  counts = rgeom(11, 0.0001),
+  v_date = rep("2020-05-01", 11), stringsAsFactors = FALSE
 )
 verticals <- rbind(agg_old, agg_new)
 }

@@ -86,19 +86,23 @@
 #' @examples
 #' set.seed(1234)
 #' agg_old <- data.frame(
-#'  vertical = c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
-#'               "Clothes", "Home", "Fashion", "Health", "Sport"),
-#'  sales = rnorm(10, 100, 10),
-#'  counts = rgeom(10, 0.0001),
-#'  v_date = rep("2020-04-01", 10), stringsAsFactors = FALSE
+#'   vertical = c(
+#'     "Electronics", "Kids1", "Kids2", "Automotive", "Books",
+#'     "Clothes", "Home", "Fashion", "Health", "Sport"
+#'   ),
+#'   sales = rnorm(10, 100, 10),
+#'   counts = rgeom(10, 0.0001),
+#'   v_date = rep("2020-04-01", 10), stringsAsFactors = FALSE
 #' )
 #'
 #' agg_new <- data.frame(
-#'  vertical = c("Electronics", "Supermarket", "Kids", "Automotive1",
-#'               "Automotive2", "Books", "Clothes", "Home", "Fashion", "Health", "Sport"),
-#'  sales = rnorm(11, 100, 10),
-#'  counts = rgeom(11, 0.0001),
-#'  v_date = rep("2020-05-01", 11), stringsAsFactors = FALSE
+#'   vertical = c(
+#'     "Electronics", "Supermarket", "Kids", "Automotive1",
+#'     "Automotive2", "Books", "Clothes", "Home", "Fashion", "Health", "Sport"
+#'   ),
+#'   sales = rnorm(11, 100, 10),
+#'   counts = rgeom(11, 0.0001),
+#'   v_date = rep("2020-05-01", 11), stringsAsFactors = FALSE
 #' )
 #' verticals <- rbind(agg_old, agg_new)
 "verticals"
@@ -118,42 +122,52 @@
 #' @examples
 #' set.seed(1234)
 #' vert_old <- data.frame(
-#'  ean = 90000001:90000020,
-#'  vertical = sample(c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
-#'               "Clothes", "Home", "Fashion", "Health", "Sport"), 20, replace = TRUE),
-#'  sales = rnorm(20, 100, 10),
-#'  v_date = rep("2020-04-01", 20), stringsAsFactors = FALSE
-#')
+#'   ean = 90000001:90000020,
+#'   vertical = sample(c(
+#'     "Electronics", "Kids1", "Kids2", "Automotive", "Books",
+#'     "Clothes", "Home", "Fashion", "Health", "Sport"
+#'   ), 20, replace = TRUE),
+#'   sales = rnorm(20, 100, 10),
+#'   v_date = rep("2020-04-01", 20), stringsAsFactors = FALSE
+#' )
 #'
 #' vert_old2 <- data.frame(
-#'  ean = 90000021:90000100,
-#'  vertical = sample(c("Electronics", "Kids1", "Kids2", "Automotive", "Books",
-#'               "Clothes", "Home", "Fashion", "Health", "Sport"), 80, replace = TRUE),
-#'  sales = rnorm(80, 100, 10),
-#'  v_date = rep("2020-04-01", 80), stringsAsFactors = FALSE
-#')
+#'   ean = 90000021:90000100,
+#'   vertical = sample(c(
+#'     "Electronics", "Kids1", "Kids2", "Automotive", "Books",
+#'     "Clothes", "Home", "Fashion", "Health", "Sport"
+#'   ), 80, replace = TRUE),
+#'   sales = rnorm(80, 100, 10),
+#'   v_date = rep("2020-04-01", 80), stringsAsFactors = FALSE
+#' )
 #'
 #' vert_new <- vert_old2
 #' vert_new$sales <- rnorm(nrow(vert_new), 80, 10)
 #' vert_new$v_date <- "2020-05-01"
 #' vert_new$vertical[vert_new$vertical %in% c("Kids1", "Kids2")] <- "Kids"
 #' vert_new$vertical[vert_new$vertical %in% c("Automotive")] <-
-#' sample(c("Automotive1", "Automotive2"), sum(vert_new$vertical %in% c("Automotive")),
-#'        replace = TRUE)
+#'   sample(c("Automotive1", "Automotive2"), sum(vert_new$vertical %in% c("Automotive")),
+#'     replace = TRUE
+#'   )
 #' vert_new$vertical[vert_new$vertical %in% c("Home")] <-
-#' sample(c("Home", "Supermarket"), sum(vert_new$vertical %in% c("Home")), replace = TRUE)
+#'   sample(c("Home", "Supermarket"), sum(vert_new$vertical %in% c("Home")), replace = TRUE)
 #'
 #' vert_new2 <- data.frame(
-#'  ean = 90000101:90000120,
-#'  vertical = sample(c("Electronics", "Supermarket", "Kids", "Automotive1",
-#'                      "Automotive2", "Books", "Clothes", "Home",
-#'                       "Fashion", "Health", "Sport"), 20,
-#'                    replace = TRUE),
-#'  sales = rnorm(20, 100, 10),
-#'  v_date = rep("2020-05-01", 20), stringsAsFactors = FALSE
-#')
+#'   ean = 90000101:90000120,
+#'   vertical = sample(c(
+#'     "Electronics", "Supermarket", "Kids", "Automotive1",
+#'     "Automotive2", "Books", "Clothes", "Home",
+#'     "Fashion", "Health", "Sport"
+#'   ), 20,
+#'   replace = TRUE
+#'   ),
+#'   sales = rnorm(20, 100, 10),
+#'   v_date = rep("2020-05-01", 20), stringsAsFactors = FALSE
+#' )
 #'
-#' verticals2 <- rbind(rbind(vert_old, vert_old2),
-#'                     rbind(vert_new, vert_new2))
+#' verticals2 <- rbind(
+#'   rbind(vert_old, vert_old2),
+#'   rbind(vert_new, vert_new2)
+#' )
 #' verticals2$vertical <- as.character(verticals2$vertical)
 "verticals2"

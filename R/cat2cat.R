@@ -145,9 +145,9 @@ get_freqs <- function(x, multiplier = NULL) {
 #'  \item{"new"} { data.frame more recent time point in a panel}
 #'  \item{"cat_var"}{ character name of the categorical variable}
 #'  \item{"time_var"}{ character name of the time variable}
-#'  \item{"id_var"}{ character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
-#'  \item{"multiplier_var"}{ character name of the multiplier variable - number of replication needed to reproduce the population}
-#'  \item{"freqs_df"}{ only for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
+#'  \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
+#'  \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}
+#'  \item{"freqs_df"}{ optional only for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
 #' }
 #' mappings args
 #' \itemize{
@@ -155,7 +155,7 @@ get_freqs <- function(x, multiplier = NULL) {
 #'   First column contains an old encoding and second a new one.}
 #'  \item{"direction"}{ character direction - "backward" or "forward"}
 #' }
-#' ml args
+#' optional ml args
 #' \itemize{
 #'  \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination, "rf" Random Forest }
 #'  \item{"features"}{ character vector of features names where all have to be numeric or logical}
@@ -165,13 +165,10 @@ get_freqs <- function(x, multiplier = NULL) {
 #' There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
 #' Additional columns will be informative only for a one data.frame as we always make a changes to one direction.
 #' @importFrom progress progress_bar
-#' @importFrom caret knn3 predict.train
 #' @importFrom tidyr pivot_longer
 #' @importFrom dplyr tibble
 #' @importFrom stats predict complete.cases setNames
-#' @importFrom randomForest randomForest
 #' @importFrom MASS lda
-#' @importFrom data.table rbindlist
 #' @importFrom assertthat assert_that
 #' @details Without ml section only simple frequencies are assessed.
 #' When ml model is broken then weights from simple frequencies are taken.
@@ -191,8 +188,8 @@ get_freqs <- function(x, multiplier = NULL) {
 #'   mappings = list(trans = trans, direction = "forward")
 #' )
 #'
-#' # additionaly add probabilities from knn
-#'
+#' # additionally add probabilities from knn
+#' \dontrun{
 #' occup_3 <- cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "forward"),
@@ -202,11 +199,10 @@ get_freqs <- function(x, multiplier = NULL) {
 #'     args = list(k = 10)
 #'   )
 #' )
-#'
+#' }
 #' @export
 
-cat2cat <- function(
-                    data = list(
+cat2cat <- function(data = list(
                       old = NULL,
                       new = NULL,
                       cat_var = NULL,
@@ -341,33 +337,23 @@ cat2cat <- function(
     assert_that(all(ml$method %in% c("knn", "rf", "lda")))
 
     uu <- unique(cat_final_rep[[data$cat_var]])
-
     features <- unique(ml$features)
-
     methods <- unique(ml$method)
-
     ml_names <- paste0("wei_", methods, "_c2c")
-
     cat_base_year[, ml_names] <- 1
-
     if (!is.null(data$id_var)) cat_mid[, ml_names] <- 1
-
     cat_final_rep[, ml_names] <- cat_final_rep["wei_freq_c2c"]
-
     cat_base_year_g <- split(cat_base_year, cat_base_year[[data$cat_var]])
-
     cat_final_rep_cat_c2c <- split(cat_final_rep, cat_final_rep[[data$cat_var]])
-
     pb <- progress_bar$new(total = length(uu))
 
     for (i in unique(uu)) {
       pb$tick()
-
       try(
         {
           base <- cat_final_rep_cat_c2c[[i]]
           dis <- do.call(rbind, cat_base_year_g[unique(base$g_new_c2c)])
-          udc <- unique(dis$code)
+          udc <- unique(dis[[data$cat_var]])
           if (length(udc) == 1) {
             cat_final_rep_cat_c2c[[i]][ml_names] <- base$wei_naive_c2c
             next
@@ -382,25 +368,33 @@ cat2cat <- function(
             for (m in methods) {
               ml_name <- paste0("wei_", m, "_c2c")
               if (m == "knn") {
-                kkk <- suppressWarnings(caret::knn3(
-                  x = dis[, features],
-                  y = factor(dis$code),
-                  k = min(ml$args$k, ceiling(nrow(dis) / 4))
-                ))
-                pp <- as.data.frame(stats::predict(kkk, base_ml[cc, features], type = "prob"))
+                if (suppressPackageStartupMessages(requireNamespace("caret", quietly = TRUE))) {
+                  kkk <- suppressWarnings(caret::knn3(
+                    x = dis[, features, drop = FALSE],
+                    y = factor(dis[[data$cat_var]]),
+                    k = min(ml$args$k, ceiling(nrow(dis) / 4))
+                  ))
+                  pp <- as.data.frame(stats::predict(kkk, base_ml[cc, features, drop = FALSE], type = "prob"))
+                } else {
+                  stop("Please install caret package to use knn model in the cat2cat function.")
+                }
               } else if (m == "rf") {
-                kkk <- suppressWarnings(randomForest(
-                  y = factor(dis$code),
-                  x = dis[, features],
-                  ntree = min(ml$args$ntree, 100)
-                ))
-                pp <- as.data.frame(stats::predict(kkk, base_ml[cc, features], type = "prob"))
+                if (suppressPackageStartupMessages(requireNamespace("randomForest", quietly = TRUE))) {
+                  kkk <- suppressWarnings(randomForest::randomForest(
+                    y = factor(dis[[data$cat_var]]),
+                    x = dis[, features, drop = FALSE],
+                    ntree = min(ml$args$ntree, 100)
+                  ))
+                  pp <- as.data.frame(stats::predict(kkk, base_ml[cc, features, drop = FALSE], type = "prob"))
+                } else {
+                  stop("Please install randomForest package to use rf model in the cat2cat function.")
+                }
               } else if (m == "lda") {
                 kkk <- suppressWarnings(MASS::lda(
-                  grouping = factor(dis$code),
-                  x = as.matrix(dis[, features])
+                  grouping = factor(dis[[data$cat_var]]),
+                  x = as.matrix(dis[, features, drop = FALSE])
                 ))
-                pp <- as.data.frame(stats::predict(kkk, as.matrix(base_ml[cc, features]))$posterior)
+                pp <- as.data.frame(stats::predict(kkk, as.matrix(base_ml[cc, features, drop = FALSE]))$posterior)
               }
               ll <- setdiff(unique(base$g_new_c2c), colnames(pp))
               # imputing rest of the class to zero prob
@@ -421,12 +415,14 @@ cat2cat <- function(
 
     pb$terminate()
 
-    cat_final_rep <- tibble(data.table::rbindlist(cat_final_rep_cat_c2c))
+    cat_final_rep <- do.call(rbind, cat_final_rep_cat_c2c)
     cat_final_rep <- cat_final_rep[order(cat_final_rep[["index_c2c"]]), ]
-    attr(cat_final_rep, ".internal.selfref") <- NULL
   }
 
-  res <- list(tibble(cat_base_year), rbind(cat_final_rep, tibble(cat_mid)))[res_ord]
+  cat_base_year_f <- tibble(cat_base_year)
+  cat_final_rep_f <- rbind(tibble(cat_final_rep), tibble(cat_mid))
+
+  res <- list(cat_base_year_f, cat_final_rep_f)[res_ord]
   names(res) <- c("old", "new")
   res
 }
@@ -527,9 +523,9 @@ prune_c2c <- function(df, index = "index_c2c", column = "wei_freq_c2c", method =
 #' )
 #' @export
 cross_c2c <- function(df,
-                          cols = colnames(df)[grepl("^wei_.*_c2c$", colnames(df))],
-                          weis = rep(1 / length(cols),length(cols)),
-                          na.rm = TRUE) {
+                      cols = colnames(df)[grepl("^wei_.*_c2c$", colnames(df))],
+                      weis = rep(1 / length(cols), length(cols)),
+                      na.rm = TRUE) {
   assert_that(inherits(df, "data.frame"))
   assert_that(all(cols %in% colnames(df)))
   assert_that(length(weis) == length(cols))

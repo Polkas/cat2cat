@@ -1,3 +1,11 @@
+# cat2cat 0.2.2
+
+* fixed the `cat2cat` function, the ml part is assuming that categorical variable is always named "code". 
+* fixed problems when using only one feature in the ml part of `cat2cat` function.
+* transfer caret and `randomForest` packages to Suggests, they are delayed loaded now.
+* styler of the code.
+* remove data.table from Imports.
+
 # cat2cat 0.2.1
 
 * usage of summary_c2c with the default df_new argument.

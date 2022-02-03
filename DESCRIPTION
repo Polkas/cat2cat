@@ -1,6 +1,6 @@
 Package: cat2cat
-Title: Mapping of a Categorical Variable in a Panel Dataset
-Version: 0.2.1
+Title: Unify a Categorical Variable in a Panel Dataset
+Version: 0.2.1.9000
 Authors@R: person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre"))
 Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
 Description: 
@@ -14,22 +14,21 @@ URL: https://github.com/Polkas/cat2cat
 BugReports: https://github.com/Polkas/cat2cat/issues
 Encoding: UTF-8
 Imports:
-	rlang,
-	caret,
-	progress,
-	randomForest,
-	MASS,
-	tidyr,
-	dplyr,
-	data.table,
-	assertthat
+  rlang,
+  progress,
+  MASS,
+  tidyr,
+  dplyr,
+  assertthat
 Suggests:
-	  knitr,
-    rmarkdown,
-    pacman,
-    testthat,
-    magrittr,
-	  igraph
+  caret,
+  randomForest,
+  knitr,
+  rmarkdown,
+  pacman,
+  testthat,
+  magrittr,
+  igraph
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
