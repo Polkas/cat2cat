@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.1.9000</span>
       </span>
     </div>
 
@@ -81,9 +81,9 @@
       <h1 data-toc-skip>cat2cat - Introduction</h1>
                         <h4 data-toc-skip class="author">Maciej Nasinski</h4>
             
-            <h4 data-toc-skip class="date">2021-09-13</h4>
+            <h4 data-toc-skip class="date">2022-02-03</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/Polkas/cat2cat/blob/master/vignettes/Introduction.Rmd" class="external-link"><code>vignettes/Introduction.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/Polkas/cat2cat/blob/HEAD/vignettes/Introduction.Rmd" class="external-link"><code>vignettes/Introduction.Rmd</code></a></small>
       <div class="hidden name"><code>Introduction.Rmd</code></div>
 
     </div>
@@ -92,9 +92,9 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">pacman</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pacman/man/p_load.html" class="external-link">p_load</a></span><span class="op">(</span><span class="va">cat2cat</span>, <span class="va">dplyr</span>, <span class="va">igraph</span><span class="op">)</span></code></pre></div>
-<div id="mapping-of-a-categorical-variable-in-a-panel-dataset" class="section level1">
-<h1 class="hasAnchor">
-<a href="#mapping-of-a-categorical-variable-in-a-panel-dataset" class="anchor" aria-hidden="true"></a>Mapping of a Categorical Variable in a Panel Dataset</h1>
+<div class="section level2">
+<h2 id="mapping-of-a-categorical-variable-in-a-panel-dataset">Mapping of a Categorical Variable in a Panel Dataset<a class="anchor" aria-label="anchor" href="#mapping-of-a-categorical-variable-in-a-panel-dataset"></a>
+</h2>
 <p>This algorithm was invented and implemented in the paper by <a href="https://doi.org/10.24425/cejeme.2020.134747" class="external-link">Nasinski, Majchrowska and Broniatowska (2020)</a></p>
 <p><strong>The main rule is to replicate the observation if it could be assign to a few categories</strong> <strong>then using simple frequencies or statistical methods to approximate probabilities of being assign to each of them.</strong></p>
 <p>Why cat2cat:<br>
@@ -104,17 +104,17 @@
 - visualize any factor variable across time<br>
 - real world datasets like <code>occup</code></p>
 <p>In many projects where dataset contains a categorical variable one of the biggest obstacle is that the data provider during internal processes was changing an encoding of such variable during a time. Thus some categories were grouped and other were separated or a new one is added or an old one is removed. The main objective is to merge a few surveys published by some data provider over the years.</p>
-<div id="many-time-points-to-map" class="section level2">
-<h2 class="hasAnchor">
-<a href="#many-time-points-to-map" class="anchor" aria-hidden="true"></a>Many Time Points To Map</h2>
+<div class="section level3">
+<h3 id="many-time-points-to-map">Many Time Points To Map<a class="anchor" aria-label="anchor" href="#many-time-points-to-map"></a>
+</h3>
 <p>cat2cat have to be used recursively where the prune methods (<code>prune_c2c</code>) might be needed to limit the problem of exponentially growing replications. Thus a <code>prune_c2c</code> with highest1 or highest method could be used before transferring a data.frame to the next iteration. However when only 3 periods have to be map then the middle one might be used as the base one.</p>
 </div>
-<div id="different-types-of-panel-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#different-types-of-panel-data" class="anchor" aria-hidden="true"></a>Different Types Of Panel Data</h2>
-<div id="panel-dataset-without-unique-identifier" class="section level3">
-<h3 class="hasAnchor">
-<a href="#panel-dataset-without-unique-identifier" class="anchor" aria-hidden="true"></a>Panel Dataset Without Unique Identifier</h3>
+<div class="section level3">
+<h3 id="different-types-of-panel-data">Different Types Of Panel Data<a class="anchor" aria-label="anchor" href="#different-types-of-panel-data"></a>
+</h3>
+<div class="section level4">
+<h4 id="panel-dataset-without-unique-identifier">Panel Dataset Without Unique Identifier<a class="anchor" aria-label="anchor" href="#panel-dataset-without-unique-identifier"></a>
+</h4>
 <p>We could not observe each subject category across time. There is not possible to build automatically a mapping table. We have to provide manually a mapping table - usually provided by a data provider like a national statistics office. In worst case somebody have to make it manually though supported by some official directives.</p>
 <table class="table">
 <thead><tr class="header">
@@ -152,9 +152,9 @@
 </table>
 <p>Notice: New categories might appeared in a new partition or same old categories are depreciated.</p>
 </div>
-<div id="panel-dataset-with-unique-identifier" class="section level3">
-<h3 class="hasAnchor">
-<a href="#panel-dataset-with-unique-identifier" class="anchor" aria-hidden="true"></a>Panel Dataset With Unique Identifier</h3>
+<div class="section level4">
+<h4 id="panel-dataset-with-unique-identifier">Panel Dataset With Unique Identifier<a class="anchor" aria-label="anchor" href="#panel-dataset-with-unique-identifier"></a>
+</h4>
 <p>Here we could observe each subject category across time. There is a possibility to build a mapping automatically.</p>
 <table class="table">
 <thead><tr class="header">
@@ -206,17 +206,17 @@
 <p>Notice: We could have new identifiers in a new partition or old identifiers which do not continue to participate. Notice: New categories might appeared in a new partition or same old categories are depraciated.</p>
 </div>
 </div>
-<div id="simple-frequencies-and-ml-methods" class="section level2">
-<h2 class="hasAnchor">
-<a href="#simple-frequencies-and-ml-methods" class="anchor" aria-hidden="true"></a>Simple Frequencies and ml Methods</h2>
+<div class="section level3">
+<h3 id="simple-frequencies-and-ml-methods">Simple Frequencies and ml Methods<a class="anchor" aria-label="anchor" href="#simple-frequencies-and-ml-methods"></a>
+</h3>
 <p>We could use simple frequencies or statistical/ml methods to approximate probabilities of being assign to each of possible categories. The probabilities might be used in further statistical models as a weights or to narrow the number of possible categories for each subject.</p>
 <p>Each new observation has some probability of existence because of the fact that it could be assign to a few groups. Probabilities were calculated using frequencies of subjects in each group/category at the previous survey/period. More advanced users might specify custom per group probabilities. This should be obvious that for each observations which was replicated a few times probabilities have to sum to one. There were made some assumptions about cases such as when there were no such groups in the previous period - some or all. When there is no frequencies the probabilities are allocated equally.</p>
 <p>Finally we get the dataset which has additional rows which comes from a replication process and at least 3 supplementary variables - new group, probability and number of replications. There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.</p>
 <p>For statistical models like linear regression its results should be adjusted because of a replication process which artificially enlarge the number of degree of freedom. Another solution might be to use the prune_c2c function to remove additional rows and leave only an one observation with highest probability for each subject.</p>
 </div>
-<div id="isco-classification--dataset-without-unique-identifier---application" class="section level2">
-<h2 class="hasAnchor">
-<a href="#isco-classification--dataset-without-unique-identifier---application" class="anchor" aria-hidden="true"></a>ISCO Classification- Dataset Without Unique Identifier - Application</h2>
+<div class="section level3">
+<h3 id="isco-classification--dataset-without-unique-identifier---application">ISCO Classification- Dataset Without Unique Identifier - Application<a class="anchor" aria-label="anchor" href="#isco-classification--dataset-without-unique-identifier---application"></a>
+</h3>
 <p>Rearrangement of the old ISCO classification into the new one To rearrange the old classification into the new one, an associative array that maps keys to values was used. More precisely, an association list was used which is a linked list in which each list element is comprised of a key and value. An association list where unique four digits COS group codes from 2010 are keys and matching groups from 2008 are values was constructed. There are around 500 unique four-digit COS group codes, so searching an association list is not less preferable than searching a binary search tree or hash table. We were able to build the association list because of existence of a transition table provided by CSO. Transition table convey information needed for matching different COS coding in time. The first association list – transitions:</p>
 <pre><code>&gt; head(get_mappings(...))
 $‘1111‘
@@ -249,9 +249,9 @@ $‘1311‘
 <p>Finally, we get the dataset that has additional rows from a replication process and three supplementary variables – new group, probability, and number of replications. This dataset was built from five SWS surveys published biannually between 2006 and 2014. It contains over 5 million observations and 70 variables.</p>
 <div style="page-break-after: always;"></div>
 </div>
-<div id="isco-classification---dataset-without-unique-identifier---example" class="section level2">
-<h2 class="hasAnchor">
-<a href="#isco-classification---dataset-without-unique-identifier---example" class="anchor" aria-hidden="true"></a>ISCO classification - Dataset Without Unique Identifier - Example</h2>
+<div class="section level3">
+<h3 id="isco-classification---dataset-without-unique-identifier---example">ISCO classification - Dataset Without Unique Identifier - Example<a class="anchor" aria-label="anchor" href="#isco-classification---dataset-without-unique-identifier---example"></a>
+</h3>
 <p>occup dataset is an example of panel dataset without unique identifier. It is presenting a characteristics from randomly selected company and then using k step procedure employees sample are chosen. The survey is anonymous and take place every two years. Use <code><a href="../reference/occup.html">?occup</a></code> for more details. trans dataset containing transitions between old (2008) and new (2010) occupational codes.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span>
@@ -259,94 +259,94 @@ $‘1311‘
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occup</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## Rows: 68,370
-## Columns: 12
-## $ id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, …
-## $ age        &lt;dbl&gt; 49.29183, 33.95678, 30.98335, 55.26238, 34.05539, 35.23543,…
-## $ sex        &lt;lgl&gt; FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, …
-## $ edu        &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 4, 1, 1, 3, 2, 1, 1,…
-## $ exp        &lt;dbl&gt; 26.461835, 7.536783, 7.483355, 24.762377, 10.055385, 11.235…
-## $ district   &lt;int&gt; 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…
-## $ parttime   &lt;dbl&gt; 1.0000000, 1.0000000, 0.3333333, 1.0000000, 1.0000000, 1.00…
-## $ salary     &lt;dbl&gt; 94730.94, 67619.39, 17862.90, 261882.46, 84540.17, 94002.69…
-## $ code       &lt;chr&gt; "2471", "2471", "2471", "1112", "2471", "2479", "3431", "11…
-## $ multiplier &lt;dbl&gt; 223.2233, 279.4190, 240.4430, 233.9506, 254.0955, 261.7070,…
-## $ year       &lt;int&gt; 2008, 2008, 2008, 2008, 2008, 2008, 2008, 2008, 2008, 2008,…
-## $ code4      &lt;chr&gt; "2471", "2471", "2471", "1112", "2471", "2479", "3431", "11…</code></pre>
+<pre><code><span class="co">## Rows: 68,370</span>
+<span class="co">## Columns: 12</span>
+<span class="co">## $ id         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, …</span>
+<span class="co">## $ age        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 49.29183, 33.95678, 30.98335, 55.26238, 34.05539, 35.23543,…</span>
+<span class="co">## $ sex        <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, …</span>
+<span class="co">## $ edu        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 4, 1, 1, 3, 2, 1, 1,…</span>
+<span class="co">## $ exp        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 26.461835, 7.536783, 7.483355, 24.762377, 10.055385, 11.235…</span>
+<span class="co">## $ district   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,…</span>
+<span class="co">## $ parttime   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1.0000000, 1.0000000, 0.3333333, 1.0000000, 1.0000000, 1.00…</span>
+<span class="co">## $ salary     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 94730.94, 67619.39, 17862.90, 261882.46, 84540.17, 94002.69…</span>
+<span class="co">## $ code       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "2471", "2471", "2471", "1112", "2471", "2479", "3431", "11…</span>
+<span class="co">## $ multiplier <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 223.2233, 279.4190, 240.4430, 233.9506, 254.0955, 261.7070,…</span>
+<span class="co">## $ year       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2008, 2008, 2008, 2008, 2008, 2008, 2008, 2008, 2008, 2008,…</span>
+<span class="co">## $ code4      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "2471", "2471", "2471", "1112", "2471", "2479", "3431", "11…</span></code></pre>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">trans</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## Rows: 2,666
-## Columns: 2
-## $ old &lt;chr&gt; "1111", "1111", "1111", "1112", "1112", "1112", "1121", "1122", "1…
-## $ new &lt;chr&gt; "111101", "111102", "111103", "111201", "111202", "111301", "11140…</code></pre>
+<pre><code><span class="co">## Rows: 2,666</span>
+<span class="co">## Columns: 2</span>
+<span class="co">## $ old <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "1111", "1111", "1111", "1112", "1112", "1112", "1121", "1122", "1…</span>
+<span class="co">## $ new <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "111101", "111102", "111103", "111201", "111202", "111301", "11140…</span></code></pre>
 <p>graph for some mappings inside trans table:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gg</span> <span class="op">=</span> <span class="fu">graph_from_data_frame</span><span class="op">(</span><span class="va">trans</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">40</span>, <span class="op">]</span><span class="op">)</span>
 <span class="fu">plot.igraph</span><span class="op">(</span><span class="va">gg</span><span class="op">)</span></code></pre></div>
 <p><img src="Introduction_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <div style="page-break-after: always;"></div>
-<div id="mappings---utils" class="section level3">
-<h3 class="hasAnchor">
-<a href="#mappings---utils" class="anchor" aria-hidden="true"></a>Mappings - utils</h3>
+<div class="section level4">
+<h4 id="mappings---utils">Mappings - utils<a class="anchor" aria-label="anchor" href="#mappings---utils"></a>
+</h4>
 <p>If you are interested in the utils functions here are presented some of them.</p>
 <p>Processing of the mapping table and deriving simple frequencies.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mappings</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_mappings.html">get_mappings</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span>
 
 <span class="va">mappings</span><span class="op">$</span><span class="va">to_old</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></code></pre></div>
-<pre><code>## $`111101`
-## [1] "1111"
-## 
-## $`111102`
-## [1] "1111"
-## 
-## $`111103`
-## [1] "1111"
-## 
-## $`111201`
-## [1] "1112"</code></pre>
+<pre><code><span class="co">## $`111101`</span>
+<span class="co">## [1] "1111"</span>
+<span class="co">## </span>
+<span class="co">## $`111102`</span>
+<span class="co">## [1] "1111"</span>
+<span class="co">## </span>
+<span class="co">## $`111103`</span>
+<span class="co">## [1] "1111"</span>
+<span class="co">## </span>
+<span class="co">## $`111201`</span>
+<span class="co">## [1] "1112"</span></code></pre>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mappings</span><span class="op">$</span><span class="va">to_new</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></code></pre></div>
-<pre><code>## $`1111`
-## [1] "111101" "111102" "111103"
-## 
-## $`1112`
-## [1] "111201" "111202" "111301"
-## 
-## $`1121`
-## [1] "111402"
-## 
-## $`1122`
-## [1] "111401" "111403" "111404"</code></pre>
+<pre><code><span class="co">## $`1111`</span>
+<span class="co">## [1] "111101" "111102" "111103"</span>
+<span class="co">## </span>
+<span class="co">## $`1112`</span>
+<span class="co">## [1] "111201" "111202" "111301"</span>
+<span class="co">## </span>
+<span class="co">## $`1121`</span>
+<span class="co">## [1] "111402"</span>
+<span class="co">## </span>
+<span class="co">## $`1122`</span>
+<span class="co">## [1] "111401" "111403" "111404"</span></code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># occup$multiplier part inside get_freqs is optional</span>
 <span class="co"># this variable specifying how many times to replicate each observation to get reliable population</span>
 <span class="va">mapp_p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_apply_freq.html">cat_apply_freq</a></span><span class="op">(</span><span class="va">mappings</span><span class="op">$</span><span class="va">to_old</span>, <span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span><span class="op">(</span><span class="va">occup</span><span class="op">$</span><span class="va">code4</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2008"</span><span class="op">]</span>, <span class="va">occup</span><span class="op">$</span><span class="va">multiplier</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2008"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">mappings</span><span class="op">$</span><span class="va">to_old</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">mapp_p</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>##        mappings.to_old mapp_p
-## 111101            1111      1
-## 111102            1111      1
-## 111103            1111      1
-## 111201            1112      1
-## 111202            1112      1
-## 111301            1112      1</code></pre>
+<pre><code><span class="co">##        mappings.to_old mapp_p</span>
+<span class="co">## 111101            1111      1</span>
+<span class="co">## 111102            1111      1</span>
+<span class="co">## 111103            1111      1</span>
+<span class="co">## 111201            1112      1</span>
+<span class="co">## 111202            1112      1</span>
+<span class="co">## 111301            1112      1</span></code></pre>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mapp_p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_apply_freq.html">cat_apply_freq</a></span><span class="op">(</span><span class="va">mappings</span><span class="op">$</span><span class="va">to_new</span>, <span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span><span class="op">(</span><span class="va">occup</span><span class="op">$</span><span class="va">code4</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2010"</span><span class="op">]</span>, <span class="va">occup</span><span class="op">$</span><span class="va">multiplier</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2010"</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">mappings</span><span class="op">$</span><span class="va">to_new</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">mapp_p</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>##      mappings.to_new       mapp_p
-## 1111    111101, .... 0.333333....
-## 1112    111201, .... 0.333333....
-## 1121          111402            1
-## 1122    111401, .... 0.333333....
-## 1123          111405            1
-## 1211    112007, .... 0.25, 0.....</code></pre>
+<pre><code><span class="co">##      mappings.to_new       mapp_p</span>
+<span class="co">## 1111    111101, .... 0.333333....</span>
+<span class="co">## 1112    111201, .... 0.333333....</span>
+<span class="co">## 1121          111402            1</span>
+<span class="co">## 1122    111401, .... 0.333333....</span>
+<span class="co">## 1123          111405            1</span>
+<span class="co">## 1211    112007, .... 0.25, 0.....</span></code></pre>
 <div style="page-break-after: always;"></div>
 </div>
-<div id="mappings---application" class="section level3">
-<h3 class="hasAnchor">
-<a href="#mappings---application" class="anchor" aria-hidden="true"></a>Mappings - Application</h3>
+<div class="section level4">
+<h4 id="mappings---application">Mappings - Application<a class="anchor" aria-label="anchor" href="#mappings---application"></a>
+</h4>
 <p>Splitting the data</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occup_old</span> <span class="op">=</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2008</span>,<span class="op">]</span>
@@ -357,43 +357,43 @@ $‘1311‘
   data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span> ,new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
   mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span>
   <span class="op">)</span></code></pre></div>
-<pre><code>## $old
-## # A tibble: 34,176 × 17
-##       id   age sex     edu   exp district parttime salary code  multiplier  year
-##    &lt;int&gt; &lt;dbl&gt; &lt;lgl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;int&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;
-##  1     1  49.3 FALSE     1 26.5         8    1     9.47e4 2471        223.  2008
-##  2     2  34.0 FALSE     1  7.54        8    1     6.76e4 2471        279.  2008
-##  3     3  31.0 TRUE      1  7.48        8    0.333 1.79e4 2471        240.  2008
-##  4     4  55.3 TRUE      1 24.8         8    1     2.62e5 1112        234.  2008
-##  5     5  34.1 TRUE      1 10.1         8    1     8.45e4 2471        254.  2008
-##  6     6  35.2 FALSE     1 11.2         8    1     9.40e4 2479        262.  2008
-##  7     7  32.4 FALSE     1  8.50        8    1     6.53e4 3431        256.  2008
-##  8     8  48.0 TRUE      1 24.5         8    1     2.62e5 1112        251.  2008
-##  9     9  51.0 FALSE     4 32.0         8    1     4.95e4 3431        259.  2008
-## 10    10  69.6 FALSE     1 44.6         8    1     1.75e5 2422        245.  2008
-## # … with 34,166 more rows, and 6 more variables: code4 &lt;chr&gt;, index_c2c &lt;int&gt;,
-## #   g_new_c2c &lt;chr&gt;, wei_freq_c2c &lt;dbl&gt;, rep_c2c &lt;dbl&gt;, wei_naive_c2c &lt;dbl&gt;
-## 
-## $new
-## # A tibble: 36,850 × 17
-##       id   age sex     edu   exp district parttime salary code  multiplier  year
-##    &lt;int&gt; &lt;dbl&gt; &lt;lgl&gt; &lt;int&gt; &lt;dbl&gt;    &lt;int&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;
-##  1 34177  52.5 TRUE      1 29.5         8     1    9.39e4 1213…       240.  2010
-##  2 34178  56.1 FALSE     6 35.7         8     0.67 2.81e4 9112…       265.  2010
-##  3 34179  28.4 FALSE     1  6.36        8     1    4.35e4 4226…       232.  2010
-##  4 34180  43.7 FALSE     5 23.0         8     1    3.37e4 9112…       225.  2010
-##  5 34181  55.0 TRUE      6 34.6         6     1    7.27e4 8322…       230.  2010
-##  6 34182  54.1 FALSE     4 27.9         8     1    4.73e4 3343…       215.  2010
-##  7 34183  62.6 FALSE     8 24.6         8     1    2.15e4 9112…       221.  2010
-##  8 34184  31.2 FALSE     1  6.37        8     1    7.53e4 2611…       202.  2010
-##  9 34185  40.6 TRUE      1 18.9         8     1    1.02e5 2611…       255.  2010
-## 10 34186  25.0 TRUE      5  5.82        8     1    2.11e4 9629…       226.  2010
-## # … with 36,840 more rows, and 6 more variables: code4 &lt;chr&gt;, index_c2c &lt;int&gt;,
-## #   g_new_c2c &lt;chr&gt;, wei_freq_c2c &lt;dbl&gt;, rep_c2c &lt;int&gt;, wei_naive_c2c &lt;dbl&gt;</code></pre>
+<pre><code><span class="co">## $old</span>
+<span class="co">## <span style="color: #949494;"># A tibble: 34,176 × 17</span></span>
+<span class="co">##       id   age sex     edu   exp district parttime salary code  multiplier  year</span>
+<span class="co">##    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="co">## <span style="color: #BCBCBC;"> 1</span>     1  49.3 FALSE     1 26.5         8    1     9.47<span style="color: #949494;">e</span>4 2471        223.  <span style="text-decoration: underline;">2</span>008</span>
+<span class="co">## <span style="color: #BCBCBC;"> 2</span>     2  34.0 FALSE     1  7.54        8    1     6.76<span style="color: #949494;">e</span>4 2471        279.  <span style="text-decoration: underline;">2</span>008</span>
+<span class="co">## <span style="color: #BCBCBC;"> 3</span>     3  31.0 TRUE      1  7.48        8    0.333 1.79<span style="color: #949494;">e</span>4 2471        240.  <span style="text-decoration: underline;">2</span>008</span>
+<span class="co">## <span style="color: #BCBCBC;"> 4</span>     4  55.3 TRUE      1 24.8         8    1     2.62<span style="color: #949494;">e</span>5 1112        234.  <span style="text-decoration: underline;">2</span>008</span>
+<span class="co">## <span style="color: #BCBCBC;"> 5</span>     5  34.1 TRUE      1 10.1         8    1     8.45<span style="color: #949494;">e</span>4 2471        254.  <span style="text-decoration: underline;">2</span>008</span>
+<span class="co">## <span style="color: #BCBCBC;"> 6</span>     6  35.2 FALSE     1 11.2         8    1     9.40<span style="color: #949494;">e</span>4 2479        262.  <span style="text-decoration: underline;">2</span>008</span>
+<span class="co">## <span style="color: #BCBCBC;"> 7</span>     7  32.4 FALSE     1  8.50        8    1     6.53<span style="color: #949494;">e</span>4 3431        256.  <span style="text-decoration: underline;">2</span>008</span>
+<span class="co">## <span style="color: #BCBCBC;"> 8</span>     8  48.0 TRUE      1 24.5         8    1     2.62<span style="color: #949494;">e</span>5 1112        251.  <span style="text-decoration: underline;">2</span>008</span>
+<span class="co">## <span style="color: #BCBCBC;"> 9</span>     9  51.0 FALSE     4 32.0         8    1     4.95<span style="color: #949494;">e</span>4 3431        259.  <span style="text-decoration: underline;">2</span>008</span>
+<span class="co">## <span style="color: #BCBCBC;">10</span>    10  69.6 FALSE     1 44.6         8    1     1.75<span style="color: #949494;">e</span>5 2422        245.  <span style="text-decoration: underline;">2</span>008</span>
+<span class="co">## <span style="color: #949494;"># … with 34,166 more rows, and 6 more variables: code4 &lt;chr&gt;, index_c2c &lt;int&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   g_new_c2c &lt;chr&gt;, wei_freq_c2c &lt;dbl&gt;, rep_c2c &lt;dbl&gt;, wei_naive_c2c &lt;dbl&gt;</span></span>
+<span class="co">## </span>
+<span class="co">## $new</span>
+<span class="co">## <span style="color: #949494;"># A tibble: 36,850 × 17</span></span>
+<span class="co">##       id   age sex     edu   exp district parttime salary code  multiplier  year</span>
+<span class="co">##    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="co">## <span style="color: #BCBCBC;"> 1</span> <span style="text-decoration: underline;">34</span>177  52.5 TRUE      1 29.5         8     1    9.39<span style="color: #949494;">e</span>4 1213…       240.  <span style="text-decoration: underline;">2</span>010</span>
+<span class="co">## <span style="color: #BCBCBC;"> 2</span> <span style="text-decoration: underline;">34</span>178  56.1 FALSE     6 35.7         8     0.67 2.81<span style="color: #949494;">e</span>4 9112…       265.  <span style="text-decoration: underline;">2</span>010</span>
+<span class="co">## <span style="color: #BCBCBC;"> 3</span> <span style="text-decoration: underline;">34</span>179  28.4 FALSE     1  6.36        8     1    4.35<span style="color: #949494;">e</span>4 4226…       232.  <span style="text-decoration: underline;">2</span>010</span>
+<span class="co">## <span style="color: #BCBCBC;"> 4</span> <span style="text-decoration: underline;">34</span>180  43.7 FALSE     5 23.0         8     1    3.37<span style="color: #949494;">e</span>4 9112…       225.  <span style="text-decoration: underline;">2</span>010</span>
+<span class="co">## <span style="color: #BCBCBC;"> 5</span> <span style="text-decoration: underline;">34</span>181  55.0 TRUE      6 34.6         6     1    7.27<span style="color: #949494;">e</span>4 8322…       230.  <span style="text-decoration: underline;">2</span>010</span>
+<span class="co">## <span style="color: #BCBCBC;"> 6</span> <span style="text-decoration: underline;">34</span>182  54.1 FALSE     4 27.9         8     1    4.73<span style="color: #949494;">e</span>4 3343…       215.  <span style="text-decoration: underline;">2</span>010</span>
+<span class="co">## <span style="color: #BCBCBC;"> 7</span> <span style="text-decoration: underline;">34</span>183  62.6 FALSE     8 24.6         8     1    2.15<span style="color: #949494;">e</span>4 9112…       221.  <span style="text-decoration: underline;">2</span>010</span>
+<span class="co">## <span style="color: #BCBCBC;"> 8</span> <span style="text-decoration: underline;">34</span>184  31.2 FALSE     1  6.37        8     1    7.53<span style="color: #949494;">e</span>4 2611…       202.  <span style="text-decoration: underline;">2</span>010</span>
+<span class="co">## <span style="color: #BCBCBC;"> 9</span> <span style="text-decoration: underline;">34</span>185  40.6 TRUE      1 18.9         8     1    1.02<span style="color: #949494;">e</span>5 2611…       255.  <span style="text-decoration: underline;">2</span>010</span>
+<span class="co">## <span style="color: #BCBCBC;">10</span> <span style="text-decoration: underline;">34</span>186  25.0 TRUE      5  5.82        8     1    2.11<span style="color: #949494;">e</span>4 9629…       226.  <span style="text-decoration: underline;">2</span>010</span>
+<span class="co">## <span style="color: #949494;"># … with 36,840 more rows, and 6 more variables: code4 &lt;chr&gt;, index_c2c &lt;int&gt;,</span></span>
+<span class="co">## <span style="color: #949494;">#   g_new_c2c &lt;chr&gt;, wei_freq_c2c &lt;dbl&gt;, rep_c2c &lt;int&gt;, wei_naive_c2c &lt;dbl&gt;</span></span></code></pre>
 </div>
-<div id="ml-argument" class="section level3">
-<h3 class="hasAnchor">
-<a href="#ml-argument" class="anchor" aria-hidden="true"></a>ml Argument</h3>
+<div class="section level4">
+<h4 id="ml-argument">ml Argument<a class="anchor" aria-label="anchor" href="#ml-argument"></a>
+</h4>
 <p>Currently knn/rf/lda methods are available to approximate probabilities of being assign to each of categories.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occup_2</span> <span class="op">=</span> <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
@@ -403,45 +403,45 @@ $‘1311‘
   <span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occup_2</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## List of 2
-##  $ old: tibble [34,176 × 18] (S3: tbl_df/tbl/data.frame)
-##   ..$ id           : int [1:34176] 1 2 3 4 5 6 7 8 9 10 ...
-##   ..$ age          : num [1:34176] 49.3 34 31 55.3 34.1 ...
-##   ..$ sex          : logi [1:34176] FALSE FALSE TRUE TRUE TRUE FALSE ...
-##   ..$ edu          : int [1:34176] 1 1 1 1 1 1 1 1 4 1 ...
-##   ..$ exp          : num [1:34176] 26.46 7.54 7.48 24.76 10.06 ...
-##   ..$ district     : int [1:34176] 8 8 8 8 8 8 8 8 8 8 ...
-##   ..$ parttime     : num [1:34176] 1 1 0.333 1 1 ...
-##   ..$ salary       : num [1:34176] 94731 67619 17863 261882 84540 ...
-##   ..$ code         : chr [1:34176] "2471" "2471" "2471" "1112" ...
-##   ..$ multiplier   : num [1:34176] 223 279 240 234 254 ...
-##   ..$ year         : int [1:34176] 2008 2008 2008 2008 2008 2008 2008 2008 2008 2008 ...
-##   ..$ code4        : chr [1:34176] "2471" "2471" "2471" "1112" ...
-##   ..$ index_c2c    : int [1:34176] 1 2 3 4 5 6 7 8 9 10 ...
-##   ..$ g_new_c2c    : chr [1:34176] "2471" "2471" "2471" "1112" ...
-##   ..$ wei_freq_c2c : num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ rep_c2c      : num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ wei_naive_c2c: num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ wei_knn_c2c  : num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...
-##  $ new: tibble [36,850 × 18] (S3: tbl_df/tbl/data.frame)
-##   ..$ id           : int [1:36850] 34177 34178 34179 34180 34181 34182 34183 34184 34185 34186 ...
-##   ..$ age          : num [1:36850] 52.5 56.1 28.4 43.7 55 ...
-##   ..$ sex          : logi [1:36850] TRUE FALSE FALSE FALSE TRUE FALSE ...
-##   ..$ edu          : int [1:36850] 1 6 1 5 6 4 8 1 1 5 ...
-##   ..$ exp          : num [1:36850] 29.49 35.73 6.36 23 34.6 ...
-##   ..$ district     : int [1:36850] 8 8 8 8 6 8 8 8 8 8 ...
-##   ..$ parttime     : num [1:36850] 1 0.67 1 1 1 1 1 1 1 1 ...
-##   ..$ salary       : num [1:36850] 93946 28062 43532 33682 72680 ...
-##   ..$ code         : chr [1:36850] "121303" "911207" "422602" "911290" ...
-##   ..$ multiplier   : num [1:36850] 240 265 232 225 230 ...
-##   ..$ year         : int [1:36850] 2010 2010 2010 2010 2010 2010 2010 2010 2010 2010 ...
-##   ..$ code4        : chr [1:36850] "1213" "9112" "4226" "9112" ...
-##   ..$ index_c2c    : int [1:36850] 1 2 3 4 5 6 7 8 9 10 ...
-##   ..$ g_new_c2c    : chr [1:36850] "1239" "9132" "4222" "9132" ...
-##   ..$ wei_freq_c2c : num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ rep_c2c      : int [1:36850] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ wei_naive_c2c: num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ wei_knn_c2c  : num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<pre><code><span class="co">## List of 2</span>
+<span class="co">##  $ old: tibble [34,176 × 18] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">##   ..$ id           : int [1:34176] 1 2 3 4 5 6 7 8 9 10 ...</span>
+<span class="co">##   ..$ age          : num [1:34176] 49.3 34 31 55.3 34.1 ...</span>
+<span class="co">##   ..$ sex          : logi [1:34176] FALSE FALSE TRUE TRUE TRUE FALSE ...</span>
+<span class="co">##   ..$ edu          : int [1:34176] 1 1 1 1 1 1 1 1 4 1 ...</span>
+<span class="co">##   ..$ exp          : num [1:34176] 26.46 7.54 7.48 24.76 10.06 ...</span>
+<span class="co">##   ..$ district     : int [1:34176] 8 8 8 8 8 8 8 8 8 8 ...</span>
+<span class="co">##   ..$ parttime     : num [1:34176] 1 1 0.333 1 1 ...</span>
+<span class="co">##   ..$ salary       : num [1:34176] 94731 67619 17863 261882 84540 ...</span>
+<span class="co">##   ..$ code         : chr [1:34176] "2471" "2471" "2471" "1112" ...</span>
+<span class="co">##   ..$ multiplier   : num [1:34176] 223 279 240 234 254 ...</span>
+<span class="co">##   ..$ year         : int [1:34176] 2008 2008 2008 2008 2008 2008 2008 2008 2008 2008 ...</span>
+<span class="co">##   ..$ code4        : chr [1:34176] "2471" "2471" "2471" "1112" ...</span>
+<span class="co">##   ..$ index_c2c    : int [1:34176] 1 2 3 4 5 6 7 8 9 10 ...</span>
+<span class="co">##   ..$ g_new_c2c    : chr [1:34176] "2471" "2471" "2471" "1112" ...</span>
+<span class="co">##   ..$ wei_freq_c2c : num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ rep_c2c      : num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ wei_naive_c2c: num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ wei_knn_c2c  : num [1:34176] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##  $ new: tibble [36,850 × 18] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">##   ..$ id           : int [1:36850] 34177 34178 34179 34180 34181 34182 34183 34184 34185 34186 ...</span>
+<span class="co">##   ..$ age          : num [1:36850] 52.5 56.1 28.4 43.7 55 ...</span>
+<span class="co">##   ..$ sex          : logi [1:36850] TRUE FALSE FALSE FALSE TRUE FALSE ...</span>
+<span class="co">##   ..$ edu          : int [1:36850] 1 6 1 5 6 4 8 1 1 5 ...</span>
+<span class="co">##   ..$ exp          : num [1:36850] 29.49 35.73 6.36 23 34.6 ...</span>
+<span class="co">##   ..$ district     : int [1:36850] 8 8 8 8 6 8 8 8 8 8 ...</span>
+<span class="co">##   ..$ parttime     : num [1:36850] 1 0.67 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ salary       : num [1:36850] 93946 28062 43532 33682 72680 ...</span>
+<span class="co">##   ..$ code         : chr [1:36850] "121303" "911207" "422602" "911290" ...</span>
+<span class="co">##   ..$ multiplier   : num [1:36850] 240 265 232 225 230 ...</span>
+<span class="co">##   ..$ year         : int [1:36850] 2010 2010 2010 2010 2010 2010 2010 2010 2010 2010 ...</span>
+<span class="co">##   ..$ code4        : chr [1:36850] "1213" "9112" "4226" "9112" ...</span>
+<span class="co">##   ..$ index_c2c    : int [1:36850] 1 2 3 4 5 6 7 8 9 10 ...</span>
+<span class="co">##   ..$ g_new_c2c    : chr [1:36850] "1239" "9132" "4222" "9132" ...</span>
+<span class="co">##   ..$ wei_freq_c2c : num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ rep_c2c      : int [1:36850] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ wei_naive_c2c: num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ wei_knn_c2c  : num [1:36850] 1 1 1 1 1 1 1 1 1 1 ...</span></code></pre>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occup_3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
   data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
@@ -451,117 +451,117 @@ $‘1311‘
 <p>Without ml subsection only simple frequencies are assessed. When ml model is broken then weights from simple frequencies are taken. <code>knn</code> method is recommended for smaller datasets.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">occup_3</span><span class="op">$</span><span class="va">old</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"wei.*c2c"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">occup_3</span><span class="op">$</span><span class="va">old</span><span class="op">)</span><span class="op">)</span><span class="op">]</span>, use <span class="op">=</span> <span class="st">"complete.obs"</span><span class="op">)</span></code></pre></div>
-<pre><code>##               wei_freq_c2c wei_naive_c2c wei_knn_c2c
-## wei_freq_c2c     1.0000000     0.5631527   0.8927482
-## wei_naive_c2c    0.5631527     1.0000000   0.5074644
-## wei_knn_c2c      0.8927482     0.5074644   1.0000000</code></pre>
+<pre><code><span class="co">##               wei_freq_c2c wei_naive_c2c wei_knn_c2c</span>
+<span class="co">## wei_freq_c2c     1.0000000     0.5631527   0.8927482</span>
+<span class="co">## wei_naive_c2c    0.5631527     1.0000000   0.5074644</span>
+<span class="co">## wei_knn_c2c      0.8927482     0.5074644   1.0000000</span></code></pre>
 <p>Summary plot:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plot_c2c.html">plot_c2c</a></span><span class="op">(</span><span class="va">occup_3</span><span class="op">$</span><span class="va">old</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"both"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="Introduction_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occup_3</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## List of 2
-##  $ old: tibble [451,670 × 18] (S3: tbl_df/tbl/data.frame)
-##   ..$ id           : int [1:451670] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ age          : num [1:451670] 49.3 49.3 49.3 49.3 49.3 ...
-##   ..$ sex          : logi [1:451670] FALSE FALSE FALSE FALSE FALSE FALSE ...
-##   ..$ edu          : int [1:451670] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ exp          : num [1:451670] 26.5 26.5 26.5 26.5 26.5 ...
-##   ..$ district     : int [1:451670] 8 8 8 8 8 8 8 8 8 8 ...
-##   ..$ parttime     : num [1:451670] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ salary       : num [1:451670] 94731 94731 94731 94731 94731 ...
-##   ..$ code         : chr [1:451670] "2471" "2471" "2471" "2471" ...
-##   ..$ multiplier   : num [1:451670] 223 223 223 223 223 ...
-##   ..$ year         : int [1:451670] 2008 2008 2008 2008 2008 2008 2008 2008 2008 2008 ...
-##   ..$ code4        : chr [1:451670] "2471" "2471" "2471" "2471" ...
-##   ..$ index_c2c    : int [1:451670] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ g_new_c2c    : chr [1:451670] "335101" "242209" "242212" "242214" ...
-##   ..$ wei_freq_c2c : num [1:451670] 0.2124 0.0674 0.0155 0.0415 0.0466 ...
-##   ..$ rep_c2c      : int [1:451670] 11 11 11 11 11 11 11 11 11 11 ...
-##   ..$ wei_naive_c2c: num [1:451670] 0.0909 0.0909 0.0909 0.0909 0.0909 ...
-##   ..$ wei_knn_c2c  : num [1:451670] 0.2 0.4 0 0.2 0 0 0 0 0 0 ...
-##  $ new: tibble [34,194 × 18] (S3: tbl_df/tbl/data.frame)
-##   ..$ id           : int [1:34194] 34177 34178 34179 34180 34181 34182 34183 34184 34185 34186 ...
-##   ..$ age          : num [1:34194] 52.5 56.1 28.4 43.7 55 ...
-##   ..$ sex          : logi [1:34194] TRUE FALSE FALSE FALSE TRUE FALSE ...
-##   ..$ edu          : int [1:34194] 1 6 1 5 6 4 8 1 1 5 ...
-##   ..$ exp          : num [1:34194] 29.49 35.73 6.36 23 34.6 ...
-##   ..$ district     : int [1:34194] 8 8 8 8 6 8 8 8 8 8 ...
-##   ..$ parttime     : num [1:34194] 1 0.67 1 1 1 1 1 1 1 1 ...
-##   ..$ salary       : num [1:34194] 93946 28062 43532 33682 72680 ...
-##   ..$ code         : chr [1:34194] "121303" "911207" "422602" "911290" ...
-##   ..$ multiplier   : num [1:34194] 240 265 232 225 230 ...
-##   ..$ year         : int [1:34194] 2010 2010 2010 2010 2010 2010 2010 2010 2010 2010 ...
-##   ..$ code4        : chr [1:34194] "1213" "9112" "4226" "9112" ...
-##   ..$ index_c2c    : int [1:34194] 1 2 3 4 5 6 7 8 9 10 ...
-##   ..$ g_new_c2c    : chr [1:34194] "121303" "911207" "422602" "911290" ...
-##   ..$ wei_freq_c2c : num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ rep_c2c      : num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ wei_naive_c2c: num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...
-##   ..$ wei_knn_c2c  : num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<pre><code><span class="co">## List of 2</span>
+<span class="co">##  $ old: tibble [451,670 × 18] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">##   ..$ id           : int [1:451670] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ age          : num [1:451670] 49.3 49.3 49.3 49.3 49.3 ...</span>
+<span class="co">##   ..$ sex          : logi [1:451670] FALSE FALSE FALSE FALSE FALSE FALSE ...</span>
+<span class="co">##   ..$ edu          : int [1:451670] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ exp          : num [1:451670] 26.5 26.5 26.5 26.5 26.5 ...</span>
+<span class="co">##   ..$ district     : int [1:451670] 8 8 8 8 8 8 8 8 8 8 ...</span>
+<span class="co">##   ..$ parttime     : num [1:451670] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ salary       : num [1:451670] 94731 94731 94731 94731 94731 ...</span>
+<span class="co">##   ..$ code         : chr [1:451670] "2471" "2471" "2471" "2471" ...</span>
+<span class="co">##   ..$ multiplier   : num [1:451670] 223 223 223 223 223 ...</span>
+<span class="co">##   ..$ year         : int [1:451670] 2008 2008 2008 2008 2008 2008 2008 2008 2008 2008 ...</span>
+<span class="co">##   ..$ code4        : chr [1:451670] "2471" "2471" "2471" "2471" ...</span>
+<span class="co">##   ..$ index_c2c    : int [1:451670] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ g_new_c2c    : chr [1:451670] "335101" "242209" "242212" "242214" ...</span>
+<span class="co">##   ..$ wei_freq_c2c : num [1:451670] 0.2124 0.0674 0.0155 0.0415 0.0466 ...</span>
+<span class="co">##   ..$ rep_c2c      : int [1:451670] 11 11 11 11 11 11 11 11 11 11 ...</span>
+<span class="co">##   ..$ wei_naive_c2c: num [1:451670] 0.0909 0.0909 0.0909 0.0909 0.0909 ...</span>
+<span class="co">##   ..$ wei_knn_c2c  : num [1:451670] 0.2 0.4 0 0.2 0 0 0 0 0 0 ...</span>
+<span class="co">##  $ new: tibble [34,194 × 18] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">##   ..$ id           : int [1:34194] 34177 34178 34179 34180 34181 34182 34183 34184 34185 34186 ...</span>
+<span class="co">##   ..$ age          : num [1:34194] 52.5 56.1 28.4 43.7 55 ...</span>
+<span class="co">##   ..$ sex          : logi [1:34194] TRUE FALSE FALSE FALSE TRUE FALSE ...</span>
+<span class="co">##   ..$ edu          : int [1:34194] 1 6 1 5 6 4 8 1 1 5 ...</span>
+<span class="co">##   ..$ exp          : num [1:34194] 29.49 35.73 6.36 23 34.6 ...</span>
+<span class="co">##   ..$ district     : int [1:34194] 8 8 8 8 6 8 8 8 8 8 ...</span>
+<span class="co">##   ..$ parttime     : num [1:34194] 1 0.67 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ salary       : num [1:34194] 93946 28062 43532 33682 72680 ...</span>
+<span class="co">##   ..$ code         : chr [1:34194] "121303" "911207" "422602" "911290" ...</span>
+<span class="co">##   ..$ multiplier   : num [1:34194] 240 265 232 225 230 ...</span>
+<span class="co">##   ..$ year         : int [1:34194] 2010 2010 2010 2010 2010 2010 2010 2010 2010 2010 ...</span>
+<span class="co">##   ..$ code4        : chr [1:34194] "1213" "9112" "4226" "9112" ...</span>
+<span class="co">##   ..$ index_c2c    : int [1:34194] 1 2 3 4 5 6 7 8 9 10 ...</span>
+<span class="co">##   ..$ g_new_c2c    : chr [1:34194] "121303" "911207" "422602" "911290" ...</span>
+<span class="co">##   ..$ wei_freq_c2c : num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ rep_c2c      : num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ wei_naive_c2c: num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">##   ..$ wei_knn_c2c  : num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...</span></code></pre>
 <p>New frequencies for potential next step might be derived manually and then used in next iteration by <code>freqs_df</code> argument (data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities). This might be useful for advanced users. Optional multiplier part specifying how many times to replicate each observation to get reliable population</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">occup_3</span><span class="op">$</span><span class="va">new</span><span class="op">$</span><span class="va">g_new_c2c</span>, multiplier <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">occup_3</span><span class="op">$</span><span class="va">new</span><span class="op">$</span><span class="va">multiplier</span>  <span class="op">*</span> <span class="va">occup_3</span><span class="op">$</span><span class="va">new</span><span class="op">$</span><span class="va">wei_freq_c2c</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>##    input  Freq
-## 1 111102   228
-## 2 111103  3517
-## 3 111201  1233
-## 4 111301 12182
-## 5 111405  1028
-## 6 112001  4741</code></pre>
+<pre><code><span class="co">##    input  Freq</span>
+<span class="co">## 1 111102   228</span>
+<span class="co">## 2 111103  3517</span>
+<span class="co">## 3 111201  1233</span>
+<span class="co">## 4 111301 12182</span>
+<span class="co">## 5 111405  1028</span>
+<span class="co">## 6 112001  4741</span></code></pre>
 <p>or backward:</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">occup_2</span><span class="op">$</span><span class="va">old</span><span class="op">$</span><span class="va">g_new_c2c</span>, multiplier  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">occup_2</span><span class="op">$</span><span class="va">old</span><span class="op">$</span><span class="va">multiplier</span>  <span class="op">*</span> <span class="va">occup_2</span><span class="op">$</span><span class="va">old</span><span class="op">$</span><span class="va">wei_freq_c2c</span><span class="op">)</span><span class="op">)</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>##   input   Freq
-## 1  1112  12977
-## 2  1123   1268
-## 3  1211 124293
-## 4  1212  44410
-## 5  1221   2256
-## 6  1222  11668</code></pre>
+<pre><code><span class="co">##   input   Freq</span>
+<span class="co">## 1  1112  12977</span>
+<span class="co">## 2  1123   1268</span>
+<span class="co">## 3  1211 124293</span>
+<span class="co">## 4  1212  44410</span>
+<span class="co">## 5  1221   2256</span>
+<span class="co">## 6  1222  11668</span></code></pre>
 <div style="page-break-after: always;"></div>
 </div>
-<div id="linear-regressions---example" class="section level3">
-<h3 class="hasAnchor">
-<a href="#linear-regressions---example" class="anchor" aria-hidden="true"></a>Linear Regressions - Example:</h3>
+<div class="section level4">
+<h4 id="linear-regressions---example">Linear Regressions - Example:<a class="anchor" aria-label="anchor" href="#linear-regressions---example"></a>
+</h4>
 <p>Remember to adjust results (<code>summary_c2c</code>) because of artificially enlarge degrees of freedom. The first weights (<code>multiplier</code> variable) might be surprising although they are multipliers which help to replicate the true population.</p>
-<div id="regression" class="section level4">
-<h4 class="hasAnchor">
-<a href="#regression" class="anchor" aria-hidden="true"></a>Regression</h4>
+<div class="section level5">
+<h5 id="regression">Regression<a class="anchor" aria-label="anchor" href="#regression"></a>
+</h5>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## orginal dataset </span>
 <span class="va">lms2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">salary</span><span class="op">)</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">edu</span><span class="op">)</span> <span class="op">+</span> <span class="va">parttime</span> <span class="op">+</span> <span class="va">exp</span>, <span class="va">occup_old</span>, weights <span class="op">=</span> <span class="va">multiplier</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">lms2</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = I(log(salary)) ~ age + sex + factor(edu) + parttime + 
-##     exp, data = occup_old, weights = multiplier)
-## 
-## Weighted Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -41.649  -4.154  -0.170   4.134  94.979 
-## 
-## Coefficients:
-##                Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   8.6049934  0.0175898 489.203  &lt; 2e-16 ***
-## age          -0.0028783  0.0004561  -6.311 2.81e-10 ***
-## sexTRUE       0.2539537  0.0050557  50.231  &lt; 2e-16 ***
-## factor(edu)2 -0.0799110  0.0097006  -8.238  &lt; 2e-16 ***
-## factor(edu)3 -0.3579335  0.0124684 -28.707  &lt; 2e-16 ***
-## factor(edu)4 -0.4252729  0.0072134 -58.956  &lt; 2e-16 ***
-## factor(edu)5 -0.4050551  0.0101847 -39.771  &lt; 2e-16 ***
-## factor(edu)6 -0.6473797  0.0072134 -89.746  &lt; 2e-16 ***
-## factor(edu)7 -0.5295860  0.0783593  -6.758 1.42e-11 ***
-## factor(edu)8 -0.6751645  0.0110551 -61.073  &lt; 2e-16 ***
-## parttime      1.9342513  0.0114274 169.264  &lt; 2e-16 ***
-## exp           0.0128464  0.0004370  29.396  &lt; 2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 7.302 on 34164 degrees of freedom
-## Multiple R-squared:  0.5797, Adjusted R-squared:  0.5796 
-## F-statistic:  4284 on 11 and 34164 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre><code><span class="co">## </span>
+<span class="co">## Call:</span>
+<span class="co">## lm(formula = I(log(salary)) ~ age + sex + factor(edu) + parttime + </span>
+<span class="co">##     exp, data = occup_old, weights = multiplier)</span>
+<span class="co">## </span>
+<span class="co">## Weighted Residuals:</span>
+<span class="co">##     Min      1Q  Median      3Q     Max </span>
+<span class="co">## -41.649  -4.154  -0.170   4.134  94.979 </span>
+<span class="co">## </span>
+<span class="co">## Coefficients:</span>
+<span class="co">##                Estimate Std. Error t value Pr(&gt;|t|)    </span>
+<span class="co">## (Intercept)   8.6049934  0.0175898 489.203  &lt; 2e-16 ***</span>
+<span class="co">## age          -0.0028783  0.0004561  -6.311 2.81e-10 ***</span>
+<span class="co">## sexTRUE       0.2539537  0.0050557  50.231  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)2 -0.0799110  0.0097006  -8.238  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)3 -0.3579335  0.0124684 -28.707  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)4 -0.4252729  0.0072134 -58.956  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)5 -0.4050551  0.0101847 -39.771  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)6 -0.6473797  0.0072134 -89.746  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)7 -0.5295860  0.0783593  -6.758 1.42e-11 ***</span>
+<span class="co">## factor(edu)8 -0.6751645  0.0110551 -61.073  &lt; 2e-16 ***</span>
+<span class="co">## parttime      1.9342513  0.0114274 169.264  &lt; 2e-16 ***</span>
+<span class="co">## exp           0.0128464  0.0004370  29.396  &lt; 2e-16 ***</span>
+<span class="co">## ---</span>
+<span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
+<span class="co">## </span>
+<span class="co">## Residual standard error: 7.302 on 34164 degrees of freedom</span>
+<span class="co">## Multiple R-squared:  0.5797, Adjusted R-squared:  0.5796 </span>
+<span class="co">## F-statistic:  4284 on 11 and 34164 DF,  p-value: &lt; 2.2e-16</span></code></pre>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## using one highest cross weights</span>
 <span class="co">## cross_c2c to cross different methods weights</span>
@@ -571,35 +571,35 @@ $‘1311‘
                 <span class="fu"><a href="../reference/prune_c2c.html">prune_c2c</a></span><span class="op">(</span><span class="va">.</span>,column <span class="op">=</span> <span class="st">"wei_cross_c2c"</span>, method <span class="op">=</span> <span class="st">"highest1"</span><span class="op">)</span> 
 <span class="va">lms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">salary</span><span class="op">)</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">edu</span><span class="op">)</span> <span class="op">+</span> <span class="va">parttime</span> <span class="op">+</span> <span class="va">exp</span>, <span class="va">occup_old_3</span>, weights <span class="op">=</span> <span class="va">multiplier</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">lms</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-## Call:
-## lm(formula = I(log(salary)) ~ age + sex + factor(edu) + parttime + 
-##     exp, data = occup_old_3, weights = multiplier)
-## 
-## Weighted Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -41.649  -4.154  -0.170   4.134  94.979 
-## 
-## Coefficients:
-##                Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   8.6049934  0.0175898 489.203  &lt; 2e-16 ***
-## age          -0.0028783  0.0004561  -6.311 2.81e-10 ***
-## sexTRUE       0.2539537  0.0050557  50.231  &lt; 2e-16 ***
-## factor(edu)2 -0.0799110  0.0097006  -8.238  &lt; 2e-16 ***
-## factor(edu)3 -0.3579335  0.0124684 -28.707  &lt; 2e-16 ***
-## factor(edu)4 -0.4252729  0.0072134 -58.956  &lt; 2e-16 ***
-## factor(edu)5 -0.4050551  0.0101847 -39.771  &lt; 2e-16 ***
-## factor(edu)6 -0.6473797  0.0072134 -89.746  &lt; 2e-16 ***
-## factor(edu)7 -0.5295860  0.0783593  -6.758 1.42e-11 ***
-## factor(edu)8 -0.6751645  0.0110551 -61.073  &lt; 2e-16 ***
-## parttime      1.9342513  0.0114274 169.264  &lt; 2e-16 ***
-## exp           0.0128464  0.0004370  29.396  &lt; 2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 7.302 on 34164 degrees of freedom
-## Multiple R-squared:  0.5797, Adjusted R-squared:  0.5796 
-## F-statistic:  4284 on 11 and 34164 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre><code><span class="co">## </span>
+<span class="co">## Call:</span>
+<span class="co">## lm(formula = I(log(salary)) ~ age + sex + factor(edu) + parttime + </span>
+<span class="co">##     exp, data = occup_old_3, weights = multiplier)</span>
+<span class="co">## </span>
+<span class="co">## Weighted Residuals:</span>
+<span class="co">##     Min      1Q  Median      3Q     Max </span>
+<span class="co">## -41.649  -4.154  -0.170   4.134  94.979 </span>
+<span class="co">## </span>
+<span class="co">## Coefficients:</span>
+<span class="co">##                Estimate Std. Error t value Pr(&gt;|t|)    </span>
+<span class="co">## (Intercept)   8.6049934  0.0175898 489.203  &lt; 2e-16 ***</span>
+<span class="co">## age          -0.0028783  0.0004561  -6.311 2.81e-10 ***</span>
+<span class="co">## sexTRUE       0.2539537  0.0050557  50.231  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)2 -0.0799110  0.0097006  -8.238  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)3 -0.3579335  0.0124684 -28.707  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)4 -0.4252729  0.0072134 -58.956  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)5 -0.4050551  0.0101847 -39.771  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)6 -0.6473797  0.0072134 -89.746  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)7 -0.5295860  0.0783593  -6.758 1.42e-11 ***</span>
+<span class="co">## factor(edu)8 -0.6751645  0.0110551 -61.073  &lt; 2e-16 ***</span>
+<span class="co">## parttime      1.9342513  0.0114274 169.264  &lt; 2e-16 ***</span>
+<span class="co">## exp           0.0128464  0.0004370  29.396  &lt; 2e-16 ***</span>
+<span class="co">## ---</span>
+<span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
+<span class="co">## </span>
+<span class="co">## Residual standard error: 7.302 on 34164 degrees of freedom</span>
+<span class="co">## Multiple R-squared:  0.5797, Adjusted R-squared:  0.5796 </span>
+<span class="co">## F-statistic:  4284 on 11 and 34164 DF,  p-value: &lt; 2.2e-16</span></code></pre>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## we have to adjust size of stds as we artificially enlarge degrees of freedom</span>
 <span class="va">occup_old_3</span> <span class="op">&lt;-</span> <span class="va">occup_3</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
@@ -607,32 +607,32 @@ $‘1311‘
 <span class="va">lms1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">salary</span><span class="op">)</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">edu</span><span class="op">)</span> <span class="op">+</span> <span class="va">parttime</span> <span class="op">+</span> <span class="va">exp</span>, <span class="va">occup_old_3</span>, weights <span class="op">=</span> <span class="va">multiplier</span> <span class="op">*</span> <span class="va">wei_freq_c2c</span><span class="op">)</span>
 <span class="co">## summary_c2c</span>
 <span class="fu"><a href="../reference/summary_c2c.html">summary_c2c</a></span><span class="op">(</span><span class="va">lms1</span>, df_old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occup_old</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>##                  Estimate   Std. Error    t value      Pr(&gt;|t|) correct
-## (Intercept)   8.604993403 0.0055287709 1556.40261  0.000000e+00 3.18095
-## age          -0.002878253 0.0001433546  -20.07786  1.296837e-89 3.18095
-## sexTRUE       0.253953695 0.0015890854  159.81123  0.000000e+00 3.18095
-## factor(edu)2 -0.079911042 0.0030490685  -26.20835 3.004023e-151 3.18095
-## factor(edu)3 -0.357933538 0.0039190179  -91.33246  0.000000e+00 3.18095
-## factor(edu)4 -0.425272851 0.0022672906 -187.56874  0.000000e+00 3.18095
-## factor(edu)5 -0.405055098 0.0032012174 -126.53158  0.000000e+00 3.18095
-## factor(edu)6 -0.647379667 0.0022673015 -285.52870  0.000000e+00 3.18095
-## factor(edu)7 -0.529586026 0.0246296091  -21.50201 1.741074e-102 3.18095
-## factor(edu)8 -0.675164484 0.0034747932 -194.30350  0.000000e+00 3.18095
-## parttime      1.934251280 0.0035918181  538.51593  0.000000e+00 3.18095
-## exp           0.012846366 0.0001373618   93.52212  0.000000e+00 3.18095
-##               std.error_c statistic_c     p.value_c
-## (Intercept)  0.0175867461  489.288544  0.000000e+00
-## age          0.0004560038   -6.311906  2.789964e-10
-## sexTRUE      0.0050548020   50.240088  0.000000e+00
-## factor(edu)2 0.0096989357   -8.239156  1.795448e-16
-## factor(edu)3 0.0124662017  -28.712317 3.613791e-179
-## factor(edu)4 0.0072121390  -58.966258  0.000000e+00
-## factor(edu)5 0.0101829139  -39.777917  0.000000e+00
-## factor(edu)6 0.0072121738  -89.762072  0.000000e+00
-## factor(edu)7 0.0783455659   -6.759617  1.405773e-11
-## factor(edu)8 0.0110531449  -61.083474  0.000000e+00
-## parttime     0.0114253954  169.294034  0.000000e+00
-## exp          0.0004369410   29.400685 1.177138e-187</code></pre>
+<pre><code><span class="co">##                  Estimate   Std. Error    t value      Pr(&gt;|t|) correct</span>
+<span class="co">## (Intercept)   8.604993403 0.0055287709 1556.40261  0.000000e+00 3.18095</span>
+<span class="co">## age          -0.002878253 0.0001433546  -20.07786  1.296837e-89 3.18095</span>
+<span class="co">## sexTRUE       0.253953695 0.0015890854  159.81123  0.000000e+00 3.18095</span>
+<span class="co">## factor(edu)2 -0.079911042 0.0030490685  -26.20835 3.004023e-151 3.18095</span>
+<span class="co">## factor(edu)3 -0.357933538 0.0039190179  -91.33246  0.000000e+00 3.18095</span>
+<span class="co">## factor(edu)4 -0.425272851 0.0022672906 -187.56874  0.000000e+00 3.18095</span>
+<span class="co">## factor(edu)5 -0.405055098 0.0032012174 -126.53158  0.000000e+00 3.18095</span>
+<span class="co">## factor(edu)6 -0.647379667 0.0022673015 -285.52870  0.000000e+00 3.18095</span>
+<span class="co">## factor(edu)7 -0.529586026 0.0246296091  -21.50201 1.741074e-102 3.18095</span>
+<span class="co">## factor(edu)8 -0.675164484 0.0034747932 -194.30350  0.000000e+00 3.18095</span>
+<span class="co">## parttime      1.934251280 0.0035918181  538.51593  0.000000e+00 3.18095</span>
+<span class="co">## exp           0.012846366 0.0001373618   93.52212  0.000000e+00 3.18095</span>
+<span class="co">##               std.error_c statistic_c     p.value_c</span>
+<span class="co">## (Intercept)  0.0175867461  489.288544  0.000000e+00</span>
+<span class="co">## age          0.0004560038   -6.311906  2.789964e-10</span>
+<span class="co">## sexTRUE      0.0050548020   50.240088  0.000000e+00</span>
+<span class="co">## factor(edu)2 0.0096989357   -8.239156  1.795448e-16</span>
+<span class="co">## factor(edu)3 0.0124662017  -28.712317 3.613791e-179</span>
+<span class="co">## factor(edu)4 0.0072121390  -58.966258  0.000000e+00</span>
+<span class="co">## factor(edu)5 0.0101829139  -39.777917  0.000000e+00</span>
+<span class="co">## factor(edu)6 0.0072121738  -89.762072  0.000000e+00</span>
+<span class="co">## factor(edu)7 0.0783455659   -6.759617  1.405773e-11</span>
+<span class="co">## factor(edu)8 0.0110531449  -61.083474  0.000000e+00</span>
+<span class="co">## parttime     0.0114253954  169.294034  0.000000e+00</span>
+<span class="co">## exp          0.0004369410   29.400685 1.177138e-187</span></code></pre>
 </div>
 </div>
 </div>
@@ -656,7 +656,7 @@ $‘1311‘
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.9000.</p>
 </div>
 
       </footer>
