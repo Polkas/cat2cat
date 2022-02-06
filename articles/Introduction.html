@@ -635,7 +635,7 @@ $‘1311‘
 <span class="co">## exp          0.0004369410   29.400685 1.177138e-187</span></code></pre>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># or</span>
-<span class="co"># Adjusted R2 is meaningless</span>
+<span class="co"># Adjusted R2 is meaningless here</span>
 <span class="va">lms_replicated</span><span class="op">$</span><span class="va">df.residual</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occup_old</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">lms_replicated</span><span class="op">$</span><span class="va">assign</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">lms_replicated</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## </span>
