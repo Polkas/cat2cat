@@ -10,3 +10,7 @@ occup_2 <- cat2cat(
 expect_error(plot_c2c(occup_2$new, type = c("both")))
 expect_error(plot_c2c(occup_2$old, type = c("wrong")))
 expect_error(plot_c2c(NULL, type = c("both")))
+
+expect_silent(plot_c2c(occup_2$old, type = c("both")))
+expect_silent(plot_c2c(occup_2$old, type = c("hist")))
+expect_silent(plot_c2c(occup_2$old, type = c("bar")))

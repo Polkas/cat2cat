@@ -1,10 +1,9 @@
-#' Aggregate panel dataset - Manual mapping of a categorical variable according to a new encoding
-#' @description Aggregate dataset - Manual mapping of a categorical variable according to a new encoding where user supplying transitions by equations.
-#' @param data list with 5 named fields `old` `new` `cat_var` `time_var` `freq_var`
-#' @param ... equations
-#' @return list of data.frame objects
-#' @details
-#' data args
+#' Manual mapping of a categorical variable according to a new encoding for aggregated panel dataset
+#' @description Aggregate panel dataset - Manual mapping of a categorical variable according to a new encoding where user providing transitions with equations.
+#' @param data list with 5 named fields `old`, `new`, `cat_var`, `time_var`, `freq_var`.
+#' @param ... equations where direction is set with any of `>`, `<`, `\%>\%`, `\%<\%`.
+#' @return list of two data.frame objects.
+#' @details data argument - list with fields
 #' \itemize{
 #'  \item{"old"}{ data.frame older time point in the panel}
 #'  \item{"new"} { data.frame more recent time point in the panel}
@@ -12,7 +11,7 @@
 #'  \item{"time_var"}{ character name of time variable}
 #'  \item{"freq_var"}{ character name of frequency variable}
 #' }
-#' ... equations where direction is set by ">","<","%>%","%<%"
+#' @export
 #' @examples
 #' data(verticals)
 #' agg_old <- verticals[verticals$v_date == "2020-04-01", ]
@@ -33,7 +32,6 @@
 #'   c(Kids1, Kids2) %>% c(Kids),
 #'   Home %>% c(Home, Supermarket)
 #' )
-#' @export
 cat2cat_agg <- function(data = list(
                           old = NULL,
                           new = NULL,

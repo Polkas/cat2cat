@@ -2,18 +2,21 @@
 % Please edit documentation in R/cat2cat.R
 \name{get_mappings}
 \alias{get_mappings}
-\title{Transforming table of mappings to a list with keys}
+\title{Transforming a transition table with mappings to two associative lists}
 \usage{
 get_mappings(x = data.frame())
 }
 \arguments{
-\item{x}{data.frame or matrix with 2 columns where first column is assumed to be an old encoding.}
+\item{x}{data.frame or matrix - transition table with 2 columns where first column is assumed to be the older encoding.}
 }
 \value{
-list with 2 fields `to_old` `to_new`
+a list with 2 named lists `to_old` and `to_new`.
 }
 \description{
-transforming table of mappings to list with keys where first column is assumed to be an old encoding.
+to rearrange the one classification encoding into another, an associative list that maps keys to values is used.
+More precisely, an association list is used which is a linked list in which each list element consists of a key and value or values.
+An association list where unique categories codes are keys and matching categories from next or previous time point are values.
+A transition table is used to build such associative lists.
 }
 \details{
 the named list will be a more efficient solution than hash map as we are not expecting more than a few thousand keys.

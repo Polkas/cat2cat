@@ -2,20 +2,22 @@
 % Please edit documentation in R/cat2cat.R
 \name{cat_apply_freq}
 \alias{cat_apply_freq}
-\title{Applying frequencies to object returned by get_mappings}
+\title{Applying frequencies to the object returned by get_mappings function}
 \usage{
 cat_apply_freq(to_x, freqs)
 }
 \arguments{
-\item{to_x}{list object returned by get_mappings}
+\item{to_x}{list object returned by get_mappings.}
 
-\item{freqs}{vector object returned by get_freqs}
+\item{freqs}{vector object returned by get_freqs.}
 }
 \value{
-list
+a list with 2 named lists `to_old` and `to_new`.
 }
 \description{
-applying frequencies to object returned by get_mappings
+applying frequencies to the object returned by get_mappings.
+We will get a symmetric object to returned one by get_mappings function, nevertheless categories are replaced with frequencies.
+Frequencies for each category/key are sum to 1, so could be interpreted as probabilities.
 }
 \examples{
 data(trans)

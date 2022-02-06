@@ -34,7 +34,7 @@ data args
 \itemize{
  \item{"old"}{ data.frame older time point in a panel}
  \item{"new"} { data.frame more recent time point in a panel}
- \item{"cat_var"}{ character name of the categorical variable}
+ \item{"cat_var"}{ character name of the categorical variable. NA values are autoamically converted to "NA" strings.}
  \item{"time_var"}{ character name of the time variable}
  \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
  \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}
@@ -43,12 +43,14 @@ data args
 mappings args
 \itemize{
  \item{"trans"}{ data.frame with 2 columns - transition table - all categories for cat_var in old and new datasets have to be included.
-  First column contains an old encoding and second a new one.}
+  First column contains an old encoding and second a new one.
+  The transition table should to have a candidate for each category from the targeted for an update period.
+}
  \item{"direction"}{ character direction - "backward" or "forward"}
 }
 optional ml args
 \itemize{
- \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination, "rf" Random Forest }
+ \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination Analysis, "rf" Random Forest }
  \item{"features"}{ character vector of features names where all have to be numeric or logical}
  \item{"args"}{ list parameters: knn: k ; rf: ntree  }
 }
@@ -56,6 +58,11 @@ optional ml args
 Without ml section only simple frequencies are assessed.
 When ml model is broken then weights from simple frequencies are taken.
 Method knn is recommended for smaller datasets.
+}
+\note{
+The transition table should to have a candidate for each category from the targeted for an update period.
+The observation from targeted for an updated period without a matched category from base period is removed.
+If you want to leave NA values add `c(NA, NA)` row to the `trans` table.
 }
 \examples{
 data(occup_small)
@@ -73,7 +80,6 @@ occup_2 <- cat2cat(
 )
 
 # additionally add probabilities from knn
-\dontrun{
 occup_3 <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "forward"),
@@ -83,5 +89,4 @@ occup_3 <- cat2cat(
     args = list(k = 10)
   )
 )
-}
 }

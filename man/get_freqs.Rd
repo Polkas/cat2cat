@@ -2,14 +2,14 @@
 % Please edit documentation in R/cat2cat.R
 \name{get_freqs}
 \alias{get_freqs}
-\title{Getting frequencies for a vector with an optional multiplier argument}
+\title{Getting frequencies from a charactr vector with an optional multiplier argument}
 \usage{
 get_freqs(x, multiplier = NULL)
 }
 \arguments{
-\item{x}{vector}
+\item{x}{character vector categorical variable to summarize.}
 
-\item{multiplier}{vector how many times to repeat certain value}
+\item{multiplier}{numeric vector how many times to repeat certain value, additional weights.}
 }
 \value{
 data.frame with two columns `input` `Freq`
@@ -17,14 +17,16 @@ data.frame with two columns `input` `Freq`
 \description{
 getting frequencies for a vector with an optional multiplier argument
 }
+\note{
+without multipier variable it is a basic `table` function wrapped with the `as.data.frame` function.
+The `table` function is used with the `useNA = "ifany"` argument.
+}
 \examples{
 data(occup)
 
 head(get_freqs(occup$code[occup$year == "2008"]))
-
 head(get_freqs(occup$code[occup$year == "2010"]))
 
 head(get_freqs(occup$code[occup$year == "2008"], occup$multiplier[occup$year == "2008"]))
-
 head(get_freqs(occup$code[occup$year == "2010"], occup$multiplier[occup$year == "2010"]))
 }

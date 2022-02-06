@@ -36,11 +36,7 @@ Why cat2cat:
 - visualize any factor variable across time  
 - real world datasets like `occup`
 
-In many projects where dataset contains a categorical variable one of the biggest obstacle is that 
-the data provider during internal processes was changing an encoding of such variable during a time.
-Thus some categories were grouped and other were separated or a new one is added or an old one is removed.
-The main objective is to merge a few surveys published by some data provider over the years.
-
+In many scientific projects where panel dataset contains a categorical variable one of the possible obstacle is that the data provider is changing a variable encoding during the time. The problem of unifying an inconsistent categorical variable in a panel dataset seems to require scientific attention. There is offered a `cat2cat` algorithm to map a categorical variable according to a specific encoding between different time points. The main rule is to replicate the observation if it could be assigned to a few categories, then using simple frequencies or statistical methods to approximate probabilities of being assigned to each of them. `cat2cat` algorithm was invented and implemented in the paper by [@Broniatowska_Paulina_Age_2020]. Algorithm was introduced in the cat2cat R CRAN package.
 
 ## Many Time Points To Map
 
@@ -301,7 +297,11 @@ summary(lms)
 ## we have to adjust size of stds as we artificially enlarge degrees of freedom
 occup_old_3 <- occup_3$old %>% 
                 prune_c2c(method = "nonzero") # many different prune methods like highest
-lms1 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_3, weights = multiplier * wei_freq_c2c)
+lms_replicated <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old_3, weights = multiplier * wei_freq_c2c)
 ## summary_c2c
-summary_c2c(lms1, df_old = nrow(occup_old))
+summary_c2c(lms_replicated, df_old = nrow(occup_old))
+# or
+# Adjusted R2 is meaningless
+lms_replicated$df.residual <- nrow(occup_old) - length(lms_replicated$assign)
+suppressWarnings(summary(lms_replicated))
 ```

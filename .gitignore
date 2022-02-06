@@ -5,3 +5,5 @@
 inst/doc
 R/preproc_data.R
 .Rproj.user
+/doc/
+/Meta/

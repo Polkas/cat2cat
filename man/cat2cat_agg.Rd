@@ -2,7 +2,7 @@
 % Please edit documentation in R/cat2cat_agg.R
 \name{cat2cat_agg}
 \alias{cat2cat_agg}
-\title{Aggregate panel dataset - Manual mapping of a categorical variable according to a new encoding}
+\title{Manual mapping of a categorical variable according to a new encoding for aggregated panel dataset}
 \usage{
 cat2cat_agg(
   data = list(old = NULL, new = NULL, cat_var = NULL, time_var = NULL, freq_var = NULL),
@@ -10,18 +10,18 @@ cat2cat_agg(
 )
 }
 \arguments{
-\item{data}{list with 5 named fields `old` `new` `cat_var` `time_var` `freq_var`}
+\item{data}{list with 5 named fields `old`, `new`, `cat_var`, `time_var`, `freq_var`.}
 
-\item{...}{equations}
+\item{...}{equations where direction is set with any of `>`, `<`, `\%>\%`, `\%<\%`.}
 }
 \value{
-list of data.frame objects
+list of two data.frame objects.
 }
 \description{
-Aggregate dataset - Manual mapping of a categorical variable according to a new encoding where user supplying transitions by equations.
+Aggregate panel dataset - Manual mapping of a categorical variable according to a new encoding where user providing transitions with equations.
 }
 \details{
-data args
+data argument - list with fields
 \itemize{
  \item{"old"}{ data.frame older time point in the panel}
  \item{"new"} { data.frame more recent time point in the panel}
@@ -29,7 +29,6 @@ data args
  \item{"time_var"}{ character name of time variable}
  \item{"freq_var"}{ character name of frequency variable}
 }
-... equations where direction is set by ">","<","%>%","%<%"
 }
 \examples{
 data(verticals)

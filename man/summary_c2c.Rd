@@ -2,7 +2,7 @@
 % Please edit documentation in R/lms.R
 \name{summary_c2c}
 \alias{summary_c2c}
-\title{Summary for data.frame with replicated rows}
+\title{Adjusted summary for linear regression when based on replicated dataset}
 \usage{
 summary_c2c(x, df_old, df_new = x$df.residual)
 }
@@ -14,10 +14,10 @@ summary_c2c(x, df_old, df_new = x$df.residual)
 \item{df_new}{integer number of d.f in dataset with replicated rows, Default: x$df.residual}
 }
 \value{
-data.frame with additional columns over a regular summary.lm output like correct and statistics adjusted by it.
+data.frame with additional columns over a regular summary.lm output, like correct and statistics adjusted by it.
 }
 \description{
-transforming summary.lm object according to real number of d.f.
+adjusting lm object results according to original number of degree of freedom.
 The standard errors, t statistics and p values have to be adjusted because of replicated rows.
 }
 \details{
