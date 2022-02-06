@@ -259,7 +259,7 @@ occup_3 %>% glimpse()
 ```
 
 New frequencies for potential next step might be derived manually and then used in next iteration by `freqs_df` argument (data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities). This might be useful for advanced users. 
-Optional multiplier part specifying how many times to replicate each observation to get reliable population
+Optional multiplier part specifying how many times to replicate each observation to get the population approximation.
 
 ```{r}
 get_freqs(x = occup_3$new$g_new_c2c, multiplier = floor(occup_3$new$multiplier  * occup_3$new$wei_freq_c2c)) %>% head()
@@ -277,6 +277,7 @@ get_freqs(x = occup_2$old$g_new_c2c, multiplier  = floor(occup_2$old$multiplier 
 
 Remember to adjust results (`summary_c2c`) because of artificially enlarge degrees of freedom.
 The first weights (`multiplier` variable) might be surprising although they are multipliers which help to replicate the true population.
+This additional weights do not change anything from the perspective of modelling, as it is replicated for each observation too.
 
 #### Regression
 

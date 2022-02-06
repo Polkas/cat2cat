@@ -111,7 +111,7 @@ occup_4 <- cat2cat(
   mappings = list(trans = trans, direction = "forward")
 )
 # not in trans table
-expect_equal(sum(occup_4$new$wei_freq_c2c) + length(setdiff(occup_new$id, occup_4$new$id)), nrow(occup_new))
+expect_equal(sum(occup_4$new$wei_freq_c2c) + sum(occup_new$code %in% setdiff(occup_new$code, trans$new)), nrow(occup_new))
 expect_true((all(occup_4$new$wei_freq_c2c <= 1 & occup_4$new$wei_freq_c2c >= 0)))
 
 ##########################################

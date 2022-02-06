@@ -1,14 +1,15 @@
-# cat2cat 0.3.0.9000
+# cat2cat 0.3.1
 
 * updated README file.
-* improved covr.
+* improved covr and tests.
+* updated vignette.
 
 # cat2cat 0.3.0
 
 * fixed the `cat2cat` function, the ml part is assuming that categorical variable is always named "code". 
 * fixed problems when using only one feature in the ml part of `cat2cat` function.
 * persist NA values in a categorical variable in the cat2cat function.
-* update vignette.
+* updated vignette.
 * improved roxygen2 docs.
 * transferred caret and `randomForest` packages to Suggests, they are delayed loaded now.
 * styler of the code.
