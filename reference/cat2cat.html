@@ -20,7 +20,7 @@ This function might seems to be a complex at the first glance though it is built
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.2</span>
       </span>
     </div>
 
@@ -96,20 +96,27 @@ Additional columns will be informative only for a one data.frame as we always ma
     <h2>Details</h2>
     <p>data args</p><ul><li><p>"old" data.frame older time point in a panel</p></li>
 <li><p>"new"  data.frame more recent time point in a panel</p></li>
-<li><p>"cat_var" character name of the categorical variable</p></li>
+<li><p>"cat_var" character name of the categorical variable. NA values are autoamically converted to "NA" strings.</p></li>
 <li><p>"time_var" character name of the time variable</p></li>
 <li><p>"id_var" optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.</p></li>
 <li><p>"multiplier_var" optional character name of the multiplier variable - number of replication needed to reproduce the population</p></li>
 <li><p>"freqs_df" optional only for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.</p></li>
 </ul><p>mappings args</p><ul><li><p>"trans" data.frame with 2 columns - transition table - all categories for cat_var in old and new datasets have to be included.
-  First column contains an old encoding and second a new one.</p></li>
+  First column contains an old encoding and second a new one.
+  The transition table should to have a candidate for each category from the targeted for an update period.</p></li>
 <li><p>"direction" character direction - "backward" or "forward"</p></li>
-</ul><p>optional ml args</p><ul><li><p>"method" character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination, "rf" Random Forest</p></li>
+</ul><p>optional ml args</p><ul><li><p>"method" character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination Analysis, "rf" Random Forest</p></li>
 <li><p>"features" character vector of features names where all have to be numeric or logical</p></li>
 <li><p>"args" list parameters: knn: k ; rf: ntree</p></li>
 </ul><p>Without ml section only simple frequencies are assessed.
 When ml model is broken then weights from simple frequencies are taken.
 Method knn is recommended for smaller datasets.</p>
+    </div>
+    <div id="note">
+    <h2>Note</h2>
+    <p>The transition table should to have a candidate for each category from the targeted for an update period.
+The observation from targeted for an updated period without a matched category from base period is removed.
+If you want to leave NA values add `c(NA, NA)` row to the `trans` table.</p>
     </div>
 
     <div id="ref-examples">
@@ -129,7 +136,6 @@ Method knn is recommended for smaller datasets.</p>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># additionally add probabilities from knn</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span class="r-in"><span class="va">occup_3</span> <span class="op">&lt;-</span> <span class="fu">cat2cat</span><span class="op">(</span></span>
 <span class="r-in">  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,</span>
 <span class="r-in">  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span>,</span>
@@ -139,7 +145,6 @@ Method knn is recommended for smaller datasets.</p>
 <span class="r-in">    args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span class="r-in">  <span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
 </code></pre></div>
     </div>
   </div>
