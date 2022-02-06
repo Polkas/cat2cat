@@ -284,7 +284,6 @@ The first weights (`multiplier` variable) might be surprising although they are 
 ## orginal dataset 
 lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old, weights = multiplier)
 summary(lms2)
-
 ## using one highest cross weights
 ## cross_c2c to cross different methods weights
 ## prune_c2c - highest1 leave only one the highest probability obs for each subject
@@ -301,7 +300,7 @@ lms_replicated <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, 
 ## summary_c2c
 summary_c2c(lms_replicated, df_old = nrow(occup_old))
 # or
-# Adjusted R2 is meaningless
+# Adjusted R2 is meaningless here
 lms_replicated$df.residual <- nrow(occup_old) - length(lms_replicated$assign)
 suppressWarnings(summary(lms_replicated))
 ```

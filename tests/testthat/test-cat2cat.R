@@ -106,13 +106,13 @@ expect_true((all(occup_3c$old$wei_knn_c2c <= 1 & occup_3c$old$wei_knn_c2c >= 0))
 
 occup_4 <- cat2cat(
   data = list(
-    old = occup_old, new = occup_new, cat_var = "code", time_var = "year",
-    freqs_df = as.data.frame(table(occup_new$code))
+    old = occup_old, new = occup_new, cat_var = "code", time_var = "year"
   ),
-  mappings = list(trans = trans, direction = "backward")
+  mappings = list(trans = trans, direction = "forward")
 )
-
-expect_true(identical(occup_4$old$wei_freq_c2c, occup_1a$old$wei_freq_c2c))
+# not in trans table
+expect_equal(sum(occup_4$new$wei_freq_c2c) + length(setdiff(occup_new$id, occup_4$new$id)), nrow(occup_new))
+expect_true((all(occup_4$new$wei_freq_c2c <= 1 & occup_4$new$wei_freq_c2c >= 0)))
 
 ##########################################
 ## the ean variable is a unique identifier
@@ -164,3 +164,27 @@ expect_equal(sum(verts2$old$wei_lda_c2c), nrow(vert_old))
 expect_true((all(verts2$old$wei_knn_c2c <= 1 & verts2$old$wei_knn_c2c >= 0)))
 expect_true((all(verts2$old$wei_rf_c2c <= 1 & verts2$old$wei_rf_c2c >= 0)))
 expect_true((all(verts2$old$wei_lda_c2c <= 1 & verts2$old$wei_lda_c2c >= 0)))
+
+verts3 <- cat2cat(
+  data = list(old = vert_old, new = vert_new, id_var = "ean", cat_var = "vertical", time_var = "v_date"),
+  mappings = list(trans = trans_v, direction = "forward"),
+  ml = list(
+    method = c("knn", "rf", "lda"),
+    features = c("sales"),
+    args = list(k = 10, ntree = 30)
+  )
+)
+
+expect_true(!identical(verts3$new$wei_freq_c2c, verts3$new$wei_rf_c2c))
+expect_true(!identical(verts3$new$wei_freq_c2c, verts3$new$wei_knn_c2c))
+expect_true(!identical(verts3$new$wei_freq_c2c, verts3$new$wei_lda_c2c))
+
+expect_equal(sum(verts3$new$wei_freq_c2c), nrow(vert_new))
+expect_equal(sum(verts3$new$wei_knn_c2c), nrow(vert_new))
+expect_equal(sum(verts3$new$wei_rf_c2c), nrow(vert_new))
+expect_equal(sum(verts3$new$wei_lda_c2c), nrow(vert_new))
+
+expect_true((all(verts3$new$wei_knn_c2c <= 1 & verts3$new$wei_knn_c2c >= 0)))
+expect_true((all(verts3$new$wei_rf_c2c <= 1 & verts3$new$wei_rf_c2c >= 0)))
+expect_true((all(verts3$new$wei_lda_c2c <= 1 & verts3$new$wei_lda_c2c >= 0)))
+

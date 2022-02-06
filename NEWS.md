@@ -1,3 +1,8 @@
+# cat2cat 0.3.0.9000
+
+* updated README file.
+* improved covr.
+
 # cat2cat 0.3.0
 
 * fixed the `cat2cat` function, the ml part is assuming that categorical variable is always named "code". 
