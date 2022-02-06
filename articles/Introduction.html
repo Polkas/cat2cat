@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.1</span>
       </span>
     </div>
 
@@ -500,7 +500,7 @@ $‘1311‘
 <span class="co">##   ..$ rep_c2c      : num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...</span>
 <span class="co">##   ..$ wei_naive_c2c: num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...</span>
 <span class="co">##   ..$ wei_knn_c2c  : num [1:34194] 1 1 1 1 1 1 1 1 1 1 ...</span></code></pre>
-<p>New frequencies for potential next step might be derived manually and then used in next iteration by <code>freqs_df</code> argument (data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities). This might be useful for advanced users. Optional multiplier part specifying how many times to replicate each observation to get reliable population</p>
+<p>New frequencies for potential next step might be derived manually and then used in next iteration by <code>freqs_df</code> argument (data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities). This might be useful for advanced users. Optional multiplier part specifying how many times to replicate each observation to get the population approximation.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/get_freqs.html">get_freqs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">occup_3</span><span class="op">$</span><span class="va">new</span><span class="op">$</span><span class="va">g_new_c2c</span>, multiplier <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">occup_3</span><span class="op">$</span><span class="va">new</span><span class="op">$</span><span class="va">multiplier</span>  <span class="op">*</span> <span class="va">occup_3</span><span class="op">$</span><span class="va">new</span><span class="op">$</span><span class="va">wei_freq_c2c</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##    input  Freq</span>
@@ -525,7 +525,7 @@ $‘1311‘
 <div class="section level4">
 <h4 id="linear-regressions---example">Linear Regressions - Example:<a class="anchor" aria-label="anchor" href="#linear-regressions---example"></a>
 </h4>
-<p>Remember to adjust results (<code>summary_c2c</code>) because of artificially enlarge degrees of freedom. The first weights (<code>multiplier</code> variable) might be surprising although they are multipliers which help to replicate the true population.</p>
+<p>Remember to adjust results (<code>summary_c2c</code>) because of artificially enlarge degrees of freedom. The first weights (<code>multiplier</code> variable) might be surprising although they are multipliers which help to replicate the true population. This additional weights do not change anything from the perspective of modelling, as it is replicated for each observation too.</p>
 <div class="section level5">
 <h5 id="regression">Regression<a class="anchor" aria-label="anchor" href="#regression"></a>
 </h5>
