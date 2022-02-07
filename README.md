@@ -3,7 +3,7 @@
 [![CRAN](http://www.r-pkg.org/badges/version/cat2cat)](https://cran.r-project.org/package=cat2cat)
 [![codecov](https://codecov.io/gh/Polkas/cat2cat/branch/master/graph/badge.svg)](https://codecov.io/gh/Polkas/cat2cat)
 
-## Mapping of a Categorical Variable in a Panel Dataset
+## Unify a Categorical Variable in a Panel Dataset
 
 **This algorithm was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <doi:10.24425/cejeme.2020.134747>).**
 
