@@ -17,8 +17,8 @@
 #' agg_old <- verticals[verticals$v_date == "2020-04-01", ]
 #' agg_new <- verticals[verticals$v_date == "2020-05-01", ]
 #'
-#' ## cat2cat_man - could map in both directions at once although
-#' ## usually we want to have oold or new representation
+#' ## cat2cat_magg - could map in both directions at once although
+#' ## usually we want to have old or new representation
 #'
 #' agg <- cat2cat_agg(
 #'   data = list(
@@ -91,7 +91,7 @@ cat2cat_agg <- function(data = list(
       }
 
       df_new <- rbind(base, base_rm)
-    } else if (i$direction == "backword") {
+    } else if (i$direction == "backward") {
       base <- df_old[!(df_old[, data$cat_var] %in% i[[2]]), ]
       base_rm <- df_old[df_old[, data$cat_var] %in% i[[2]], ]
 

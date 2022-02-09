@@ -26,7 +26,7 @@ format_trans <- function(x) {
 
   direc_df <- data.frame(
     direction = c(forw, back),
-    names = c(rep("forward", 2), rep("backword", 2)),
+    names = c(rep("forward", 2), rep("backward", 2)),
     stringsAsFactors = F
   )
   direct <- direc_df$names[match(x[[1]], direc_df$direction)]
