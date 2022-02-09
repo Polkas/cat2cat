@@ -17,7 +17,7 @@
 #' agg_old <- verticals[verticals$v_date == "2020-04-01", ]
 #' agg_new <- verticals[verticals$v_date == "2020-05-01", ]
 #'
-#' ## cat2cat_magg - could map in both directions at once although
+#' ## cat2cat_agg - could map in both directions at once although
 #' ## usually we want to have old or new representation
 #'
 #' agg <- cat2cat_agg(
