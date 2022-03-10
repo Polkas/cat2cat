@@ -7,7 +7,7 @@
 #'
 #' @usage occup
 #'
-#' @format A data frame with around 70000 observations and 12 variables.
+#' @format A data frame with around 20000 observations and 12 variables.
 #' \describe{
 #' \item{id}{	integer	id}
 #' \item{age}{ numeric age of a subject}

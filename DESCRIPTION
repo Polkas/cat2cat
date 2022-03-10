@@ -1,6 +1,6 @@
 Package: cat2cat
 Title: Unify a Categorical Variable in a Panel Dataset
-Version: 0.3.1
+Version: 0.3.1.9000
 Authors@R: person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre"))
 Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
 Description: 
@@ -15,10 +15,7 @@ BugReports: https://github.com/Polkas/cat2cat/issues
 Encoding: UTF-8
 Imports:
   rlang,
-  progress,
   MASS,
-  tidyr,
-  dplyr,
   assertthat
 Suggests:
   caret,
@@ -28,7 +25,9 @@ Suggests:
   pacman,
   testthat,
   magrittr,
-  igraph
+  igraph,
+  tidyr,
+  dplyr,
 LazyData: true
 VignetteBuilder: knitr
 RoxygenNote: 7.1.2

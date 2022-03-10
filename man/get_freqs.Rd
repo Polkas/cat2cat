@@ -2,7 +2,7 @@
 % Please edit documentation in R/cat2cat.R
 \name{get_freqs}
 \alias{get_freqs}
-\title{Getting frequencies from a charactr vector with an optional multiplier argument}
+\title{Getting frequencies from a `character` vector with an optional multiplier argument}
 \usage{
 get_freqs(x, multiplier = NULL)
 }
@@ -18,7 +18,7 @@ data.frame with two columns `input` `Freq`
 getting frequencies for a vector with an optional multiplier argument
 }
 \note{
-without multipier variable it is a basic `table` function wrapped with the `as.data.frame` function.
+without multiplier variable it is a basic `table` function wrapped with the `as.data.frame` function.
 The `table` function is used with the `useNA = "ifany"` argument.
 }
 \examples{

@@ -34,7 +34,7 @@ data args
 \itemize{
  \item{"old"}{ data.frame older time point in a panel}
  \item{"new"} { data.frame more recent time point in a panel}
- \item{"cat_var"}{ character name of the categorical variable. NA values are autoamically converted to "NA" strings.}
+ \item{"cat_var"}{ character name of the categorical variable. NA values are automatically converted to "NA" strings.}
  \item{"time_var"}{ character name of the time variable}
  \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
  \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}

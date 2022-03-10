@@ -79,7 +79,7 @@ We have to assume that each person could not change the occupation which sometim
 Thus the best solution might to build a transition table and treat it as dataset without identifier.
 
 Notice: We could have new identifiers in a new partition or old identifiers which do not continue to participate.
-Notice: New categories might appeared in a new partition or same old categories are depraciated.
+Notice: New categories might appeared in a new partition or same old categories are deprecated
 
 ## Simple Frequencies and ml Methods
 
@@ -165,9 +165,14 @@ trans %>% glimpse()
 
 graph for some mappings inside trans table:
 
-```{r}
-gg = graph_from_data_frame(trans[1:40, ])
-plot.igraph(gg)
+```{r, fig.height=4, fig.width=5, echo=TRUE}
+oldMargins <- par("mar")
+par(mar = c(1,1,1,1))
+gg <- graph_from_data_frame(trans[1:30, ])
+plot(gg, edge.arrow.size = .5, vertex.color = "gold", vertex.size = 15,
+     vertex.frame.color = "gray", vertex.label.color = "black",
+     vertex.label.cex = 0.6, vertex.label.dist = 2, edge.curved = 0.2)
+par(mar = oldMargins)
 ```
 
 \newpage
@@ -197,6 +202,7 @@ data.frame(I(mappings$to_new), I(mapp_p)) %>% head()
 ```
 
 \newpage
+
 ### Mappings - Application
 
 Splitting the data
@@ -209,10 +215,12 @@ occup_new = occup[occup$year == 2010,]
 Simple model where probabilities will be taken from categories frequencies.
 
 ```{r}
-cat2cat(
+simple_cat2cat <- cat2cat(
   data = list(old = occup_old ,new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "forward")
-  )
+) 
+
+simple_cat2cat %>% glimpse()
 ```
 
 ### ml Argument
@@ -224,7 +232,7 @@ occup_2 = cat2cat(
   data = list(old = occup_old ,new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "forward"),
   ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), args = list(k = 10))
-  )
+)
 ```
 
 ```{r}

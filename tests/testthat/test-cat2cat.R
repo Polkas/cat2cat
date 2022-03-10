@@ -187,4 +187,3 @@ expect_equal(sum(verts3$new$wei_lda_c2c), nrow(vert_new))
 expect_true((all(verts3$new$wei_knn_c2c <= 1 & verts3$new$wei_knn_c2c >= 0)))
 expect_true((all(verts3$new$wei_rf_c2c <= 1 & verts3$new$wei_rf_c2c >= 0)))
 expect_true((all(verts3$new$wei_lda_c2c <= 1 & verts3$new$wei_lda_c2c >= 0)))
-

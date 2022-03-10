@@ -102,13 +102,14 @@ cat_apply_freq <- function(to_x, freqs) {
   res_out
 }
 
-#' Getting frequencies from a charactr vector with an optional multiplier argument
+#' Getting frequencies from a `character` vector with an optional multiplier argument
 #' @description getting frequencies for a vector with an optional multiplier argument
 #' @param x character vector categorical variable to summarize.
 #' @param multiplier numeric vector how many times to repeat certain value, additional weights.
 #' @return data.frame with two columns `input` `Freq`
-#' @note without multipier variable it is a basic `table` function wrapped with the `as.data.frame` function.
+#' @note without multiplier variable it is a basic `table` function wrapped with the `as.data.frame` function.
 #' The `table` function is used with the `useNA = "ifany"` argument.
+#' @export
 #' @examples
 #' data(occup)
 #'
@@ -117,8 +118,6 @@ cat_apply_freq <- function(to_x, freqs) {
 #'
 #' head(get_freqs(occup$code[occup$year == "2008"], occup$multiplier[occup$year == "2008"]))
 #' head(get_freqs(occup$code[occup$year == "2010"], occup$multiplier[occup$year == "2010"]))
-#' @export
-
 get_freqs <- function(x, multiplier = NULL) {
   assert_that(is.null(multiplier) || length(x) == length(multiplier))
 
@@ -144,7 +143,7 @@ get_freqs <- function(x, multiplier = NULL) {
 #' \itemize{
 #'  \item{"old"}{ data.frame older time point in a panel}
 #'  \item{"new"} { data.frame more recent time point in a panel}
-#'  \item{"cat_var"}{ character name of the categorical variable. NA values are autoamically converted to "NA" strings.}
+#'  \item{"cat_var"}{ character name of the categorical variable. NA values are automatically converted to "NA" strings.}
 #'  \item{"time_var"}{ character name of the time variable}
 #'  \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
 #'  \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}
@@ -167,9 +166,6 @@ get_freqs <- function(x, multiplier = NULL) {
 #' @return named list with 2 fields old an new - 2 data.frames.
 #' There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
 #' Additional columns will be informative only for a one data.frame as we always make a changes to one direction.
-#' @importFrom progress progress_bar
-#' @importFrom tidyr pivot_longer
-#' @importFrom dplyr tibble
 #' @importFrom stats predict complete.cases setNames
 #' @importFrom MASS lda
 #' @importFrom assertthat assert_that
@@ -205,7 +201,7 @@ get_freqs <- function(x, multiplier = NULL) {
 #'   )
 #' )
 #' @export
-
+#'
 cat2cat <- function(data = list(
                       old = NULL,
                       new = NULL,
@@ -295,7 +291,7 @@ cat2cat <- function(data = list(
   cats_target <- cat_target_year[[data$cat_var]]
 
   if (!is.null(data$id_var)) {
-    cat_mid$index_c2c <- 1:nrow(cat_mid)
+    cat_mid$index_c2c <- seq_len(nrow(cat_mid))
     cat_mid$g_new_c2c <- tos_df$cat[match(cat_mid[[data$id_var]], tos_df$id)]
     cat_mid$wei_freq_c2c <- 1
     cat_mid$rep_c2c <- 1
@@ -322,14 +318,14 @@ cat2cat <- function(data = list(
   rep_vec <- unname(lengths(g_vec))
   wei_vec <- freqs_2[match(cats_target, names(freqs_2))]
   wei_vec <- unlist(wei_vec, use.names = FALSE)
-  cat_target_year$index_c2c <- 1:nrow(cat_target_year)
-  cat_target_rep <- cat_target_year[rep(1:nrow(cat_target_year), times = rep_vec), ]
+  cat_target_year$index_c2c <- seq_len(nrow(cat_target_year))
+  cat_target_rep <- cat_target_year[rep(seq_len(nrow(cat_target_year)), times = rep_vec), ]
   cat_target_rep$g_new_c2c <- unlist(g_vec, use.names = FALSE)
   cat_target_rep$wei_freq_c2c <- wei_vec
   cat_target_rep$rep_c2c <- rep(rep_vec, times = rep_vec)
   cat_target_rep$wei_naive_c2c <- 1 / cat_target_rep$rep_c2c
 
-  cat_base_year$index_c2c <- 1:nrow(cat_base_year)
+  cat_base_year$index_c2c <- seq_len(nrow(cat_base_year))
   cat_base_year$g_new_c2c <- cats_base
   cat_base_year$wei_freq_c2c <- 1
   cat_base_year$rep_c2c <- 1
@@ -353,10 +349,9 @@ cat2cat <- function(data = list(
     cat_base_year_g <- split(cat_base_year, factor(cat_base_year[[data$cat_var]], exclude = NULL))
     cat_target_rep_cat_c2c <- split(cat_target_rep, factor(cat_target_rep[[data$cat_var]], exclude = NULL))
 
-    pb <- progress_bar$new(total = length(unique_target_cats))
+    message("Please wait, statistical models are evaluated.")
 
     for (cat in unique_target_cats) {
-      pb$tick()
       try(
         {
           target_data_cat <- cat_target_rep_cat_c2c[[match(cat, names(cat_target_rep_cat_c2c))]]
@@ -417,7 +412,10 @@ cat2cat <- function(data = list(
                 pp[ll] <- 0
               }
               pp[["index_c2c"]] <- base_ml[["index_c2c"]][cc]
-              res <- tidyr::pivot_longer(pp, -"index_c2c", names_to = "g_new_c2c", values_to = "val")
+              index_c2c <- NULL
+              pp_stack <- utils::stack(pp, select = -index_c2c)
+              res <- cbind(pp_stack, index_c2c = rep(pp$index_c2c, ncol(pp) - 1))
+              colnames(res) <- c("val", "g_new_c2c", "index_c2c")
               ress <- merge(target_data_cat[, c("index_c2c", "g_new_c2c")], res, by = c("index_c2c", "g_new_c2c"), all.x = TRUE, sort = FALSE)
               resso <- ress[order(ress$index_c2c), ]
               cat_target_rep_cat_c2c[[match(cat, names(cat_target_rep_cat_c2c))]][[ml_name]] <- resso$val
@@ -427,13 +425,12 @@ cat2cat <- function(data = list(
         silent = TRUE
       )
     }
-    pb$terminate()
 
     cat_target_rep <- do.call(rbind, cat_target_rep_cat_c2c)
     cat_target_rep <- cat_target_rep[order(cat_target_rep[["index_c2c"]]), ]
   }
-  cat_base_year_f <- tibble(cat_base_year)
-  cat_target_rep_f <- rbind(tibble(cat_target_rep), tibble(cat_mid))
+  cat_base_year_f <- cat_base_year
+  cat_target_rep_f <- rbind(cat_target_rep, cat_mid)
 
   res <- list(cat_base_year_f, cat_target_rep_f)[res_ord]
   names(res) <- c("old", "new")

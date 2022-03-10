@@ -9,7 +9,7 @@ testthat::test_that("get_freqs", {
   expect_identical(elem1, elem2)
 })
 
-transition_table <- data.frame(old = c(1, 1, 1, 2 , 2, 3, NA, NA), new = c(NA, 1, 2, 2, 3, 2, NA, 3), stringsAsFactors = FALSE)
+transition_table <- data.frame(old = c(1, 1, 1, 2, 2, 3, NA, NA), new = c(NA, 1, 2, 2, 3, 2, NA, 3), stringsAsFactors = FALSE)
 
 testthat::test_that("get_mappings", {
   mappings <- get_mappings(transition_table)
@@ -23,6 +23,3 @@ testthat::test_that("cat_apply_freq", {
   expect_identical(length(mappings_freq), 4L)
   expect_equal(as.numeric(lengths(mappings_freq)), c(3, 2, 1, 2))
 })
-
-
-
