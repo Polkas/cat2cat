@@ -175,7 +175,9 @@ get_freqs <- function(x, multiplier = NULL) {
 #' @note The transition table should to have a candidate for each category from the targeted for an update period.
 #' The observation from targeted for an updated period without a matched category from base period is removed.
 #' If you want to leave NA values add `c(NA, NA)` row to the `trans` table.
+#' @export
 #' @examples
+#' \dontrun{
 #' data(occup_small)
 #' data(occup)
 #' data(trans)
@@ -185,13 +187,13 @@ get_freqs <- function(x, multiplier = NULL) {
 #'
 #' # default only simple frequencies
 #'
-#' occup_2 <- cat2cat(
+#' occup_simple <- cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "forward")
 #' )
 #'
 #' # additionally add probabilities from knn
-#' occup_3 <- cat2cat(
+#' occup_ml <- cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "forward"),
 #'   ml = list(
@@ -200,7 +202,7 @@ get_freqs <- function(x, multiplier = NULL) {
 #'     args = list(k = 10)
 #'   )
 #' )
-#' @export
+#'}
 #'
 cat2cat <- function(data = list(
                       old = NULL,
@@ -453,7 +455,9 @@ cat2cat <- function(data = list(
 #'  \item{"highest1"} { leave only highest probabilities for each subject- not accepting ties so always one is returned}
 #'  \item{"morethan"}{ leave rows where a probability is higher than value specify by percent argument }
 #' }
+#' @export
 #' @examples
+#' \dontrun{
 #' data(occup_small)
 #' data(occup)
 #' data(trans)
@@ -461,7 +465,7 @@ cat2cat <- function(data = list(
 #' occup_old <- occup_small[occup_small$year == 2008, ]
 #' occup_new <- occup_small[occup_small$year == 2010, ]
 #'
-#' occup_2 <- cat2cat(
+#' occup_ml <- cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "backward"),
 #'   ml = list(
@@ -471,13 +475,14 @@ cat2cat <- function(data = list(
 #'   )
 #' )
 #'
-#' prune_c2c(occup_2$old, method = "nonzero")
-#' prune_c2c(occup_2$old, method = "highest")
-#' prune_c2c(occup_2$old, method = "highest1")
-#' prune_c2c(occup_2$old, method = "morethan", percent = 90)
+#' prune_c2c(occup_ml$old, method = "nonzero")
+#' prune_c2c(occup_ml$old, method = "highest")
+#' prune_c2c(occup_ml$old, method = "highest1")
+#' prune_c2c(occup_ml$old, method = "morethan", percent = 90)
 #'
-#' prune_c2c(occup_2$old, column = "wei_knn_c2c", method = "nonzero")
-#' @export
+#' prune_c2c(occup_ml$old, column = "wei_knn_c2c", method = "nonzero")
+#' }
+#'
 prune_c2c <- function(df, index = "index_c2c", column = "wei_freq_c2c", method = "nonzero", percent = 50) {
   assert_that(inherits(df, "data.frame"))
   assert_that(all(c(index, column) %in% colnames(df)))
@@ -504,7 +509,9 @@ prune_c2c <- function(df, index = "index_c2c", column = "wei_freq_c2c", method =
 #' @param weis numeric vector  Default vector the same length as cols and with equally spaced values summing to 1.
 #' @param na.rm logical if NA should be skipped, default TRUE
 #' @return data.frame with an additional column wei_cross_c2c
+#' @export
 #' @examples
+#' \dontrun{
 #' data(occup_small)
 #' data(occup)
 #' data(trans)
@@ -515,21 +522,22 @@ prune_c2c <- function(df, index = "index_c2c", column = "wei_freq_c2c", method =
 #' # mix of methods - forward direction, try out backward too
 #' occup_mix <- cat2cat(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
-#'   mappings = list(trans = trans, direction = "forward"),
+#'   mappings = list(trans = trans, direction = "backward"),
 #'   ml = list(
-#'     method = c("knn", "rf"),
+#'     method = c("knn"),
 #'     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
 #'     args = list(k = 10, ntree = 20)
 #'   )
 #' )
 #' # correlation between ml model
 #' occup_mix_old <- occup_mix$old
-#' cor(occup_mix_old[occup_mix_old$rep_c2c != 1, c("wei_knn_c2c", "wei_rf_c2c", "wei_freq_c2c")])
+#' cor(occup_mix_old[occup_mix_old$rep_c2c != 1, c("wei_knn_c2c", "wei_freq_c2c")])
 #' # cross all methods and subset one highest probability category for each subject
 #' occup_old_highest1_mix <- prune_c2c(cross_c2c(occup_mix$old),
 #'   column = "wei_cross_c2c", method = "highest1"
 #' )
-#' @export
+#' }
+#'
 cross_c2c <- function(df,
                       cols = colnames(df)[grepl("^wei_.*_c2c$", colnames(df))],
                       weis = rep(1 / length(cols), length(cols)),

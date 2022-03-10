@@ -65,6 +65,7 @@ The observation from targeted for an updated period without a matched category f
 If you want to leave NA values add `c(NA, NA)` row to the `trans` table.
 }
 \examples{
+\dontrun{
 data(occup_small)
 data(occup)
 data(trans)
@@ -74,13 +75,13 @@ occup_new <- occup_small[occup_small$year == 2010, ]
 
 # default only simple frequencies
 
-occup_2 <- cat2cat(
+occup_simple <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "forward")
 )
 
 # additionally add probabilities from knn
-occup_3 <- cat2cat(
+occup_ml <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "forward"),
   ml = list(
@@ -89,4 +90,6 @@ occup_3 <- cat2cat(
     args = list(k = 10)
   )
 )
+}
+
 }

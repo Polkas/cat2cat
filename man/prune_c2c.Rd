@@ -39,6 +39,7 @@ method - specify method to reduce number of replications
 }
 }
 \examples{
+\dontrun{
 data(occup_small)
 data(occup)
 data(trans)
@@ -46,7 +47,7 @@ data(trans)
 occup_old <- occup_small[occup_small$year == 2008, ]
 occup_new <- occup_small[occup_small$year == 2010, ]
 
-occup_2 <- cat2cat(
+occup_ml <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
   ml = list(
@@ -56,10 +57,12 @@ occup_2 <- cat2cat(
   )
 )
 
-prune_c2c(occup_2$old, method = "nonzero")
-prune_c2c(occup_2$old, method = "highest")
-prune_c2c(occup_2$old, method = "highest1")
-prune_c2c(occup_2$old, method = "morethan", percent = 90)
+prune_c2c(occup_ml$old, method = "nonzero")
+prune_c2c(occup_ml$old, method = "highest")
+prune_c2c(occup_ml$old, method = "highest1")
+prune_c2c(occup_ml$old, method = "morethan", percent = 90)
 
-prune_c2c(occup_2$old, column = "wei_knn_c2c", method = "nonzero")
+prune_c2c(occup_ml$old, column = "wei_knn_c2c", method = "nonzero")
+}
+
 }

@@ -27,6 +27,7 @@ data.frame with an additional column wei_cross_c2c
 adding additional column which is a mix of weights columns by each row
 }
 \examples{
+\dontrun{
 data(occup_small)
 data(occup)
 data(trans)
@@ -37,18 +38,20 @@ occup_new <- occup_small[occup_small$year == 2010, ]
 # mix of methods - forward direction, try out backward too
 occup_mix <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
-  mappings = list(trans = trans, direction = "forward"),
+  mappings = list(trans = trans, direction = "backward"),
   ml = list(
-    method = c("knn", "rf"),
+    method = c("knn"),
     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
     args = list(k = 10, ntree = 20)
   )
 )
 # correlation between ml model
 occup_mix_old <- occup_mix$old
-cor(occup_mix_old[occup_mix_old$rep_c2c != 1, c("wei_knn_c2c", "wei_rf_c2c", "wei_freq_c2c")])
+cor(occup_mix_old[occup_mix_old$rep_c2c != 1, c("wei_knn_c2c", "wei_freq_c2c")])
 # cross all methods and subset one highest probability category for each subject
 occup_old_highest1_mix <- prune_c2c(cross_c2c(occup_mix$old),
   column = "wei_cross_c2c", method = "highest1"
 )
+}
+
 }
