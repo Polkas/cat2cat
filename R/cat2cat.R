@@ -349,8 +349,6 @@ cat2cat <- function(data = list(
     cat_base_year_g <- split(cat_base_year, factor(cat_base_year[[data$cat_var]], exclude = NULL))
     cat_target_rep_cat_c2c <- split(cat_target_rep, factor(cat_target_rep[[data$cat_var]], exclude = NULL))
 
-    message("Please wait, statistical models are evaluated.")
-
     for (cat in unique_target_cats) {
       try(
         {
