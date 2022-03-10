@@ -50,7 +50,7 @@ agg_new <- verticals[verticals$v_date == "2020-05-01", ]
 ## cat2cat_agg - could map in both directions at once although 
 ## usually we want to have old or new representation
 
-agg = cat2cat_agg(data = list(old = agg_old, 
+agg <- cat2cat_agg(data = list(old = agg_old, 
                               new = agg_new, 
                               cat_var = "vertical", 
                               time_var = "v_date",
@@ -90,7 +90,7 @@ select(vertical.x, vertical.y) %>% distinct()
 ## cat2cat
 ## it is important to set id_var as then we merging categories 1 to 1 
 ## for this identifier which exists in both periods.
-verts = cat2cat(
+verts <- cat2cat(
   data = list(old = vert_old, new = vert_new, id_var = "ean", cat_var = "vertical", time_var = "v_date"),
   mappings = list(trans = trans_v, direction = "backward")
 )
@@ -102,11 +102,11 @@ verts = cat2cat(
 data(occup)
 data(trans)
 
-occup_old = occup[occup$year == 2008,]
-occup_new = occup[occup$year == 2010,]
+occup_old <- occup[occup$year == 2008,]
+occup_new <- occup[occup$year == 2010,]
 
 ## cat2cat
-cat2cat(
+occup_simple <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward")
 )
@@ -114,7 +114,7 @@ cat2cat(
 ## with informative features it might be usefull to run ml algorithm
 ## currently only knn, lda or rf (randomForest),  a few methods could be specified at once 
 ## where probability will be assessed as fraction of closest points.
-occup_2 = cat2cat(
+occup_2 <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
   ml = list(method = "knn", features = c("age", "sex", "edu", "exp", "parttime", "salary"), 
@@ -125,7 +125,7 @@ occup_2 = cat2cat(
 plot_c2c(occup_2$old, type = c("both"))
 
 # mix of methods
-occup_2_mix = cat2cat(
+occup_2_mix <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
   ml = list(method = c("knn", "rf", "lda"), features = c("age", "sex", "edu", "exp", "parttime", "salary"), 
