@@ -20,24 +20,17 @@ This function might seems to be a complex at the first glance though it is built
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.1.9000</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
+  <a href="../articles/cat2cat.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/Introduction.html">cat2cat - Introduction</a>
-    </li>
-  </ul></li>
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
@@ -96,7 +89,7 @@ Additional columns will be informative only for a one data.frame as we always ma
     <h2>Details</h2>
     <p>data args</p><ul><li><p>"old" data.frame older time point in a panel</p></li>
 <li><p>"new"  data.frame more recent time point in a panel</p></li>
-<li><p>"cat_var" character name of the categorical variable. NA values are autoamically converted to "NA" strings.</p></li>
+<li><p>"cat_var" character name of the categorical variable. NA values are automatically converted to "NA" strings.</p></li>
 <li><p>"time_var" character name of the time variable</p></li>
 <li><p>"id_var" optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.</p></li>
 <li><p>"multiplier_var" optional character name of the multiplier variable - number of replication needed to reproduce the population</p></li>
@@ -145,6 +138,7 @@ If you want to leave NA values add `c(NA, NA)` row to the `trans` table.</p>
 <span class="r-in">    args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span class="r-in">  <span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Please wait, statistical models are evaluated.</span>
 </code></pre></div>
     </div>
   </div>
