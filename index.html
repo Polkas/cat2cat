@@ -49,6 +49,18 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/Introduction.html">cat2cat - Introduction</a>
+    </li>
+  </ul>
+</li>
 <li>
   <a href="news/index.html">Changelog</a>
 </li>
@@ -82,14 +94,7 @@
 </h2>
 <p><strong>This algorithm was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <a href="doi:10.24425/cejeme.2020.134747" class="uri">doi:10.24425/cejeme.2020.134747</a>).</strong></p>
 <p><strong>The main rule is to replicate the observation if it could be assign to a few categories</strong> <strong>then using simple frequencies or statistical methods to approximate probabilities of being assign to each of them.</strong></p>
-<p><a href="https://polkas.github.io/cat2cat/" class="external-link"><strong>pkgdown url</strong></a></p>
-<p>Why cat2cat:<br>
-- universal algorithm which could be used in different science fields<br>
-- stop removing variables for statistical models because variable categories are not the same across time<br>
-- use a statistical modelling to join datasets from different time points and retain categorical variable structure<br>
-- visualize any factor variable across time<br>
-- real world datasets like <code>occup</code></p>
-<p>In many scientific projects where panel dataset contains a categorical variable one of the possible obstacle is that the data provider is changing a variable encoding during the time. The problem of unifying an inconsistent categorical variable in a panel dataset seems to require scientific attention. There is offered a <code>cat2cat</code> algorithm to map a categorical variable according to a specific encoding between different time points. The main rule is to replicate the observation if it could be assigned to a few categories, then using simple frequencies or statistical methods to approximate probabilities of being assigned to each of them. <code>cat2cat</code> algorithm was invented and implemented in the paper by [@Broniatowska_Paulina_Age_2020]. Algorithm was introduced in the cat2cat R CRAN package.</p>
+<p><a href="https://polkas.github.io/cat2cat/" class="external-link"><strong>For more information visit the cat2cat webpage</strong></a></p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -97,149 +102,14 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"polkas/cat2cat"</span><span class="op">)</span></code></pre></div>
-<p>There should be stated a 3 clear questions:</p>
-<ol style="list-style-type: decimal">
-<li>Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers, aggregate data vs individual data.</li>
-<li>Do i have a transition table.</li>
-<li>Direction of a transition, forward or backward - use a new or an old encoding.</li>
-</ol>
-<p>Quick intro:</p>
-</div>
-<div class="section level2">
-<h2 id="manual-transitions">Manual transitions<a class="anchor" aria-label="anchor" href="#manual-transitions"></a>
-</h2>
-</div>
-<div class="section level2">
-<h2 id="aggregate-dataset">Aggregate dataset<a class="anchor" aria-label="anchor" href="#aggregate-dataset"></a>
-</h2>
+<p>or from CRAN:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Polkas/cat2cat" class="external-link">cat2cat</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">verticals</span><span class="op">)</span>
-<span class="va">agg_old</span> <span class="op">&lt;-</span> <span class="va">verticals</span><span class="op">[</span><span class="va">verticals</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-04-01"</span>, <span class="op">]</span>
-<span class="va">agg_new</span> <span class="op">&lt;-</span> <span class="va">verticals</span><span class="op">[</span><span class="va">verticals</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-05-01"</span>, <span class="op">]</span>
-
-<span class="co">## cat2cat_agg - could map in both directions at once although </span>
-<span class="co">## usually we want to have old or new representation</span>
-
-<span class="va">agg</span> <span class="op">=</span> <span class="fu"><a href="reference/cat2cat_agg.html">cat2cat_agg</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">agg_old</span>, 
-                              new <span class="op">=</span> <span class="va">agg_new</span>, 
-                              cat_var <span class="op">=</span> <span class="st">"vertical"</span>, 
-                              time_var <span class="op">=</span> <span class="st">"v_date"</span>,
-                              freq_var <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span>, 
-                  <span class="va">Automotive</span> <span class="op">%&lt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Automotive1</span>, <span class="va">Automotive2</span><span class="op">)</span>,
-                  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Kids1</span>, <span class="va">Kids2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Kids</span><span class="op">)</span>,
-                  <span class="va">Home</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Home</span>, <span class="va">Supermarket</span><span class="op">)</span><span class="op">)</span>
-            
-<span class="co">## possible processing</span>
-  
-<span class="va">agg</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">vertical</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>sales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">sales</span><span class="op">*</span><span class="va">prop_c2c</span><span class="op">)</span>, counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">counts</span><span class="op">*</span><span class="va">prop_c2c</span><span class="op">)</span>, v_date <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html" class="external-link">first</a></span><span class="op">(</span><span class="va">v_date</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">agg</span><span class="op">$</span><span class="va">new</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">vertical</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>sales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">sales</span><span class="op">*</span><span class="va">prop_c2c</span><span class="op">)</span>, counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">counts</span><span class="op">*</span><span class="va">prop_c2c</span><span class="op">)</span>, v_date <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html" class="external-link">first</a></span><span class="op">(</span><span class="va">v_date</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"cat2cat"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="automatic-using-trans-table">Automatic using trans table<a class="anchor" aria-label="anchor" href="#automatic-using-trans-table"></a>
+<h2 id="quick-intro">Quick Intro<a class="anchor" aria-label="anchor" href="#quick-intro"></a>
 </h2>
-</div>
-<div class="section level2">
-<h2 id="dataset-with-unique-identifiers">Dataset with unique identifiers<a class="anchor" aria-label="anchor" href="#dataset-with-unique-identifiers"></a>
-</h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## the ean variable is a unique identifier</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">verticals2</span><span class="op">)</span>
-
-<span class="va">vert_old</span> <span class="op">&lt;-</span> <span class="va">verticals2</span><span class="op">[</span><span class="va">verticals2</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-04-01"</span>, <span class="op">]</span>
-<span class="va">vert_new</span> <span class="op">&lt;-</span> <span class="va">verticals2</span><span class="op">[</span><span class="va">verticals2</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-05-01"</span>, <span class="op">]</span>
-
-<span class="co">## get transitions table</span>
-<span class="va">trans_v</span> <span class="op">&lt;-</span> <span class="va">vert_old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">vert_new</span>, by <span class="op">=</span> <span class="st">"ean"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">vertical.x</span>, <span class="va">vertical.y</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="co"># </span>
-<span class="co">## cat2cat</span>
-<span class="co">## it is important to set id_var as then we merging categories 1 to 1 </span>
-<span class="co">## for this identifier which exists in both periods.</span>
-<span class="va">verts</span> <span class="op">=</span> <span class="fu"><a href="reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
-  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">vert_old</span>, new <span class="op">=</span> <span class="va">vert_new</span>, id_var <span class="op">=</span> <span class="st">"ean"</span>, cat_var <span class="op">=</span> <span class="st">"vertical"</span>, time_var <span class="op">=</span> <span class="st">"v_date"</span><span class="op">)</span>,
-  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans_v</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="dataset-without-unique-identifiers">Dataset without unique identifiers<a class="anchor" aria-label="anchor" href="#dataset-without-unique-identifiers"></a>
-</h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span>
-
-<span class="va">occup_old</span> <span class="op">=</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2008</span>,<span class="op">]</span>
-<span class="va">occup_new</span> <span class="op">=</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2010</span>,<span class="op">]</span>
-
-<span class="co">## cat2cat</span>
-<span class="fu"><a href="reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
-  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
-  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="co">## with informative features it might be usefull to run ml algorithm</span>
-<span class="co">## currently only knn, lda or rf (randomForest),  a few methods could be specified at once </span>
-<span class="co">## where probability will be assessed as fraction of closest points.</span>
-<span class="va">occup_2</span> <span class="op">=</span> <span class="fu"><a href="reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
-  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
-  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>,
-  ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"knn"</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"edu"</span>, <span class="st">"exp"</span>, <span class="st">"parttime"</span>, <span class="st">"salary"</span><span class="op">)</span>, 
-            args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="co"># summary_plot</span>
-<span class="fu"><a href="reference/plot_c2c.html">plot_c2c</a></span><span class="op">(</span><span class="va">occup_2</span><span class="op">$</span><span class="va">old</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"both"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># mix of methods</span>
-<span class="va">occup_2_mix</span> <span class="op">=</span> <span class="fu"><a href="reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
-  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
-  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>,
-  ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"knn"</span>, <span class="st">"rf"</span>, <span class="st">"lda"</span><span class="op">)</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"edu"</span>, <span class="st">"exp"</span>, <span class="st">"parttime"</span>, <span class="st">"salary"</span><span class="op">)</span>, 
-            args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span>, ntree <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co"># correlation between ml models and simple fequencies</span>
-<span class="va">occup_2_mix</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">wei_knn_c2c</span>, <span class="va">wei_rf_c2c</span>, <span class="va">wei_lda_c2c</span>, <span class="va">wei_freq_c2c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co"># cross all methods and subset one highest probability category for each subject</span>
-<span class="va">occup_old_mix_highest1</span> <span class="op">&lt;-</span> <span class="va">occup_2_mix</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-                <span class="fu"><a href="reference/cross_c2c.html">cross_c2c</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-                <span class="fu"><a href="reference/prune_c2c.html">prune_c2c</a></span><span class="op">(</span><span class="va">.</span>,column <span class="op">=</span> <span class="st">"wei_cross_c2c"</span>, method <span class="op">=</span> <span class="st">"highest1"</span><span class="op">)</span> </code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="regression">Regression<a class="anchor" aria-label="anchor" href="#regression"></a>
-</h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## orginal dataset </span>
-<span class="va">lms2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">salary</span><span class="op">)</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">edu</span><span class="op">)</span> <span class="op">+</span> <span class="va">parttime</span> <span class="op">+</span> <span class="va">exp</span>, <span class="va">occup_old</span>, weights <span class="op">=</span> <span class="va">multiplier</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">lms2</span><span class="op">)</span>
-
-<span class="co">## using one highest cross weights</span>
-<span class="co">## cross_c2c to cross differen methods weights</span>
-<span class="co">## prune_c2c - highest1 leave only one the highest probability obs for each subject</span>
-<span class="va">occup_old_2</span> <span class="op">&lt;-</span> <span class="va">occup_2</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-                <span class="fu"><a href="reference/cross_c2c.html">cross_c2c</a></span><span class="op">(</span><span class="va">.</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wei_freq_c2c"</span>, <span class="st">"wei_knn_c2c"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-                <span class="fu"><a href="reference/prune_c2c.html">prune_c2c</a></span><span class="op">(</span><span class="va">.</span>,column <span class="op">=</span> <span class="st">"wei_cross_c2c"</span>, method <span class="op">=</span> <span class="st">"highest1"</span><span class="op">)</span> 
-<span class="va">lms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">salary</span><span class="op">)</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">edu</span><span class="op">)</span> <span class="op">+</span> <span class="va">parttime</span> <span class="op">+</span> <span class="va">exp</span>, <span class="va">occup_old_2</span>, weights <span class="op">=</span> <span class="va">multiplier</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">lms</span><span class="op">)</span>
-
-<span class="co">## we have to adjust size of stds as we artificialy enlarge degrees of freedom</span>
-<span class="va">occup_old_3</span> <span class="op">&lt;-</span> <span class="va">occup_2</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-                <span class="fu"><a href="reference/prune_c2c.html">prune_c2c</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"nonzero"</span><span class="op">)</span> <span class="co">#many prune methods like highest</span>
-<span class="va">lms_replicated</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">salary</span><span class="op">)</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">edu</span><span class="op">)</span> <span class="op">+</span> <span class="va">parttime</span> <span class="op">+</span> <span class="va">exp</span>, <span class="va">occup_old_3</span>, weights <span class="op">=</span> <span class="va">multiplier</span> <span class="op">*</span> <span class="va">wei_freq_c2c</span><span class="op">)</span>
-<span class="co">## summary_c2c</span>
-<span class="fu"><a href="reference/summary_c2c.html">summary_c2c</a></span><span class="op">(</span><span class="va">lms_replicated</span>, df_old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occup_old</span><span class="op">)</span><span class="op">)</span>
-<span class="co"># or</span>
-<span class="co"># Adjusted R2 is meaningless here</span>
-<span class="va">lms_replicated</span><span class="op">$</span><span class="va">df.residual</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">occup_old</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">lms_replicated</span><span class="op">$</span><span class="va">assign</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">lms_replicated</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><a href="https://polkas.github.io/cat2cat/articles/cat2cat.html" class="external-link"><strong>Get Started</strong></a></p>
 </div>
 </div>
   </div>
