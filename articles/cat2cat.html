@@ -241,10 +241,10 @@
 <span class="co"># correlation between ml models and simple fequencies</span>
 <span class="va">occup_2_mix</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">wei_knn_c2c</span>, <span class="va">wei_rf_c2c</span>, <span class="va">wei_lda_c2c</span>, <span class="va">wei_freq_c2c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##              wei_knn_c2c wei_rf_c2c wei_lda_c2c wei_freq_c2c</span>
-<span class="co">## wei_knn_c2c    1.0000000  0.8603440   0.8406724    0.8974173</span>
-<span class="co">## wei_rf_c2c     0.8603440  1.0000000   0.8880442    0.8749451</span>
-<span class="co">## wei_lda_c2c    0.8406724  0.8880442   1.0000000    0.8894577</span>
-<span class="co">## wei_freq_c2c   0.8974173  0.8749451   0.8894577    1.0000000</span></code></pre>
+<span class="co">## wei_knn_c2c    1.0000000  0.8598666   0.8406724    0.8974173</span>
+<span class="co">## wei_rf_c2c     0.8598666  1.0000000   0.8866401    0.8735673</span>
+<span class="co">## wei_lda_c2c    0.8406724  0.8866401   1.0000000    0.8894577</span>
+<span class="co">## wei_freq_c2c   0.8974173  0.8735673   0.8894577    1.0000000</span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># cross all methods and subset one highest probability category for each subject</span>
 <span class="va">occup_old_mix_highest1</span> <span class="op">&lt;-</span> <span class="va">occup_2_mix</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 

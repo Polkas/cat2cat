@@ -92,7 +92,8 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup_small</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup_small</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span></span>
 <span class="r-in"></span>
@@ -102,24 +103,22 @@
 <span class="r-in"><span class="co"># mix of methods - forward direction, try out backward too</span></span>
 <span class="r-in"><span class="va">occup_mix</span> <span class="op">&lt;-</span> <span class="fu"><a href="cat2cat.html">cat2cat</a></span><span class="op">(</span></span>
 <span class="r-in">  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,</span>
-<span class="r-in">  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span>,</span>
+<span class="r-in">  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>,</span>
 <span class="r-in">  ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">    method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"knn"</span>, <span class="st">"rf"</span><span class="op">)</span>,</span>
+<span class="r-in">    method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"knn"</span><span class="op">)</span>,</span>
 <span class="r-in">    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"edu"</span>, <span class="st">"exp"</span>, <span class="st">"parttime"</span>, <span class="st">"salary"</span><span class="op">)</span>,</span>
 <span class="r-in">    args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span>, ntree <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
 <span class="r-in">  <span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"><span class="co"># correlation between ml model</span></span>
 <span class="r-in"><span class="va">occup_mix_old</span> <span class="op">&lt;-</span> <span class="va">occup_mix</span><span class="op">$</span><span class="va">old</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">occup_mix_old</span><span class="op">[</span><span class="va">occup_mix_old</span><span class="op">$</span><span class="va">rep_c2c</span> <span class="op">!=</span> <span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wei_knn_c2c"</span>, <span class="st">"wei_rf_c2c"</span>, <span class="st">"wei_freq_c2c"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              wei_knn_c2c wei_rf_c2c wei_freq_c2c</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> wei_knn_c2c           NA         NA           NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> wei_rf_c2c            NA         NA           NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> wei_freq_c2c          NA         NA           NA</span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">occup_mix_old</span><span class="op">[</span><span class="va">occup_mix_old</span><span class="op">$</span><span class="va">rep_c2c</span> <span class="op">!=</span> <span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wei_knn_c2c"</span>, <span class="st">"wei_freq_c2c"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span class="r-in"><span class="co"># cross all methods and subset one highest probability category for each subject</span></span>
 <span class="r-in"><span class="va">occup_old_highest1_mix</span> <span class="op">&lt;-</span> <span class="fu"><a href="prune_c2c.html">prune_c2c</a></span><span class="op">(</span><span class="fu">cross_c2c</span><span class="op">(</span><span class="va">occup_mix</span><span class="op">$</span><span class="va">old</span><span class="op">)</span>,</span>
 <span class="r-in">  column <span class="op">=</span> <span class="st">"wei_cross_c2c"</span>, method <span class="op">=</span> <span class="st">"highest1"</span></span>
 <span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span class="op">}</span></span>
+<span class="r-in"></span>
 </code></pre></div>
     </div>
   </div>
