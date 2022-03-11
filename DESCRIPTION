@@ -1,6 +1,6 @@
 Package: cat2cat
 Title: Unify a Categorical Variable in a Panel Dataset
-Version: 0.3.1.9000
+Version: 0.3.2
 Authors@R: person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre"))
 Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
 Description: 
@@ -10,11 +10,10 @@ Description:
   This algorithm was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <doi:10.24425/cejeme.2020.134747>).
 Depends: R (>= 3.6)
 License: GPL (>= 2)
-URL: https://github.com/Polkas/cat2cat
+URL: https://github.com/Polkas/cat2cat, https://polkas.github.io/cat2cat
 BugReports: https://github.com/Polkas/cat2cat/issues
 Encoding: UTF-8
 Imports:
-  rlang,
   MASS,
   assertthat
 Suggests:
@@ -26,8 +25,7 @@ Suggests:
   testthat,
   magrittr,
   igraph,
-  tidyr,
-  dplyr,
+  dplyr
 LazyData: true
 VignetteBuilder: knitr
 RoxygenNote: 7.1.2

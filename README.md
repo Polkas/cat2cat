@@ -6,32 +6,38 @@
 
 ## Unify a Categorical Variable in a Panel Dataset
 
+Unifying an inconsistent coded categorical variable in a panel/longtitudal dataset.  
+There is offered the `cat2cat` algorithm to map a categorical variable according to a transition table between two different time points.
+The main rule is to replicate the observation if it could be assigned to a few categories, then using simple frequencies or statistical methods to approximate probabilities of being assigned to each of them.
+
 **This algorithm was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <doi:10.24425/cejeme.2020.134747>).**
 
-**The main rule is to replicate the observation if it could be assign to a few categories**
-**then using simple frequencies or statistical methods to approximate probabilities of being assign to each of them.**
-
-[**For more information visit the cat2cat webpage**](https://polkas.github.io/cat2cat/)
+[**Please visit the cat2cat webpage for more information**](https://polkas.github.io/cat2cat/articles/cat2cat.html)
 
 ## Installation
 
 ```r
-# install.packages("devtools")
-devtools::install_github("polkas/cat2cat")
-```
-
-or from CRAN:
-
-```r
+# install.packages("remotes")
+remotes::install_github("polkas/cat2cat")
+# or
 install.packages("cat2cat")
 ```
 
-## Quick Intro
+## Example
 
-[**Get Started**](https://polkas.github.io/cat2cat/articles/cat2cat.html)
+```{r}
+library(cat2cat)
+data(occup)
+data(trans)
 
+occup_old <- occup[occup$year == 2008, ]
+occup_new <- occup[occup$year == 2010, ]
 
-
+occup_simple <- cat2cat(
+  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "backward")
+)
+```
 
 
 

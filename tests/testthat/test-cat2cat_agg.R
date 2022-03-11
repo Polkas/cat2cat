@@ -35,3 +35,21 @@ expect_true(sum(agg$old$prop_c2c) == nrow(agg_old))
 expect_true(sum(agg$new$prop_c2c) == nrow(agg_new))
 expect_true(all(agg$new$prop_c2c >= 0 & agg$new$prop_c2c <= 1))
 expect_true(all(agg$old$prop_c2c >= 0 & agg$old$prop_c2c <= 1))
+
+agg2 <- cat2cat_agg(
+  data = list(
+    old = agg_old,
+    new = agg_new,
+    cat_var = "vertical",
+    time_var = "v_date",
+    freq_var = "counts"
+  ),
+  Automotive < c(Automotive1, Automotive2),
+  c(Kids1, Kids2) > c(Kids),
+  Home > c(Home, Supermarket)
+)
+
+expect_true(sum(agg2$old$prop_c2c) == nrow(agg_old))
+expect_true(sum(agg2$new$prop_c2c) == nrow(agg_new))
+expect_true(all(agg2$new$prop_c2c >= 0 & agg2$new$prop_c2c <= 1))
+expect_true(all(agg2$old$prop_c2c >= 0 & agg2$old$prop_c2c <= 1))

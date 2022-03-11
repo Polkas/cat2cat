@@ -59,9 +59,9 @@ cat2cat_agg <- function(data = list(
 
   assert_that(all(table(data$old[[data$cat_var]]) == 1) && all(table(data$new[[data$cat_var]]) == 1))
 
-  t <- enexprs(...)
+  t <- as.list(substitute(list(...))[-1])
 
-  trans <- read_eq(!!!t)
+  trans <- do.call(read_eq, t)
   trans_map <- lapply(trans, format_trans)
 
   df_old <- data$old
@@ -105,8 +105,6 @@ cat2cat_agg <- function(data = list(
       }
 
       df_old <- rbind(base, base_rm)
-    } else {
-      stop()
     }
   }
 

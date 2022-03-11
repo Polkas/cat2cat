@@ -202,7 +202,7 @@ get_freqs <- function(x, multiplier = NULL) {
 #'     args = list(k = 10)
 #'   )
 #' )
-#'}
+#' }
 #'
 cat2cat <- function(data = list(
                       old = NULL,
