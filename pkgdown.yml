@@ -2,7 +2,6 @@ pandoc: 2.7.3
 pkgdown: 2.0.2.9000
 pkgdown_sha: 9aae87398abdbe1cd5af5ff6f168d2e142d531c9
 articles:
-  Introduction: Introduction.html
   cat2cat: cat2cat.html
-last_built: 2022-03-10T19:39Z
+last_built: 2022-03-11T19:06Z
 
