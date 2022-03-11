@@ -1,4 +1,9 @@
-# 0.3.2
+# cat2cat 0.3.3
+
+* improve the `pkgdown` website.
+* `deparse` instead of `deparse1`.
+
+# cat2cat 0.3.2
 
 * `tinyverse` world, even less dependencies.
 

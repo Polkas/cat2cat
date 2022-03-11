@@ -92,7 +92,9 @@ vert_new <- verticals2[verticals2$v_date == "2020-05-01", ]
 trans_v <- vert_old %>% 
 inner_join(vert_new, by = "ean") %>%
 select(vertical.x, vertical.y) %>% distinct()
+```
 
+```{r}
 # 
 ## cat2cat
 ## it is important to set id_var as then we merging categories 1 to 1 
@@ -111,7 +113,9 @@ data(trans)
 
 occup_old <- occup[occup$year == 2008,]
 occup_new <- occup[occup$year == 2010,]
+```
 
+```{r}
 ## cat2cat
 occup_simple <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
