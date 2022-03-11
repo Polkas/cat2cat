@@ -8,10 +8,10 @@ read_eq <- function(...) {
     for (c in seq_along(children)) {
       if (is.call(children[[c]])) {
         children[[c]] <- vapply(as.list(children[[c]])[-1], function(x) {
-          deparse1(x)
+          deparse(x, width.cutoff = 500L)
         }, character(1))
       } else if (is.symbol(children[[c]])) {
-        children[[c]] <- deparse1(children[[c]])
+        children[[c]] <- deparse(children[[c]], width.cutoff = 500L)
       }
     }
     res[[i]] <- children
