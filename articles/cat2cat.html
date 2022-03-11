@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
       </span>
     </div>
 
@@ -181,9 +181,9 @@
 <span class="co">## get transitions table</span>
 <span class="va">trans_v</span> <span class="op">&lt;-</span> <span class="va">vert_old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
 <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">vert_new</span>, by <span class="op">=</span> <span class="st">"ean"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-<span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">vertical.x</span>, <span class="va">vertical.y</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="co"># </span>
+<span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">vertical.x</span>, <span class="va">vertical.y</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># </span>
 <span class="co">## cat2cat</span>
 <span class="co">## it is important to set id_var as then we merging categories 1 to 1 </span>
 <span class="co">## for this identifier which exists in both periods.</span>
@@ -195,14 +195,14 @@
 <div class="section level3">
 <h3 id="dataset-without-unique-identifiers">Dataset without unique identifiers<a class="anchor" aria-label="anchor" href="#dataset-without-unique-identifiers"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span>
 
 <span class="va">occup_old</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2008</span>,<span class="op">]</span>
-<span class="va">occup_new</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2010</span>,<span class="op">]</span>
-
-<span class="co">## cat2cat</span>
+<span class="va">occup_new</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2010</span>,<span class="op">]</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## cat2cat</span>
 <span class="va">occup_simple</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
   data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
   mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>
@@ -220,8 +220,8 @@
 
 <span class="co"># summary_plot</span>
 <span class="fu"><a href="../reference/plot_c2c.html">plot_c2c</a></span><span class="op">(</span><span class="va">occup_2</span><span class="op">$</span><span class="va">old</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"both"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="cat2cat_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<p><img src="cat2cat_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># mix of methods</span>
 <span class="va">occup_2_mix</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
   data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
@@ -232,11 +232,11 @@
 <span class="co"># correlation between ml models and simple fequencies</span>
 <span class="va">occup_2_mix</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">wei_knn_c2c</span>, <span class="va">wei_rf_c2c</span>, <span class="va">wei_lda_c2c</span>, <span class="va">wei_freq_c2c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##              wei_knn_c2c wei_rf_c2c wei_lda_c2c wei_freq_c2c</span>
-<span class="co">## wei_knn_c2c    1.0000000  0.8599497   0.8406724    0.8974173</span>
-<span class="co">## wei_rf_c2c     0.8599497  1.0000000   0.8878778    0.8742654</span>
-<span class="co">## wei_lda_c2c    0.8406724  0.8878778   1.0000000    0.8894577</span>
-<span class="co">## wei_freq_c2c   0.8974173  0.8742654   0.8894577    1.0000000</span></code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<span class="co">## wei_knn_c2c    1.0000000  0.8584583   0.8406724    0.8974173</span>
+<span class="co">## wei_rf_c2c     0.8584583  1.0000000   0.8872383    0.8738383</span>
+<span class="co">## wei_lda_c2c    0.8406724  0.8872383   1.0000000    0.8894577</span>
+<span class="co">## wei_freq_c2c   0.8974173  0.8738383   0.8894577    1.0000000</span></code></pre>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># cross all methods and subset one highest probability category for each subject</span>
 <span class="va">occup_old_mix_highest1</span> <span class="op">&lt;-</span> <span class="va">occup_2_mix</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
                 <span class="fu"><a href="../reference/cross_c2c.html">cross_c2c</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
@@ -251,7 +251,7 @@
 <h3 id="regression-1">Regression<a class="anchor" aria-label="anchor" href="#regression-1"></a>
 </h3>
 <p>The next 3 regressions have the same results.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## orginal dataset </span>
 <span class="va">lms2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">salary</span><span class="op">)</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">edu</span><span class="op">)</span> <span class="op">+</span> <span class="va">parttime</span> <span class="op">+</span> <span class="va">exp</span>, <span class="va">occup_old</span>, weights <span class="op">=</span> <span class="va">multiplier</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">lms2</span><span class="op">)</span></code></pre></div>
@@ -284,7 +284,7 @@
 <span class="co">## Residual standard error: 7.302 on 34164 degrees of freedom</span>
 <span class="co">## Multiple R-squared:  0.5797, Adjusted R-squared:  0.5796 </span>
 <span class="co">## F-statistic:  4284 on 11 and 34164 DF,  p-value: &lt; 2.2e-16</span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## using one highest cross weights</span>
 <span class="co">## cross_c2c to cross differen methods weights</span>
 <span class="co">## prune_c2c - highest1 leave only one the highest probability obs for each subject</span>
@@ -322,7 +322,7 @@
 <span class="co">## Residual standard error: 7.302 on 34164 degrees of freedom</span>
 <span class="co">## Multiple R-squared:  0.5797, Adjusted R-squared:  0.5796 </span>
 <span class="co">## F-statistic:  4284 on 11 and 34164 DF,  p-value: &lt; 2.2e-16</span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## we have to adjust size of stds as we artificialy enlarge degrees of freedom</span>
 <span class="va">occup_old_3</span> <span class="op">&lt;-</span> <span class="va">occup_2</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
                 <span class="fu"><a href="../reference/prune_c2c.html">prune_c2c</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"nonzero"</span><span class="op">)</span> <span class="co">#many prune methods like highest</span>
@@ -364,7 +364,7 @@
 <h3 id="regression-with-unified-variable">Regression with unified variable<a class="anchor" aria-label="anchor" href="#regression-with-unified-variable"></a>
 </h3>
 <p>Example regression model with usage of the unified variable (<code>g_new_c2c</code>). A separate model for each occupational group.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">occup_old_4</span> <span class="op">&lt;-</span> <span class="va">occup_2</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
                 <span class="fu"><a href="../reference/prune_c2c.html">prune_c2c</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"nonzero"</span><span class="op">)</span> <span class="co">#many prune methods like highest</span>
 <span class="va">formula_oo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">salary</span><span class="op">)</span><span class="op">)</span> <span class="op">~</span> <span class="va">age</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">edu</span><span class="op">)</span> <span class="op">+</span> <span class="va">parttime</span> <span class="op">+</span> <span class="va">exp</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span><span class="op">)</span>
@@ -389,7 +389,7 @@
 <span class="co">## <span style="color: #BCBCBC;">4</span> 112001    <span style="color: #949494;">&lt;smmry.lm&gt;</span></span>
 <span class="co">## <span style="color: #BCBCBC;">5</span> 112002    <span style="color: #949494;">&lt;smmry.lm&gt;</span></span>
 <span class="co">## <span style="color: #BCBCBC;">6</span> 112003    <span style="color: #949494;">&lt;smmry.lm&gt;</span></span></code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">oo</span><span class="op">$</span><span class="va">lm</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></code></pre></div>
 <pre><code><span class="co">## </span>
 <span class="co">## Call:</span>
