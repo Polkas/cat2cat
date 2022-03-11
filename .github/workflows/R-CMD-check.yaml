@@ -28,10 +28,6 @@ jobs:
           # Deliberately check on older ubuntu to maximise backward compatibility
           - {os: ubuntu-18.04,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-18.04,   r: 'release'}
-            include:
-              - node: 15
-                os: ubuntu-18.04
-                experimental: true
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
