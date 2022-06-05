@@ -14,7 +14,7 @@
 #' mappings$to_new[1:4]
 #' @export
 get_mappings <- function(x = data.frame()) {
-  assert_that(ncol(x) == 2)
+  stopifnot(ncol(x) == 2)
 
   x <- as.matrix(x)
 
@@ -81,7 +81,7 @@ get_mappings <- function(x = data.frame()) {
 #' head(data.frame(I(mappings$to_new), I(mapp_p)))
 #' @export
 cat_apply_freq <- function(to_x, freqs) {
-  assert_that(ncol(freqs) == 2)
+  stopifnot(ncol(freqs) == 2)
   res <- lapply(
     to_x,
     function(x) {
@@ -119,7 +119,7 @@ cat_apply_freq <- function(to_x, freqs) {
 #' head(get_freqs(occup$code[occup$year == "2008"], occup$multiplier[occup$year == "2008"]))
 #' head(get_freqs(occup$code[occup$year == "2010"], occup$multiplier[occup$year == "2010"]))
 get_freqs <- function(x, multiplier = NULL) {
-  assert_that(is.null(multiplier) || length(x) == length(multiplier))
+  stopifnot(is.null(multiplier) || length(x) == length(multiplier))
 
   input <- if (!is.null(multiplier)) {
     rep(x, times = as.numeric(multiplier))
@@ -169,7 +169,6 @@ get_freqs <- function(x, multiplier = NULL) {
 #' Additional columns will be informative only for a one data.frame as we always make a changes to one direction.
 #' @importFrom stats predict complete.cases setNames
 #' @importFrom MASS lda
-#' @importFrom assertthat assert_that
 #' @details Without ml section only simple frequencies are assessed.
 #' When ml model is broken then weights from simple frequencies are taken.
 #' Method knn is recommended for smaller datasets.
@@ -220,15 +219,15 @@ cat2cat <- function(data = list(
                       features = NULL,
                       args = NULL
                     )) {
-  assert_that(is.list(data))
-  assert_that(length(data) %in% c(4, 5, 6, 7))
-  assert_that(inherits(data$old, "data.frame"))
-  assert_that(inherits(data$new, "data.frame"))
-  assert_that(all(c("old", "new", "cat_var", "time_var") %in% names(data)))
-  assert_that(all(c(data$cat_var, data$time_var) %in% colnames(data$old)))
-  assert_that(all(c(data$cat_var, data$time_var) %in% colnames(data$new)))
+  stopifnot(is.list(data))
+  stopifnot(length(data) %in% c(4, 5, 6, 7))
+  stopifnot(inherits(data$old, "data.frame"))
+  stopifnot(inherits(data$new, "data.frame"))
+  stopifnot(all(c("old", "new", "cat_var", "time_var") %in% names(data)))
+  stopifnot(all(c(data$cat_var, data$time_var) %in% colnames(data$old)))
+  stopifnot(all(c(data$cat_var, data$time_var) %in% colnames(data$new)))
 
-  assert_that(
+  stopifnot(
     is.null(data$multiplier_var) ||
       (
         data$multiplier_var %in% colnames(data$new) &&
@@ -236,21 +235,21 @@ cat2cat <- function(data = list(
       )
   )
 
-  assert_that(is.null(data$freqs_df) || (ncol(data$freqs_df) == 2))
+  stopifnot(is.null(data$freqs_df) || (ncol(data$freqs_df) == 2))
 
   d_old <- length(unique(data$old[[data$time_var]]))
   d_new <- length(unique(data$new[[data$time_var]]))
 
-  assert_that((d_old == 1) && (d_new == 1))
+  stopifnot((d_old == 1) && (d_new == 1))
 
-  assert_that(is.list(mappings))
-  assert_that(length(mappings) == 2)
-  assert_that(all(c("trans", "direction") %in% names(mappings)))
-  assert_that(mappings$direction %in% c("forward", "backward"))
-  assert_that(all(vapply(mappings, Negate(is.null), logical(1))))
-  assert_that(ncol(mappings$trans) == 2)
+  stopifnot(is.list(mappings))
+  stopifnot(length(mappings) == 2)
+  stopifnot(all(c("trans", "direction") %in% names(mappings)))
+  stopifnot(mappings$direction %in% c("forward", "backward"))
+  stopifnot(all(vapply(mappings, Negate(is.null), logical(1))))
+  stopifnot(ncol(mappings$trans) == 2)
 
-  assert_that(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
+  stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
     (data$id_var %in% colnames(data$new)) &&
     !anyDuplicated(data$old[[data$id_var]]) &&
     !anyDuplicated(data$new[[data$id_var]])))
@@ -307,7 +306,7 @@ cat2cat <- function(data = list(
     NULL
   }
 
-  assert_that(is.null(data$freq_df) || all(data$freqs_df[, 1] %in% cats_base))
+  stopifnot(is.null(data$freq_df) || all(data$freqs_df[, 1] %in% cats_base))
 
   fre <- if (!is.null(data$freqs_df)) {
     data$freqs_df
@@ -331,10 +330,10 @@ cat2cat <- function(data = list(
   cat_base_year <- dummy_c2c_cols(cat_base_year, data$cat_var)
 
   if (sum(vapply(ml, Negate(is.null), logical(1))) >= 2) {
-    assert_that(all(c("method", "features") %in% names(ml)))
-    assert_that(all(ml$features %in% colnames(cat_target_rep)))
-    assert_that(all(vapply(cat_target_rep[, ml$features], function(x) is.numeric(x) || is.logical(x), logical(1))))
-    assert_that(all(ml$method %in% c("knn", "rf", "lda")))
+    stopifnot(all(c("method", "features") %in% names(ml)))
+    stopifnot(all(ml$features %in% colnames(cat_target_rep)))
+    stopifnot(all(vapply(cat_target_rep[, ml$features], function(x) is.numeric(x) || is.logical(x), logical(1))))
+    stopifnot(all(ml$method %in% c("knn", "rf", "lda")))
 
     unique_target_cats <- unique(cat_target_rep[[data$cat_var]])
     features <- unique(ml$features)
@@ -480,11 +479,11 @@ cat2cat <- function(data = list(
 #' }
 #'
 prune_c2c <- function(df, index = "index_c2c", column = "wei_freq_c2c", method = "nonzero", percent = 50) {
-  assert_that(inherits(df, "data.frame"))
-  assert_that(all(c(index, column) %in% colnames(df)))
-  assert_that(method %in% c("nonzero", "highest", "highest1", "morethan"))
-  assert_that(length(percent) == 1)
-  assert_that(percent >= 0 && percent < 100)
+  stopifnot(inherits(df, "data.frame"))
+  stopifnot(all(c(index, column) %in% colnames(df)))
+  stopifnot(method %in% c("nonzero", "highest", "highest1", "morethan"))
+  stopifnot(length(percent) == 1)
+  stopifnot(percent >= 0 && percent < 100)
 
   df <- df[order(df[[index]]), ]
 
@@ -542,10 +541,10 @@ cross_c2c <- function(df,
                       cols = colnames(df)[grepl("^wei_.*_c2c$", colnames(df))],
                       weis = rep(1 / length(cols), length(cols)),
                       na.rm = TRUE) {
-  assert_that(inherits(df, "data.frame"))
-  assert_that(all(cols %in% colnames(df)))
-  assert_that(length(weis) == length(cols))
-  assert_that(is.logical(na.rm))
+  stopifnot(inherits(df, "data.frame"))
+  stopifnot(all(cols %in% colnames(df)))
+  stopifnot(length(weis) == length(cols))
+  stopifnot(is.logical(na.rm))
 
   weis <- weis / sum(weis)
 
