@@ -39,7 +39,7 @@ data args
  \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
  \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}
  \item{"freqs_df"}{ optional - data.frame with 2 columns where first one is category name and second counts.
- It is optional nevertheless will be very often needed.
+ It is optional nevertheless will be very often needed, as give more control.
  It will be used to assess the probabilities. The multiplier variable is omit so sb has to apply it in this table.}
 }
 mappings args

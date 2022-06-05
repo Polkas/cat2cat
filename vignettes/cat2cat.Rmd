@@ -36,7 +36,7 @@ For each observation that was replicated, the probabilities have to add up to on
 The algorithm distinguishes different mechanics for panel data with and without unique identifiers.
 
 There were prepared two graphs for forward and backward mapping.
-These graphs present how `cat2cat::cat2cat` functions works, in this case of a panel dataset without the unique identifiers and only two periods.
+These graphs present how the `cat2cat::cat2cat` function works, in this case under a panel dataset without the unique identifiers and only two periods.
 
 ![Backward Mapping](https://raw.githubusercontent.com/Polkas/cat2cat/master/man/figures/back_nom.png)
 
@@ -197,6 +197,7 @@ occup_back_2008_2010 <- cat2cat(
   mappings = list(trans = trans, direction = "backward")
 )
 
+# optional, give more control
 # the counts could be any of wei_* or their combination
 freq_df <- occup_back_2008_2010$old[, c("g_new_c2c", "wei_freq_c2c")] %>%
   group_by(g_new_c2c) %>%
@@ -254,6 +255,7 @@ occup_for_2008_2010 <- cat2cat(
   mappings = list(trans = trans, direction = "forward")
 )
 
+# optional, give more control
 # the counts could be any of wei_* or their combination
 freq_df <- occup_for_2008_2010$new[, c("g_new_c2c", "wei_freq_c2c")] %>%
   group_by(g_new_c2c) %>%
@@ -324,20 +326,13 @@ occup_back_2008_2010 <- cat2cat(
             args = list(k = 10))
 )
 
-# the counts could be any of wei_* or their combination
-freq_df <- occup_back_2008_2010$old[, c("g_new_c2c", "wei_freq_c2c")] %>%
-  cross_c2c() %>%
-  group_by(g_new_c2c) %>%
-  summarise(counts = round(sum(wei_cross_c2c)))
-
 occup_2006[["g_new_c2c"]] <- occup_2006[["code"]]
 
 occup_back_2006_2008 <- cat2cat(
   data = list(old = occup_2006,
               new = occup_back_2008_2010$old,
               cat_var = "g_new_c2c",
-              time_var = "year",
-              freqs_df = freq_df),
+              time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
   ml = list(data = occup_2010,
             cat_var = "code",
@@ -372,6 +367,12 @@ counts_old <- occup %>%
   summarise(n = n(), n2 = n(), .groups = 'drop')
 
 identical(counts_new, counts_old)
+
+# counts per each level
+counts_per_level <- final_data_back_ml %>% 
+  group_by(year, g_new_c2c) %>% 
+  summarise(n = sum(wei_freq_c2c), .groups = 'drop') %>%
+  arrange(g_new_c2c, year)
 ```
 
 

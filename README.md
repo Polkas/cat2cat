@@ -43,7 +43,7 @@ occup_simple <- cat2cat(
 
 ## UML
 
-The graphs present how `cat2cat::cat2cat` functions works, in this case of a panel dataset without the unique identifiers and only two periods.
+The graphs present how the `cat2cat::cat2cat` function works, in this case under a panel dataset without the unique identifiers and only two periods.
 
 ![Backward Mapping](./man/figures/back_nom.png)
 

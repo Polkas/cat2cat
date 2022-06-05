@@ -148,7 +148,7 @@ get_freqs <- function(x, multiplier = NULL) {
 #'  \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
 #'  \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}
 #'  \item{"freqs_df"}{ optional - data.frame with 2 columns where first one is category name and second counts.
-#'  It is optional nevertheless will be very often needed.
+#'  It is optional nevertheless will be very often needed, as give more control.
 #'  It will be used to assess the probabilities. The multiplier variable is omit so sb has to apply it in this table.}
 #' }
 #' mappings args
@@ -302,15 +302,30 @@ cat2cat <- function(data = list(
     cat_mid$g_new_c2c <- tos_df$cat[match(cat_mid[[data$id_var]], tos_df$id)]
   }
 
+  multi_base <- if (!is.null(data$multiplier_var)) {
+    data$multiplier_var
+  } else {
+    NULL
+  }
+
   fre <- if (is.data.frame(data$freqs_df)) {
     data$freqs_df
-  } else {
-    multi_base <- if (!is.null(data$multiplier_var)) {
-      cat_base_year[[data$multiplier_var]]
+  } else if ("wei_freq_c2c" %in% colnames(cat_base_year)) {
+    if (!is.null(data$multiplier_var)) {
+      stats::aggregate(cat_base_year[["wei_freq_c2c"]] * cat_base_year[[data$multiplier_var]],
+              list(g = cat_base_year[[data$cat_var]]),
+              function(x) round(sum(x, na.rm = TRUE)))
     } else {
-      NULL
+      stats::aggregate(cat_base_year[["wei_freq_c2c"]],
+             list(g = cat_base_year[[data$cat_var]]),
+             function(x) round(sum(x, na.rm = TRUE)))
     }
-    get_freqs(cats_base, multi_base)
+  } else {
+    if (!is.null(data$multiplier_var)) {
+      get_freqs(cats_base, cat_base_year[[data$multiplier_var]])
+    } else {
+      get_freqs(cats_base)
+    }
   }
   freqs_2 <- cat_apply_freq(mapp, fre)
 
@@ -328,7 +343,6 @@ cat2cat <- function(data = list(
   cat_target_rep$rep_c2c <- rep(rep_vec, times = rep_vec)
   cat_target_rep$wei_naive_c2c <- 1 / cat_target_rep$rep_c2c
   # Base
-  is_base_c2c <- "index_c2c" %in% colnames(cat_base_year)
   cat_base_year <- dummy_c2c_cols(cat_base_year, data$cat_var)
 
   # ML
@@ -351,7 +365,7 @@ cat2cat <- function(data = list(
 
     cat_target_rep[, ml_names] <- cat_target_rep["wei_freq_c2c"]
 
-    cat_base_year_g <- split(ml$data, factor(ml$data[[ml$cat_var]], exclude = NULL))
+    cat_base_year_g <- split(ml$data[, c(features, ml$cat_var)], factor(ml$data[[ml$cat_var]], exclude = NULL))
     cat_target_rep_cats <- cat_target_rep[[ml$cat_var]]
     cat_target_rep_cat_c2c <- split(cat_target_rep, factor(cat_target_rep_cats, exclude = NULL))
 
@@ -360,7 +374,6 @@ cat2cat <- function(data = list(
         {
           target_data_cat <- cat_target_rep_cat_c2c[[match(cat, names(cat_target_rep_cat_c2c))]]
           dis <- do.call(rbind, cat_base_year_g[mapp[[match(cat, names(mapp))]]])
-          dis <- dis[, c(features, ml$cat_var)]
           udc <- unique(dis[[ml$cat_var]])
           if (length(udc) <= 1) {
             cat_target_rep_cat_c2c[[match(cat, names(cat_target_rep_cat_c2c))]][ml_names] <- target_data_cat$wei_freq_c2c
@@ -433,6 +446,7 @@ cat2cat <- function(data = list(
     cat_target_rep <- do.call(rbind, cat_target_rep_cat_c2c)
     cat_target_rep <- cat_target_rep[order(cat_target_rep[["index_c2c"]]), ]
   }
+
   cat_base_year_f <- cat_base_year
   cat_target_rep_f <- rbind(cat_target_rep, cat_mid)
 
@@ -595,8 +609,8 @@ dummy_c2c_cols <- function(df, cat_var, ml = NULL) {
     df$wei_naive_c2c <- 1
   }
 
-  if (!is.null(ml) && !all(ml %in% colnames(df))) {
-    df[, ml] <- 1
+  if (!is.null(ml)) {
+    df[, setdiff(ml, colnames(df))] <- 1
   }
 
   df
