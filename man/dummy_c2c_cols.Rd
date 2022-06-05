@@ -4,12 +4,14 @@
 \alias{dummy_c2c_cols}
 \title{Add default cat2cat columns to a `data.frame`}
 \usage{
-dummy_c2c_cols(df, cat_var)
+dummy_c2c_cols(df, cat_var, ml = NULL)
 }
 \arguments{
 \item{df}{`data.frame`}
 
-\item{cat_var}{`character` a categorical variable name}
+\item{cat_var}{`character` a categorical variable name.}
+
+\item{ml}{`character` vector of ml models applied, any of `c("wei_knn_c2c", "wei_rf_c2c", "wei_lda_c2c")`.}
 }
 \description{
 a utils function to add default cat2cat columns to a `data.frame`.

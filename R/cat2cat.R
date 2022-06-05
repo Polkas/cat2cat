@@ -558,7 +558,8 @@ cross_c2c <- function(df,
 #' @description a utils function to add default cat2cat columns to a `data.frame`.
 #' It will be useful e.g. for a boarder periods which will not have additional `cat2cat` columns.
 #' @param df `data.frame`
-#' @param cat_var `character` a categorical variable name
+#' @param cat_var `character` a categorical variable name.
+#' @param ml `character` vector of ml models applied, any of `c("wei_knn_c2c", "wei_rf_c2c", "wei_lda_c2c")`.
 #' @export
 #' @examples
 #' data(occup_small)
@@ -567,20 +568,23 @@ cross_c2c <- function(df,
 #'
 #' occup_old <- occup_small[occup_small$year == 2008, ]
 #' dummy_c2c_cols(occup_old, "code")
-dummy_c2c_cols <- function(df, cat_var) {
+dummy_c2c_cols <- function(df, cat_var, ml = NULL) {
   stopifnot(is.data.frame(df))
   stopifnot(length(cat_var) == 1 && is.character(cat_var))
   stopifnot(cat_var %in% colnames(df))
+  stopifnot(is.null(ml) || all(ml %in% c("wei_knn_c2c", "wei_rf_c2c", "wei_lda_c2c")))
 
-  if (all(c("index_c2c", "g_new_c2c", "wei_freq_c2c", "rep_c2c", "wei_naive_c2c") %in% colnames(df))) {
-    return(df)
+  if (!all(c("index_c2c", "g_new_c2c", "wei_freq_c2c", "rep_c2c", "wei_naive_c2c") %in% colnames(df))) {
+    df$index_c2c <- seq_len(nrow(df))
+    df$g_new_c2c <- df[[cat_var]]
+    df$wei_freq_c2c <- 1
+    df$rep_c2c <- 1
+    df$wei_naive_c2c <- 1
   }
 
-  df$index_c2c <- seq_len(nrow(df))
-  df$g_new_c2c <- df[[cat_var]]
-  df$wei_freq_c2c <- 1
-  df$rep_c2c <- 1
-  df$wei_naive_c2c <- 1
+  if (!is.null(ml) && !all(ml %in% colnames(df))) {
+    df[, ml] <- 1
+  }
 
   df
 }
