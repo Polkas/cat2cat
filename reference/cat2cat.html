@@ -88,12 +88,13 @@ Additional columns will be informative only for a one data.frame as we always ma
     <h2>Details</h2>
     <p>data args</p><ul><li><p>"old" data.frame older time point in a panel</p></li>
 <li><p>"new"  data.frame more recent time point in a panel</p></li>
-<li><p>"cat_var" character name of the categorical variable. NA values are automatically converted to "NA" strings.</p></li>
+<li><p>"cat_var" character name of the categorical variable.</p></li>
 <li><p>"time_var" character name of the time variable</p></li>
 <li><p>"id_var" optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.</p></li>
 <li><p>"multiplier_var" optional character name of the multiplier variable - number of replication needed to reproduce the population</p></li>
-<li><p>"freqs_df" optional - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.
- If used then the multiplier variable is omit so sb has to apply it in this table.</p></li>
+<li><p>"freqs_df" optional - data.frame with 2 columns where first one is category name and second counts.
+ It is optional nevertheless will be very often needed.
+ It will be used to assess the probabilities. The multiplier variable is omit so sb has to apply it in this table.</p></li>
 </ul><p>mappings args</p><ul><li><p>"trans" data.frame with 2 columns - transition table - all categories for cat_var in old and new datasets have to be included.
   First column contains an old encoding and second a new one.
   The transition table should to have a candidate for each category from the targeted for an update period.</p></li>
@@ -109,7 +110,8 @@ Method knn is recommended for smaller datasets.</p>
     <h2>Note</h2>
     <p>The transition table should to have a candidate for each category from the targeted for an update period.
 The observation from targeted for an updated period without a matched category from base period is removed.
-If you want to leave NA values add `c(NA, NA)` row to the `trans` table.</p>
+If you want to leave NA values add `c(NA, NA)` row to the `trans` table.
+Please check the vignette for more information.</p>
     </div>
 
     <div id="ref-examples">
