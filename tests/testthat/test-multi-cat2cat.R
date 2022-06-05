@@ -12,7 +12,10 @@ occup_2012 <- occup[occup$year == 2012, ]
 occup_back_2008_2010 <- cat2cat(
   data = list(old = occup_2008, new = occup_2010, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
-  ml = list(method = c("knn"), features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+  ml = list(data = occup_2010,
+            cat_var = "code",
+            method = c("knn"),
+            features = c("age", "sex", "edu", "exp", "parttime", "salary"),
             args = list(k = 10, ntree = 50))
 )
 
@@ -31,7 +34,10 @@ occup_back_2006_2008 <- cat2cat(
               time_var = "year",
               freqs_df = freq_df),
   mappings = list(trans = trans, direction = "backward"),
-  ml = list(method = c("knn"), features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+  ml = list(data = occup_2010,
+            cat_var = "code",
+            method = c("knn"),
+            features = c("age", "sex", "edu", "exp", "parttime", "salary"),
             args = list(k = 10, ntree = 50))
 )
 
@@ -40,6 +46,7 @@ expect_identical(occup_back_2008_2010$old, occup_back_2006_2008$new)
 testthat::test_that("multi-period cat2cat probabilities", {
   expect_true(!identical(occup_back_2006_2008$old$wei_freq_c2c, occup_back_2006_2008$old$wei_naive_c2c))
   expect_true(!identical(occup_back_2006_2008$old$wei_freq_c2c, occup_back_2006_2008$old$wei_knn_c2c))
+  expect_true(!identical(occup_back_2006_2008$old$wei_naive_c2c, occup_back_2006_2008$old$wei_knn_c2c))
 
   expect_equal(sum(occup_back_2006_2008$old$wei_freq_c2c), nrow(occup_2006))
   expect_equal(sum(occup_back_2006_2008$old$wei_knn_c2c), nrow(occup_2006))

@@ -8,7 +8,7 @@ cat2cat(
   data = list(old = NULL, new = NULL, cat_var = NULL, id_var = NULL, time_var = NULL,
     multiplier_var = NULL, freqs_df = NULL),
   mappings = list(trans = NULL, direction = NULL),
-  ml = list(method = NULL, features = NULL, args = NULL)
+  ml = list(data = NULL, cat_var = NULL, method = NULL, features = NULL, args = NULL)
 )
 }
 \arguments{
@@ -52,9 +52,11 @@ mappings args
 }
 optional ml args
 \itemize{
+ \item{"data"}{ data.frame - dataset with features and the `cat_var`.}
+ \item{"cat_var"}{ character - the dependent variable name. It has to be compatible with the `cat_var` in the target period.}
  \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination Analysis, "rf" Random Forest }
  \item{"features"}{ character vector of features names where all have to be numeric or logical}
- \item{"args"}{ list parameters: knn: k ; rf: ntree  }
+ \item{"args"}{ optional - list parameters: knn: k ; rf: ntree  }
 }
 
 Without ml section only simple frequencies are assessed.
@@ -88,6 +90,8 @@ occup_ml <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "forward"),
   ml = list(
+    data = occup_old,
+    cat_var = "code",
     method = "knn",
     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
     args = list(k = 10)

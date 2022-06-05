@@ -1,5 +1,6 @@
 # cat2cat 0.3.3.9000
 
+* new syntax of the `ml` argument in the `cat2cat::cat2cat` function.
 * `prune_c2c` is automatically scale the weights now, to still sum to one for each subject.
 * new function `dummy_c2c_cols` to add a default `cat2cat` columns to a `data.frame`.
 * `occup`and `occup_small` datasets have 4 periods now.

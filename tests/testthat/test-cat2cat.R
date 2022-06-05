@@ -22,6 +22,8 @@ occup_2 <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
   ml = list(
+    data = occup_new,
+    cat_var = "code",
     method = c("knn", "rf", "lda"),
     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
     args = list(k = 10, ntree = 30)
@@ -81,6 +83,8 @@ occup_3b <- cat2cat(
   data = list(old = rbind(occup_old, na_row), new = rbind(occup_new, na_row2), cat_var = "code", time_var = "year", multiplier_var = "multiplier"),
   mappings = list(trans = do.call(rbind, list(trans, c(NA, NA), c(NA, "432190"))), direction = "backward"),
   ml = list(
+    data = rbind(occup_new, na_row2),
+    cat_var = "code",
     method = c("knn"),
     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
     args = list(k = 10)
@@ -149,6 +153,8 @@ verts2 <- cat2cat(
   data = list(old = vert_old, new = vert_new, id_var = "ean", cat_var = "vertical", time_var = "v_date"),
   mappings = list(trans = trans_v, direction = "backward"),
   ml = list(
+    data = vert_new,
+    cat_var = "vertical",
     method = c("knn", "rf", "lda"),
     features = c("sales"),
     args = list(k = 10, ntree = 30)
@@ -172,6 +178,8 @@ verts3 <- cat2cat(
   data = list(old = vert_old, new = vert_new, id_var = "ean", cat_var = "vertical", time_var = "v_date"),
   mappings = list(trans = trans_v, direction = "forward"),
   ml = list(
+    data = vert_old,
+    cat_var = "vertical",
     method = c("knn", "rf", "lda"),
     features = c("sales"),
     args = list(k = 10, ntree = 30)

@@ -40,6 +40,8 @@ occup_mix <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
   ml = list(
+    data = occup_new,
+    cat_var = "code",
     method = c("knn"),
     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
     args = list(k = 10, ntree = 20)

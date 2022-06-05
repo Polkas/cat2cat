@@ -161,9 +161,11 @@ get_freqs <- function(x, multiplier = NULL) {
 #' }
 #' optional ml args
 #' \itemize{
+#'  \item{"data"}{ data.frame - dataset with features and the `cat_var`.}
+#'  \item{"cat_var"}{ character - the dependent variable name. It has to be compatible with the `cat_var` in the target period.}
 #'  \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination Analysis, "rf" Random Forest }
 #'  \item{"features"}{ character vector of features names where all have to be numeric or logical}
-#'  \item{"args"}{ list parameters: knn: k ; rf: ntree  }
+#'  \item{"args"}{ optional - list parameters: knn: k ; rf: ntree  }
 #' }
 #' @return named list with 2 fields old an new - 2 data.frames.
 #' There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
@@ -200,6 +202,8 @@ get_freqs <- function(x, multiplier = NULL) {
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "forward"),
 #'   ml = list(
+#'     data = occup_old,
+#'     cat_var = "code",
 #'     method = "knn",
 #'     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
 #'     args = list(k = 10)
@@ -218,6 +222,8 @@ cat2cat <- function(data = list(
                     ),
                     mappings = list(trans = NULL, direction = NULL),
                     ml = list(
+                      data = NULL,
+                      cat_var = NULL,
                       method = NULL,
                       features = NULL,
                       args = NULL
@@ -315,7 +321,6 @@ cat2cat <- function(data = list(
   wei_vec <- unlist(wei_vec, use.names = FALSE)
   cat_target_year$index_c2c <- seq_len(nrow(cat_target_year))
   cat_target_rep <- cat_target_year[rep(seq_len(nrow(cat_target_year)), times = rep_vec), ]
-  cat_target_rep_cats <- cat_target_rep[[data$cat_var]]
 
   # Target
   cat_target_rep$g_new_c2c <- unlist(g_vec, use.names = FALSE)
@@ -323,27 +328,31 @@ cat2cat <- function(data = list(
   cat_target_rep$rep_c2c <- rep(rep_vec, times = rep_vec)
   cat_target_rep$wei_naive_c2c <- 1 / cat_target_rep$rep_c2c
   # Base
+  is_base_c2c <- "index_c2c" %in% colnames(cat_base_year)
   cat_base_year <- dummy_c2c_cols(cat_base_year, data$cat_var)
 
   # ML
-  if (sum(vapply(ml, Negate(is.null), logical(1))) >= 2) {
+  if (sum(vapply(ml, Negate(is.null), logical(1))) >= 1) {
     stopifnot(all(c("method", "features") %in% names(ml)))
     stopifnot(all(ml$features %in% colnames(cat_target_rep)))
     stopifnot(all(vapply(cat_target_rep[, ml$features], function(x) is.numeric(x) || is.logical(x), logical(1))))
     stopifnot(all(ml$method %in% c("knn", "rf", "lda")))
 
+    # Backward compatibility
+    if (is.null(ml$data)) ml$data <- cat_base_year
+    if (is.null(ml$cat_var)) ml$cat_var <- data$cat_var
+
     features <- unique(ml$features)
     methods <- unique(ml$method)
     ml_names <- paste0("wei_", methods, "_c2c")
 
-    if (!all(ml_names %in% colnames(cat_base_year))) {
-      cat_base_year[, ml_names] <- 1
-      if (!is.null(data$id_var)) cat_mid[, ml_names] <- 1
-    }
+    cat_base_year[, setdiff(ml_names, colnames(cat_base_year))] <- 1
+    if (!is.null(data$id_var)) cat_mid[, setdiff(ml_names, colnames(cat_mid))] <- 1
 
     cat_target_rep[, ml_names] <- cat_target_rep["wei_freq_c2c"]
 
-    cat_base_year_g <- split(cat_base_year, factor(cat_base_year[[data$cat_var]], exclude = NULL))
+    cat_base_year_g <- split(ml$data, factor(ml$data[[ml$cat_var]], exclude = NULL))
+    cat_target_rep_cats <- cat_target_rep[[ml$cat_var]]
     cat_target_rep_cat_c2c <- split(cat_target_rep, factor(cat_target_rep_cats, exclude = NULL))
 
     for (cat in unique_target_cats) {
@@ -351,7 +360,8 @@ cat2cat <- function(data = list(
         {
           target_data_cat <- cat_target_rep_cat_c2c[[match(cat, names(cat_target_rep_cat_c2c))]]
           dis <- do.call(rbind, cat_base_year_g[mapp[[match(cat, names(mapp))]]])
-          udc <- unique(dis[[data$cat_var]])
+          dis <- dis[, c(features, ml$cat_var)]
+          udc <- unique(dis[[ml$cat_var]])
           if (length(udc) <= 1) {
             cat_target_rep_cat_c2c[[match(cat, names(cat_target_rep_cat_c2c))]][ml_names] <- target_data_cat$wei_freq_c2c
             next
@@ -371,7 +381,7 @@ cat2cat <- function(data = list(
                   kkk <- suppressWarnings(
                     caret::knn3(
                       x = dis[, features, drop = FALSE],
-                      y = factor(dis[[data$cat_var]]),
+                      y = factor(dis[[ml$cat_var]]),
                       k = min(ml$args$k, ceiling(nrow(dis) / 4))
                     )
                   )
@@ -383,7 +393,7 @@ cat2cat <- function(data = list(
                 if (suppressPackageStartupMessages(requireNamespace("randomForest", quietly = TRUE))) {
                   kkk <- suppressWarnings(
                     randomForest::randomForest(
-                      y = factor(dis[[data$cat_var]]),
+                      y = factor(dis[[ml$cat_var]]),
                       x = dis[, features, drop = FALSE],
                       ntree = min(ml$args$ntree, 100)
                     )
@@ -395,7 +405,7 @@ cat2cat <- function(data = list(
               } else if (m == "lda") {
                 kkk <- suppressWarnings(
                   MASS::lda(
-                    grouping = factor(dis[[data$cat_var]]),
+                    grouping = factor(dis[[ml$cat_var]]),
                     x = as.matrix(dis[, features, drop = FALSE])
                   )
                 )
@@ -406,8 +416,8 @@ cat2cat <- function(data = list(
               if (length(ll)) {
                 pp[ll] <- 0
               }
+              pp_stack <- utils::stack(pp)
               pp[["index_c2c"]] <- base_ml[["index_c2c"]][cc]
-              pp_stack <- utils::stack(pp[, -ncol(pp)])
               res <- cbind(pp_stack, index_c2c = rep(pp$index_c2c, ncol(pp) - 1))
               colnames(res) <- c("val", "g_new_c2c", "index_c2c")
               ress <- merge(target_data_cat[, c("index_c2c", "g_new_c2c")], res, by = c("index_c2c", "g_new_c2c"), all.x = TRUE, sort = FALSE)
@@ -463,6 +473,8 @@ cat2cat <- function(data = list(
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "backward"),
 #'   ml = list(
+#'     data = occup_new,
+#'     cat_var = "code",
 #'     method = "knn",
 #'     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
 #'     args = list(k = 10)
@@ -522,6 +534,8 @@ prune_c2c <- function(df, index = "index_c2c", column = "wei_freq_c2c", method =
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "backward"),
 #'   ml = list(
+#'     data = occup_new,
+#'     cat_var = "code",
 #'     method = c("knn"),
 #'     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
 #'     args = list(k = 10, ntree = 20)
