@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3.9000</span>
       </span>
     </div>
 
@@ -72,7 +72,7 @@
       <h1 data-toc-skip>Get Started</h1>
                         <h4 data-toc-skip class="author">Maciej Nasinski</h4>
             
-            <h4 data-toc-skip class="date">2022-03-11</h4>
+            <h4 data-toc-skip class="date">2022-06-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Polkas/cat2cat/blob/HEAD/vignettes/cat2cat.Rmd" class="external-link"><code>vignettes/cat2cat.Rmd</code></a></small>
       <div class="hidden name"><code>cat2cat.Rmd</code></div>
@@ -232,10 +232,10 @@
 <span class="co"># correlation between ml models and simple fequencies</span>
 <span class="va">occup_2_mix</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">wei_knn_c2c</span>, <span class="va">wei_rf_c2c</span>, <span class="va">wei_lda_c2c</span>, <span class="va">wei_freq_c2c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##              wei_knn_c2c wei_rf_c2c wei_lda_c2c wei_freq_c2c</span>
-<span class="co">## wei_knn_c2c    1.0000000  0.8584583   0.8406724    0.8974173</span>
-<span class="co">## wei_rf_c2c     0.8584583  1.0000000   0.8872383    0.8738383</span>
-<span class="co">## wei_lda_c2c    0.8406724  0.8872383   1.0000000    0.8894577</span>
-<span class="co">## wei_freq_c2c   0.8974173  0.8738383   0.8894577    1.0000000</span></code></pre>
+<span class="co">## wei_knn_c2c    1.0000000  0.8643716   0.8350984    0.8989887</span>
+<span class="co">## wei_rf_c2c     0.8643716  1.0000000   0.8769230    0.8752207</span>
+<span class="co">## wei_lda_c2c    0.8350984  0.8769230   1.0000000    0.8807702</span>
+<span class="co">## wei_freq_c2c   0.8989887  0.8752207   0.8807702    1.0000000</span></code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># cross all methods and subset one highest probability category for each subject</span>
 <span class="va">occup_old_mix_highest1</span> <span class="op">&lt;-</span> <span class="va">occup_2_mix</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
@@ -262,28 +262,28 @@
 <span class="co">## </span>
 <span class="co">## Weighted Residuals:</span>
 <span class="co">##     Min      1Q  Median      3Q     Max </span>
-<span class="co">## -41.649  -4.154  -0.170   4.134  94.979 </span>
+<span class="co">## -70.064  -5.773  -0.387   5.378  75.990 </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                Estimate Std. Error t value Pr(&gt;|t|)    </span>
-<span class="co">## (Intercept)   8.6049934  0.0175898 489.203  &lt; 2e-16 ***</span>
-<span class="co">## age          -0.0028783  0.0004561  -6.311 2.81e-10 ***</span>
-<span class="co">## sexTRUE       0.2539537  0.0050557  50.231  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)2 -0.0799110  0.0097006  -8.238  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)3 -0.3579335  0.0124684 -28.707  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)4 -0.4252729  0.0072134 -58.956  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)5 -0.4050551  0.0101847 -39.771  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)6 -0.6473797  0.0072134 -89.746  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)7 -0.5295860  0.0783593  -6.758 1.42e-11 ***</span>
-<span class="co">## factor(edu)8 -0.6751645  0.0110551 -61.073  &lt; 2e-16 ***</span>
-<span class="co">## parttime      1.9342513  0.0114274 169.264  &lt; 2e-16 ***</span>
-<span class="co">## exp           0.0128464  0.0004370  29.396  &lt; 2e-16 ***</span>
+<span class="co">## (Intercept)   8.5999047  0.0242898 354.055  &lt; 2e-16 ***</span>
+<span class="co">## age          -0.0034642  0.0006339  -5.465 4.71e-08 ***</span>
+<span class="co">## sexTRUE       0.2705985  0.0069407  38.987  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)2 -0.0829940  0.0132021  -6.286 3.33e-10 ***</span>
+<span class="co">## factor(edu)3 -0.3555287  0.0172194 -20.647  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)4 -0.4162423  0.0098900 -42.087  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)5 -0.4045499  0.0139431 -29.014  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)6 -0.6272203  0.0098347 -63.777  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)7 -0.6108803  0.0993123  -6.151 7.86e-10 ***</span>
+<span class="co">## factor(edu)8 -0.6734363  0.0155248 -43.378  &lt; 2e-16 ***</span>
+<span class="co">## parttime      1.9666250  0.0158731 123.897  &lt; 2e-16 ***</span>
+<span class="co">## exp           0.0129456  0.0006092  21.251  &lt; 2e-16 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
-<span class="co">## Residual standard error: 7.302 on 34164 degrees of freedom</span>
-<span class="co">## Multiple R-squared:  0.5797, Adjusted R-squared:  0.5796 </span>
-<span class="co">## F-statistic:  4284 on 11 and 34164 DF,  p-value: &lt; 2.2e-16</span></code></pre>
+<span class="co">## Residual standard error: 9.976 on 17211 degrees of freedom</span>
+<span class="co">## Multiple R-squared:  0.5886, Adjusted R-squared:  0.5883 </span>
+<span class="co">## F-statistic:  2239 on 11 and 17211 DF,  p-value: &lt; 2.2e-16</span></code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## using one highest cross weights</span>
 <span class="co">## cross_c2c to cross differen methods weights</span>
@@ -300,28 +300,28 @@
 <span class="co">## </span>
 <span class="co">## Weighted Residuals:</span>
 <span class="co">##     Min      1Q  Median      3Q     Max </span>
-<span class="co">## -41.649  -4.154  -0.170   4.134  94.979 </span>
+<span class="co">## -70.064  -5.773  -0.387   5.378  75.990 </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                Estimate Std. Error t value Pr(&gt;|t|)    </span>
-<span class="co">## (Intercept)   8.6049934  0.0175898 489.203  &lt; 2e-16 ***</span>
-<span class="co">## age          -0.0028783  0.0004561  -6.311 2.81e-10 ***</span>
-<span class="co">## sexTRUE       0.2539537  0.0050557  50.231  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)2 -0.0799110  0.0097006  -8.238  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)3 -0.3579335  0.0124684 -28.707  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)4 -0.4252729  0.0072134 -58.956  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)5 -0.4050551  0.0101847 -39.771  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)6 -0.6473797  0.0072134 -89.746  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)7 -0.5295860  0.0783593  -6.758 1.42e-11 ***</span>
-<span class="co">## factor(edu)8 -0.6751645  0.0110551 -61.073  &lt; 2e-16 ***</span>
-<span class="co">## parttime      1.9342513  0.0114274 169.264  &lt; 2e-16 ***</span>
-<span class="co">## exp           0.0128464  0.0004370  29.396  &lt; 2e-16 ***</span>
+<span class="co">## (Intercept)   8.5999047  0.0242898 354.055  &lt; 2e-16 ***</span>
+<span class="co">## age          -0.0034642  0.0006339  -5.465 4.71e-08 ***</span>
+<span class="co">## sexTRUE       0.2705985  0.0069407  38.987  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)2 -0.0829940  0.0132021  -6.286 3.33e-10 ***</span>
+<span class="co">## factor(edu)3 -0.3555287  0.0172194 -20.647  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)4 -0.4162423  0.0098900 -42.087  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)5 -0.4045499  0.0139431 -29.014  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)6 -0.6272203  0.0098347 -63.777  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)7 -0.6108803  0.0993123  -6.151 7.86e-10 ***</span>
+<span class="co">## factor(edu)8 -0.6734363  0.0155248 -43.378  &lt; 2e-16 ***</span>
+<span class="co">## parttime      1.9666250  0.0158731 123.897  &lt; 2e-16 ***</span>
+<span class="co">## exp           0.0129456  0.0006092  21.251  &lt; 2e-16 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
-<span class="co">## Residual standard error: 7.302 on 34164 degrees of freedom</span>
-<span class="co">## Multiple R-squared:  0.5797, Adjusted R-squared:  0.5796 </span>
-<span class="co">## F-statistic:  4284 on 11 and 34164 DF,  p-value: &lt; 2.2e-16</span></code></pre>
+<span class="co">## Residual standard error: 9.976 on 17211 degrees of freedom</span>
+<span class="co">## Multiple R-squared:  0.5886, Adjusted R-squared:  0.5883 </span>
+<span class="co">## F-statistic:  2239 on 11 and 17211 DF,  p-value: &lt; 2.2e-16</span></code></pre>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## we have to adjust size of stds as we artificialy enlarge degrees of freedom</span>
 <span class="va">occup_old_3</span> <span class="op">&lt;-</span> <span class="va">occup_2</span><span class="op">$</span><span class="va">old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
@@ -337,28 +337,28 @@
 <span class="co">## </span>
 <span class="co">## Weighted Residuals:</span>
 <span class="co">##     Min      1Q  Median      3Q     Max </span>
-<span class="co">## -34.550  -0.686  -0.045   0.616  65.260 </span>
+<span class="co">## -53.217  -1.067  -0.142   0.786  55.322 </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                Estimate Std. Error t value Pr(&gt;|t|)    </span>
-<span class="co">## (Intercept)   8.6049934  0.0175898 489.203  &lt; 2e-16 ***</span>
-<span class="co">## age          -0.0028783  0.0004561  -6.311 2.81e-10 ***</span>
-<span class="co">## sexTRUE       0.2539537  0.0050557  50.231  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)2 -0.0799110  0.0097006  -8.238  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)3 -0.3579335  0.0124684 -28.707  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)4 -0.4252729  0.0072134 -58.956  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)5 -0.4050551  0.0101847 -39.771  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)6 -0.6473797  0.0072134 -89.746  &lt; 2e-16 ***</span>
-<span class="co">## factor(edu)7 -0.5295860  0.0783593  -6.758 1.42e-11 ***</span>
-<span class="co">## factor(edu)8 -0.6751645  0.0110551 -61.073  &lt; 2e-16 ***</span>
-<span class="co">## parttime      1.9342513  0.0114274 169.264  &lt; 2e-16 ***</span>
-<span class="co">## exp           0.0128464  0.0004370  29.396  &lt; 2e-16 ***</span>
+<span class="co">## (Intercept)   8.5999047  0.0242898 354.055  &lt; 2e-16 ***</span>
+<span class="co">## age          -0.0034642  0.0006339  -5.465 4.71e-08 ***</span>
+<span class="co">## sexTRUE       0.2705985  0.0069407  38.987  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)2 -0.0829940  0.0132021  -6.286 3.33e-10 ***</span>
+<span class="co">## factor(edu)3 -0.3555287  0.0172194 -20.647  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)4 -0.4162423  0.0098900 -42.087  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)5 -0.4045499  0.0139431 -29.014  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)6 -0.6272203  0.0098347 -63.777  &lt; 2e-16 ***</span>
+<span class="co">## factor(edu)7 -0.6108803  0.0993123  -6.151 7.86e-10 ***</span>
+<span class="co">## factor(edu)8 -0.6734363  0.0155248 -43.378  &lt; 2e-16 ***</span>
+<span class="co">## parttime      1.9666250  0.0158731 123.897  &lt; 2e-16 ***</span>
+<span class="co">## exp           0.0129456  0.0006092  21.251  &lt; 2e-16 ***</span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
-<span class="co">## Residual standard error: 7.302 on 34164 degrees of freedom</span>
-<span class="co">## Multiple R-squared:  0.5797, Adjusted R-squared:  -3.254 </span>
-<span class="co">## F-statistic:  4284 on 11 and 34164 DF,  p-value: &lt; 2.2e-16</span></code></pre>
+<span class="co">## Residual standard error: 9.976 on 17211 degrees of freedom</span>
+<span class="co">## Multiple R-squared:  0.5886, Adjusted R-squared:  -2.902 </span>
+<span class="co">## F-statistic:  2239 on 11 and 17211 DF,  p-value: &lt; 2.2e-16</span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="regression-with-unified-variable">Regression with unified variable<a class="anchor" aria-label="anchor" href="#regression-with-unified-variable"></a>
@@ -388,7 +388,7 @@
 <span class="co">## <span style="color: #BCBCBC;">3</span> 111405    <span style="color: #949494;">&lt;smmry.lm&gt;</span></span>
 <span class="co">## <span style="color: #BCBCBC;">4</span> 112001    <span style="color: #949494;">&lt;smmry.lm&gt;</span></span>
 <span class="co">## <span style="color: #BCBCBC;">5</span> 112002    <span style="color: #949494;">&lt;smmry.lm&gt;</span></span>
-<span class="co">## <span style="color: #BCBCBC;">6</span> 112003    <span style="color: #949494;">&lt;smmry.lm&gt;</span></span></code></pre>
+<span class="co">## <span style="color: #BCBCBC;">6</span> 112004    <span style="color: #949494;">&lt;smmry.lm&gt;</span></span></code></pre>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">oo</span><span class="op">$</span><span class="va">lm</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></code></pre></div>
 <pre><code><span class="co">## </span>
@@ -396,26 +396,149 @@
 <span class="co">## lm(formula = formula_oo, data = ., weights = multiplier * wei_freq_c2c)</span>
 <span class="co">## </span>
 <span class="co">## Weighted Residuals:</span>
-<span class="co">##    Min     1Q Median     3Q    Max </span>
-<span class="co">## -7.277 -1.488 -0.145  1.362  6.923 </span>
+<span class="co">##     Min      1Q  Median      3Q     Max </span>
+<span class="co">## -3.7425 -1.1758 -0.0699  1.0669  4.4043 </span>
 <span class="co">## </span>
 <span class="co">## Coefficients:</span>
 <span class="co">##                   Estimate Std. Error t value Pr(&gt;|t|)    </span>
-<span class="co">## (Intercept)       8.520469   0.682841  12.478  &lt; 2e-16 ***</span>
-<span class="co">## age               0.021666   0.013878   1.561  0.12433    </span>
-<span class="co">## sexTRUE           0.089484   0.119301   0.750  0.45647    </span>
-<span class="co">## factor(edu)2     -0.248113   0.187691  -1.322  0.19177    </span>
-<span class="co">## factor(edu)4     -0.505550   0.255098  -1.982  0.05260 .  </span>
-<span class="co">## parttime          1.758043   0.617628   2.846  0.00624 ** </span>
-<span class="co">## exp               0.001256   0.010965   0.115  0.90920    </span>
-<span class="co">## factor(year)2010  0.617386   0.148847   4.148  0.00012 ***</span>
+<span class="co">## (Intercept)       9.487920   0.439551  21.585   &lt;2e-16 ***</span>
+<span class="co">## age               0.011990   0.008583   1.397   0.1727    </span>
+<span class="co">## sexTRUE           0.330976   0.138828   2.384   0.0236 *  </span>
+<span class="co">## factor(edu)2     -0.168278   0.159079  -1.058   0.2986    </span>
+<span class="co">## factor(edu)4     -0.230820   0.157819  -1.463   0.1540    </span>
+<span class="co">## parttime          0.525614   0.548268   0.959   0.3454    </span>
+<span class="co">## exp               0.013207   0.007056   1.872   0.0710 .  </span>
+<span class="co">## factor(year)2010  0.142234   0.123501   1.152   0.2585    </span>
 <span class="co">## ---</span>
 <span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">## </span>
-<span class="co">## Residual standard error: 2.54 on 54 degrees of freedom</span>
-<span class="co">## Multiple R-squared:  0.4966, Adjusted R-squared:  0.4313 </span>
-<span class="co">## F-statistic:  7.61 on 7 and 54 DF,  p-value: 2.27e-06</span></code></pre>
+<span class="co">## Residual standard error: 2.024 on 30 degrees of freedom</span>
+<span class="co">## Multiple R-squared:  0.8338, Adjusted R-squared:  0.7951 </span>
+<span class="co">## F-statistic: 21.51 on 7 and 30 DF,  p-value: 4.587e-10</span></code></pre>
 </div>
+</div>
+<div class="section level2">
+<h2 id="more-than-2-periods">More than 2 periods<a class="anchor" aria-label="anchor" href="#more-than-2-periods"></a>
+</h2>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span>
+
+<span class="va">occup_2006</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2006</span>,<span class="op">]</span>
+<span class="va">occup_2008</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2008</span>,<span class="op">]</span>
+<span class="va">occup_2010</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2010</span>,<span class="op">]</span>
+<span class="va">occup_2012</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2012</span>,<span class="op">]</span>
+
+<span class="co">### Backward</span>
+<span class="va">occup_simple_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
+  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_2008</span>, new <span class="op">=</span> <span class="va">occup_2010</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
+  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="va">occup_2006</span><span class="op">[[</span><span class="st">"g_new_c2c"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">occup_2006</span><span class="op">[[</span><span class="st">"code"</span><span class="op">]</span><span class="op">]</span>
+
+<span class="co"># the counts could be any of wei_* or their combination</span>
+<span class="va">freq_df</span> <span class="op">&lt;-</span> <span class="va">occup_simple_1</span><span class="op">$</span><span class="va">old</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"g_new_c2c"</span>, <span class="st">"wei_freq_c2c"</span><span class="op">)</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">g_new_c2c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">wei_freq_c2c</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">occup_simple_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
+  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_2006</span>, 
+              new <span class="op">=</span> <span class="va">occup_simple_1</span><span class="op">$</span><span class="va">old</span>, 
+              cat_var <span class="op">=</span> <span class="st">"g_new_c2c"</span>, 
+              time_var <span class="op">=</span> <span class="st">"year"</span>, 
+              freq_df <span class="op">=</span> <span class="va">freq_df</span><span class="op">)</span>,
+  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="va">occup_2006_new</span> <span class="op">&lt;-</span> <span class="va">occup_simple_2</span><span class="op">$</span><span class="va">old</span>
+<span class="va">occup_2008_new</span> <span class="op">&lt;-</span> <span class="va">occup_simple_1</span><span class="op">$</span><span class="va">old</span> <span class="co"># or occup_simple_2$new</span>
+<span class="va">occup_2010_new</span> <span class="op">&lt;-</span> <span class="va">occup_simple_1</span><span class="op">$</span><span class="va">new</span>
+<span class="co"># possibly have to add a few more cols manually, e.g. when applied ml models</span>
+<span class="va">occup_2012_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dummy_c2c_cols.html">dummy_c2c_cols</a></span><span class="op">(</span><span class="va">occup_2012</span>, <span class="st">"code"</span><span class="op">)</span>
+  
+<span class="va">final_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">occup_2006_new</span>, 
+                                  <span class="va">occup_2008_new</span>, 
+                                  <span class="va">occup_2010_new</span>,
+                                  <span class="va">occup_2012_new</span><span class="op">)</span><span class="op">)</span>
+
+<span class="co"># We persist the number of observations</span>
+<span class="va">counts_new</span> <span class="op">&lt;-</span> <span class="va">final_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">wei_freq_c2c</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">counts_old</span> <span class="op">&lt;-</span> <span class="va">occup</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">counts_new</span>, <span class="va">counts_old</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [1] TRUE</span></code></pre>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># counts per each level</span>
+<span class="va">counts_per_level</span> <span class="op">&lt;-</span><span class="va">final_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">g_new_c2c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">wei_freq_c2c</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">g_new_c2c</span>, <span class="va">year</span><span class="op">)</span>
+
+<span class="co">### Forward</span>
+
+<span class="va">occup_simple_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
+  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_2008</span>, new <span class="op">=</span> <span class="va">occup_2010</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
+  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="va">occup_2012</span><span class="op">[[</span><span class="st">"g_new_c2c"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">occup_2012</span><span class="op">[[</span><span class="st">"code"</span><span class="op">]</span><span class="op">]</span>
+
+<span class="co"># the counts could be any of wei_* or their combination</span>
+<span class="va">freq_df</span> <span class="op">&lt;-</span> <span class="va">occup_simple_1</span><span class="op">$</span><span class="va">new</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"g_new_c2c"</span>, <span class="st">"wei_freq_c2c"</span><span class="op">)</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">g_new_c2c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">wei_freq_c2c</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">occup_simple_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
+  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_simple_1</span><span class="op">$</span><span class="va">new</span>, 
+              new <span class="op">=</span> <span class="va">occup_2012</span>,
+              cat_var <span class="op">=</span> <span class="st">"g_new_c2c"</span>, 
+              time_var <span class="op">=</span> <span class="st">"year"</span>, 
+              freq_df <span class="op">=</span> <span class="va">freq_df</span><span class="op">)</span>,
+  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="co"># possibly have to add a few more cols manually, e.g. when applied ml models</span>
+<span class="va">occup_2006_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dummy_c2c_cols.html">dummy_c2c_cols</a></span><span class="op">(</span><span class="va">occup_2006</span>, <span class="st">"code"</span><span class="op">)</span>
+<span class="va">occup_2008_new</span> <span class="op">&lt;-</span> <span class="va">occup_simple_1</span><span class="op">$</span><span class="va">old</span>
+<span class="va">occup_2010_new</span> <span class="op">&lt;-</span> <span class="va">occup_simple_1</span><span class="op">$</span><span class="va">new</span> <span class="co"># or occup_simple_2$old</span>
+<span class="va">occup_2012_new</span> <span class="op">&lt;-</span> <span class="va">occup_simple_2</span><span class="op">$</span><span class="va">new</span>
+  
+<span class="va">final_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">occup_2006_new</span>, 
+                                  <span class="va">occup_2008_new</span>, 
+                                  <span class="va">occup_2010_new</span>,
+                                  <span class="va">occup_2012_new</span><span class="op">)</span><span class="op">)</span>
+
+<span class="co"># We persist the number of observations</span>
+<span class="va">counts_new</span> <span class="op">&lt;-</span> <span class="va">final_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">wei_freq_c2c</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">counts_old</span> <span class="op">&lt;-</span> <span class="va">occup</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+
+<span class="co"># counts are not identical as a few categories levels are not in the trans table</span>
+<span class="co"># lacking levels setdiff(c(occup_2010$code, occup_2012$code), trans$new)</span>
+<span class="co"># we could solve it by adding a "no_cat" level for each of them in the `trans` table</span>
+<span class="co"># trans2 &lt;- rbind(trans, </span>
+<span class="co">#                 data.frame(old = "no_cat", </span>
+<span class="co">#                            new = setdiff(c(occup_2010$code, occup_2012$code), </span>
+<span class="co">#                                          trans$new)))</span>
+<span class="co"># of course the best solution will be to get these mappings from the data provider</span>
+<span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">counts_new</span>, <span class="va">counts_old</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [1] FALSE</span></code></pre>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># counts per each level</span>
+<span class="va">counts_per_level</span> <span class="op">&lt;-</span> <span class="va">final_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">g_new_c2c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">wei_freq_c2c</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">g_new_c2c</span>, <span class="va">year</span><span class="op">)</span></code></pre></div>
 </div>
   </div>
 
@@ -436,7 +559,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
 </div>
 
       </footer>

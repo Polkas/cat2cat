@@ -20,7 +20,7 @@ This function might seems to be a complex at the first glance though it is built
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3.9000</span>
       </span>
     </div>
 
@@ -72,16 +72,15 @@ This function might seems to be a complex at the first glance though it is built
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>data</dt>
-<dd><p>list with 4, 5, 6 or 7 named fields `old` `new` `cat_var` `time_var` and optional `id_var`,`multiplier_var`,`freq_df`</p></dd>
-<dt>mappings</dt>
-<dd><p>list with 2 named fields `trans` `direction`</p></dd>
-<dt>ml</dt>
-<dd><p>list with 3 named fields `method` `features` `args`</p></dd>
-</dl></div>
+    <p></p>
+<p></p>
+<p></p>
+    </div>
     <div id="value">
     <h2>Value</h2>
-    <p>named list with 2 fields old an new - 2 data.frames.
+    
+
+<p>named list with 2 fields old an new - 2 data.frames.
 There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
 Additional columns will be informative only for a one data.frame as we always make a changes to one direction.</p>
     </div>
@@ -93,7 +92,8 @@ Additional columns will be informative only for a one data.frame as we always ma
 <li><p>"time_var" character name of the time variable</p></li>
 <li><p>"id_var" optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.</p></li>
 <li><p>"multiplier_var" optional character name of the multiplier variable - number of replication needed to reproduce the population</p></li>
-<li><p>"freqs_df" optional only for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.</p></li>
+<li><p>"freqs_df" optional - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.
+ If used then the multiplier variable is omit so sb has to apply it in this table.</p></li>
 </ul><p>mappings args</p><ul><li><p>"trans" data.frame with 2 columns - transition table - all categories for cat_var in old and new datasets have to be included.
   First column contains an old encoding and second a new one.
   The transition table should to have a candidate for each category from the targeted for an update period.</p></li>
@@ -155,7 +155,7 @@ If you want to leave NA values add `c(NA, NA)` row to the `trans` table.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
 </div>
 
       </footer></div>
