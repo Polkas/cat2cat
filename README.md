@@ -4,11 +4,11 @@
 [![codecov](https://codecov.io/gh/Polkas/cat2cat/branch/master/graph/badge.svg)](https://codecov.io/gh/Polkas/cat2cat)
 [![Dependencies](https://tinyverse.netlify.com/badge/cat2cat)](https://cran.r-project.org/package=cat2cat)
 
-## Unify a Categorical Variable in a Panel Dataset
+## Handling an Inconsistent Coded Categorical Variable in a Panel Dataset
 
 Unifying an inconsistent coded categorical variable in a panel/longtitudal dataset.  
-There is offered the `cat2cat` algorithm to map a categorical variable according to a transition table between two different time points.
-The main rule is to replicate the observation if it could be assigned to a few categories, then using simple frequencies or statistical methods to approximate probabilities of being assigned to each of them.
+There is offered the `cat2cat` procedure to map a categorical variable according to a transition table between two different time points.
+The transition table should to have a candidate for each category from the targeted for an update period. The main rule is to replicate the observation if it could be assigned to a few categories, then using simple frequencies or statistical methods to approximate probabilities of being assigned to each of them.
 
 **This algorithm was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <doi:10.24425/cejeme.2020.134747>).**
 

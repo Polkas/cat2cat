@@ -194,7 +194,8 @@ occup_back_2008_2010 <- cat2cat(
 # the counts could be any of wei_* or their combination
 freq_df <- occup_back_2008_2010$old[, c("g_new_c2c", "wei_freq_c2c")] %>%
   group_by(g_new_c2c) %>%
-  summarise(counts = round(sum(wei_freq_c2c)))
+  summarise(counts = round(sum(wei_freq_c2c)),
+            .groups = 'drop')
 
 occup_2006[["g_new_c2c"]] <- occup_2006[["code"]]
 
@@ -203,7 +204,7 @@ occup_back_2006_2008 <- cat2cat(
               new = occup_back_2008_2010$old, 
               cat_var = "g_new_c2c", 
               time_var = "year", 
-              freq_df = freq_df),
+              freqs_df = freq_df),
   mappings = list(trans = trans, direction = "backward")
 )
 
@@ -213,18 +214,19 @@ occup_2010_new <- occup_back_2008_2010$new
 # use ml argument when applied ml models
 occup_2012_new <- dummy_c2c_cols(occup_2012, "code")
   
-final_data <- do.call(rbind, list(occup_2006_new, 
-                                  occup_2008_new, 
-                                  occup_2010_new,
-                                  occup_2012_new))
+final_data_back <- do.call(rbind, list(occup_2006_new, 
+                                       occup_2008_new, 
+                                       occup_2010_new,
+                                       occup_2012_new))
+```
 
+```{r}
 # We persist the number of observations
-counts_new <- final_data %>% 
+counts_new <- final_data_back %>% 
   cross_c2c() %>%
   group_by(year) %>% 
   summarise(n = as.integer(round(sum(wei_freq_c2c))),
-            n2 = as.integer(round(sum(wei_cross_c2c))),
-            .groups = 'drop')
+            n2 = as.integer(round(sum(wei_cross_c2c))))
 
 counts_old <- occup %>% 
   group_by(year) %>% 
@@ -233,7 +235,7 @@ counts_old <- occup %>%
 identical(counts_new, counts_old)
 
 # counts per each level
-counts_per_level <- final_data %>% 
+counts_per_level <- final_data_back %>% 
   group_by(year, g_new_c2c) %>% 
   summarise(n = sum(wei_freq_c2c), .groups = 'drop') %>%
   arrange(g_new_c2c, year)
@@ -250,7 +252,8 @@ occup_for_2008_2010 <- cat2cat(
 # the counts could be any of wei_* or their combination
 freq_df <- occup_for_2008_2010$new[, c("g_new_c2c", "wei_freq_c2c")] %>%
   group_by(g_new_c2c) %>%
-  summarise(counts = round(sum(wei_freq_c2c)))
+  summarise(counts = round(sum(wei_freq_c2c)),
+            .groups = 'drop')
 
 occup_2012[["g_new_c2c"]] <- occup_2012[["code"]]
 
@@ -259,7 +262,7 @@ occup_for_2010_2012 <- cat2cat(
               new = occup_2012,
               cat_var = "g_new_c2c", 
               time_var = "year", 
-              freq_df = freq_df),
+              freqs_df = freq_df),
   mappings = list(trans = trans, direction = "forward")
 )
 
@@ -269,18 +272,19 @@ occup_2008_new <- occup_for_2008_2010$old
 occup_2010_new <- occup_for_2008_2010$new # or occup_for_2010_2012$old
 occup_2012_new <- occup_for_2010_2012$new
   
-final_data <- do.call(rbind, list(occup_2006_new, 
-                                  occup_2008_new, 
-                                  occup_2010_new,
-                                  occup_2012_new))
+final_data_for <- do.call(rbind, list(occup_2006_new, 
+                                      occup_2008_new, 
+                                      occup_2010_new,
+                                      occup_2012_new))
+```
 
+```{r}
 # We persist the number of observations
-counts_new <- final_data %>% 
+counts_new <- final_data_for %>% 
   cross_c2c() %>%
   group_by(year) %>% 
   summarise(n = as.integer(round(sum(wei_freq_c2c))),
-            n2 = as.integer(round(sum(wei_cross_c2c))),
-            .groups = 'drop')
+            n2 = as.integer(round(sum(wei_cross_c2c))))
 
 counts_old <- occup %>% 
   group_by(year) %>% 
@@ -297,7 +301,7 @@ counts_old <- occup %>%
 identical(counts_new, counts_old)
 
 # counts per each level
-counts_per_level <- final_data %>% 
+counts_per_level <- final_data_for %>% 
   group_by(year, g_new_c2c) %>% 
   summarise(n = sum(wei_freq_c2c), .groups = 'drop') %>%
   arrange(g_new_c2c, year)
@@ -343,10 +347,9 @@ Example regression model with usage of the unified variable (`g_new_c2c`).
 A separate model for each occupational group.
 
 ```{r}
-occup_old_4 <- occup_2$old %>% 
-                prune_c2c(method = "nonzero") #many prune methods like highest
 formula_oo <- formula(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp + factor(year))
-oo <- rbind(occup_old_4, occup_2$new) %>% 
+oo <- final_data_back %>% 
+  prune_c2c(method = "nonzero") %>% # many prune methods like highest
   group_by(g_new_c2c) %>% 
   do(
     lm = tryCatch(
@@ -358,5 +361,5 @@ oo <- rbind(occup_old_4, occup_2$new) %>%
 
 head(oo)
 
-oo$lm[[1]]
+oo$lm[[2]]
 ```

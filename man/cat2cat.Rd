@@ -12,11 +12,11 @@ cat2cat(
 )
 }
 \arguments{
-\item{data}{list with 4, 5, 6 or 7 named fields `old` `new` `cat_var` `time_var` and optional `id_var`,`multiplier_var`,`freq_df`}
+\item{data}{list with 4, 5, 6 or 7 named fields `old` `new` `cat_var` `time_var` and optional `id_var`,`multiplier_var`,`freq_df`.}
 
-\item{mappings}{list with 2 named fields `trans` `direction`}
+\item{mappings}{list with 2 named fields `trans` `direction`.}
 
-\item{ml}{list with 3 named fields `method` `features` `args`}
+\item{ml}{list with 3 named fields `method` `features` `args`.}
 }
 \value{
 named list with 2 fields old an new - 2 data.frames.
@@ -34,12 +34,13 @@ data args
 \itemize{
  \item{"old"}{ data.frame older time point in a panel}
  \item{"new"} { data.frame more recent time point in a panel}
- \item{"cat_var"}{ character name of the categorical variable. NA values are automatically converted to "NA" strings.}
+ \item{"cat_var"}{ character name of the categorical variable.}
  \item{"time_var"}{ character name of the time variable}
  \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
  \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}
- \item{"freqs_df"}{ optional - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.
- If used then the multiplier variable is omit so sb has to apply it in this table.}
+ \item{"freqs_df"}{ optional - data.frame with 2 columns where first one is category name and second counts.
+ It is optional nevertheless will be very often needed.
+ It will be used to assess the probabilities. The multiplier variable is omit so sb has to apply it in this table.}
 }
 mappings args
 \itemize{
@@ -64,6 +65,7 @@ Method knn is recommended for smaller datasets.
 The transition table should to have a candidate for each category from the targeted for an update period.
 The observation from targeted for an updated period without a matched category from base period is removed.
 If you want to leave NA values add `c(NA, NA)` row to the `trans` table.
+Please check the vignette for more information.
 }
 \examples{
 \dontrun{

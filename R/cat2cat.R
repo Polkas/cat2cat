@@ -85,7 +85,7 @@ cat_apply_freq <- function(to_x, freqs) {
   res <- lapply(
     to_x,
     function(x) {
-      alls <- freqs[, 2][match(x, freqs[, 1])]
+      alls <- freqs[, 2, drop = TRUE][match(x, freqs[, 1, drop = TRUE])]
       ff <- alls / sum(alls, na.rm = T)
       # NA to 0
       ifelse(is.na(ff) | is.nan(ff), 0, ff)
@@ -135,20 +135,21 @@ get_freqs <- function(x, multiplier = NULL) {
 #' Thus for more periods some recursion will be needed.
 #' The \code{prune_c2c} might be needed when we have many interactions to limit growing number of replications.
 #' This function might seems to be a complex at the first glance though it is built to offer a wide range of applications for complex tasks.
-#' @param data list with 4, 5, 6 or 7 named fields `old` `new` `cat_var` `time_var` and optional `id_var`,`multiplier_var`,`freq_df`
-#' @param mappings list with 2 named fields `trans` `direction`
-#' @param ml list with 3 named fields `method` `features` `args`
+#' @param data list with 4, 5, 6 or 7 named fields `old` `new` `cat_var` `time_var` and optional `id_var`,`multiplier_var`,`freq_df`.
+#' @param mappings list with 2 named fields `trans` `direction`.
+#' @param ml list with 3 named fields `method` `features` `args`.
 #' @details
 #' data args
 #' \itemize{
 #'  \item{"old"}{ data.frame older time point in a panel}
 #'  \item{"new"} { data.frame more recent time point in a panel}
-#'  \item{"cat_var"}{ character name of the categorical variable. NA values are automatically converted to "NA" strings.}
+#'  \item{"cat_var"}{ character name of the categorical variable.}
 #'  \item{"time_var"}{ character name of the time variable}
 #'  \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
 #'  \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}
-#'  \item{"freqs_df"}{ optional - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.
-#'  If used then the multiplier variable is omit so sb has to apply it in this table.}
+#'  \item{"freqs_df"}{ optional - data.frame with 2 columns where first one is category name and second counts.
+#'  It is optional nevertheless will be very often needed.
+#'  It will be used to assess the probabilities. The multiplier variable is omit so sb has to apply it in this table.}
 #' }
 #' mappings args
 #' \itemize{
@@ -172,9 +173,11 @@ get_freqs <- function(x, multiplier = NULL) {
 #' @details Without ml section only simple frequencies are assessed.
 #' When ml model is broken then weights from simple frequencies are taken.
 #' Method knn is recommended for smaller datasets.
-#' @note The transition table should to have a candidate for each category from the targeted for an update period.
+#' @note
+#' The transition table should to have a candidate for each category from the targeted for an update period.
 #' The observation from targeted for an updated period without a matched category from base period is removed.
 #' If you want to leave NA values add `c(NA, NA)` row to the `trans` table.
+#' Please check the vignette for more information.
 #' @export
 #' @examples
 #' \dontrun{
@@ -256,13 +259,8 @@ cat2cat <- function(data = list(
 
   if (!is.null(data$id_var)) {
     id_inner <- intersect(data$old[[data$id_var]], data$new[[data$id_var]])
-
-    tos <- merge(data$old[, c(data$id_var, data$cat_var)], data$new[, c(data$id_var, data$cat_var)],
-      by = data$id_var
-    )
-
+    tos <- merge(data$old[, c(data$id_var, data$cat_var)], data$new[, c(data$id_var, data$cat_var)], by = data$id_var)
     colnames(tos) <- c(data$id_var, "cat_old", "cat_new")
-
     if (mappings$direction == "forward") {
       id_outer <- setdiff(data$new[[data$id_var]], data$old[[data$id_var]])
       tos_df <- tos[, c(data$id_var, "cat_old")]
@@ -291,61 +289,62 @@ cat2cat <- function(data = list(
 
   cats_base <- cat_base_year[[data$cat_var]]
   cats_target <- cat_target_year[[data$cat_var]]
+  unique_target_cats <- unique(cats_target)
 
   if (!is.null(data$id_var)) {
-    cat_mid$index_c2c <- seq_len(nrow(cat_mid))
+    cat_mid <- dummy_c2c_cols(cat_mid, data$cat_var)
     cat_mid$g_new_c2c <- tos_df$cat[match(cat_mid[[data$id_var]], tos_df$id)]
-    cat_mid$wei_freq_c2c <- 1
-    cat_mid$rep_c2c <- 1
-    cat_mid$wei_naive_c2c <- 1
   }
 
-  multi_base <- if (!is.null(data$multiplier_var)) {
-    cat_base_year[[data$multiplier_var]]
-  } else {
-    NULL
-  }
-
-  stopifnot(is.null(data$freq_df) || all(data$freqs_df[, 1] %in% cats_base))
-
-  fre <- if (!is.null(data$freqs_df)) {
+  fre <- if (is.data.frame(data$freqs_df)) {
     data$freqs_df
   } else {
+    multi_base <- if (!is.null(data$multiplier_var)) {
+      cat_base_year[[data$multiplier_var]]
+    } else {
+      NULL
+    }
     get_freqs(cats_base, multi_base)
   }
-
   freqs_2 <- cat_apply_freq(mapp, fre)
 
+  # Replicate and apply freq probabilities
   g_vec <- mapp[match(cats_target, names(mapp))]
   rep_vec <- unname(lengths(g_vec))
   wei_vec <- freqs_2[match(cats_target, names(freqs_2))]
   wei_vec <- unlist(wei_vec, use.names = FALSE)
   cat_target_year$index_c2c <- seq_len(nrow(cat_target_year))
   cat_target_rep <- cat_target_year[rep(seq_len(nrow(cat_target_year)), times = rep_vec), ]
+  cat_target_rep_cats <- cat_target_rep[[data$cat_var]]
+
+  # Target
   cat_target_rep$g_new_c2c <- unlist(g_vec, use.names = FALSE)
   cat_target_rep$wei_freq_c2c <- wei_vec
   cat_target_rep$rep_c2c <- rep(rep_vec, times = rep_vec)
   cat_target_rep$wei_naive_c2c <- 1 / cat_target_rep$rep_c2c
-
+  # Base
   cat_base_year <- dummy_c2c_cols(cat_base_year, data$cat_var)
 
+  # ML
   if (sum(vapply(ml, Negate(is.null), logical(1))) >= 2) {
     stopifnot(all(c("method", "features") %in% names(ml)))
     stopifnot(all(ml$features %in% colnames(cat_target_rep)))
     stopifnot(all(vapply(cat_target_rep[, ml$features], function(x) is.numeric(x) || is.logical(x), logical(1))))
     stopifnot(all(ml$method %in% c("knn", "rf", "lda")))
 
-    unique_target_cats <- unique(cat_target_rep[[data$cat_var]])
     features <- unique(ml$features)
     methods <- unique(ml$method)
     ml_names <- paste0("wei_", methods, "_c2c")
 
-    cat_base_year[, ml_names] <- 1
-    if (!is.null(data$id_var)) cat_mid[, ml_names] <- 1
+    if (!all(ml_names %in% colnames(cat_base_year))) {
+      cat_base_year[, ml_names] <- 1
+      if (!is.null(data$id_var)) cat_mid[, ml_names] <- 1
+    }
+
     cat_target_rep[, ml_names] <- cat_target_rep["wei_freq_c2c"]
 
     cat_base_year_g <- split(cat_base_year, factor(cat_base_year[[data$cat_var]], exclude = NULL))
-    cat_target_rep_cat_c2c <- split(cat_target_rep, factor(cat_target_rep[[data$cat_var]], exclude = NULL))
+    cat_target_rep_cat_c2c <- split(cat_target_rep, factor(cat_target_rep_cats, exclude = NULL))
 
     for (cat in unique_target_cats) {
       try(
