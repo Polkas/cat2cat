@@ -1,6 +1,6 @@
 Package: cat2cat
 Title: Unify a Categorical Variable in a Panel Dataset
-Version: 0.3.3
+Version: 0.3.3.9000
 Authors@R: person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre"))
 Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
 Description: 
@@ -27,4 +27,4 @@ Suggests:
   dplyr
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0

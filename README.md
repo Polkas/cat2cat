@@ -39,5 +39,7 @@ occup_simple <- cat2cat(
 )
 ```
 
+**The 4 period example is presented in the "Get Started" vignette.**
+
 
 

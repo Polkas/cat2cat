@@ -7,7 +7,7 @@
 #'
 #' @usage occup
 #'
-#' @format A data frame with around 20000 observations and 12 variables.
+#' @format A data frame with around 70000 observations and 12 variables.
 #' \describe{
 #' \item{id}{	integer	id}
 #' \item{age}{ numeric age of a subject}
@@ -35,7 +35,7 @@
 #'
 #' @usage occup_small
 #'
-#' @format A data frame with around 5000 observations and 12 variables.
+#' @format A data frame with around 8000 observations and 12 variables.
 #' \describe{
 #' \item{id}{	integer	id}
 #' \item{age}{ numeric age of a subject}
@@ -54,7 +54,7 @@
 #' @examples
 #' set.seed(1234)
 #' data(occup)
-#' occup_small <- occup[sort(sample(nrow(occup), 5000)), ]
+#' occup_small <- occup[sort(sample(nrow(occup), 8000)), ]
 "occup_small"
 
 #' trans dataset containing transitions between old (2008) and new (2010) occupational codes.

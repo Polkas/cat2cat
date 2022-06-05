@@ -38,7 +38,8 @@ data args
  \item{"time_var"}{ character name of the time variable}
  \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
  \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}
- \item{"freqs_df"}{ optional only for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
+ \item{"freqs_df"}{ optional - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.
+ If used then the multiplier variable is omit so sb has to apply it in this table.}
 }
 mappings args
 \itemize{

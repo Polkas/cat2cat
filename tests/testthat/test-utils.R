@@ -23,3 +23,8 @@ testthat::test_that("cat_apply_freq", {
   expect_identical(length(mappings_freq), 4L)
   expect_equal(as.numeric(lengths(mappings_freq)), c(3, 2, 1, 2))
 })
+
+testthat::test_that("dummy_c2c_cols", {
+  expect_identical(c(colnames(airquality), "index_c2c", "g_new_c2c", "wei_freq_c2c", "rep_c2c", "wei_naive_c2c"),
+                   colnames(dummy_c2c_cols(airquality, "Month")))
+})

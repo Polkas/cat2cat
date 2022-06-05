@@ -147,7 +147,8 @@ get_freqs <- function(x, multiplier = NULL) {
 #'  \item{"time_var"}{ character name of the time variable}
 #'  \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
 #'  \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}
-#'  \item{"freqs_df"}{ optional only for advanced users - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.}
+#'  \item{"freqs_df"}{ optional - data.frame with 2 columns where first one is category name and second counts which will be used to assess the probabilities.
+#'  If used then the multiplier variable is omit so sb has to apply it in this table.}
 #' }
 #' mappings args
 #' \itemize{
@@ -327,11 +328,7 @@ cat2cat <- function(data = list(
   cat_target_rep$rep_c2c <- rep(rep_vec, times = rep_vec)
   cat_target_rep$wei_naive_c2c <- 1 / cat_target_rep$rep_c2c
 
-  cat_base_year$index_c2c <- seq_len(nrow(cat_base_year))
-  cat_base_year$g_new_c2c <- cats_base
-  cat_base_year$wei_freq_c2c <- 1
-  cat_base_year$rep_c2c <- 1
-  cat_base_year$wei_naive_c2c <- 1
+  cat_base_year <- dummy_c2c_cols(cat_base_year, data$cat_var)
 
   if (sum(vapply(ml, Negate(is.null), logical(1))) >= 2) {
     assert_that(all(c("method", "features") %in% names(ml)))
@@ -412,8 +409,7 @@ cat2cat <- function(data = list(
                 pp[ll] <- 0
               }
               pp[["index_c2c"]] <- base_ml[["index_c2c"]][cc]
-              index_c2c <- NULL
-              pp_stack <- utils::stack(pp, select = -index_c2c)
+              pp_stack <- utils::stack(pp[, -ncol(pp)])
               res <- cbind(pp_stack, index_c2c = rep(pp$index_c2c, ncol(pp) - 1))
               colnames(res) <- c("val", "g_new_c2c", "index_c2c")
               ress <- merge(target_data_cat[, c("index_c2c", "g_new_c2c")], res, by = c("index_c2c", "g_new_c2c"), all.x = TRUE, sort = FALSE)
@@ -492,12 +488,16 @@ prune_c2c <- function(df, index = "index_c2c", column = "wei_freq_c2c", method =
 
   df <- df[order(df[[index]]), ]
 
-  switch(method,
+  df <- switch(method,
     nonzero = df[df[[column]] > 0, ],
     highest1 = df[unlist(tapply(df[[column]], df[[index]], function(x) seq_along(x) == which.max(x))), ],
     highest = df[unlist(tapply(df[[column]], df[[index]], function(x) x == max(x))), ],
     morethan = df[df[[column]] > percent / 100, ]
   )
+
+  df[[column]] <- unlist(tapply(df[[column]], df[[index]], function(x) x / sum(x)))
+
+  df
 }
 
 #' a function to make a combination of weights from different methods by each row
@@ -550,6 +550,38 @@ cross_c2c <- function(df,
   weis <- weis / sum(weis)
 
   df[["wei_cross_c2c"]] <- as.vector(rowSums(t(t(as.matrix(df[, cols])) * weis), na.rm = na.rm))
+
+  df
+}
+
+
+#' Add default cat2cat columns to a `data.frame`
+#' @description a utils function to add default cat2cat columns to a `data.frame`.
+#' It will be useful e.g. for a boarder periods which will not have additional `cat2cat` columns.
+#' @param df `data.frame`
+#' @param cat_var `character` a categorical variable name
+#' @export
+#' @examples
+#' data(occup_small)
+#' data(occup)
+#' data(trans)
+#'
+#' occup_old <- occup_small[occup_small$year == 2008, ]
+#' dummy_c2c_cols(occup_old, "code")
+dummy_c2c_cols <- function(df, cat_var) {
+  stopifnot(is.data.frame(df))
+  stopifnot(length(cat_var) == 1 && is.character(cat_var))
+  stopifnot(cat_var %in% colnames(df))
+
+  if (all(c("index_c2c", "g_new_c2c", "wei_freq_c2c", "rep_c2c", "wei_naive_c2c") %in% colnames(df))) {
+    return(df)
+  }
+
+  df$index_c2c <- seq_len(nrow(df))
+  df$g_new_c2c <- df[[cat_var]]
+  df$wei_freq_c2c <- 1
+  df$rep_c2c <- 1
+  df$wei_naive_c2c <- 1
 
   df
 }

@@ -5,7 +5,7 @@
 \alias{occup_small}
 \title{Occupational dataset - small one}
 \format{
-A data frame with around 5000 observations and 12 variables.
+A data frame with around 8000 observations and 12 variables.
 \describe{
 \item{id}{	integer	id}
 \item{age}{ numeric age of a subject}
@@ -38,6 +38,6 @@ occupational dataset
 \examples{
 set.seed(1234)
 data(occup)
-occup_small <- occup[sort(sample(nrow(occup), 5000)), ]
+occup_small <- occup[sort(sample(nrow(occup), 8000)), ]
 }
 \keyword{datasets}
