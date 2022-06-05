@@ -1,6 +1,7 @@
 # cat2cat 0.3.3.9000
 
 * `prune_c2c` is now automatically scale the weights to still sum to one for each subject.
+* new function `dummy_c2c_cols` to add a default `cat2cat` columns to a `data.frame`.
 * `occup`and `occup_small` datasets have 4 periods now.
 * add the 4 period example to the vignette.
 

@@ -35,11 +35,14 @@ More precisely for each observation we look across a transition table to check h
 For each observation that was replicated, the probabilities have to add up to one.
 The algorithm distinguishes different mechanics for panel data with and without unique identifiers.
 
+There were prepared two graphs for forward and backward mapping.
+These graphs present how `cat2cat::cat2cat` functions works, in this case for a panel dataset without the unique identifiers and only two periods.
+
 ## Core elements
 
 There should be highlighted 3 important elements:
 
-1. Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers, aggregate data vs unit data.
+1. Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers, aggregate data vs non-aggragate data.
 2. Transition table. 
 3. Direction of a transition, forward or backward - a new or an old encoding as a base one.
 
@@ -150,6 +153,132 @@ occup_old_mix_highest1 <- occup_2_mix$old %>%
                 prune_c2c(.,column = "wei_cross_c2c", method = "highest1") 
 ```
 
+## More than 2 periods
+
+When only three periods have to be mapped, the middle one
+might be used as the base one. However, when we have to map many time points,
+cat2cat has to be used recursively when pruning methods might be
+needed to limit the growing number of replications.
+
+```{r, message=FALSE, warning=FALSE}
+data(occup)
+data(trans)
+
+occup_2006 <- occup[occup$year == 2006,]
+occup_2008 <- occup[occup$year == 2008,]
+occup_2010 <- occup[occup$year == 2010,]
+occup_2012 <- occup[occup$year == 2012,]
+
+### Backward
+occup_simple_1 <- cat2cat(
+  data = list(old = occup_2008, new = occup_2010, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "backward")
+)
+
+occup_2006[["g_new_c2c"]] <- occup_2006[["code"]]
+
+# the counts could be any of wei_* or their combination
+freq_df <- occup_simple_1$old[, c("g_new_c2c", "wei_freq_c2c")] %>%
+  group_by(g_new_c2c) %>%
+  summarise(counts = round(sum(wei_freq_c2c)))
+
+occup_simple_2 <- cat2cat(
+  data = list(old = occup_2006, 
+              new = occup_simple_1$old, 
+              cat_var = "g_new_c2c", 
+              time_var = "year", 
+              freq_df = freq_df),
+  mappings = list(trans = trans, direction = "backward")
+)
+
+occup_2006_new <- occup_simple_2$old
+occup_2008_new <- occup_simple_1$old # or occup_simple_2$new
+occup_2010_new <- occup_simple_1$new
+# possibly have to add a few more cols manually, e.g. when applied ml models
+occup_2012_new <- dummy_c2c_cols(occup_2012, "code")
+  
+final_data <- do.call(rbind, list(occup_2006_new, 
+                                  occup_2008_new, 
+                                  occup_2010_new,
+                                  occup_2012_new))
+
+# We persist the number of observations
+counts_new <- final_data %>% 
+  group_by(year) %>% 
+  summarise(n = as.integer(round(sum(wei_freq_c2c))), .groups = 'drop')
+
+counts_old <- occup %>% 
+  group_by(year) %>% 
+  summarise(n = n(), .groups = 'drop')
+
+identical(counts_new, counts_old)
+
+# counts per each level
+counts_per_level <-final_data %>% 
+  group_by(year, g_new_c2c) %>% 
+  summarise(n = sum(wei_freq_c2c), .groups = 'drop') %>%
+  arrange(g_new_c2c, year)
+
+### Forward
+
+occup_simple_1 <- cat2cat(
+  data = list(old = occup_2008, new = occup_2010, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "forward")
+)
+
+occup_2012[["g_new_c2c"]] <- occup_2012[["code"]]
+
+# the counts could be any of wei_* or their combination
+freq_df <- occup_simple_1$new[, c("g_new_c2c", "wei_freq_c2c")] %>%
+  group_by(g_new_c2c) %>%
+  summarise(counts = round(sum(wei_freq_c2c)))
+
+occup_simple_2 <- cat2cat(
+  data = list(old = occup_simple_1$new, 
+              new = occup_2012,
+              cat_var = "g_new_c2c", 
+              time_var = "year", 
+              freq_df = freq_df),
+  mappings = list(trans = trans, direction = "forward")
+)
+
+# possibly have to add a few more cols manually, e.g. when applied ml models
+occup_2006_new <- dummy_c2c_cols(occup_2006, "code")
+occup_2008_new <- occup_simple_1$old
+occup_2010_new <- occup_simple_1$new # or occup_simple_2$old
+occup_2012_new <- occup_simple_2$new
+  
+final_data <- do.call(rbind, list(occup_2006_new, 
+                                  occup_2008_new, 
+                                  occup_2010_new,
+                                  occup_2012_new))
+
+# We persist the number of observations
+counts_new <- final_data %>% 
+  group_by(year) %>% 
+  summarise(n = as.integer(round(sum(wei_freq_c2c))), .groups = 'drop')
+
+counts_old <- occup %>% 
+  group_by(year) %>% 
+  summarise(n = n(), .groups = 'drop')
+
+# counts are not identical as a few categories levels are not in the trans table
+# lacking levels setdiff(c(occup_2010$code, occup_2012$code), trans$new)
+# we could solve it by adding a "no_cat" level for each of them in the `trans` table
+# trans2 <- rbind(trans, 
+#                 data.frame(old = "no_cat", 
+#                            new = setdiff(c(occup_2010$code, occup_2012$code), 
+#                                          trans$new)))
+# of course the best solution will be to get these mappings from the data provider
+identical(counts_new, counts_old)
+
+# counts per each level
+counts_per_level <- final_data %>% 
+  group_by(year, g_new_c2c) %>% 
+  summarise(n = sum(wei_freq_c2c), .groups = 'drop') %>%
+  arrange(g_new_c2c, year)
+```
+
 ## Regression
 
 The replication process is neutral for calculating at least the first 2 central moments for all variables.
@@ -207,125 +336,3 @@ head(oo)
 
 oo$lm[[1]]
 ```
-
-## More than 2 periods
-
-```{r}
-data(occup)
-data(trans)
-
-occup_2006 <- occup[occup$year == 2006,]
-occup_2008 <- occup[occup$year == 2008,]
-occup_2010 <- occup[occup$year == 2010,]
-occup_2012 <- occup[occup$year == 2012,]
-
-### Backward
-occup_simple_1 <- cat2cat(
-  data = list(old = occup_2008, new = occup_2010, cat_var = "code", time_var = "year"),
-  mappings = list(trans = trans, direction = "backward")
-)
-
-occup_2006[["g_new_c2c"]] <- occup_2006[["code"]]
-
-# the counts could be any of wei_* or their combination
-freq_df <- occup_simple_1$old[, c("g_new_c2c", "wei_freq_c2c")] %>%
-  group_by(g_new_c2c) %>%
-  summarise(counts = round(sum(wei_freq_c2c)))
-
-occup_simple_2 <- cat2cat(
-  data = list(old = occup_2006, 
-              new = occup_simple_1$old, 
-              cat_var = "g_new_c2c", 
-              time_var = "year", 
-              freq_df = freq_df),
-  mappings = list(trans = trans, direction = "backward")
-)
-
-occup_2006_new <- occup_simple_2$old
-occup_2008_new <- occup_simple_1$old # or occup_simple_2$new
-occup_2010_new <- occup_simple_1$new
-# possibly have to add a few more cols manually, e.g. when applied ml models
-occup_2012_new <- dummy_c2c_cols(occup_2012, "code")
-  
-final_data <- do.call(rbind, list(occup_2006_new, 
-                                  occup_2008_new, 
-                                  occup_2010_new,
-                                  occup_2012_new))
-
-# We persist the number of observations
-counts_new <- final_data %>% 
-  group_by(year) %>% 
-  summarise(n = as.integer(round(sum(wei_freq_c2c))))
-
-counts_old <- occup %>% 
-  group_by(year) %>% 
-  summarise(n = n())
-
-identical(counts_new, counts_old)
-
-# counts per each level
-counts_per_level <-final_data %>% 
-  group_by(year, g_new_c2c) %>% 
-  summarise(n = sum(wei_freq_c2c)) %>%
-  arrange(g_new_c2c, year)
-
-### Forward
-
-occup_simple_1 <- cat2cat(
-  data = list(old = occup_2008, new = occup_2010, cat_var = "code", time_var = "year"),
-  mappings = list(trans = trans, direction = "forward")
-)
-
-occup_2012[["g_new_c2c"]] <- occup_2012[["code"]]
-
-# the counts could be any of wei_* or their combination
-freq_df <- occup_simple_1$new[, c("g_new_c2c", "wei_freq_c2c")] %>%
-  group_by(g_new_c2c) %>%
-  summarise(counts = round(sum(wei_freq_c2c)))
-
-occup_simple_2 <- cat2cat(
-  data = list(old = occup_simple_1$new, 
-              new = occup_2012,
-              cat_var = "g_new_c2c", 
-              time_var = "year", 
-              freq_df = freq_df),
-  mappings = list(trans = trans, direction = "forward")
-)
-
-# possibly have to add a few more cols manually, e.g. when applied ml models
-occup_2006_new <- dummy_c2c_cols(occup_2006, "code")
-occup_2008_new <- occup_simple_1$old
-occup_2010_new <- occup_simple_1$new # or occup_simple_2$old
-occup_2012_new <- occup_simple_2$new
-  
-final_data <- do.call(rbind, list(occup_2006_new, 
-                                  occup_2008_new, 
-                                  occup_2010_new,
-                                  occup_2012_new))
-
-# We persist the number of observations
-counts_new <- final_data %>% 
-  group_by(year) %>% 
-  summarise(n = as.integer(round(sum(wei_freq_c2c))))
-
-counts_old <- occup %>% 
-  group_by(year) %>% 
-  summarise(n = n())
-
-# counts are not identical as a few categories levels are not in the trans table
-# lacking levels setdiff(c(occup_2010$code, occup_2012$code), trans$new)
-# we could solve it by adding a "no_cat" level for each of them in the `trans` table
-# trans2 <- rbind(trans, 
-#                 data.frame(old = "no_cat", 
-#                            new = setdiff(c(occup_2010$code, occup_2012$code), 
-#                                          trans$new)))
-# of course the best solution will be to get these mappings from the data provider
-identical(counts_new, counts_old)
-
-# counts per each level
-counts_per_level <- final_data %>% 
-  group_by(year, g_new_c2c) %>% 
-  summarise(n = sum(wei_freq_c2c)) %>%
-  arrange(g_new_c2c, year)
-```
-

@@ -23,9 +23,9 @@
 #' plot_c2c(occup_2$old, type = c("hist"))
 #' plot_c2c(occup_2$old, type = c("bar"))
 plot_c2c <- function(data, weis = "wei_freq_c2c", type = c("both", "hist", "bar")) {
-  assert_that(is.data.frame(data))
-  assert_that(!is.null(data[[weis]]), msg = paste("There are no cat2cat additional columns/variables like", weis))
-  assert_that(nrow(data) != sum(data[[weis]]), msg = "There are no replications. Probably you should switch between old/new period.")
+  stopifnot(is.data.frame(data))
+  stopifnot("There are no cat2cat additional wei_* columns/variables" = !is.null(data[[weis]]))
+  stopifnot("There are no replications. Probably you should switch between old/new period." = nrow(data) != sum(data[[weis]]))
   type <- match.arg(type)
 
   if (type == "both") {

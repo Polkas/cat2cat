@@ -37,7 +37,7 @@
 #' @export
 #'
 summary_c2c <- function(x, df_old, df_new = x$df.residual) {
-  assert_that(inherits(x, "lm"))
+  stopifnot(inherits(x, "lm"))
   ss <- summary(x)
   cc <- ss$coefficients
   correct <- sqrt(df_new / df_old)
