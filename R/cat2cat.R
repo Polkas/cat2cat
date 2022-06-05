@@ -312,13 +312,17 @@ cat2cat <- function(data = list(
     data$freqs_df
   } else if ("wei_freq_c2c" %in% colnames(cat_base_year)) {
     if (!is.null(data$multiplier_var)) {
-      stats::aggregate(cat_base_year[["wei_freq_c2c"]] * cat_base_year[[data$multiplier_var]],
-              list(g = cat_base_year[[data$cat_var]]),
-              function(x) round(sum(x, na.rm = TRUE)))
+      stats::aggregate(
+        cat_base_year[["wei_freq_c2c"]] * cat_base_year[[data$multiplier_var]],
+        list(g = cat_base_year[[data$cat_var]]),
+        function(x) round(sum(x, na.rm = TRUE))
+      )
     } else {
-      stats::aggregate(cat_base_year[["wei_freq_c2c"]],
-             list(g = cat_base_year[[data$cat_var]]),
-             function(x) round(sum(x, na.rm = TRUE)))
+      stats::aggregate(
+        cat_base_year[["wei_freq_c2c"]],
+        list(g = cat_base_year[[data$cat_var]]),
+        function(x) round(sum(x, na.rm = TRUE))
+      )
     }
   } else {
     if (!is.null(data$multiplier_var)) {

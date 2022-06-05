@@ -72,8 +72,10 @@ expect_true((all(occup_3$old$wei_freq_c2c <= 1 & occup_3$old$wei_freq_c2c >= 0))
 expect_false(identical(occup_3$old$wei_freq_c2c, occup_1a$old$wei_freq_c2c))
 expect_identical(nrow(occup_old), occup_3$old %>% prune_c2c(method = "highest1") %>% nrow())
 
-expect_equal(nrow(occup_old),
-             occup_3$old %>% prune_c2c(method = "morethan", percent = 0.2) %>% pull("wei_freq_c2c") %>% sum())
+expect_equal(
+  nrow(occup_old),
+  occup_3$old %>% prune_c2c(method = "morethan", percent = 0.2) %>% pull("wei_freq_c2c") %>% sum()
+)
 
 na_row <- occup_old[1, ]
 na_row$code <- NA

@@ -51,7 +51,8 @@ There should be highlighted 3 important elements:
 3. Direction of a transition, forward or backward - a new or an old encoding as a base one.
 
 ## Manual transitions
-### Aggregate dataset
+
+Mainly for aggregate datasets.
 
 ```{r}
 library(cat2cat)
@@ -65,10 +66,10 @@ agg_new <- verticals[verticals$v_date == "2020-05-01", ]
 ## usually we want to have old or new representation
 
 agg <- cat2cat_agg(data = list(old = agg_old, 
-                              new = agg_new, 
-                              cat_var = "vertical", 
-                              time_var = "v_date",
-                              freq_var = "counts"), 
+                               new = agg_new, 
+                               cat_var = "vertical", 
+                               time_var = "v_date",
+                               freq_var = "counts"), 
                   Automotive %<% c(Automotive1, Automotive2),
                   c(Kids1, Kids2) %>% c(Kids),
                   Home %>% c(Home, Supermarket))
@@ -84,9 +85,7 @@ group_by(vertical) %>%
 summarise(sales = sum(sales*prop_c2c), counts = sum(counts*prop_c2c), v_date = first(v_date))
 ```
 
-## Automatic using trans table
-
-### Dataset with unique identifiers
+## Dataset with unique identifiers
 
 ```{r}
 ## the ean variable is a unique identifier
@@ -112,7 +111,7 @@ verts <- cat2cat(
 )
 ```
 
-### Dataset without unique identifiers
+## Dataset without unique identifiers
 
 ```{r}
 data(occup)
@@ -163,7 +162,7 @@ occup_old_mix_highest1 <- occup_2_mix$old %>%
                 prune_c2c(.,column = "wei_cross_c2c", method = "highest1") 
 ```
 
-## More than 2 periods
+### More than 2 periods
 
 When we have to map more than 2 time points, then
 cat2cat has to be used recursively. 
@@ -189,7 +188,7 @@ occup_2010 <- occup[occup$year == 2010,]
 occup_2012 <- occup[occup$year == 2012,]
 ```
 
-### Backward
+#### Backward
 
 ```{r}
 occup_back_2008_2010 <- cat2cat(
@@ -247,7 +246,7 @@ counts_per_level <- final_data_back %>%
   arrange(g_new_c2c, year)
 ```
 
-### Forward
+#### Forward
 
 ```{r}
 occup_for_2008_2010 <- cat2cat(
@@ -313,7 +312,7 @@ counts_per_level <- final_data_for %>%
   arrange(g_new_c2c, year)
 ```
 
-### Backward and ML
+#### Backward and ML
 
 ```{r}
 occup_back_2008_2010 <- cat2cat(
@@ -383,7 +382,7 @@ This is because for each observation which was replicated, probabilities sum to 
 If we are removing non-zero probability observations then replication probabilities have to be reweighed to still sum to one.
 Important note is that removing non zero probability observations should be done only if needed, as it impact the counts of categorical variable levels. More preciously removing non-zero weights will influence the regression model if we will use the unified categorical variable.
 
-### Regression
+### Regression - neutral impact
 
 The next 3 regressions have the same results.
 

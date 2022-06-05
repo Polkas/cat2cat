@@ -25,6 +25,8 @@ testthat::test_that("cat_apply_freq", {
 })
 
 testthat::test_that("dummy_c2c_cols", {
-  expect_identical(c(colnames(airquality), "index_c2c", "g_new_c2c", "wei_freq_c2c", "rep_c2c", "wei_naive_c2c"),
-                   colnames(dummy_c2c_cols(airquality, "Month")))
+  expect_identical(
+    c(colnames(airquality), "index_c2c", "g_new_c2c", "wei_freq_c2c", "rep_c2c", "wei_naive_c2c"),
+    colnames(dummy_c2c_cols(airquality, "Month"))
+  )
 })
