@@ -35,6 +35,37 @@ More precisely for each observation we look across a transition table to check h
 For each observation that was replicated, the probabilities have to add up to one.
 The algorithm distinguishes different mechanics for panel data with and without unique identifiers.
 
+## Core elements
+
+There are 3 important elements:
+
+1. Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers and aggregate data vs non-aggragate data.
+2. Transition table, possibly a few for longer panels. 
+3. Direction of a transition, forward or backward - a new or an old encoding as a base one.
+
+## Data
+
+```{r, message=FALSE, warning=FALSE}
+library(cat2cat)
+library(dplyr)
+
+data(occup)
+data(trans)
+data(verticals)
+## the ean variable is a unique identifier
+data(verticals2)
+
+occup_old <- occup[occup$year == 2008,]
+occup_new <- occup[occup$year == 2010,]
+
+occup_2006 <- occup[occup$year == 2006,]
+occup_2008 <- occup[occup$year == 2008,]
+occup_2010 <- occup[occup$year == 2010,]
+occup_2012 <- occup[occup$year == 2012,]
+```
+
+## Dataset without unique identifiers
+
 There were prepared two graphs for forward and backward mapping.
 These graphs present how the `cat2cat::cat2cat` function works, in this case under a panel dataset without the unique identifiers and only two periods.
 
@@ -42,84 +73,7 @@ These graphs present how the `cat2cat::cat2cat` function works, in this case und
 
 ![Forward Mapping](https://raw.githubusercontent.com/Polkas/cat2cat/master/man/figures/for_nom.png)
 
-## Core elements
-
-There should be highlighted 3 important elements:
-
-1. Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers, aggregate data vs non-aggragate data.
-2. Transition table, possibly a few for longer panels. 
-3. Direction of a transition, forward or backward - a new or an old encoding as a base one.
-
-## Manual transitions
-
-Mainly for aggregate datasets.
-
-```{r}
-library(cat2cat)
-library(dplyr)
-
-data(verticals)
-agg_old <- verticals[verticals$v_date == "2020-04-01", ]
-agg_new <- verticals[verticals$v_date == "2020-05-01", ]
-
-## cat2cat_agg - could map in both directions at once although 
-## usually we want to have old or new representation
-
-agg <- cat2cat_agg(data = list(old = agg_old, 
-                               new = agg_new, 
-                               cat_var = "vertical", 
-                               time_var = "v_date",
-                               freq_var = "counts"), 
-                  Automotive %<% c(Automotive1, Automotive2),
-                  c(Kids1, Kids2) %>% c(Kids),
-                  Home %>% c(Home, Supermarket))
-            
-## possible processing
-  
-agg$old %>% 
-group_by(vertical) %>% 
-summarise(sales = sum(sales*prop_c2c), counts = sum(counts*prop_c2c), v_date = first(v_date))
-
-agg$new %>% 
-group_by(vertical) %>%
-summarise(sales = sum(sales*prop_c2c), counts = sum(counts*prop_c2c), v_date = first(v_date))
-```
-
-## Dataset with unique identifiers
-
-```{r}
-## the ean variable is a unique identifier
-data(verticals2)
-
-vert_old <- verticals2[verticals2$v_date == "2020-04-01", ]
-vert_new <- verticals2[verticals2$v_date == "2020-05-01", ]
-
-## get transitions table
-trans_v <- vert_old %>% 
-inner_join(vert_new, by = "ean") %>%
-select(vertical.x, vertical.y) %>% distinct()
-```
-
-```{r}
-# 
-## cat2cat
-## it is important to set id_var as then we merging categories 1 to 1 
-## for this identifier which exists in both periods.
-verts <- cat2cat(
-  data = list(old = vert_old, new = vert_new, id_var = "ean", cat_var = "vertical", time_var = "v_date"),
-  mappings = list(trans = trans_v, direction = "backward")
-)
-```
-
-## Dataset without unique identifiers
-
-```{r}
-data(occup)
-data(trans)
-
-occup_old <- occup[occup$year == 2008,]
-occup_new <- occup[occup$year == 2010,]
-```
+### Example - 2 periods
 
 ```{r}
 ## cat2cat
@@ -140,10 +94,18 @@ occup_2 <- cat2cat(
             features = c("age", "sex", "edu", "exp", "parttime", "salary"), 
             args = list(k = 10))
 )
+```
 
+`plot_c2c` offers a summary of the replication process.
+
+```{r}
 # summary_plot
 plot_c2c(occup_2$old, type = c("both"))
+```
 
+Example for the 2 period panel dataset.
+
+```{r}
 # mix of methods
 occup_2_mix <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
@@ -154,15 +116,20 @@ occup_2_mix <- cat2cat(
             features = c("age", "sex", "edu", "exp", "parttime", "salary"), 
             args = list(k = 10, ntree = 50))
 )
-# correlation between ml models and simple fequencies
-occup_2_mix$old %>% select(wei_knn_c2c, wei_rf_c2c, wei_lda_c2c, wei_freq_c2c) %>% cor()
 # cross all methods and subset one highest probability category for each subject
 occup_old_mix_highest1 <- occup_2_mix$old %>% 
                 cross_c2c(.) %>% 
                 prune_c2c(.,column = "wei_cross_c2c", method = "highest1") 
 ```
 
-### More than 2 periods
+Correlations between different methods of assesing weights are presented.
+
+```{r}
+# correlation between ml models and simple fequencies
+occup_2_mix$old %>% select(wei_knn_c2c, wei_rf_c2c, wei_lda_c2c, wei_freq_c2c) %>% cor()
+```
+
+### Example - More than 2 periods
 
 When we have to map more than 2 time points, then
 cat2cat has to be used recursively. 
@@ -178,17 +145,9 @@ growing number of observations.
 
 Example with 4 period and only one mapping table:
 
-```{r, message=FALSE, warning=FALSE}
-data(occup)
-data(trans)
-
-occup_2006 <- occup[occup$year == 2006,]
-occup_2008 <- occup[occup$year == 2008,]
-occup_2010 <- occup[occup$year == 2010,]
-occup_2012 <- occup[occup$year == 2012,]
-```
-
 #### Backward
+
+Unification Process:
 
 ```{r}
 occup_back_2008_2010 <- cat2cat(
@@ -225,6 +184,8 @@ final_data_back <- do.call(rbind, list(occup_2006_new,
                                        occup_2012_new))
 ```
 
+Valiation of global counts and per variable level counts:
+
 ```{r}
 # We persist the number of observations
 counts_new <- final_data_back %>% 
@@ -247,6 +208,8 @@ counts_per_level <- final_data_back %>%
 ```
 
 #### Forward
+
+Unification Process:
 
 ```{r}
 occup_for_2008_2010 <- cat2cat(
@@ -283,6 +246,9 @@ final_data_for <- do.call(rbind, list(occup_2006_new,
                                       occup_2012_new))
 ```
 
+Valiation of global counts and per variable level counts.
+
+
 ```{r}
 # We persist the number of observations
 counts_new <- final_data_for %>% 
@@ -314,11 +280,13 @@ counts_per_level <- final_data_for %>%
 
 #### Backward and ML
 
+Unification Process:
+
 ```{r}
 occup_back_2008_2010 <- cat2cat(
   data = list(old = occup_2008, new = occup_2010, cat_var = "code", time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
-  ml = list(data = occup_2010,
+  ml = list(data = dplyr::bind_rows(occup_2010, occup_2012),
             cat_var = "code",
             method = c("knn"),
             features = c("age", "sex", "edu", "exp", "parttime", "salary"),
@@ -333,7 +301,7 @@ occup_back_2006_2008 <- cat2cat(
               cat_var = "g_new_c2c",
               time_var = "year"),
   mappings = list(trans = trans, direction = "backward"),
-  ml = list(data = occup_2010,
+  ml = list(data = dplyr::bind_rows(occup_2010, occup_2012),
             cat_var = "code",
             method = c("knn"),
             features = c("age", "sex", "edu", "exp", "parttime", "salary"),
@@ -352,6 +320,8 @@ final_data_back_ml <- do.call(rbind, list(occup_2006_new,
                                           occup_2010_new,
                                           occup_2012_new))
 ```
+
+Valiation of global counts and per variable level counts.
 
 ```{r}
 counts_new <- final_data_back_ml %>%
@@ -373,7 +343,6 @@ counts_per_level <- final_data_back_ml %>%
   summarise(n = sum(wei_freq_c2c), .groups = 'drop') %>%
   arrange(g_new_c2c, year)
 ```
-
 
 ## Regression
 
@@ -430,4 +399,61 @@ oo <- final_data_back %>%
 head(oo)
 
 oo$lm[[2]]
+```
+
+## Manual transitions
+
+`cat2cat_agg` is mainly useful for aggregate datasets.
+
+```{r}
+agg_old <- verticals[verticals$v_date == "2020-04-01", ]
+agg_new <- verticals[verticals$v_date == "2020-05-01", ]
+
+## cat2cat_agg - could map in both directions at once although 
+## usually we want to have old or new representation
+
+agg <- cat2cat_agg(data = list(old = agg_old, 
+                               new = agg_new, 
+                               cat_var = "vertical", 
+                               time_var = "v_date",
+                               freq_var = "counts"), 
+                  Automotive %<% c(Automotive1, Automotive2),
+                  c(Kids1, Kids2) %>% c(Kids),
+                  Home %>% c(Home, Supermarket))
+            
+## possible processing
+  
+agg$old %>% 
+group_by(vertical) %>% 
+summarise(sales = sum(sales*prop_c2c), counts = sum(counts*prop_c2c), v_date = first(v_date))
+
+agg$new %>% 
+group_by(vertical) %>%
+summarise(sales = sum(sales*prop_c2c), counts = sum(counts*prop_c2c), v_date = first(v_date))
+```
+
+## Dataset with unique identifiers
+
+If the panel datset is balanced so contains subjects id's then we could match some of the categories directly.
+Unfortunately we have to assume that a subject could not change the category level in time.
+
+```{r}
+vert_old <- verticals2[verticals2$v_date == "2020-04-01", ]
+vert_new <- verticals2[verticals2$v_date == "2020-05-01", ]
+
+## get transitions table
+trans_v <- vert_old %>% 
+inner_join(vert_new, by = "ean") %>%
+select(vertical.x, vertical.y) %>% distinct()
+```
+
+```{r}
+# 
+## cat2cat
+## it is important to set id_var as then we merging categories 1 to 1 
+## for this identifier which exists in both periods.
+verts <- cat2cat(
+  data = list(old = vert_old, new = vert_new, id_var = "ean", cat_var = "vertical", time_var = "v_date"),
+  mappings = list(trans = trans_v, direction = "backward")
+)
 ```
