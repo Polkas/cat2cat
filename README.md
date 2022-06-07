@@ -25,6 +25,8 @@ install.packages("cat2cat")
 
 ## Example
 
+Panel dataset without the unique identifiers and only two periods, backward:
+
 ```{r}
 library(cat2cat)
 data(occup)
@@ -39,7 +41,43 @@ occup_simple <- cat2cat(
 )
 ```
 
-**The 4 period example is presented in the "Get Started" vignette.**
+Panel dataset without the unique identifiers and four periods, backward:
+
+```{r}
+library(cat2cat)
+data(occup)
+data(trans)
+
+occup_2006 <- occup[occup$year == 2006,]
+occup_2008 <- occup[occup$year == 2008,]
+occup_2010 <- occup[occup$year == 2010,]
+occup_2012 <- occup[occup$year == 2012,]
+
+# 2010 -> 2008
+occup_back_2008_2010 <- cat2cat(
+  data = list(old = occup_2008, new = occup_2010, cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "backward")
+)
+
+# 2008 -> 2006
+occup_back_2006_2008 <- cat2cat(
+  data = list(old = occup_2006,
+              new = occup_back_2008_2010$old,
+              cat_var_new = "g_new_c2c",
+              cat_var_old = "code",
+              time_var = "year"),
+  mappings = list(trans = trans, direction = "backward")
+)
+
+occup_2006_new <- occup_back_2006_2008$old
+occup_2008_new <- occup_back_2008_2010$old # or occup_back_2006_2008$new
+occup_2010_new <- occup_back_2008_2010$new
+occup_2012_new <- dummy_c2c_cols(occup_2012, cat_var = "code")
+
+final_data_back_ml <- do.call(rbind, list(occup_2006_new, occup_2008_new, occup_2010_new, occup_2012_new))
+```
+
+**More complex examples are presented in the "Get Started" vignette.**
 
 ## UML
 

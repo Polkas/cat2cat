@@ -144,7 +144,9 @@ get_freqs <- function(x, multiplier = NULL) {
 #'  \item{"old"}{ data.frame older time point in a panel}
 #'  \item{"new"} { data.frame more recent time point in a panel}
 #'  \item{"cat_var"}{ character name of the categorical variable.}
-#'  \item{"time_var"}{ character name of the time variable}
+#'  \item{"cat_var_old"}{ optional character name of the categorical variable in the older time point. Default `cat_var`.}
+#'  \item{"cat_var_new"}{ optional character name of the categorical variable in the newer time point. Default `cat_var`.}
+#'  \item{"time_var"}{ character name of the time variable.}
 #'  \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
 #'  \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}
 #'  \item{"freqs_df"}{ optional - data.frame with 2 columns where first one is category name and second counts.
@@ -215,6 +217,8 @@ cat2cat <- function(data = list(
                       old = NULL,
                       new = NULL,
                       cat_var = NULL,
+                      cat_var_old = NULL,
+                      cat_var_new = NULL,
                       id_var = NULL,
                       time_var = NULL,
                       multiplier_var = NULL,
@@ -229,45 +233,42 @@ cat2cat <- function(data = list(
                       args = NULL
                     )) {
   stopifnot(is.list(data))
-  stopifnot(length(data) %in% c(4, 5, 6, 7))
+  stopifnot(is.list(mappings))
+  stopifnot(is.list(ml))
+
+  # data validation
   stopifnot(inherits(data$old, "data.frame"))
   stopifnot(inherits(data$new, "data.frame"))
-  stopifnot(all(c("old", "new", "cat_var", "time_var") %in% names(data)))
-  stopifnot(all(c(data$cat_var, data$time_var) %in% colnames(data$old)))
-  stopifnot(all(c(data$cat_var, data$time_var) %in% colnames(data$new)))
-
+  stopifnot(!is.null(data$cat_var) || (!is.null(data$cat_var_old) && !is.null(data$cat_var_new)))
+  if (is.null(data$cat_var_old)) data$cat_var_old <- data$cat_var
+  if (is.null(data$cat_var_new)) data$cat_var_new <- data$cat_var
+  stopifnot(all(c(data$cat_var_old, data$time_var) %in% colnames(data$old)))
+  stopifnot(all(c(data$cat_var_new, data$time_var) %in% colnames(data$new)))
   stopifnot(
     is.null(data$multiplier_var) ||
-      (
-        data$multiplier_var %in% colnames(data$new) &&
-          data$multiplier_var %in% colnames(data$old)
-      )
+      (data$multiplier_var %in% colnames(data$new) && data$multiplier_var %in% colnames(data$old))
   )
-
   stopifnot(is.null(data$freqs_df) || (ncol(data$freqs_df) == 2))
-
   d_old <- length(unique(data$old[[data$time_var]]))
   d_new <- length(unique(data$new[[data$time_var]]))
-
   stopifnot((d_old == 1) && (d_new == 1))
+  stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
+                                       (data$id_var %in% colnames(data$new)) &&
+                                       !anyDuplicated(data$old[[data$id_var]]) &&
+                                       !anyDuplicated(data$new[[data$id_var]])))
 
-  stopifnot(is.list(mappings))
+  # mappings validation
   stopifnot(length(mappings) == 2)
   stopifnot(all(c("trans", "direction") %in% names(mappings)))
   stopifnot(mappings$direction %in% c("forward", "backward"))
   stopifnot(all(vapply(mappings, Negate(is.null), logical(1))))
   stopifnot(ncol(mappings$trans) == 2)
 
-  stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
-    (data$id_var %in% colnames(data$new)) &&
-    !anyDuplicated(data$old[[data$id_var]]) &&
-    !anyDuplicated(data$new[[data$id_var]])))
-
   is_direct_match <- !is.null(data$id_var)
 
   if (is_direct_match) {
     id_inner <- intersect(data$old[[data$id_var]], data$new[[data$id_var]])
-    tos <- merge(data$old[, c(data$id_var, data$cat_var)], data$new[, c(data$id_var, data$cat_var)], by = data$id_var)
+    tos <- merge(data$old[, c(data$id_var, data$cat_var_old)], data$new[, c(data$id_var, data$cat_var_new)], by = data$id_var)
     colnames(tos) <- c(data$id_var, "cat_old", "cat_new")
     if (mappings$direction == "forward") {
       id_outer <- setdiff(data$new[[data$id_var]], data$old[[data$id_var]])
@@ -282,12 +283,16 @@ cat2cat <- function(data = list(
   mapps <- get_mappings(mappings$trans)
 
   if (mappings$direction == "forward") {
+    cat_var_base <- data$cat_var_old
+    cat_var_target <- data$cat_var_new
     cat_base_year <- data$old
     cat_target_year <- if (is.null(data$id_var)) data$new else data$new[data$new[[data$id_var]] %in% id_outer, ]
     cat_mid <- if (is_direct_match) data$new[data$new[[data$id_var]] %in% id_inner, ] else NULL
     mapp <- mapps$to_old
     res_ord <- c(1, 2)
   } else if (mappings$direction == "backward") {
+    cat_var_base <- data$cat_var_new
+    cat_var_target <- data$cat_var_old
     cat_base_year <- data$new
     cat_target_year <- if (is.null(data$id_var)) data$old else data$old[data$old[[data$id_var]] %in% id_outer, ]
     cat_mid <- if (is_direct_match) data$old[data$old[[data$id_var]] %in% id_inner, ] else NULL
@@ -295,11 +300,11 @@ cat2cat <- function(data = list(
     res_ord <- c(2, 1)
   }
 
-  cats_base <- cat_base_year[[data$cat_var]]
-  cats_target <- cat_target_year[[data$cat_var]]
+  cats_base <- cat_base_year[[cat_var_base]]
+  cats_target <- cat_target_year[[cat_var_target]]
 
   if (is_direct_match) {
-    cat_mid <- dummy_c2c_cols(cat_mid, data$cat_var)
+    cat_mid <- dummy_c2c_cols(cat_mid, cat_var_base)
     cat_mid$g_new_c2c <- tos_df$cat[match(cat_mid[[data$id_var]], tos_df$id)]
   }
 
@@ -308,7 +313,7 @@ cat2cat <- function(data = list(
   } else if ("wei_freq_c2c" %in% colnames(cat_base_year)) {
     stats::aggregate(
       if (!is.null(data$multiplier_var)) cat_base_year[["wei_freq_c2c"]] * cat_base_year[[data$multiplier_var]] else cat_base_year[["wei_freq_c2c"]],
-      list(g = cat_base_year[[data$cat_var]]),
+      list(g = cat_base_year[[cat_var_base]]),
       function(x) round(sum(x, na.rm = TRUE))
     )
   } else {
@@ -334,22 +339,24 @@ cat2cat <- function(data = list(
   cat_target_rep$rep_c2c <- rep(rep_vec, times = rep_vec)
   cat_target_rep$wei_naive_c2c <- 1 / cat_target_rep$rep_c2c
   # Base
-  cat_base_year <- dummy_c2c_cols(cat_base_year, data$cat_var)
+  cat_base_year <- dummy_c2c_cols(cat_base_year, cat_var_base)
 
   # ML
   if (sum(vapply(ml, Negate(is.null), logical(1))) >= 1) {
     # Backward compatibility
     if (is.null(ml$data)) ml$data <- cat_base_year
-    if (is.null(ml$cat_var)) ml$cat_var <- data$cat_var
+    if (is.null(ml$cat_var)) ml$cat_var <- cat_var_base
 
     ml_names <- paste0("wei_", unique(ml$method), "_c2c")
 
     cat_base_year[, setdiff(ml_names, colnames(cat_base_year))] <- 1
     if (is_direct_match) cat_mid[, setdiff(ml_names, colnames(cat_mid))] <- 1
 
-    ml_results <- cat2cat_ml(ml = ml,
-                             mapp = mapp,
-                             target_data = cat_target_rep)
+    ml_results <- cat2cat_ml(
+      ml = ml,
+      mapp = mapp,
+      target_data = cat_target_rep
+    )
 
     cat_target_rep <- ml_results$target_data
   }
@@ -401,9 +408,9 @@ cat2cat_ml <- function(ml,
         }
         if (
           length(unique(target_data_cat$g_new_c2c)) > 1 &&
-          length(udc) >= 1 &&
-          nrow(target_data_cat) > 0 &&
-          any(target_data_cat$g_new_c2c %in% names(cat_ml_year_g))
+            length(udc) >= 1 &&
+            nrow(target_data_cat) > 0 &&
+            any(target_data_cat$g_new_c2c %in% names(cat_ml_year_g))
         ) {
           base_ml <- target_data_cat[!duplicated(target_data_cat[["index_c2c"]]), c("index_c2c", features)]
           cc <- complete.cases(base_ml[, features])

@@ -5,8 +5,8 @@
 \title{Automatic mapping of a categorical variable in a panel dataset according to a new encoding}
 \usage{
 cat2cat(
-  data = list(old = NULL, new = NULL, cat_var = NULL, id_var = NULL, time_var = NULL,
-    multiplier_var = NULL, freqs_df = NULL),
+  data = list(old = NULL, new = NULL, cat_var = NULL, cat_var_old = NULL, cat_var_new =
+    NULL, id_var = NULL, time_var = NULL, multiplier_var = NULL, freqs_df = NULL),
   mappings = list(trans = NULL, direction = NULL),
   ml = list(data = NULL, cat_var = NULL, method = NULL, features = NULL, args = NULL)
 )
@@ -35,7 +35,9 @@ data args
  \item{"old"}{ data.frame older time point in a panel}
  \item{"new"} { data.frame more recent time point in a panel}
  \item{"cat_var"}{ character name of the categorical variable.}
- \item{"time_var"}{ character name of the time variable}
+ \item{"cat_var_old"}{ optional character name of the categorical variable in the older time point. Default `cat_var`.}
+ \item{"cat_var_new"}{ optional character name of the categorical variable in the newer time point. Default `cat_var`.}
+ \item{"time_var"}{ character name of the time variable.}
  \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
  \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}
  \item{"freqs_df"}{ optional - data.frame with 2 columns where first one is category name and second counts.
