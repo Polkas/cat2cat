@@ -357,6 +357,17 @@ counts_per_level <- final_data_back_ml %>%
   arrange(g_new_c2c, year)
 ```
 
+Possible processing:
+
+```{r}
+ff <- final_data_back_ml %>% 
+      split(.$year) %>% 
+      lapply(function(x) x %>% cross_c2c() %>% prune_c2c(column = "wei_cross_c2c", method = "highest1")) %>% 
+      bind_rows()
+all.equal(nrow(ff), sum(final_data_back_ml$wei_freq_c2c))
+```
+
+
 ## Regression
 
 The replication process is neutral for calculating at least the first 2 central moments for all variables.

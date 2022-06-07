@@ -74,7 +74,13 @@ occup_2008_new <- occup_back_2008_2010$old # or occup_back_2006_2008$new
 occup_2010_new <- occup_back_2008_2010$new
 occup_2012_new <- dummy_c2c_cols(occup_2012, cat_var = "code")
 
-final_data_back_ml <- do.call(rbind, list(occup_2006_new, occup_2008_new, occup_2010_new, occup_2012_new))
+final_data_back <- do.call(rbind, list(occup_2006_new, occup_2008_new, occup_2010_new, occup_2012_new))
+
+# possible processing, leaving only one obs per subject and period
+# still it is recommended to leave all replications and use the weights in the statistical models
+library(dplyr)
+ff <- final_data_back %>% split(.$year) %>% lapply(function(x) prune_c2c(x, method = "highest1")) %>% bind_rows()
+all.equal(nrow(ff), sum(final_data_back$wei_freq_c2c))
 ```
 
 **More complex examples are presented in the "Get Started" vignette.**

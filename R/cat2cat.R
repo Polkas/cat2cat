@@ -135,9 +135,9 @@ get_freqs <- function(x, multiplier = NULL) {
 #' Thus for more periods some recursion will be needed.
 #' The \code{prune_c2c} might be needed when we have many interactions to limit growing number of replications.
 #' This function might seems to be a complex at the first glance though it is built to offer a wide range of applications for complex tasks.
-#' @param data list with 4, 5, 6 or 7 named fields `old` `new` `cat_var` `time_var` and optional `id_var`,`multiplier_var`,`freq_df`.
-#' @param mappings list with 2 named fields `trans` `direction`.
-#' @param ml list with 3 named fields `method` `features` `args`.
+#' @param data `named list` with fields `old`, `new`, `cat_var` (or `cat_var_old` and `cat_var_new`), `time_var` and optional `id_var`,`multiplier_var`,`freq_df`.
+#' @param mappings `named list` with 2 fields `trans` and `direction`.
+#' @param ml `named list` with up to 5 fields `data`, `cat_var`, `method`, `features` and optional `args`.
 #' @details
 #' data args
 #' \itemize{
@@ -176,7 +176,7 @@ get_freqs <- function(x, multiplier = NULL) {
 #' @importFrom MASS lda
 #' @details Without ml section only simple frequencies are assessed.
 #' When ml model is broken then weights from simple frequencies are taken.
-#' Method knn is recommended for smaller datasets.
+#' `knn` method is recommended for smaller datasets.
 #' @note
 #' The transition table should to have a candidate for each category from the targeted for an update period.
 #' The observation from targeted for an updated period without a matched category from base period is removed.
@@ -265,6 +265,8 @@ cat2cat <- function(data = list(
   stopifnot(ncol(mappings$trans) == 2)
 
   is_direct_match <- !is.null(data$id_var)
+  mapps <- get_mappings(mappings$trans)
+
 
   if (is_direct_match) {
     id_inner <- intersect(data$old[[data$id_var]], data$new[[data$id_var]])
@@ -280,13 +282,11 @@ cat2cat <- function(data = list(
     colnames(tos_df) <- c("id", "cat")
   }
 
-  mapps <- get_mappings(mappings$trans)
-
   if (mappings$direction == "forward") {
     cat_var_base <- data$cat_var_old
     cat_var_target <- data$cat_var_new
     cat_base_year <- data$old
-    cat_target_year <- if (is.null(data$id_var)) data$new else data$new[data$new[[data$id_var]] %in% id_outer, ]
+    cat_target_year <- if (is_direct_match) data$new[data$new[[data$id_var]] %in% id_outer, ] else data$new
     cat_mid <- if (is_direct_match) data$new[data$new[[data$id_var]] %in% id_inner, ] else NULL
     mapp <- mapps$to_old
     res_ord <- c(1, 2)
@@ -294,7 +294,7 @@ cat2cat <- function(data = list(
     cat_var_base <- data$cat_var_new
     cat_var_target <- data$cat_var_old
     cat_base_year <- data$new
-    cat_target_year <- if (is.null(data$id_var)) data$old else data$old[data$old[[data$id_var]] %in% id_outer, ]
+    cat_target_year <- if (is_direct_match) data$old[data$old[[data$id_var]] %in% id_outer, ] else data$old
     cat_mid <- if (is_direct_match) data$old[data$old[[data$id_var]] %in% id_inner, ] else NULL
     mapp <- mapps$to_new
     res_ord <- c(2, 1)

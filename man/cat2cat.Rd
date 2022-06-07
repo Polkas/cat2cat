@@ -12,11 +12,11 @@ cat2cat(
 )
 }
 \arguments{
-\item{data}{list with 4, 5, 6 or 7 named fields `old` `new` `cat_var` `time_var` and optional `id_var`,`multiplier_var`,`freq_df`.}
+\item{data}{`named list` with fields `old`, `new`, `cat_var` (or `cat_var_old` and `cat_var_new`), `time_var` and optional `id_var`,`multiplier_var`,`freq_df`.}
 
-\item{mappings}{list with 2 named fields `trans` `direction`.}
+\item{mappings}{`named list` with 2 fields `trans` and `direction`.}
 
-\item{ml}{list with 3 named fields `method` `features` `args`.}
+\item{ml}{`named list` with up to 5 fields `data`, `cat_var`, `method`, `features` and optional `args`.}
 }
 \value{
 named list with 2 fields old an new - 2 data.frames.
@@ -63,7 +63,7 @@ optional ml args
 
 Without ml section only simple frequencies are assessed.
 When ml model is broken then weights from simple frequencies are taken.
-Method knn is recommended for smaller datasets.
+`knn` method is recommended for smaller datasets.
 }
 \note{
 The transition table should to have a candidate for each category from the targeted for an update period.
