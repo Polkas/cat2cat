@@ -64,9 +64,14 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <p></p>
-<p></p>
-    </div>
+    <dl><dt>data</dt>
+<dd><p>list with 5 named fields `old`, `new`, `cat_var`, `time_var`, `freq_var`.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>equations where direction is set with any of `&gt;`, `&lt;`, `%&gt;%`, `%&lt;%`.</p></dd>
+
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     
@@ -100,8 +105,8 @@
 <span class="r-in">    freq_var <span class="op">=</span> <span class="st">"counts"</span></span>
 <span class="r-in">  <span class="op">)</span>,</span>
 <span class="r-in">  <span class="va">Automotive</span> <span class="op">%&lt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Automotive1</span>, <span class="va">Automotive2</span><span class="op">)</span>,</span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Kids1</span>, <span class="va">Kids2</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Kids</span><span class="op">)</span>,</span>
-<span class="r-in">  <span class="va">Home</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Home</span>, <span class="va">Supermarket</span><span class="op">)</span></span>
+<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Kids1</span>, <span class="va">Kids2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Kids</span><span class="op">)</span>,</span>
+<span class="r-in">  <span class="va">Home</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Home</span>, <span class="va">Supermarket</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
 </code></pre></div>
     </div>

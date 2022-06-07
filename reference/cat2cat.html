@@ -72,10 +72,18 @@ This function might seems to be a complex at the first glance though it is built
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <p></p>
-<p></p>
-<p></p>
-    </div>
+    <dl><dt>data</dt>
+<dd><p>`named list` with fields `old`, `new`, `cat_var` (or `cat_var_old` and `cat_var_new`), `time_var` and optional `id_var`,`multiplier_var`,`freq_df`.</p></dd>
+
+
+<dt>mappings</dt>
+<dd><p>`named list` with 2 fields `trans` and `direction`.</p></dd>
+
+
+<dt>ml</dt>
+<dd><p>`named list` with up to 5 fields `data`, `cat_var`, `method`, `features` and optional `args`.</p></dd>
+
+</dl></div>
     <div id="value">
     <h2>Value</h2>
     
@@ -108,7 +116,7 @@ Additional columns will be informative only for a one data.frame as we always ma
 <li><p>"args" optional - list parameters: knn: k ; rf: ntree</p></li>
 </ul><p>Without ml section only simple frequencies are assessed.
 When ml model is broken then weights from simple frequencies are taken.
-Method knn is recommended for smaller datasets.</p>
+`knn` method is recommended for smaller datasets.</p>
     </div>
     <div id="note">
     <h2>Note</h2>
