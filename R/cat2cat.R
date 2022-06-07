@@ -304,7 +304,7 @@ cat2cat <- function(data = list(
   cats_target <- cat_target_year[[cat_var_target]]
 
   if (is_direct_match) {
-    cat_mid <- dummy_c2c_cols(cat_mid, cat_var_base)
+    cat_mid <- dummy_c2c(cat_mid, cat_var_base)
     cat_mid$g_new_c2c <- tos_df$cat[match(cat_mid[[data$id_var]], tos_df$id)]
   }
 
@@ -339,7 +339,7 @@ cat2cat <- function(data = list(
   cat_target_rep$rep_c2c <- rep(rep_vec, times = rep_vec)
   cat_target_rep$wei_naive_c2c <- 1 / cat_target_rep$rep_c2c
   # Base
-  cat_base_year <- dummy_c2c_cols(cat_base_year, cat_var_base)
+  cat_base_year <- dummy_c2c(cat_base_year, cat_var_base)
 
   # ML
   if (sum(vapply(ml, Negate(is.null), logical(1))) >= 1) {
@@ -615,8 +615,8 @@ cross_c2c <- function(df,
 #' data(trans)
 #'
 #' occup_old <- occup_small[occup_small$year == 2008, ]
-#' dummy_c2c_cols(occup_old, "code")
-dummy_c2c_cols <- function(df, cat_var, ml = NULL) {
+#' dummy_c2c(occup_old, "code")
+dummy_c2c <- function(df, cat_var, ml = NULL) {
   stopifnot(is.data.frame(df))
   stopifnot(length(cat_var) == 1 && is.character(cat_var))
   stopifnot(cat_var %in% colnames(df))

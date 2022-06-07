@@ -12,9 +12,11 @@ occup_1a <- cat2cat(
   mappings = list(trans = trans, direction = "backward")
 )
 
-expect_true(all(occup_1a$old$wei_freq_c2c <= 1 & occup_1a$old$wei_freq_c2c >= 0))
-expect_true(all(occup_1a$new$wei_freq_c2c <= 1 & occup_1a$new$wei_freq_c2c >= 0))
+between_01 <- function(...) {
+  all(vapply(list(...), function(x) isTRUE(all(x >= 0 & x <= 1)), logical(1)))
+}
 
+expect_true(between_01(occup_1a$old$wei_freq_c2c, occup_1a$new$wei_freq_c2c, occup_1a$old$wei_naive_c2c, occup_1a$new$wei_naive_c2c))
 expect_equal(sum(occup_1a$old$wei_naive_c2c), nrow(occup_old))
 expect_equal(sum(occup_1a$old$wei_freq_c2c), nrow(occup_old))
 
@@ -124,7 +126,7 @@ expect_equal(sum(occup_4$new$wei_freq_c2c) + sum(occup_new$code %in% setdiff(occ
 expect_true((all(occup_4$new$wei_freq_c2c <= 1 & occup_4$new$wei_freq_c2c >= 0)))
 
 ##########################################
-## the ean variable is a unique identifier
+## the ean variable is an unique identifier
 data(verticals2)
 
 vert_old <- verticals2[verticals2$v_date == "2020-04-01", ]

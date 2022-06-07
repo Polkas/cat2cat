@@ -1,10 +1,15 @@
-# cat2cat 0.3.3.9000
+# cat2cat 0.4.0.9000
+
+* documentation and tests improvements.
+
+# cat2cat 0.4.0
 
 * new syntax of the `ml` and `data` argument in the `cat2cat::cat2cat` function, two additional arguments each.
 * `prune_c2c` scales the weights now, so still sum to one for each subject.
-* new function `dummy_c2c_cols` to add a default `cat2cat` columns to a `data.frame`.
+* new function `dummy_c2c` to add a default `cat2cat` columns to a `data.frame`.
 * `occup`and `occup_small` datasets have 4 periods now.
 * add the 4 periods example to the vignette.
+* custom `pkgdown` reference.
 
 # cat2cat 0.3.3
 

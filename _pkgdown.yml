@@ -1,0 +1,24 @@
+reference:
+- title: main functions
+- contents:
+  - cat2cat
+  - cat2cat_agg
+- title: Datasets
+- contents:
+  - occup
+  - occup_small
+  - verticals
+  - verticals2
+  - trans
+- title: cat2cat utils
+- contents:
+  - dummy_c2c
+  - prune_c2c
+  - cross_c2c
+  - plot_c2c
+  - summary_c2c
+- title: raw - replications and frequencies utils
+- contents:
+  - get_mappings
+  - get_freqs
+  - cat_apply_freq

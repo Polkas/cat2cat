@@ -185,7 +185,7 @@ occup_2006_new <- occup_back_2006_2008$old
 occup_2008_new <- occup_back_2008_2010$old # or occup_back_2006_2008$new
 occup_2010_new <- occup_back_2008_2010$new
 # use ml argument when applied ml models
-occup_2012_new <- dummy_c2c_cols(occup_2012, "code")
+occup_2012_new <- dummy_c2c(occup_2012, "code")
 
 final_data_back <- do.call(rbind, list(occup_2006_new, occup_2008_new, occup_2010_new, occup_2012_new))
 ```
@@ -246,7 +246,7 @@ occup_for_2010_2012 <- cat2cat(
 )
 
 # use ml argument when applied ml models
-occup_2006_new <- dummy_c2c_cols(occup_2006, "code")
+occup_2006_new <- dummy_c2c(occup_2006, "code")
 occup_2008_new <- occup_for_2008_2010$old
 occup_2010_new <- occup_for_2008_2010$new # or occup_for_2010_2012$old
 occup_2012_new <- occup_for_2010_2012$new
@@ -327,7 +327,7 @@ occup_back_2006_2008 <- cat2cat(
 occup_2006_new <- occup_back_2006_2008$old
 occup_2008_new <- occup_back_2008_2010$old # or occup_back_2006_2008$new
 occup_2010_new <- occup_back_2008_2010$new
-occup_2012_new <- dummy_c2c_cols(occup_2012, cat_var = "code", ml = c("wei_knn_c2c"))
+occup_2012_new <- dummy_c2c(occup_2012, cat_var = "code", ml = c("wei_knn_c2c"))
 
 final_data_back_ml <- do.call(rbind, list(occup_2006_new, occup_2008_new, occup_2010_new, occup_2012_new))
 ```
