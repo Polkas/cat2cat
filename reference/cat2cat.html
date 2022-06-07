@@ -63,8 +63,8 @@ This function might seems to be a complex at the first glance though it is built
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">cat2cat</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="cn">NULL</span>, new <span class="op">=</span> <span class="cn">NULL</span>, cat_var <span class="op">=</span> <span class="cn">NULL</span>, id_var <span class="op">=</span> <span class="cn">NULL</span>, time_var <span class="op">=</span> <span class="cn">NULL</span>,
-    multiplier_var <span class="op">=</span> <span class="cn">NULL</span>, freqs_df <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,
+  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="cn">NULL</span>, new <span class="op">=</span> <span class="cn">NULL</span>, cat_var <span class="op">=</span> <span class="cn">NULL</span>, cat_var_old <span class="op">=</span> <span class="cn">NULL</span>, cat_var_new <span class="op">=</span>
+    <span class="cn">NULL</span>, id_var <span class="op">=</span> <span class="cn">NULL</span>, time_var <span class="op">=</span> <span class="cn">NULL</span>, multiplier_var <span class="op">=</span> <span class="cn">NULL</span>, freqs_df <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,
   mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="cn">NULL</span>, direction <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,
   ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>data <span class="op">=</span> <span class="cn">NULL</span>, cat_var <span class="op">=</span> <span class="cn">NULL</span>, method <span class="op">=</span> <span class="cn">NULL</span>, features <span class="op">=</span> <span class="cn">NULL</span>, args <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
@@ -89,7 +89,9 @@ Additional columns will be informative only for a one data.frame as we always ma
     <p>data args</p><ul><li><p>"old" data.frame older time point in a panel</p></li>
 <li><p>"new"  data.frame more recent time point in a panel</p></li>
 <li><p>"cat_var" character name of the categorical variable.</p></li>
-<li><p>"time_var" character name of the time variable</p></li>
+<li><p>"cat_var_old" optional character name of the categorical variable in the older time point. Default `cat_var`.</p></li>
+<li><p>"cat_var_new" optional character name of the categorical variable in the newer time point. Default `cat_var`.</p></li>
+<li><p>"time_var" character name of the time variable.</p></li>
 <li><p>"id_var" optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.</p></li>
 <li><p>"multiplier_var" optional character name of the multiplier variable - number of replication needed to reproduce the population</p></li>
 <li><p>"freqs_df" optional - data.frame with 2 columns where first one is category name and second counts.

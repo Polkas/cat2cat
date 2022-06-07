@@ -97,6 +97,7 @@ There is offered the <code>cat2cat</code> procedure to map a categorical variabl
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
+<p>Panel dataset without the unique identifiers and only two periods, backward:</p>
 <pre class="{r}"><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Polkas/cat2cat" class="external-link">cat2cat</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span>
@@ -108,7 +109,39 @@ There is offered the <code>cat2cat</code> procedure to map a categorical variabl
   data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
   mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>
 <span class="op">)</span></code></pre>
-<p><strong>The 4 period example is presented in the “Get Started” vignette.</strong></p>
+<p>Panel dataset without the unique identifiers and four periods, backward:</p>
+<pre class="{r}"><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Polkas/cat2cat" class="external-link">cat2cat</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span>
+
+<span class="va">occup_2006</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2006</span>,<span class="op">]</span>
+<span class="va">occup_2008</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2008</span>,<span class="op">]</span>
+<span class="va">occup_2010</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2010</span>,<span class="op">]</span>
+<span class="va">occup_2012</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2012</span>,<span class="op">]</span>
+
+<span class="co"># 2010 -&gt; 2008</span>
+<span class="va">occup_back_2008_2010</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
+  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_2008</span>, new <span class="op">=</span> <span class="va">occup_2010</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
+  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="co"># 2008 -&gt; 2006</span>
+<span class="va">occup_back_2006_2008</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cat2cat.html">cat2cat</a></span><span class="op">(</span>
+  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_2006</span>,
+              new <span class="op">=</span> <span class="va">occup_back_2008_2010</span><span class="op">$</span><span class="va">old</span>,
+              cat_var_new <span class="op">=</span> <span class="st">"g_new_c2c"</span>,
+              cat_var_old <span class="op">=</span> <span class="st">"code"</span>,
+              time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,
+  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="va">occup_2006_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2006_2008</span><span class="op">$</span><span class="va">old</span>
+<span class="va">occup_2008_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2008_2010</span><span class="op">$</span><span class="va">old</span> <span class="co"># or occup_back_2006_2008$new</span>
+<span class="va">occup_2010_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2008_2010</span><span class="op">$</span><span class="va">new</span>
+<span class="va">occup_2012_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dummy_c2c_cols.html">dummy_c2c_cols</a></span><span class="op">(</span><span class="va">occup_2012</span>, cat_var <span class="op">=</span> <span class="st">"code"</span><span class="op">)</span>
+
+<span class="va">final_data_back_ml</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">occup_2006_new</span>, <span class="va">occup_2008_new</span>, <span class="va">occup_2010_new</span>, <span class="va">occup_2012_new</span><span class="op">)</span><span class="op">)</span></code></pre>
+<p><strong>More complex examples are presented in the “Get Started” vignette.</strong></p>
 </div>
 <div class="section level2">
 <h2 id="uml">UML<a class="anchor" aria-label="anchor" href="#uml"></a>
