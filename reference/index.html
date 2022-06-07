@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
       </span>
     </div>
 
@@ -50,7 +50,7 @@
     </div>
 
     <table class="ref-index"><colgroup><col class="alias"><col class="title"></colgroup><tbody><tr><th colspan="2">
-          <h2 id="all-functions">All functions <a href="#all-functions" class="anchor" aria-hidden="true"></a></h2>
+          <h2 id="main-functions">main functions <a href="#main-functions" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
@@ -61,27 +61,11 @@
           <p><code><a href="cat2cat_agg.html">cat2cat_agg()</a></code> </p>
         </td>
         <td><p>Manual mapping of a categorical variable according to a new encoding for aggregated panel dataset</p></td>
-      </tr><tr><td>
-          <p><code><a href="cat_apply_freq.html">cat_apply_freq()</a></code> </p>
-        </td>
-        <td><p>Applying frequencies to the object returned by get_mappings function</p></td>
-      </tr><tr><td>
-          <p><code><a href="cross_c2c.html">cross_c2c()</a></code> </p>
-        </td>
-        <td><p>a function to make a combination of weights from different methods by each row</p></td>
-      </tr><tr><td>
-          <p><code><a href="dummy_c2c_cols.html">dummy_c2c_cols()</a></code> </p>
-        </td>
-        <td><p>Add default cat2cat columns to a `data.frame`</p></td>
-      </tr><tr><td>
-          <p><code><a href="get_freqs.html">get_freqs()</a></code> </p>
-        </td>
-        <td><p>Getting frequencies from a `character` vector with an optional multiplier argument</p></td>
-      </tr><tr><td>
-          <p><code><a href="get_mappings.html">get_mappings()</a></code> </p>
-        </td>
-        <td><p>Transforming a transition table with mappings to two associative lists</p></td>
-      </tr><tr><td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="datasets">Datasets <a href="#datasets" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
           <p><code><a href="occup.html">occup</a></code> </p>
         </td>
         <td><p>Occupational dataset</p></td>
@@ -90,23 +74,6 @@
         </td>
         <td><p>Occupational dataset - small one</p></td>
       </tr><tr><td>
-          <p><code><a href="plot_c2c.html">plot_c2c()</a></code> </p>
-        </td>
-        <td><p>Summary plots for cat2cat results</p></td>
-      </tr><tr><td>
-          <p><code><a href="prune_c2c.html">prune_c2c()</a></code> </p>
-        </td>
-        <td><p>A set of prune methods which will be useful after transition process</p></td>
-      </tr><tr><td>
-          <p><code><a href="summary_c2c.html">summary_c2c()</a></code> </p>
-        </td>
-        <td><p>Adjusted summary for linear regression when based on replicated dataset</p></td>
-      </tr><tr><td>
-          <p><code><a href="trans.html">trans</a></code> </p>
-        </td>
-        <td><p>trans dataset containing transitions between old (2008) and new (2010) occupational codes.
-this table could be used to map encodings in both directions.</p></td>
-      </tr><tr><td>
           <p><code><a href="verticals.html">verticals</a></code> </p>
         </td>
         <td><p>verticals dataset</p></td>
@@ -114,6 +81,51 @@ this table could be used to map encodings in both directions.</p></td>
           <p><code><a href="verticals2.html">verticals2</a></code> </p>
         </td>
         <td><p>verticals2 dataset</p></td>
+      </tr><tr><td>
+          <p><code><a href="trans.html">trans</a></code> </p>
+        </td>
+        <td><p>trans dataset containing transitions between old (2008) and new (2010) occupational codes.
+this table could be used to map encodings in both directions.</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="cat-cat-utils">cat2cat utils <a href="#cat-cat-utils" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="dummy_c2c.html">dummy_c2c()</a></code> </p>
+        </td>
+        <td><p>Add default cat2cat columns to a `data.frame`</p></td>
+      </tr><tr><td>
+          <p><code><a href="prune_c2c.html">prune_c2c()</a></code> </p>
+        </td>
+        <td><p>A set of prune methods which will be useful after transition process</p></td>
+      </tr><tr><td>
+          <p><code><a href="cross_c2c.html">cross_c2c()</a></code> </p>
+        </td>
+        <td><p>a function to make a combination of weights from different methods by each row</p></td>
+      </tr><tr><td>
+          <p><code><a href="plot_c2c.html">plot_c2c()</a></code> </p>
+        </td>
+        <td><p>Summary plots for cat2cat results</p></td>
+      </tr><tr><td>
+          <p><code><a href="summary_c2c.html">summary_c2c()</a></code> </p>
+        </td>
+        <td><p>Adjusted summary for linear regression when based on replicated dataset</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="raw-replications-and-frequencies-utils">raw - replications and frequencies utils <a href="#raw-replications-and-frequencies-utils" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="get_mappings.html">get_mappings()</a></code> </p>
+        </td>
+        <td><p>Transforming a transition table with mappings to two associative lists</p></td>
+      </tr><tr><td>
+          <p><code><a href="get_freqs.html">get_freqs()</a></code> </p>
+        </td>
+        <td><p>Getting frequencies from a `character` vector with an optional multiplier argument</p></td>
+      </tr><tr><td>
+          <p><code><a href="cat_apply_freq.html">cat_apply_freq()</a></code> </p>
+        </td>
+        <td><p>Applying frequencies to the object returned by get_mappings function</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

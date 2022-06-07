@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.3.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
       </span>
     </div>
 
@@ -185,10 +185,10 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">wei_knn_c2c</span>, <span class="va">wei_rf_c2c</span>, <span class="va">wei_lda_c2c</span>, <span class="va">wei_freq_c2c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##              wei_knn_c2c wei_rf_c2c wei_lda_c2c wei_freq_c2c</span>
-<span class="co">## wei_knn_c2c    1.0000000  0.8634861   0.8350984    0.8989887</span>
-<span class="co">## wei_rf_c2c     0.8634861  1.0000000   0.8772455    0.8731498</span>
-<span class="co">## wei_lda_c2c    0.8350984  0.8772455   1.0000000    0.8807702</span>
-<span class="co">## wei_freq_c2c   0.8989887  0.8731498   0.8807702    1.0000000</span></code></pre>
+<span class="co">## wei_knn_c2c    1.0000000  0.8648338   0.8350984    0.8989887</span>
+<span class="co">## wei_rf_c2c     0.8648338  1.0000000   0.8777032    0.8747108</span>
+<span class="co">## wei_lda_c2c    0.8350984  0.8777032   1.0000000    0.8807702</span>
+<span class="co">## wei_freq_c2c   0.8989887  0.8747108   0.8807702    1.0000000</span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="example---more-than-2-periods">Example - More than 2 periods<a class="anchor" aria-label="anchor" href="#example---more-than-2-periods"></a>
@@ -230,7 +230,7 @@ If we have to apply many mapping tables across time then pruning methods might b
 <span class="va">occup_2008_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2008_2010</span><span class="op">$</span><span class="va">old</span> <span class="co"># or occup_back_2006_2008$new</span>
 <span class="va">occup_2010_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2008_2010</span><span class="op">$</span><span class="va">new</span>
 <span class="co"># use ml argument when applied ml models</span>
-<span class="va">occup_2012_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dummy_c2c_cols.html">dummy_c2c_cols</a></span><span class="op">(</span><span class="va">occup_2012</span>, <span class="st">"code"</span><span class="op">)</span>
+<span class="va">occup_2012_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dummy_c2c.html">dummy_c2c</a></span><span class="op">(</span><span class="va">occup_2012</span>, <span class="st">"code"</span><span class="op">)</span>
 
 <span class="va">final_data_back</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">occup_2006_new</span>, <span class="va">occup_2008_new</span>, <span class="va">occup_2010_new</span>, <span class="va">occup_2012_new</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Valiation of global counts and per variable level counts:</p>
@@ -288,7 +288,7 @@ If we have to apply many mapping tables across time then pruning methods might b
 <span class="op">)</span>
 
 <span class="co"># use ml argument when applied ml models</span>
-<span class="va">occup_2006_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dummy_c2c_cols.html">dummy_c2c_cols</a></span><span class="op">(</span><span class="va">occup_2006</span>, <span class="st">"code"</span><span class="op">)</span>
+<span class="va">occup_2006_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dummy_c2c.html">dummy_c2c</a></span><span class="op">(</span><span class="va">occup_2006</span>, <span class="st">"code"</span><span class="op">)</span>
 <span class="va">occup_2008_new</span> <span class="op">&lt;-</span> <span class="va">occup_for_2008_2010</span><span class="op">$</span><span class="va">old</span>
 <span class="va">occup_2010_new</span> <span class="op">&lt;-</span> <span class="va">occup_for_2008_2010</span><span class="op">$</span><span class="va">new</span> <span class="co"># or occup_for_2010_2012$old</span>
 <span class="va">occup_2012_new</span> <span class="op">&lt;-</span> <span class="va">occup_for_2010_2012</span><span class="op">$</span><span class="va">new</span>
@@ -366,7 +366,7 @@ If we have to apply many mapping tables across time then pruning methods might b
 <span class="va">occup_2006_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2006_2008</span><span class="op">$</span><span class="va">old</span>
 <span class="va">occup_2008_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2008_2010</span><span class="op">$</span><span class="va">old</span> <span class="co"># or occup_back_2006_2008$new</span>
 <span class="va">occup_2010_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2008_2010</span><span class="op">$</span><span class="va">new</span>
-<span class="va">occup_2012_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dummy_c2c_cols.html">dummy_c2c_cols</a></span><span class="op">(</span><span class="va">occup_2012</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wei_knn_c2c"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">occup_2012_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dummy_c2c.html">dummy_c2c</a></span><span class="op">(</span><span class="va">occup_2012</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wei_knn_c2c"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">final_data_back_ml</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">occup_2006_new</span>, <span class="va">occup_2008_new</span>, <span class="va">occup_2010_new</span>, <span class="va">occup_2012_new</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Valiation of global counts and per variable level counts.</p>
