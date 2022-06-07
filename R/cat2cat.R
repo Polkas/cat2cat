@@ -263,7 +263,9 @@ cat2cat <- function(data = list(
     !anyDuplicated(data$old[[data$id_var]]) &&
     !anyDuplicated(data$new[[data$id_var]])))
 
-  if (!is.null(data$id_var)) {
+  is_direct_match <- !is.null(data$id_var)
+
+  if (is_direct_match) {
     id_inner <- intersect(data$old[[data$id_var]], data$new[[data$id_var]])
     tos <- merge(data$old[, c(data$id_var, data$cat_var)], data$new[, c(data$id_var, data$cat_var)], by = data$id_var)
     colnames(tos) <- c(data$id_var, "cat_old", "cat_new")
@@ -282,13 +284,13 @@ cat2cat <- function(data = list(
   if (mappings$direction == "forward") {
     cat_base_year <- data$old
     cat_target_year <- if (is.null(data$id_var)) data$new else data$new[data$new[[data$id_var]] %in% id_outer, ]
-    cat_mid <- if (!is.null(data$id_var)) data$new[data$new[[data$id_var]] %in% id_inner, ] else NULL
+    cat_mid <- if (is_direct_match) data$new[data$new[[data$id_var]] %in% id_inner, ] else NULL
     mapp <- mapps$to_old
     res_ord <- c(1, 2)
   } else if (mappings$direction == "backward") {
     cat_base_year <- data$new
     cat_target_year <- if (is.null(data$id_var)) data$old else data$old[data$old[[data$id_var]] %in% id_outer, ]
-    cat_mid <- if (!is.null(data$id_var)) data$old[data$old[[data$id_var]] %in% id_inner, ] else NULL
+    cat_mid <- if (is_direct_match) data$old[data$old[[data$id_var]] %in% id_inner, ] else NULL
     mapp <- mapps$to_new
     res_ord <- c(2, 1)
   }
@@ -296,7 +298,7 @@ cat2cat <- function(data = list(
   cats_base <- cat_base_year[[data$cat_var]]
   cats_target <- cat_target_year[[data$cat_var]]
 
-  if (!is.null(data$id_var)) {
+  if (is_direct_match) {
     cat_mid <- dummy_c2c_cols(cat_mid, data$cat_var)
     cat_mid$g_new_c2c <- tos_df$cat[match(cat_mid[[data$id_var]], tos_df$id)]
   }
@@ -340,15 +342,16 @@ cat2cat <- function(data = list(
     if (is.null(ml$data)) ml$data <- cat_base_year
     if (is.null(ml$cat_var)) ml$cat_var <- data$cat_var
 
+    ml_names <- paste0("wei_", unique(ml$method), "_c2c")
+
+    cat_base_year[, setdiff(ml_names, colnames(cat_base_year))] <- 1
+    if (is_direct_match) cat_mid[, setdiff(ml_names, colnames(cat_mid))] <- 1
+
     ml_results <- cat2cat_ml(ml = ml,
                              mapp = mapp,
-                             target_data = cat_target_rep,
-                             base_data = cat_base_year,
-                             mid_data = if (!is.null(data$id_var)) cat_mid else NULL)
+                             target_data = cat_target_rep)
 
-    cat_base_year <- ml_results$base_data
     cat_target_rep <- ml_results$target_data
-    cat_mid <- ml_results$mid_data
   }
 
   cat_target_rep_f <- rbind(cat_target_rep, cat_mid)
@@ -363,18 +366,15 @@ cat2cat <- function(data = list(
 #' @param ml `list` the same `ml` argument as provided to `cat2cat` function.
 #' @param mapp `list` a mapping table
 #' @param target_data `data.frame`
-#' @param base_data `data.frame`
-#' @param cat_mid `data.frame`
 #' @keywords internal
 cat2cat_ml <- function(ml,
                        mapp,
-                       target_data,
-                       base_data,
-                       mid_data) {
+                       target_data) {
   stopifnot(all(c("method", "features") %in% names(ml)))
   stopifnot(all(ml$features %in% colnames(target_data)))
   stopifnot(all(ml$features %in% colnames(ml$data)))
-  stopifnot(all(vapply(target_data[, ml$features], function(x) is.numeric(x) || is.logical(x), logical(1))))
+  stopifnot(all(vapply(target_data[, ml$features, drop = FALSE], function(x) is.numeric(x) || is.logical(x), logical(1))))
+  stopifnot(all(vapply(ml$data[, ml$features, drop = FALSE], function(x) is.numeric(x) || is.logical(x), logical(1))))
   stopifnot(all(ml$method %in% c("knn", "rf", "lda")))
   stopifnot(ml$cat_var %in% colnames(ml$data))
 
@@ -382,12 +382,9 @@ cat2cat_ml <- function(ml,
   methods <- unique(ml$method)
   ml_names <- paste0("wei_", methods, "_c2c")
 
-  base_data[, setdiff(ml_names, colnames(base_data))] <- 1
-  if (!is.null(mid_data)) mid_data[, setdiff(ml_names, colnames(mid_data))] <- 1
-
   target_data[, ml_names] <- target_data["wei_freq_c2c"]
 
-  cat_ml_year_g <- split(ml$data[, c(features, ml$cat_var)], factor(ml$data[[ml$cat_var]], exclude = NULL))
+  cat_ml_year_g <- split(ml$data[, c(features, ml$cat_var), drop = FALSE], factor(ml$data[[ml$cat_var]], exclude = NULL))
   target_data_cats <- target_data[[ml$cat_var]]
   target_data_cat_c2c <- split(target_data, factor(target_data_cats, exclude = NULL))
 
@@ -469,7 +466,7 @@ cat2cat_ml <- function(ml,
   target_data <- do.call(rbind, target_data_cat_c2c)
   target_data <- target_data[order(target_data[["index_c2c"]]), ]
 
-  list(target_data = target_data, base_data = base_data, mid_data = mid_data)
+  list(target_data = target_data)
 }
 
 #' A set of prune methods which will be useful after transition process
