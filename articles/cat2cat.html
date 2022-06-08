@@ -121,12 +121,6 @@
 <span class="va">occup_2012</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2012</span>, <span class="op">]</span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="mapping-table">Mapping Table<a class="anchor" aria-label="anchor" href="#mapping-table"></a>
-</h2>
-<p>Graph of 30 first observations from the <code>trans</code> mapping table. This graph is specific as the newer codes are much more detailed than older ones. That is why almost each old 4-digit code has a few new 6-digit code siblings.</p>
-<p><img src="cat2cat_files/figure-html/unnamed-chunk-2-1.png" width="480"></p>
-</div>
-<div class="section level2">
 <h2 id="dataset-without-unique-identifiers">Dataset without unique identifiers<a class="anchor" aria-label="anchor" href="#dataset-without-unique-identifiers"></a>
 </h2>
 <p>There were prepared two graphs for forward and backward mapping. These graphs present how the <code><a href="../reference/cat2cat.html">cat2cat::cat2cat</a></code> function works, in this case under a panel dataset without the unique identifiers and only two periods.</p>
@@ -164,7 +158,7 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># summary_plot</span>
 <span class="fu"><a href="../reference/plot_c2c.html">plot_c2c</a></span><span class="op">(</span><span class="va">occup_2</span><span class="op">$</span><span class="va">old</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"both"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="cat2cat_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p><img src="cat2cat_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 <p>Example for the 2 period panel dataset.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># mix of methods</span>
@@ -190,10 +184,10 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">wei_knn_c2c</span>, <span class="va">wei_rf_c2c</span>, <span class="va">wei_lda_c2c</span>, <span class="va">wei_freq_c2c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">##              wei_knn_c2c wei_rf_c2c wei_lda_c2c wei_freq_c2c</span>
-<span class="co">## wei_knn_c2c    1.0000000  0.8649408   0.8350984    0.8989887</span>
-<span class="co">## wei_rf_c2c     0.8649408  1.0000000   0.8778849    0.8743225</span>
-<span class="co">## wei_lda_c2c    0.8350984  0.8778849   1.0000000    0.8807702</span>
-<span class="co">## wei_freq_c2c   0.8989887  0.8743225   0.8807702    1.0000000</span></code></pre>
+<span class="co">## wei_knn_c2c    1.0000000  0.8650113   0.8350984    0.8989887</span>
+<span class="co">## wei_rf_c2c     0.8650113  1.0000000   0.8773747    0.8750360</span>
+<span class="co">## wei_lda_c2c    0.8350984  0.8773747   1.0000000    0.8807702</span>
+<span class="co">## wei_freq_c2c   0.8989887  0.8750360   0.8807702    1.0000000</span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="example---more-than-2-periods">Example - More than 2 periods<a class="anchor" aria-label="anchor" href="#example---more-than-2-periods"></a>
