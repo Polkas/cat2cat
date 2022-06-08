@@ -20,7 +20,6 @@ Suggests:
   randomForest,
   knitr,
   rmarkdown,
-  igraph,
   pacman,
   testthat,
   magrittr,
