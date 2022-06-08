@@ -58,7 +58,7 @@
 "occup_small"
 
 #' trans dataset containing transitions between old (2008) and new (2010) occupational codes.
-#' this table could be used to map encodings in both directions.
+#' This table could be used to map encodings in both directions.
 #'
 #' @usage trans
 #'

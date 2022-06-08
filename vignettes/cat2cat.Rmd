@@ -45,15 +45,19 @@ There are 3 important elements:
 
 ## Data
 
+`occup` dataset is an example of unbalance panel dataset.
+This is a simulated data although there are applied a real world characteristics from national statistical office survey.
+The original survey is anonymous and take place **every two years**.
+
+`trans` dataset containing transitions between old (2008) and new (2010) occupational codes.
+This table could be used to map encodings in both directions.
+
 ```{r, message=FALSE, warning=FALSE}
 library(cat2cat)
 library(dplyr)
 
 data(occup)
 data(trans)
-data(verticals)
-## the ean variable is a unique identifier
-data(verticals2)
 
 occup_old <- occup[occup$year == 2008, ]
 occup_new <- occup[occup$year == 2010, ]
@@ -430,6 +434,9 @@ oo$lm[[2]]
 `cat2cat_agg` is mainly useful for aggregate datasets.
 
 ```{r}
+library(cat2cat)
+data(verticals)
+
 agg_old <- verticals[verticals$v_date == "2020-04-01", ]
 agg_new <- verticals[verticals$v_date == "2020-05-01", ]
 
@@ -466,6 +473,10 @@ If the panel datset is balanced so contains subjects id's then we could match so
 Unfortunately we have to assume that a subject could not change the category level in time.
 
 ```{r}
+library(cat2cat)
+## the ean variable is a unique identifier
+data(verticals2)
+
 vert_old <- verticals2[verticals2$v_date == "2020-04-01", ]
 vert_new <- verticals2[verticals2$v_date == "2020-05-01", ]
 

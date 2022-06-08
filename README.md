@@ -25,6 +25,13 @@ install.packages("cat2cat")
 
 ## Example
 
+`occup` dataset is an example of unbalance panel dataset.
+This is a simulated data although there are applied a real world characteristics from national statistical office survey.
+The original survey is anonymous and take place **every two years**.
+
+`trans` dataset containing transitions between old (2008) and new (2010) occupational codes.
+This table could be used to map encodings in both directions.
+
 Panel dataset without the unique identifiers and only two periods, backward:
 
 ```{r}
@@ -78,8 +85,11 @@ final_data_back <- do.call(rbind, list(occup_2006_new, occup_2008_new, occup_201
 
 # possible processing, leaving only one obs per subject and period
 # still it is recommended to leave all replications and use the weights in the statistical models
-library(dplyr)
-ff <- final_data_back %>% split(.$year) %>% lapply(function(x) prune_c2c(x, method = "highest1")) %>% bind_rows()
+library(magrittr)
+ff <- final_data_back %>% 
+  split(.$year) %>% 
+  lapply(function(x) prune_c2c(x, method = "highest1")) %>% 
+  do.call(rbind, .)
 all.equal(nrow(ff), sum(final_data_back$wei_freq_c2c))
 ```
 

@@ -27,15 +27,13 @@ freq_df <- occup_back_2008_2010$old[, c("g_new_c2c", "wei_freq_c2c")] %>%
   group_by(g_new_c2c) %>%
   summarise(counts = round(sum(wei_cross_c2c, na.rm = TRUE)))
 
-occup_2006[["g_new_c2c"]] <- occup_2006[["code"]]
-
-occup_back_2006_2008 <- cat2cat(
+occup_back_2006_2008_1 <- cat2cat(
   data = list(
     old = occup_2006,
     new = occup_back_2008_2010$old,
-    cat_var = "g_new_c2c",
-    time_var = "year",
-    freqs_df = freq_df
+    cat_var_old = "code",
+    cat_var_new = "g_new_c2c",
+    time_var = "year"
   ),
   mappings = list(trans = trans, direction = "backward"),
   ml = list(
@@ -47,6 +45,8 @@ occup_back_2006_2008 <- cat2cat(
   )
 )
 
+occup_2006[["index_c2c"]] <- 1:nrow(occup_2006)
+occup_2006[["g_new_c2c"]] <- occup_2006[["code"]]
 occup_back_2006_2008_2 <- cat2cat(
   data = list(
     old = occup_2006,
@@ -64,40 +64,48 @@ occup_back_2006_2008_2 <- cat2cat(
   )
 )
 
+occup_back_2006_2008_3 <- cat2cat(
+  data = list(
+    old = occup_2006,
+    new = occup_back_2008_2010$old,
+    cat_var = "g_new_c2c",
+    time_var = "year",
+    freqs_df = freq_df
+  ),
+  mappings = list(trans = trans, direction = "backward"),
+  ml = list(
+    data = occup_2010,
+    cat_var = "code",
+    method = c("knn"),
+    features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+    args = list(k = 10, ntree = 50)
+  )
+)
+
 testthat::test_that("multi-period cat2cat freqs_df assesed internally", {
-  expect_identical(occup_back_2006_2008, occup_back_2006_2008_2)
+  expect_identical(occup_back_2006_2008_1, occup_back_2006_2008_2)
+  expect_identical(occup_back_2006_2008_1, occup_back_2006_2008_3)
 })
 
 testthat::test_that("multi-period cat2cat neutral for base period", {
-  expect_identical(occup_back_2008_2010$old, occup_back_2006_2008$new)
+  expect_identical(occup_back_2008_2010$old, occup_back_2006_2008_1$new)
   expect_identical(occup_back_2008_2010$old, occup_back_2006_2008_2$new)
+  expect_identical(occup_back_2008_2010$old, occup_back_2006_2008_3$new)
 })
 
 testthat::test_that("multi-period cat2cat probabilities", {
-  expect_true(!identical(occup_back_2006_2008$old$wei_freq_c2c, occup_back_2006_2008$old$wei_naive_c2c))
-  expect_true(!identical(occup_back_2006_2008$old$wei_freq_c2c, occup_back_2006_2008$old$wei_knn_c2c))
-  expect_true(!identical(occup_back_2006_2008$old$wei_naive_c2c, occup_back_2006_2008$old$wei_knn_c2c))
+  expect_true(!identical(occup_back_2006_2008_1$old$wei_freq_c2c, occup_back_2006_2008_1$old$wei_naive_c2c))
+  expect_true(!identical(occup_back_2006_2008_1$old$wei_freq_c2c, occup_back_2006_2008_1$old$wei_knn_c2c))
+  expect_true(!identical(occup_back_2006_2008_1$old$wei_naive_c2c, occup_back_2006_2008_1$old$wei_knn_c2c))
 
-  expect_equal(sum(occup_back_2006_2008$old$wei_freq_c2c), nrow(occup_2006))
-  expect_equal(sum(occup_back_2006_2008$old$wei_knn_c2c), nrow(occup_2006))
+  expect_equal(sum(occup_back_2006_2008_1$old$wei_freq_c2c), nrow(occup_2006))
+  expect_equal(sum(occup_back_2006_2008_1$old$wei_knn_c2c), nrow(occup_2006))
 
-  expect_true((all(occup_back_2006_2008$old$wei_freq_c2c <= 1 & occup_back_2006_2008$old$wei_freq_c2c >= 0)))
-  expect_true((all(occup_back_2006_2008$old$wei_knn_c2c <= 1 & occup_back_2006_2008$old$wei_knn_c2c >= 0)))
+  expect_true((all(occup_back_2006_2008_1$old$wei_freq_c2c <= 1 & occup_back_2006_2008_1$old$wei_freq_c2c >= 0)))
+  expect_true((all(occup_back_2006_2008_1$old$wei_knn_c2c <= 1 & occup_back_2006_2008_1$old$wei_knn_c2c >= 0)))
 })
 
-testthat::test_that("multi-period cat2cat probabilities", {
-  expect_true(!identical(occup_back_2006_2008_2$old$wei_freq_c2c, occup_back_2006_2008_2$old$wei_naive_c2c))
-  expect_true(!identical(occup_back_2006_2008_2$old$wei_freq_c2c, occup_back_2006_2008_2$old$wei_knn_c2c))
-  expect_true(!identical(occup_back_2006_2008_2$old$wei_naive_c2c, occup_back_2006_2008_2$old$wei_knn_c2c))
-
-  expect_equal(sum(occup_back_2006_2008_2$old$wei_freq_c2c), nrow(occup_2006))
-  expect_equal(sum(occup_back_2006_2008_2$old$wei_knn_c2c), nrow(occup_2006))
-
-  expect_true((all(occup_back_2006_2008_2$old$wei_freq_c2c <= 1 & occup_back_2006_2008_2$old$wei_freq_c2c >= 0)))
-  expect_true((all(occup_back_2006_2008_2$old$wei_knn_c2c <= 1 & occup_back_2006_2008_2$old$wei_knn_c2c >= 0)))
-})
-
-occup_2006_new <- occup_back_2006_2008$old
+occup_2006_new <- occup_back_2006_2008_1$old
 occup_2008_new <- occup_back_2008_2010$old # or occup_back_2006_2008$new
 occup_2010_new <- occup_back_2008_2010$new
 occup_2012_new <- dummy_c2c(occup_2012,
