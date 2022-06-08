@@ -75,9 +75,10 @@ This graph is specific as the newer codes are much more detailed than older ones
 That is why almost each old 4-digit code has a few new 6-digit code siblings.
 
 ```{r, fig.height=4, fig.width=5, echo=FALSE}
+library(igraph)
 oldMargins <- par("mar")
 par(mar = c(1,1,1,1))
-gg <- igraph::graph_from_data_frame(trans[1:30, ])
+gg <- graph_from_data_frame(trans[1:30, ])
 plot(gg, edge.arrow.size = .5, vertex.color = "gold", vertex.size = 15,
      vertex.frame.color = "gray", vertex.label.color = "black",
      vertex.label.cex = 0.6, vertex.label.dist = 2, edge.curved = 0.2)

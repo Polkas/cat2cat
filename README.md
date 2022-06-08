@@ -32,7 +32,7 @@ The original survey is anonymous and take place **every two years**.
 `trans` dataset containing transitions between old (2008) and new (2010) occupational codes.
 This table could be used to map encodings in both directions.
 
-Panel dataset without the unique identifiers and only two periods, backward:
+Panel dataset without the unique identifiers and only two periods, backward and simple frequencies:
 
 ```{r}
 library(cat2cat)
@@ -48,7 +48,7 @@ occup_simple <- cat2cat(
 )
 ```
 
-Panel dataset without the unique identifiers and four periods, backward:
+Panel dataset without the unique identifiers and four periods, backward and simple frequencies:
 
 ```{r}
 library(cat2cat)

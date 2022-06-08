@@ -248,22 +248,18 @@ cat2cat <- function(data = list(
     is.null(data$multiplier_var) ||
       (data$multiplier_var %in% colnames(data$new) && data$multiplier_var %in% colnames(data$old))
   )
-  stopifnot(is.null(data$freqs_df) || (ncol(data$freqs_df) == 2))
-  d_old <- length(unique(data$old[[data$time_var]]))
-  d_new <- length(unique(data$new[[data$time_var]]))
-  stopifnot((d_old == 1) && (d_new == 1))
+  stopifnot(is.null(data$freqs_df) || (is.data.frame(data$freqs_df) && ncol(data$freqs_df) == 2))
+  stopifnot((length(unique(data$old[[data$time_var]])) == 1) && (length(unique(data$new[[data$time_var]])) == 1))
   stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
     (data$id_var %in% colnames(data$new)) &&
     !anyDuplicated(data$old[[data$id_var]]) &&
     !anyDuplicated(data$new[[data$id_var]])))
 
   # mappings validation
-  stopifnot(length(mappings) == 2)
-  stopifnot(all(c("trans", "direction") %in% names(mappings)))
-  stopifnot(mappings$direction %in% c("forward", "backward"))
   stopifnot(all(vapply(mappings, Negate(is.null), logical(1))))
-  stopifnot(is.data.frame(mappings$trans))
-  stopifnot(ncol(mappings$trans) == 2)
+  stopifnot(all(c("trans", "direction") %in% names(mappings)))
+  stopifnot(isTRUE(mappings$direction %in% c("forward", "backward")))
+  stopifnot(is.data.frame(mappings$trans) && ncol(mappings$trans) == 2)
 
   is_direct_match <- !is.null(data$id_var)
   mapps <- get_mappings(mappings$trans)
@@ -384,9 +380,7 @@ cat2cat <- function(data = list(
 #' @param mapp `list` a mapping table
 #' @param target_data `data.frame`
 #' @keywords internal
-cat2cat_ml <- function(ml,
-                       mapp,
-                       target_data) {
+cat2cat_ml <- function(ml, mapp, target_data) {
   stopifnot(all(c("method", "features") %in% names(ml)))
   stopifnot(all(ml$features %in% colnames(target_data)))
   stopifnot(all(ml$features %in% colnames(ml$data)))
@@ -535,11 +529,10 @@ cat2cat_ml <- function(ml,
 #' }
 #'
 prune_c2c <- function(df, index = "index_c2c", column = "wei_freq_c2c", method = "nonzero", percent = 50) {
-  stopifnot(inherits(df, "data.frame"))
+  stopifnot(is.data.frame(df))
   stopifnot(all(c(index, column) %in% colnames(df)))
-  stopifnot(method %in% c("nonzero", "highest", "highest1", "morethan"))
-  stopifnot(length(percent) == 1)
-  stopifnot(percent >= 0 && percent < 100)
+  stopifnot(isTRUE(method %in% c("nonzero", "highest", "highest1", "morethan")))
+  stopifnot(length(percent) == 1 && (percent >= 0 && percent < 100))
 
   df <- df[order(df[[index]]), ]
 
@@ -549,7 +542,7 @@ prune_c2c <- function(df, index = "index_c2c", column = "wei_freq_c2c", method =
     highest = df[unlist(tapply(df[[column]], df[[index]], function(x) x == max(x))), ],
     morethan = df[df[[column]] > percent / 100, ]
   )
-
+  # reweight to still sum to 1 per subject
   df[[column]] <- unlist(tapply(df[[column]], df[[index]], function(x) x / sum(x)))
 
   df
@@ -599,7 +592,7 @@ cross_c2c <- function(df,
                       cols = colnames(df)[grepl("^wei_.*_c2c$", colnames(df))],
                       weis = rep(1 / length(cols), length(cols)),
                       na.rm = TRUE) {
-  stopifnot(inherits(df, "data.frame"))
+  stopifnot(is.data.frame(df))
   stopifnot(all(cols %in% colnames(df)))
   stopifnot(length(weis) == length(cols))
   stopifnot(is.logical(na.rm))
@@ -620,16 +613,17 @@ cross_c2c <- function(df,
 #' @param ml `character` vector of ml models applied, any of `c("wei_knn_c2c", "wei_rf_c2c", "wei_lda_c2c")`.
 #' @export
 #' @examples
-#' data(occup_small)
-#' data(occup)
-#' data(trans)
+#' \dontrun{
+#' dummy_c2c(airquality, "Month")
 #'
+#' data(occup_small)#'
 #' occup_old <- occup_small[occup_small$year == 2008, ]
 #' dummy_c2c(occup_old, "code")
+#' }
 dummy_c2c <- function(df, cat_var, ml = NULL) {
   stopifnot(is.data.frame(df))
   stopifnot(length(cat_var) == 1 && is.character(cat_var))
-  stopifnot(cat_var %in% colnames(df))
+  stopifnot(isTRUE(cat_var %in% colnames(df)))
   stopifnot(is.null(ml) || all(ml %in% c("wei_knn_c2c", "wei_rf_c2c", "wei_lda_c2c")))
 
   if (!all(c("index_c2c", "g_new_c2c", "wei_freq_c2c", "rep_c2c", "wei_naive_c2c") %in% colnames(df))) {

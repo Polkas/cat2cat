@@ -18,10 +18,11 @@ a utils function to add default cat2cat columns to a `data.frame`.
 It will be useful e.g. for a boarder periods which will not have additional `cat2cat` columns.
 }
 \examples{
-data(occup_small)
-data(occup)
-data(trans)
+\dontrun{
+dummy_c2c(airquality, "Month")
 
+data(occup_small)#'
 occup_old <- occup_small[occup_small$year == 2008, ]
 dummy_c2c(occup_old, "code")
+}
 }
