@@ -51,6 +51,20 @@ expect_equal(
   (occup_2$old$wei_knn_c2c + occup_2$old$wei_freq_c2c) / 2
 )
 
+expect_warning({
+  cat2cat(
+    data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+    mappings = list(trans = head(trans, -50), direction = "backward"),
+    ml = list(
+      data = occup_new,
+      cat_var = "code",
+      method = c("knn", "rf", "lda"),
+      features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+      args = list(k = 10, ntree = 30)
+    )
+  )
+}, "9321, 9312, 9311, 9331, 9313")
+
 ###############
 
 lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old, weights = multiplier * wei_freq_c2c)
@@ -64,7 +78,7 @@ ss2 <- summary(lms2)
 expect_true(sum((ss2$coefficients[, 2] - ss1$coefficients[, 2])**2) < 0.01)
 expect_true(sum((ss2$coefficients[, 2] - ss_c2c$std.error_c)**2) < 0.01)
 
-#################
+############################
 
 occup_3 <- cat2cat(
   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year", multiplier_var = "multiplier"),
@@ -119,15 +133,29 @@ expect_identical(nrow(occup_3b$old), nrow(occup_3c$old) + 1L)
 expect_true((all(occup_3c$old$wei_freq_c2c <= 1 & occup_3c$old$wei_freq_c2c >= 0)))
 expect_true((all(occup_3c$old$wei_knn_c2c <= 1 & occup_3c$old$wei_knn_c2c >= 0)))
 
-occup_4 <- cat2cat(
-  data = list(
-    old = occup_old, new = occup_new, cat_var = "code", time_var = "year"
-  ),
-  mappings = list(trans = trans, direction = "forward")
-)
+occup_4 <- expect_warning({
+  cat2cat(
+    data = list(
+      old = occup_old, new = occup_new, cat_var = "code", time_var = "year"
+    ),
+    mappings = list(trans = trans, direction = "forward")
+  )
+}, "741103, 712604, 732201, 818116, 732301, 816003, 741201, 713201, 818115, 815204")
+
 # not in trans table
 expect_equal(sum(occup_4$new$wei_freq_c2c) + sum(occup_new$code %in% setdiff(occup_new$code, trans$new)), nrow(occup_new))
 expect_true((all(occup_4$new$wei_freq_c2c <= 1 & occup_4$new$wei_freq_c2c >= 0)))
+
+occup_4b <- cat2cat(
+  data = list(
+    old = occup_old, new = occup_new, cat_var = "code", time_var = "year"
+  ),
+  mappings = list(trans = rbind(trans, data.frame(old = "no_cat", new = setdiff(occup_new$code, trans$new))),
+                  direction = "forward")
+)
+
+expect_identical(nrow(occup_4b$old), nrow(occup_4b$old))
+expect_true((all(occup_4b$old$wei_freq_c2c <= 1 & occup_4b$old$wei_freq_c2c >= 0)))
 
 ##########################################
 ## the ean variable is an unique identifier

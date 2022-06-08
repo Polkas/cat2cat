@@ -4,7 +4,7 @@
 \name{trans}
 \alias{trans}
 \title{trans dataset containing transitions between old (2008) and new (2010) occupational codes.
-this table could be used to map encodings in both directions.}
+This table could be used to map encodings in both directions.}
 \format{
 A data frame with 2693 observations and 2 variables.
 \describe{
@@ -17,7 +17,7 @@ trans
 }
 \description{
 trans dataset containing transitions between old (2008) and new (2010) occupational codes.
-this table could be used to map encodings in both directions.
+This table could be used to map encodings in both directions.
 }
 \details{
 transition table for occupations where first column contains old encodings and second one a new encoding

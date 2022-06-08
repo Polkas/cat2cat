@@ -253,20 +253,20 @@ cat2cat <- function(data = list(
   d_new <- length(unique(data$new[[data$time_var]]))
   stopifnot((d_old == 1) && (d_new == 1))
   stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
-                                       (data$id_var %in% colnames(data$new)) &&
-                                       !anyDuplicated(data$old[[data$id_var]]) &&
-                                       !anyDuplicated(data$new[[data$id_var]])))
+    (data$id_var %in% colnames(data$new)) &&
+    !anyDuplicated(data$old[[data$id_var]]) &&
+    !anyDuplicated(data$new[[data$id_var]])))
 
   # mappings validation
   stopifnot(length(mappings) == 2)
   stopifnot(all(c("trans", "direction") %in% names(mappings)))
   stopifnot(mappings$direction %in% c("forward", "backward"))
   stopifnot(all(vapply(mappings, Negate(is.null), logical(1))))
+  stopifnot(is.data.frame(mappings$trans))
   stopifnot(ncol(mappings$trans) == 2)
 
   is_direct_match <- !is.null(data$id_var)
   mapps <- get_mappings(mappings$trans)
-
 
   if (is_direct_match) {
     id_inner <- intersect(data$old[[data$id_var]], data$new[[data$id_var]])
@@ -302,6 +302,16 @@ cat2cat <- function(data = list(
 
   cats_base <- cat_base_year[[cat_var_base]]
   cats_target <- cat_target_year[[cat_var_target]]
+
+  if (cats_target_diff_len <- length(cats_target_diff <- setdiff(unique(cats_target), names(mapp)))) {
+    warning(
+      paste(
+        sprintf("trans table does not cover some levels for a target period, so the result will not contain all original observations. Lacking %s levels: ",
+                cats_target_diff_len),
+        paste(head(cats_target_diff, 10), collapse = ", "),
+        if (cats_target_diff_len >= 10) "..." else NULL)
+    )
+  }
 
   if (is_direct_match) {
     cat_mid <- dummy_c2c(cat_mid, cat_var_base)

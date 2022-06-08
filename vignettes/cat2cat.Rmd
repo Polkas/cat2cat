@@ -23,15 +23,15 @@ knitr::opts_chunk$set(warning = F)
 
 ## `cat2cat`
 
-The introduced `cat2cat` algorithm was designed to offer an easy and clear interface to apply a transition table which was provided by a data maintainer or built by a researcher. The objective is to unify an inconsistent coded categorical variable in a panel dataset, where a transition table is the core element of the process.
+The introduced `cat2cat` algorithm was designed to offer an easy and clear interface to apply a mapping table (transition table) which was provided by a data maintainer or built by a researcher. The objective is to unify an inconsistent coded categorical variable in a panel dataset, where a transition table is the core element of the process.
 
 Examples of a dataset with such inconsistent coded categorical variable are ISCO (The International Standard Classification of Occupations) or ICD (International Classification of Diseases) based one. The both classifications are regularly updated to adjust to e.g. new science achievements. More clearly we might image that e.g. new science achievements brings new occupations types on the market or enable recognition of new diseases types.
 
-The categorical variable encoding changes are typically provided by datasets providers in the form of transition table, for each time point the changes occurred. A transition table conveys information needed for matching all categories between two periods of time. More precisely it contains two columns where the first column contains old categories and the second column contains the new ones.
+The categorical variable encoding changes are typically provided by datasets providers in the transition table form, for each time point the changes occurred. A transition table conveys information needed for matching all categories between two periods of time. More precisely it contains two columns where the first column contains old categories and the second column contains the new ones.
 Sometimes a transition table has to be created manually by a researcher.
 
 The main rule is to replicate the observation if it could be assigned to a few categories.
-More precisely for each observation we look across a transition table to check how the original category could be mapped to the opposite period one. Then using simple frequencies or statistical methods to approximate probabilities of being assigned to each of them.
+More precisely for each observation we look across a transition table to check how the original category could be mapped to the opposite period one. Then using simple frequencies or statistical methods to approximate weights (probabilities) of being assigned to each of them.
 For each observation that was replicated, the probabilities have to add up to one.
 The algorithm distinguishes different mechanics for panel data with and without unique identifiers.
 
@@ -39,8 +39,8 @@ The algorithm distinguishes different mechanics for panel data with and without 
 
 There are 3 important elements:
 
-1. Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers and aggregate data vs non-aggragate data.
-2. Transition table, possibly a few for longer panels. 
+1. Transition table, possibly a few for longer panels. 
+2. Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers and aggregate data vs non-aggragate data.
 3. Direction of a transition, forward or backward - a new or an old encoding as a base one.
 
 ## Data
@@ -66,6 +66,22 @@ occup_2006 <- occup[occup$year == 2006, ]
 occup_2008 <- occup[occup$year == 2008, ]
 occup_2010 <- occup[occup$year == 2010, ]
 occup_2012 <- occup[occup$year == 2012, ]
+```
+
+## Mapping Table
+
+Graph of 30 first observations from the `trans` mapping table.
+This graph is specific as the newer codes are much more detailed than older ones. 
+That is why almost each old 4-digit code has a few new 6-digit code siblings.
+
+```{r, fig.height=4, fig.width=5, echo=FALSE}
+oldMargins <- par("mar")
+par(mar = c(1,1,1,1))
+gg <- igraph::graph_from_data_frame(trans[1:30, ])
+plot(gg, edge.arrow.size = .5, vertex.color = "gold", vertex.size = 15,
+     vertex.frame.color = "gray", vertex.label.color = "black",
+     vertex.label.cex = 0.6, vertex.label.dist = 2, edge.curved = 0.2)
+par(mar = oldMargins)
 ```
 
 ## Dataset without unique identifiers
@@ -223,11 +239,21 @@ counts_per_level <- final_data_back %>%
 
 Unification Process:
 
+A few categories levels are not in the trans table, lacking levels `setdiff(c(occup_2010$code, occup_2012$code), trans$new)`.
+We could solve it by adding a "no_cat" level for each of them in the `trans` table.
+
+```{r}
+trans2 <- rbind(trans, data.frame(old = "no_cat",
+                                  new = setdiff(c(occup_2010$code, occup_2012$code), trans$new)))
+```
+
+Of course the best solution will be to get these mappings from the data provider
+
 ```{r}
 # 2008 -> 2010
 occup_for_2008_2010 <- cat2cat(
   data = list(old = occup_2008, new = occup_2010, cat_var = "code", time_var = "year"),
-  mappings = list(trans = trans, direction = "forward")
+  mappings = list(trans = trans2, direction = "forward")
 )
 
 # optional, give more control
@@ -246,7 +272,7 @@ occup_for_2010_2012 <- cat2cat(
     time_var = "year",
     freqs_df = freq_df
   ),
-  mappings = list(trans = trans, direction = "forward")
+  mappings = list(trans = trans2, direction = "forward")
 )
 
 # use ml argument when applied ml models
@@ -274,14 +300,6 @@ counts_old <- occup %>%
   group_by(year) %>%
   summarise(n = n(), n2 = n(), .groups = "drop")
 
-# counts are not identical as a few categories levels are not in the trans table
-# lacking levels setdiff(c(occup_2010$code, occup_2012$code), trans$new)
-# we could solve it by adding a "no_cat" level for each of them in the `trans` table
-# trans2 <- rbind(trans,
-#                 data.frame(old = "no_cat",
-#                            new = setdiff(c(occup_2010$code, occup_2012$code),
-#                                          trans$new)))
-# of course the best solution will be to get these mappings from the data provider
 identical(counts_new, counts_old)
 
 # counts per each level
@@ -364,10 +382,14 @@ counts_per_level <- final_data_back_ml %>%
 Possible processing:
 
 ```{r}
-ff <- final_data_back_ml %>% 
-      split(.$year) %>% 
-      lapply(function(x) x %>% cross_c2c() %>% prune_c2c(column = "wei_cross_c2c", method = "highest1")) %>% 
-      bind_rows()
+ff <- final_data_back_ml %>%
+  split(.$year) %>%
+  lapply(function(x) {
+    x %>%
+      cross_c2c() %>%
+      prune_c2c(column = "wei_cross_c2c", method = "highest1")
+  }) %>%
+  bind_rows()
 all.equal(nrow(ff), sum(final_data_back_ml$wei_freq_c2c))
 ```
 
