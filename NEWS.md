@@ -1,4 +1,4 @@
-# cat2cat 0.4.0.9000
+# cat2cat 0.4.1
 
 * additional `cat2cat` validation, if the `trans` table covers all needed levels.
 * documentation and tests improvements.
