@@ -1,6 +1,6 @@
 Package: cat2cat
 Title: Handling an Inconsistent Coded Categorical Variable in a Panel Dataset
-Version: 0.4.1
+Version: 0.4.1.9000
 Authors@R: person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre"))
 Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
 Description: 
