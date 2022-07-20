@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1.9000</span>
       </span>
     </div>
 
@@ -56,10 +56,10 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">cat2cat_agg</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="cn">NULL</span>, new <span class="op">=</span> <span class="cn">NULL</span>, cat_var <span class="op">=</span> <span class="cn">NULL</span>, time_var <span class="op">=</span> <span class="cn">NULL</span>, freq_var <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cat2cat_agg</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="cn">NULL</span>, new <span class="op">=</span> <span class="cn">NULL</span>, cat_var <span class="op">=</span> <span class="cn">NULL</span>, time_var <span class="op">=</span> <span class="cn">NULL</span>, freq_var <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -89,25 +89,25 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">verticals</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">agg_old</span> <span class="op">&lt;-</span> <span class="va">verticals</span><span class="op">[</span><span class="va">verticals</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-04-01"</span>, <span class="op">]</span></span>
-<span class="r-in"><span class="va">agg_new</span> <span class="op">&lt;-</span> <span class="va">verticals</span><span class="op">[</span><span class="va">verticals</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-05-01"</span>, <span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## cat2cat_agg - could map in both directions at once although</span></span>
-<span class="r-in"><span class="co">## usually we want to have old or new representation</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">agg</span> <span class="op">&lt;-</span> <span class="fu">cat2cat_agg</span><span class="op">(</span></span>
-<span class="r-in">  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">    old <span class="op">=</span> <span class="va">agg_old</span>,</span>
-<span class="r-in">    new <span class="op">=</span> <span class="va">agg_new</span>,</span>
-<span class="r-in">    cat_var <span class="op">=</span> <span class="st">"vertical"</span>,</span>
-<span class="r-in">    time_var <span class="op">=</span> <span class="st">"v_date"</span>,</span>
-<span class="r-in">    freq_var <span class="op">=</span> <span class="st">"counts"</span></span>
-<span class="r-in">  <span class="op">)</span>,</span>
-<span class="r-in">  <span class="va">Automotive</span> <span class="op">%&lt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Automotive1</span>, <span class="va">Automotive2</span><span class="op">)</span>,</span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Kids1</span>, <span class="va">Kids2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Kids</span><span class="op">)</span>,</span>
-<span class="r-in">  <span class="va">Home</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Home</span>, <span class="va">Supermarket</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">verticals</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">agg_old</span> <span class="op">&lt;-</span> <span class="va">verticals</span><span class="op">[</span><span class="va">verticals</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-04-01"</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">agg_new</span> <span class="op">&lt;-</span> <span class="va">verticals</span><span class="op">[</span><span class="va">verticals</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-05-01"</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## cat2cat_agg - could map in both directions at once although</span></span></span>
+<span class="r-in"><span><span class="co">## usually we want to have old or new representation</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">agg</span> <span class="op">&lt;-</span> <span class="fu">cat2cat_agg</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    old <span class="op">=</span> <span class="va">agg_old</span>,</span></span>
+<span class="r-in"><span>    new <span class="op">=</span> <span class="va">agg_new</span>,</span></span>
+<span class="r-in"><span>    cat_var <span class="op">=</span> <span class="st">"vertical"</span>,</span></span>
+<span class="r-in"><span>    time_var <span class="op">=</span> <span class="st">"v_date"</span>,</span></span>
+<span class="r-in"><span>    freq_var <span class="op">=</span> <span class="st">"counts"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="va">Automotive</span> <span class="op">%&lt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Automotive1</span>, <span class="va">Automotive2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Kids1</span>, <span class="va">Kids2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Kids</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="va">Home</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Home</span>, <span class="va">Supermarket</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -122,7 +122,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

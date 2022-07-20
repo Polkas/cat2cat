@@ -20,7 +20,7 @@ This function might seems to be a complex at the first glance though it is built
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1.9000</span>
       </span>
     </div>
 
@@ -62,12 +62,12 @@ This function might seems to be a complex at the first glance though it is built
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">cat2cat</span><span class="op">(</span>
-  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="cn">NULL</span>, new <span class="op">=</span> <span class="cn">NULL</span>, cat_var <span class="op">=</span> <span class="cn">NULL</span>, cat_var_old <span class="op">=</span> <span class="cn">NULL</span>, cat_var_new <span class="op">=</span>
-    <span class="cn">NULL</span>, id_var <span class="op">=</span> <span class="cn">NULL</span>, time_var <span class="op">=</span> <span class="cn">NULL</span>, multiplier_var <span class="op">=</span> <span class="cn">NULL</span>, freqs_df <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,
-  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="cn">NULL</span>, direction <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,
-  ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>data <span class="op">=</span> <span class="cn">NULL</span>, cat_var <span class="op">=</span> <span class="cn">NULL</span>, method <span class="op">=</span> <span class="cn">NULL</span>, features <span class="op">=</span> <span class="cn">NULL</span>, args <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cat2cat</span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="cn">NULL</span>, new <span class="op">=</span> <span class="cn">NULL</span>, cat_var <span class="op">=</span> <span class="cn">NULL</span>, cat_var_old <span class="op">=</span> <span class="cn">NULL</span>, cat_var_new <span class="op">=</span></span>
+<span>    <span class="cn">NULL</span>, id_var <span class="op">=</span> <span class="cn">NULL</span>, time_var <span class="op">=</span> <span class="cn">NULL</span>, multiplier_var <span class="op">=</span> <span class="cn">NULL</span>, freqs_df <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="cn">NULL</span>, direction <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>  ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>data <span class="op">=</span> <span class="cn">NULL</span>, cat_var <span class="op">=</span> <span class="cn">NULL</span>, method <span class="op">=</span> <span class="cn">NULL</span>, features <span class="op">=</span> <span class="cn">NULL</span>, args <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -110,7 +110,7 @@ Additional columns will be informative only for a one data.frame as we always ma
   The transition table should to have a candidate for each category from the targeted for an update period.</p></li>
 <li><p>"direction" character direction - "backward" or "forward"</p></li>
 </ul><p>optional ml args</p><ul><li><p>"data" data.frame - dataset with features and the `cat_var`.</p></li>
-<li><p>"cat_var" character - the dependent variable name. It has to be compatible with the `cat_var` in the target period.</p></li>
+<li><p>"cat_var" character - the dependent variable name.</p></li>
 <li><p>"method" character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination Analysis, "rf" Random Forest</p></li>
 <li><p>"features" character vector of features names where all have to be numeric or logical</p></li>
 <li><p>"args" optional - list parameters: knn: k ; rf: ntree</p></li>
@@ -128,35 +128,35 @@ Please check the vignette for more information.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup_small</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">occup_old</span> <span class="op">&lt;-</span> <span class="va">occup_small</span><span class="op">[</span><span class="va">occup_small</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2008</span>, <span class="op">]</span></span>
-<span class="r-in"><span class="va">occup_new</span> <span class="op">&lt;-</span> <span class="va">occup_small</span><span class="op">[</span><span class="va">occup_small</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2010</span>, <span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># default only simple frequencies</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">occup_simple</span> <span class="op">&lt;-</span> <span class="fu">cat2cat</span><span class="op">(</span></span>
-<span class="r-in">  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,</span>
-<span class="r-in">  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># additionally add probabilities from knn</span></span>
-<span class="r-in"><span class="va">occup_ml</span> <span class="op">&lt;-</span> <span class="fu">cat2cat</span><span class="op">(</span></span>
-<span class="r-in">  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,</span>
-<span class="r-in">  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span>,</span>
-<span class="r-in">  ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">    data <span class="op">=</span> <span class="va">occup_old</span>,</span>
-<span class="r-in">    cat_var <span class="op">=</span> <span class="st">"code"</span>,</span>
-<span class="r-in">    method <span class="op">=</span> <span class="st">"knn"</span>,</span>
-<span class="r-in">    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"edu"</span>, <span class="st">"exp"</span>, <span class="st">"parttime"</span>, <span class="st">"salary"</span><span class="op">)</span>,</span>
-<span class="r-in">    args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in">  <span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup_small</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">occup_old</span> <span class="op">&lt;-</span> <span class="va">occup_small</span><span class="op">[</span><span class="va">occup_small</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2008</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">occup_new</span> <span class="op">&lt;-</span> <span class="va">occup_small</span><span class="op">[</span><span class="va">occup_small</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2010</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># default only simple frequencies</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">occup_simple</span> <span class="op">&lt;-</span> <span class="fu">cat2cat</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># additionally add probabilities from knn</span></span></span>
+<span class="r-in"><span><span class="va">occup_ml</span> <span class="op">&lt;-</span> <span class="fu">cat2cat</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"forward"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    data <span class="op">=</span> <span class="va">occup_old</span>,</span></span>
+<span class="r-in"><span>    cat_var <span class="op">=</span> <span class="st">"code"</span>,</span></span>
+<span class="r-in"><span>    method <span class="op">=</span> <span class="st">"knn"</span>,</span></span>
+<span class="r-in"><span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"edu"</span>, <span class="st">"exp"</span>, <span class="st">"parttime"</span>, <span class="st">"salary"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -171,7 +171,7 @@ Please check the vignette for more information.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

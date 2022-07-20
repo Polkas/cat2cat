@@ -19,7 +19,7 @@ Frequencies for each category/key are sum to 1, so could be interpreted as proba
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1.9000</span>
       </span>
     </div>
 
@@ -60,7 +60,7 @@ Frequencies for each category/key are sum to 1, so could be interpreted as proba
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">cat_apply_freq</span><span class="op">(</span><span class="va">to_x</span>, <span class="va">freqs</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cat_apply_freq</span><span class="op">(</span><span class="va">to_x</span>, <span class="va">freqs</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -82,12 +82,12 @@ Frequencies for each category/key are sum to 1, so could be interpreted as proba
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">mappings</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_mappings.html">get_mappings</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">mappings</span><span class="op">$</span><span class="va">to_old</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">mappings</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_mappings.html">get_mappings</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">mappings</span><span class="op">$</span><span class="va">to_old</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`111101`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1111"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -100,7 +100,7 @@ Frequencies for each category/key are sum to 1, so could be interpreted as proba
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`111201`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1112"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span class="va">mappings</span><span class="op">$</span><span class="va">to_new</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
+<span class="r-in"><span><span class="va">mappings</span><span class="op">$</span><span class="va">to_new</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1111`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "111101" "111102" "111103"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -113,15 +113,15 @@ Frequencies for each category/key are sum to 1, so could be interpreted as proba
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`1122`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "111401" "111403" "111404"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">mapp_p</span> <span class="op">&lt;-</span> <span class="fu">cat_apply_freq</span><span class="op">(</span></span>
-<span class="r-in">  <span class="va">mappings</span><span class="op">$</span><span class="va">to_old</span>,</span>
-<span class="r-in">  <span class="fu"><a href="get_freqs.html">get_freqs</a></span><span class="op">(</span></span>
-<span class="r-in">    <span class="va">occup</span><span class="op">$</span><span class="va">code</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2008"</span><span class="op">]</span>,</span>
-<span class="r-in">    <span class="va">occup</span><span class="op">$</span><span class="va">multiplier</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2008"</span><span class="op">]</span></span>
-<span class="r-in">  <span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">mappings</span><span class="op">$</span><span class="va">to_old</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">mapp_p</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">mapp_p</span> <span class="op">&lt;-</span> <span class="fu">cat_apply_freq</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">mappings</span><span class="op">$</span><span class="va">to_old</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="get_freqs.html">get_freqs</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">occup</span><span class="op">$</span><span class="va">code</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2008"</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>    <span class="va">occup</span><span class="op">$</span><span class="va">multiplier</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2008"</span><span class="op">]</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">mappings</span><span class="op">$</span><span class="va">to_old</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">mapp_p</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        mappings.to_old mapp_p</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 111101            1111      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 111102            1111      1</span>
@@ -129,14 +129,14 @@ Frequencies for each category/key are sum to 1, so could be interpreted as proba
 <span class="r-out co"><span class="r-pr">#&gt;</span> 111201            1112      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 111202            1112      1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 111301            1112      1</span>
-<span class="r-in"><span class="va">mapp_p</span> <span class="op">&lt;-</span> <span class="fu">cat_apply_freq</span><span class="op">(</span></span>
-<span class="r-in">  <span class="va">mappings</span><span class="op">$</span><span class="va">to_new</span>,</span>
-<span class="r-in">  <span class="fu"><a href="get_freqs.html">get_freqs</a></span><span class="op">(</span></span>
-<span class="r-in">    <span class="va">occup</span><span class="op">$</span><span class="va">code</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2010"</span><span class="op">]</span>,</span>
-<span class="r-in">    <span class="va">occup</span><span class="op">$</span><span class="va">multiplier</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2010"</span><span class="op">]</span></span>
-<span class="r-in">  <span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">mappings</span><span class="op">$</span><span class="va">to_new</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">mapp_p</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">mapp_p</span> <span class="op">&lt;-</span> <span class="fu">cat_apply_freq</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">mappings</span><span class="op">$</span><span class="va">to_new</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="get_freqs.html">get_freqs</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">occup</span><span class="op">$</span><span class="va">code</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2010"</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>    <span class="va">occup</span><span class="op">$</span><span class="va">multiplier</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="st">"2010"</span><span class="op">]</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">mappings</span><span class="op">$</span><span class="va">to_new</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">mapp_p</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      mappings.to_new       mapp_p</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1111    111101, .... 0, 0.100....</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1112    111201, .... 0.079357....</span>
@@ -158,7 +158,7 @@ Frequencies for each category/key are sum to 1, so could be interpreted as proba
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>
