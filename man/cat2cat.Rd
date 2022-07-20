@@ -55,7 +55,7 @@ mappings args
 optional ml args
 \itemize{
  \item{"data"}{ data.frame - dataset with features and the `cat_var`.}
- \item{"cat_var"}{ character - the dependent variable name. It has to be compatible with the `cat_var` in the target period.}
+ \item{"cat_var"}{ character - the dependent variable name.}
  \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination Analysis, "rf" Random Forest }
  \item{"features"}{ character vector of features names where all have to be numeric or logical}
  \item{"args"}{ optional - list parameters: knn: k ; rf: ntree  }

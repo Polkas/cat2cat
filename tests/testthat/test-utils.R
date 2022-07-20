@@ -30,3 +30,10 @@ testthat::test_that("dummy_c2c", {
     colnames(dummy_c2c(airquality, "Month"))
   )
 })
+
+testthat::test_that("dummy_c2c", {
+  expect_identical(
+    c(colnames(airquality), "index_c2c", "g_new_c2c", "wei_freq_c2c", "rep_c2c", "wei_naive_c2c", "wei_knn_c2c"),
+    colnames(dummy_c2c(airquality, "Month", ml = "knn"))
+  )
+})

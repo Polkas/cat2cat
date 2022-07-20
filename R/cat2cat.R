@@ -164,7 +164,7 @@ get_freqs <- function(x, multiplier = NULL) {
 #' optional ml args
 #' \itemize{
 #'  \item{"data"}{ data.frame - dataset with features and the `cat_var`.}
-#'  \item{"cat_var"}{ character - the dependent variable name. It has to be compatible with the `cat_var` in the target period.}
+#'  \item{"cat_var"}{ character - the dependent variable name.}
 #'  \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination Analysis, "rf" Random Forest }
 #'  \item{"features"}{ character vector of features names where all have to be numeric or logical}
 #'  \item{"args"}{ optional - list parameters: knn: k ; rf: ntree  }
@@ -361,7 +361,8 @@ cat2cat <- function(data = list(
     ml_results <- cat2cat_ml(
       ml = ml,
       mapp = mapp,
-      target_data = cat_target_rep
+      target_data = cat_target_rep,
+      cat_var_target = cat_var_target
     )
 
     cat_target_rep <- ml_results$target_data
@@ -379,8 +380,9 @@ cat2cat <- function(data = list(
 #' @param ml `list` the same `ml` argument as provided to `cat2cat` function.
 #' @param mapp `list` a mapping table
 #' @param target_data `data.frame`
+#' @param cat_var_target `character` name of the categorical variable in the target period.
 #' @keywords internal
-cat2cat_ml <- function(ml, mapp, target_data) {
+cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
   stopifnot(all(c("method", "features") %in% names(ml)))
   stopifnot(all(ml$features %in% colnames(target_data)))
   stopifnot(all(ml$features %in% colnames(ml$data)))
@@ -388,6 +390,7 @@ cat2cat_ml <- function(ml, mapp, target_data) {
   stopifnot(all(vapply(ml$data[, ml$features, drop = FALSE], function(x) is.numeric(x) || is.logical(x), logical(1))))
   stopifnot(all(ml$method %in% c("knn", "rf", "lda")))
   stopifnot(ml$cat_var %in% colnames(ml$data))
+  stopifnot(cat_var_target %in% colnames(target_data))
 
   features <- unique(ml$features)
   methods <- unique(ml$method)
@@ -396,7 +399,7 @@ cat2cat_ml <- function(ml, mapp, target_data) {
   target_data[, ml_names] <- target_data["wei_freq_c2c"]
 
   cat_ml_year_g <- split(ml$data[, c(features, ml$cat_var), drop = FALSE], factor(ml$data[[ml$cat_var]], exclude = NULL))
-  target_data_cats <- target_data[[ml$cat_var]]
+  target_data_cats <- target_data[[cat_var_target]]
   target_data_cat_c2c <- split(target_data, factor(target_data_cats, exclude = NULL))
 
   for (cat in unique(names(target_data_cat_c2c))) {
@@ -610,7 +613,7 @@ cross_c2c <- function(df,
 #' It will be useful e.g. for a boarder periods which will not have additional `cat2cat` columns.
 #' @param df `data.frame`
 #' @param cat_var `character` a categorical variable name.
-#' @param ml `character` vector of ml models applied, any of `c("wei_knn_c2c", "wei_rf_c2c", "wei_lda_c2c")`.
+#' @param ml `character` vector of ml models applied, any of `c("knn", "rf", "lda")`.
 #' @export
 #' @examples
 #' \dontrun{
@@ -624,7 +627,7 @@ dummy_c2c <- function(df, cat_var, ml = NULL) {
   stopifnot(is.data.frame(df))
   stopifnot(length(cat_var) == 1 && is.character(cat_var))
   stopifnot(isTRUE(cat_var %in% colnames(df)))
-  stopifnot(is.null(ml) || all(ml %in% c("wei_knn_c2c", "wei_rf_c2c", "wei_lda_c2c")))
+  stopifnot(is.null(ml) || all(ml %in% c("knn", "rf", "lda")))
 
   if (!all(c("index_c2c", "g_new_c2c", "wei_freq_c2c", "rep_c2c", "wei_naive_c2c") %in% colnames(df))) {
     df$index_c2c <- seq_len(nrow(df))
@@ -635,7 +638,7 @@ dummy_c2c <- function(df, cat_var, ml = NULL) {
   }
 
   if (!is.null(ml)) {
-    df[, setdiff(ml, colnames(df))] <- 1
+    df[, setdiff(paste0("wei_", ml, "_c2c"), colnames(df))] <- 1
   }
 
   df

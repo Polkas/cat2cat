@@ -11,7 +11,7 @@ dummy_c2c(df, cat_var, ml = NULL)
 
 \item{cat_var}{`character` a categorical variable name.}
 
-\item{ml}{`character` vector of ml models applied, any of `c("wei_knn_c2c", "wei_rf_c2c", "wei_lda_c2c")`.}
+\item{ml}{`character` vector of ml models applied, any of `c("knn", "rf", "lda")`.}
 }
 \description{
 a utils function to add default cat2cat columns to a `data.frame`.

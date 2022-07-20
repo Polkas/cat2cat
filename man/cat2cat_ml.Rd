@@ -4,7 +4,7 @@
 \alias{cat2cat_ml}
 \title{The internal function used in the cat2cat ones}
 \usage{
-cat2cat_ml(ml, mapp, target_data)
+cat2cat_ml(ml, mapp, target_data, cat_var_target)
 }
 \arguments{
 \item{ml}{`list` the same `ml` argument as provided to `cat2cat` function.}
@@ -12,6 +12,8 @@ cat2cat_ml(ml, mapp, target_data)
 \item{mapp}{`list` a mapping table}
 
 \item{target_data}{`data.frame`}
+
+\item{cat_var_target}{`character` name of the categorical variable in the target period.}
 }
 \description{
 apply the ml models to the cat2cat data
