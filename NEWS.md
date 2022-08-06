@@ -1,8 +1,8 @@
-# cat2cat 0.4.1.9000
+# cat2cat 0.4.2
 
 * The `ml` argument in the `dummy_c2c` function is redefined, shorter names for a simpler usage.
-* The `cat2cat` ml part is using direct `cat_var` for target for an update dataset now, not the one from the `ml` argument list.
-* Improve the UML for the forward mapping.
+* The `cat2cat` ml part is using direct `cat_var` for target (for an update) dataset now, not the one from the `ml` argument list.
+* Improve procedure graphs.
 
 # cat2cat 0.4.1
 
