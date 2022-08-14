@@ -2,7 +2,7 @@
 % Please edit documentation in R/cat2cat.R
 \name{cat2cat_ml}
 \alias{cat2cat_ml}
-\title{The internal function used in the cat2cat ones}
+\title{The internal function used in the cat2cat one}
 \usage{
 cat2cat_ml(ml, mapp, target_data, cat_var_target)
 }

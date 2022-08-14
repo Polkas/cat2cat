@@ -1,10 +1,10 @@
-#' Transforming a transition table with mappings to two associative lists
+#' Transforming a transition (mapping) table to two associative lists
 #' @description to rearrange the one classification encoding into another, an associative list that maps keys to values is used.
 #' More precisely, an association list is used which is a linked list in which each list element consists of a key and value or values.
 #' An association list where unique categories codes are keys and matching categories from next or previous time point are values.
-#' A transition table is used to build such associative lists.
-#' @param x `data.frame` or `matrix` - transition table with 2 columns where first column is assumed to be the older encoding.
-#' @details the named list will be a more efficient solution than hash map as we are not expecting more than a few thousand keys.
+#' A transition (mapping) table is used to build such associative lists.
+#' @param x `data.frame` or `matrix` - transition (mapping) table with 2 columns where first column is assumed to be the older encoding.
+#' @details the `named list` will be a almost equally efficient solution as hash map (`environment`) as we are not expecting more than a few thousand keys and R has an in-build multi-element subset operator for lists.
 #' @return a list with 2 named lists `to_old` and `to_new`.
 #' @examples
 #' data(trans)
@@ -14,6 +14,7 @@
 #' mappings$to_new[1:4]
 #' @export
 get_mappings <- function(x = data.frame()) {
+  stopifnot(is.data.frame(x) || is.matrix(x))
   stopifnot(ncol(x) == 2)
 
   x <- as.matrix(x)
@@ -47,11 +48,11 @@ get_mappings <- function(x = data.frame()) {
   list(to_old = to_old, to_new = to_new)
 }
 
-#' Getting frequencies from a `character` vector with an optional multiplier argument
-#' @description getting frequencies for a vector with an optional multiplier argument
-#' @param x character vector categorical variable to summarize.
-#' @param multiplier numeric vector how many times to repeat certain value, additional weights.
-#' @return data.frame with two columns `input` `Freq`
+#' Getting frequencies from a vector with an optional multiplier
+#' @description getting frequencies for a vector with an optional multiplier.
+#' @param x `character` vector categorical variable to summarize.
+#' @param multiplier `numeric` vector how many times to repeat certain value, additional weights.
+#' @return `data.frame` with two columns `input` `Freq`
 #' @note without multiplier variable it is a basic `table` function wrapped with the `as.data.frame` function.
 #' The `table` function is used with the `useNA = "ifany"` argument.
 #' @export
@@ -64,6 +65,7 @@ get_mappings <- function(x = data.frame()) {
 #' head(get_freqs(occup$code[occup$year == "2008"], occup$multiplier[occup$year == "2008"]))
 #' head(get_freqs(occup$code[occup$year == "2010"], occup$multiplier[occup$year == "2010"]))
 get_freqs <- function(x, multiplier = NULL) {
+  stopifnot(is.vector(x))
   stopifnot(is.null(multiplier) || length(x) == length(multiplier))
 
   input <- if (!is.null(multiplier)) {
@@ -80,9 +82,9 @@ get_freqs <- function(x, multiplier = NULL) {
 #' @description applying frequencies to the object returned by the `get_mappings` function.
 #' We will get a symmetric object to the one returned by the `get_mappings` function, nevertheless categories are replaced with frequencies.
 #' Frequencies for each category/key are sum to 1, so could be interpreted as probabilities.
-#' @param to_x `list` object returned by get_mappings.
-#' @param freqs `data.frame` object returned by the `get_freqs` function.
-#' @return a list with 2 named lists `to_old` and `to_new`.
+#' @param to_x `list` object returned by `get_mappings`.
+#' @param freqs `data.frame` object like the one returned by the `get_freqs` function.
+#' @return a `list` with a structure like `to_x` object but with probabilities for each category.
 #' @examples
 #' data(trans)
 #' data(occup)
@@ -110,6 +112,7 @@ get_freqs <- function(x, multiplier = NULL) {
 #' head(data.frame(I(mappings$to_new), I(mapp_p)))
 #' @export
 cat_apply_freq <- function(to_x, freqs) {
+  stopifnot(is.list(to_x))
   stopifnot(ncol(freqs) == 2)
   res <- lapply(
     to_x,

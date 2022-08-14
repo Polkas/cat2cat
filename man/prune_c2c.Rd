@@ -2,7 +2,7 @@
 % Please edit documentation in R/cat2cat_utils.R
 \name{prune_c2c}
 \alias{prune_c2c}
-\title{A set of prune methods which will be useful after transition process}
+\title{Pruning which could be useful after the mapping process}
 \usage{
 prune_c2c(
   df,
@@ -13,21 +13,21 @@ prune_c2c(
 )
 }
 \arguments{
-\item{df}{data.frame}
+\item{df}{`data.frame` like result of the `cat2cat` function for a specific period.}
 
-\item{index}{character default wei_freq_c2c}
+\item{index}{`character` default wei_freq_c2c}
 
-\item{column}{character default index_c2c}
+\item{column}{`character` default index_c2c}
 
-\item{method}{character one of four available methods: default "nonzero", "highest", "highest1", "morethan"}
+\item{method}{`character` one of four available methods: default "nonzero", "highest", "highest1", "morethan"}
 
-\item{percent}{integer from 0 to 99}
+\item{percent}{`integer` from 0 to 99}
 }
 \value{
-data.frame
+`data.frame` with the same structure and possibly reduced number of rows
 }
 \description{
-user could specify one from four methods to prune replications
+user could specify one of four methods to prune replications created in the cat2cat procedure.
 }
 \details{
 method - specify method to reduce number of replications

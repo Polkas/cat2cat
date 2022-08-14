@@ -1,6 +1,7 @@
 # cat2cat 0.4.2.9000
 
-* Improve documentation
+* Improve documentation.
+* Improve validation.
 
 # cat2cat 0.4.2
 

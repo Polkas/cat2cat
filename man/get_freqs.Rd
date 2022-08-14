@@ -2,20 +2,20 @@
 % Please edit documentation in R/mapping.R
 \name{get_freqs}
 \alias{get_freqs}
-\title{Getting frequencies from a `character` vector with an optional multiplier argument}
+\title{Getting frequencies from a vector with an optional multiplier}
 \usage{
 get_freqs(x, multiplier = NULL)
 }
 \arguments{
-\item{x}{character vector categorical variable to summarize.}
+\item{x}{`character` vector categorical variable to summarize.}
 
-\item{multiplier}{numeric vector how many times to repeat certain value, additional weights.}
+\item{multiplier}{`numeric` vector how many times to repeat certain value, additional weights.}
 }
 \value{
-data.frame with two columns `input` `Freq`
+`data.frame` with two columns `input` `Freq`
 }
 \description{
-getting frequencies for a vector with an optional multiplier argument
+getting frequencies for a vector with an optional multiplier.
 }
 \note{
 without multiplier variable it is a basic `table` function wrapped with the `as.data.frame` function.

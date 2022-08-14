@@ -95,7 +95,7 @@ all.equal(nrow(ff), sum(final_data_back$wei_freq_c2c))
 
 **More complex examples are presented in the "Get Started" vignette.**
 
-## UML
+## Graph
 
 The graphs present how the `cat2cat::cat2cat` function works, in this case under a panel dataset without the unique identifiers and only two periods.
 

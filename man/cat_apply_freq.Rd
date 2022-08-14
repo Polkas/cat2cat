@@ -7,12 +7,12 @@
 cat_apply_freq(to_x, freqs)
 }
 \arguments{
-\item{to_x}{`list` object returned by get_mappings.}
+\item{to_x}{`list` object returned by `get_mappings`.}
 
-\item{freqs}{`data.frame` object returned by the `get_freqs` function.}
+\item{freqs}{`data.frame` object like the one returned by the `get_freqs` function.}
 }
 \value{
-a list with 2 named lists `to_old` and `to_new`.
+a `list` with a structure like `to_x` object but with probabilities for each category.
 }
 \description{
 applying frequencies to the object returned by the `get_mappings` function.

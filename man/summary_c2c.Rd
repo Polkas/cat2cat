@@ -18,7 +18,7 @@ data.frame with additional columns over a regular summary.lm output, like correc
 }
 \description{
 adjusting lm object results according to original number of degree of freedom.
-The standard errors, t statistics and p values have to be adjusted because of replicated rows.
+The standard errors, t statistics and p values have to be adjusted because of replicated observations.
 }
 \details{
 The size of the correction is equal to sqrt(df_new / df_old).

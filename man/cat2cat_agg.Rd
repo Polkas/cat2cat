@@ -2,7 +2,7 @@
 % Please edit documentation in R/cat2cat_agg.R
 \name{cat2cat_agg}
 \alias{cat2cat_agg}
-\title{Manual mapping of a categorical variable according to a new encoding for aggregated panel dataset}
+\title{Manual mapping for an aggregated panel dataset}
 \usage{
 cat2cat_agg(
   data = list(old = NULL, new = NULL, cat_var = NULL, time_var = NULL, freq_var = NULL),
@@ -12,13 +12,13 @@ cat2cat_agg(
 \arguments{
 \item{data}{list with 5 named fields `old`, `new`, `cat_var`, `time_var`, `freq_var`.}
 
-\item{...}{equations where direction is set with any of `>`, `<`, `\%>\%`, `\%<\%`.}
+\item{...}{mapping equations where direction is set with any of `>`, `<`, `\%>\%`, `\%<\%`.}
 }
 \value{
-list of two data.frame objects.
+`list` of two data.frame objects.
 }
 \description{
-Aggregate panel dataset - Manual mapping of a categorical variable according to a new encoding where user providing transitions with equations.
+Manual mapping of an inconsistently coded categorical variable according to the user provided mappings (equations).
 }
 \details{
 data argument - list with fields
@@ -35,8 +35,8 @@ data(verticals)
 agg_old <- verticals[verticals$v_date == "2020-04-01", ]
 agg_new <- verticals[verticals$v_date == "2020-05-01", ]
 
-## cat2cat_agg - could map in both directions at once although
-## usually we want to have old or new representation
+# cat2cat_agg - can map in both directions at once
+# although usually we want to have the old or the new representation
 
 agg <- cat2cat_agg(
   data = list(
@@ -50,4 +50,13 @@ agg <- cat2cat_agg(
   c(Kids1, Kids2) \%>\% c(Kids),
   Home \%>\% c(Home, Supermarket)
 )
+
+## possible processing
+library(dplyr)
+agg \%>\%
+bind_rows() \%>\%
+  group_by(v_date, vertical) \%>\%
+  summarise(sales = sum(sales * prop_c2c),
+            counts = sum(counts * prop_c2c),
+            v_date = first(v_date))
 }

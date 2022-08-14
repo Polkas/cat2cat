@@ -1,13 +1,13 @@
-#' A set of prune methods which will be useful after transition process
+#' Pruning which could be useful after the mapping process
 #'
-#' @description user could specify one from four methods to prune replications
+#' @description user could specify one of four methods to prune replications created in the cat2cat procedure.
 #'
-#' @param df data.frame
-#' @param index character default wei_freq_c2c
-#' @param column character default index_c2c
-#' @param method character one of four available methods: default "nonzero", "highest", "highest1", "morethan"
-#' @param percent integer from 0 to 99
-#' @return data.frame
+#' @param df `data.frame` like result of the `cat2cat` function for a specific period.
+#' @param index `character` default wei_freq_c2c
+#' @param column `character` default index_c2c
+#' @param method `character` one of four available methods: default "nonzero", "highest", "highest1", "morethan"
+#' @param percent `integer` from 0 to 99
+#' @return `data.frame` with the same structure and possibly reduced number of rows
 #' @details
 #' method - specify method to reduce number of replications
 #' \itemize{
@@ -66,15 +66,16 @@ prune_c2c <- function(df, index = "index_c2c", column = "wei_freq_c2c", method =
   df
 }
 
-#' a function to make a combination of weights from different methods by each row
+#' Make a combination of weights from different methods
 #'
-#' @description adding additional column which is a mix of weights columns by each row
+#' @description adding the additional column which is a mix of weights columns by each row.
+#' Ensemble of a few methods usually produces more accurate solutions than a single model would.
 #'
-#' @param df data.frame
-#' @param cols character vector default all columns follow regex like "wei_.*_c2c"
-#' @param weis numeric vector  Default vector the same length as cols and with equally spaced values summing to 1.
-#' @param na.rm logical if NA should be skipped, default TRUE
-#' @return data.frame with an additional column wei_cross_c2c
+#' @param df `data.frame` like result of the `cat2cat` function for a specific period.
+#' @param cols `character` vector default all columns follow regex like "wei_.*_c2c"
+#' @param weis `numeric` vector  Default vector the same length as cols and with equally spaced values summing to 1.
+#' @param na.rm `logical` if NA should be skipped, default TRUE
+#' @return `data.frame` with an additional column `wei_cross_c2c`
 #' @export
 #' @examples
 #' \dontrun{
@@ -134,7 +135,7 @@ cross_c2c <- function(df,
 #' \dontrun{
 #' dummy_c2c(airquality, "Month")
 #'
-#' data(occup_small) #'
+#' data(occup_small)
 #' occup_old <- occup_small[occup_small$year == 2008, ]
 #' dummy_c2c(occup_old, "code")
 #' }
@@ -153,7 +154,8 @@ dummy_c2c <- function(df, cat_var, ml = NULL) {
   }
 
   if (!is.null(ml)) {
-    df[, setdiff(paste0("wei_", ml, "_c2c"), colnames(df))] <- 1
+    ml_cols <- if (any(grepl("_c2c", ml))) ml else paste0("wei_", ml, "_c2c")
+    df[, setdiff(ml_cols, colnames(df))] <- 1
   }
 
   df

@@ -1,4 +1,5 @@
 
+#' @keywords internal
 read_eq <- function(...) {
   xx <- as.list(substitute(list(...))[-1])
   ll <- length(xx)
@@ -19,6 +20,7 @@ read_eq <- function(...) {
   res
 }
 
+#' @keywords internal
 format_trans <- function(x) {
   forw <- c("%>%", ">")
   back <- c("%<%", "<")

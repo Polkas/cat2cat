@@ -7,11 +7,11 @@
 plot_c2c(data, weis = "wei_freq_c2c", type = c("both", "hist", "bar"))
 }
 \arguments{
-\item{data}{data.frame - one of the data.frames returned by the `cat2cat` function.}
+\item{data}{`data.frame` - one of the data.frames returned by the `cat2cat` function.}
 
-\item{weis}{character - name of a certain wei_*_c2c column, added by cat2cat function. Default wei_freq_c2c}
+\item{weis}{`character` - name of a certain wei_*_c2c column, added by cat2cat function. Default wei_freq_c2c}
 
-\item{type}{character - one of 3 types `"both"`, `"hist"`, `"bar"`.}
+\item{type}{`character` - one of 3 types `"both"`, `"hist"`, `"bar"`.}
 }
 \value{
 base plot graphics

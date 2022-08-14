@@ -1,6 +1,6 @@
 #' Adjusted summary for linear regression when based on replicated dataset
 #' @description adjusting lm object results according to original number of degree of freedom.
-#' The standard errors, t statistics and p values have to be adjusted because of replicated rows.
+#' The standard errors, t statistics and p values have to be adjusted because of replicated observations.
 #' @param x lm object
 #' @param df_old integer number of d.f in original dataset. For bigger datasets `nrow` should be sufficient.
 #' @param df_new integer number of d.f in dataset with replicated rows, Default: x$df.residual

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cat2cat.R
 \name{cat2cat}
 \alias{cat2cat}
-\title{Automatic mapping of a categorical variable in a panel dataset according to a new encoding}
+\title{Automatic mapping in a panel dataset}
 \usage{
 cat2cat(
   data = list(old = NULL, new = NULL, cat_var = NULL, cat_var_old = NULL, cat_var_new =
@@ -16,18 +16,26 @@ cat2cat(
 
 \item{mappings}{`named list` with 2 fields `trans` and `direction`.}
 
-\item{ml}{`named list` with up to 5 fields `data`, `cat_var`, `method`, `features` and optional `args`.}
+\item{ml}{`named list` (optional) with up to 5 fields `data`, `cat_var`, `method`, `features` and optional `args`.}
 }
 \value{
-named list with 2 fields old an new - 2 data.frames.
+`named list` with 2 fields old and new - 2 data.frames.
 There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
 Additional columns will be informative only for a one data.frame as we always make a changes to one direction.
 }
 \description{
-This function is built to work for two time points at once.
-Thus for more periods some recursion will be needed.
-The \code{prune_c2c} might be needed when we have many interactions to limit growing number of replications.
-This function might seems to be a complex at the first glance though it is built to offer a wide range of applications for complex tasks.
+The objective is to unify an inconsistently coded categorical variable in a panel
+dataset  according to a transition (mapping) table.
+The transition (mapping) table is the core element of the process.
+There are three arguments `data`, `mappings`, and `ml`. Each
+of these arguments is of a `list` type, wherein the
+`ml` argument is optional. Arguments are separated to
+identify the core elements of the procedure. Although this function seems
+complex initially, it is built to offer a wide range of
+applications for complex tasks. The function contains
+many validation checks to prevent incorrect usage.
+The function has to be applied iteratively for each two neighboring periods of a panel dataset.
+The \code{prune_c2c} function could be needed to limit growing number of replications.
 }
 \details{
 data args
@@ -46,9 +54,9 @@ data args
 }
 mappings args
 \itemize{
- \item{"trans"}{ data.frame with 2 columns - transition table - all categories for cat_var in old and new datasets have to be included.
+ \item{"trans"}{ data.frame with 2 columns - transition (mapping) table - all categories for cat_var in old and new datasets have to be included.
   First column contains an old encoding and second a new one.
-  The transition table should to have a candidate for each category from the targeted for an update period.
+  The transition (mapping) table should to have a candidate for each category from the targeted for an update period.
 }
  \item{"direction"}{ character direction - "backward" or "forward"}
 }
@@ -66,7 +74,7 @@ When ml model is broken then weights from simple frequencies are taken.
 `knn` method is recommended for smaller datasets.
 }
 \note{
-The transition table should to have a candidate for each category from the targeted for an update period.
+The transition (mapping) table should to have a candidate for each category from the targeted for an update period.
 The observation from targeted for an updated period without a matched category from base period is removed.
 If you want to leave NA values add `c(NA, NA)` row to the `trans` table.
 Please check the vignette for more information.

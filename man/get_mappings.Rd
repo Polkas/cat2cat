@@ -2,12 +2,12 @@
 % Please edit documentation in R/mapping.R
 \name{get_mappings}
 \alias{get_mappings}
-\title{Transforming a transition table with mappings to two associative lists}
+\title{Transforming a transition (mapping) table to two associative lists}
 \usage{
 get_mappings(x = data.frame())
 }
 \arguments{
-\item{x}{`data.frame` or `matrix` - transition table with 2 columns where first column is assumed to be the older encoding.}
+\item{x}{`data.frame` or `matrix` - transition (mapping) table with 2 columns where first column is assumed to be the older encoding.}
 }
 \value{
 a list with 2 named lists `to_old` and `to_new`.
@@ -16,10 +16,10 @@ a list with 2 named lists `to_old` and `to_new`.
 to rearrange the one classification encoding into another, an associative list that maps keys to values is used.
 More precisely, an association list is used which is a linked list in which each list element consists of a key and value or values.
 An association list where unique categories codes are keys and matching categories from next or previous time point are values.
-A transition table is used to build such associative lists.
+A transition (mapping) table is used to build such associative lists.
 }
 \details{
-the named list will be a more efficient solution than hash map as we are not expecting more than a few thousand keys.
+the `named list` will be a almost equally efficient solution as hash map (`environment`) as we are not expecting more than a few thousand keys and R has an in-build multi-element subset operator for lists.
 }
 \examples{
 data(trans)

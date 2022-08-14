@@ -2,7 +2,7 @@
 % Please edit documentation in R/cat2cat_utils.R
 \name{cross_c2c}
 \alias{cross_c2c}
-\title{a function to make a combination of weights from different methods by each row}
+\title{Make a combination of weights from different methods}
 \usage{
 cross_c2c(
   df,
@@ -12,19 +12,20 @@ cross_c2c(
 )
 }
 \arguments{
-\item{df}{data.frame}
+\item{df}{`data.frame` like result of the `cat2cat` function for a specific period.}
 
-\item{cols}{character vector default all columns follow regex like "wei_.*_c2c"}
+\item{cols}{`character` vector default all columns follow regex like "wei_.*_c2c"}
 
-\item{weis}{numeric vector  Default vector the same length as cols and with equally spaced values summing to 1.}
+\item{weis}{`numeric` vector  Default vector the same length as cols and with equally spaced values summing to 1.}
 
-\item{na.rm}{logical if NA should be skipped, default TRUE}
+\item{na.rm}{`logical` if NA should be skipped, default TRUE}
 }
 \value{
-data.frame with an additional column wei_cross_c2c
+`data.frame` with an additional column `wei_cross_c2c`
 }
 \description{
-adding additional column which is a mix of weights columns by each row
+adding the additional column which is a mix of weights columns by each row.
+Ensemble of a few methods usually produces more accurate solutions than a single model would.
 }
 \examples{
 \dontrun{
