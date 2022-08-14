@@ -180,10 +180,13 @@ cat2cat <- function(data = list(
   if (cats_target_diff_len <- length(cats_target_diff <- setdiff(unique(cats_target), names(mapp)))) {
     warning(
       paste(
-        sprintf("trans table does not cover some levels for a target period, so the result will not contain all original observations. Lacking %s levels: ",
-                cats_target_diff_len),
+        sprintf(
+          "trans table does not cover some levels for a target period, so the result will not contain all original observations. Lacking %s levels: ",
+          cats_target_diff_len
+        ),
         paste(head(cats_target_diff, 10), collapse = ", "),
-        if (cats_target_diff_len >= 10) "..." else NULL)
+        if (cats_target_diff_len >= 10) "..." else NULL
+      )
     )
   }
 

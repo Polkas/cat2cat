@@ -7,7 +7,7 @@
 get_mappings(x = data.frame())
 }
 \arguments{
-\item{x}{data.frame or matrix - transition table with 2 columns where first column is assumed to be the older encoding.}
+\item{x}{`data.frame` or `matrix` - transition table with 2 columns where first column is assumed to be the older encoding.}
 }
 \value{
 a list with 2 named lists `to_old` and `to_new`.

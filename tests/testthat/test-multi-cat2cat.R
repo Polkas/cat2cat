@@ -150,4 +150,3 @@ counts_old <- occup %>%
 testthat::test_that("", {
   testthat::expect_identical(counts_new, counts_old)
 })
-

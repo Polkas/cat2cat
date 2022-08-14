@@ -134,7 +134,7 @@ cross_c2c <- function(df,
 #' \dontrun{
 #' dummy_c2c(airquality, "Month")
 #'
-#' data(occup_small)#'
+#' data(occup_small) #'
 #' occup_old <- occup_small[occup_small$year == 2008, ]
 #' dummy_c2c(occup_old, "code")
 #' }

@@ -1,3 +1,7 @@
+# cat2cat 0.4.2.9000
+
+* Improve documentation
+
 # cat2cat 0.4.2
 
 * The `ml` argument in the `dummy_c2c` function is redefined, shorter names for a simpler usage.
