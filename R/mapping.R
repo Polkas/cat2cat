@@ -50,7 +50,7 @@ get_mappings <- function(x = data.frame()) {
 
 #' Getting frequencies from a vector with an optional multiplier
 #' @description getting frequencies for a vector with an optional multiplier.
-#' @param x `character` vector categorical variable to summarize.
+#' @param x `vector` categorical variable to summarize.
 #' @param multiplier `numeric` vector how many times to repeat certain value, additional weights.
 #' @return `data.frame` with two columns `input` `Freq`
 #' @note without multiplier variable it is a basic `table` function wrapped with the `as.data.frame` function.
@@ -85,6 +85,7 @@ get_freqs <- function(x, multiplier = NULL) {
 #' @param to_x `list` object returned by `get_mappings`.
 #' @param freqs `data.frame` object like the one returned by the `get_freqs` function.
 #' @return a `list` with a structure like `to_x` object but with probabilities for each category.
+#' @note The uniform distribution (outcomes are equally likely) is assumed for no match for all possible categories.
 #' @examples
 #' data(trans)
 #' data(occup)
@@ -120,16 +121,15 @@ cat_apply_freq <- function(to_x, freqs) {
       alls <- freqs[, 2, drop = TRUE][match(x, freqs[, 1, drop = TRUE])]
       ff <- alls / sum(alls, na.rm = T)
       # NA to 0
-      ifelse(is.na(ff) | is.nan(ff), 0, ff)
+      ff[is.na(ff) | is.nan(ff)] <- 0
+      # all equal to zero so proportional probability
+      if (all(ff == 0)) {
+        ff_len <- length(ff)
+        ff <- rep(1 / ff_len, ff_len)
+      }
+      ff
     }
   )
-  # all equal to zero so proportional probability
-  res_out <- lapply(
-    res,
-    function(x) {
-      ifelse(rep(all(x == 0), length(x)), 1 / length(x), x)
-    }
-  )
-  names(res_out) <- names(to_x)
-  res_out
+  names(res) <- names(to_x)
+  res
 }

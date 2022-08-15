@@ -7,7 +7,7 @@
 get_freqs(x, multiplier = NULL)
 }
 \arguments{
-\item{x}{`character` vector categorical variable to summarize.}
+\item{x}{`vector` categorical variable to summarize.}
 
 \item{multiplier}{`numeric` vector how many times to repeat certain value, additional weights.}
 }

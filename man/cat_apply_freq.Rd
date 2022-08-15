@@ -19,6 +19,9 @@ applying frequencies to the object returned by the `get_mappings` function.
 We will get a symmetric object to the one returned by the `get_mappings` function, nevertheless categories are replaced with frequencies.
 Frequencies for each category/key are sum to 1, so could be interpreted as probabilities.
 }
+\note{
+The uniform distribution (outcomes are equally likely) is assumed for no match for all possible categories.
+}
 \examples{
 data(trans)
 data(occup)

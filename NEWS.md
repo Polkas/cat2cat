@@ -1,5 +1,8 @@
 # cat2cat 0.4.2.9000
 
+* Fix `dummy_c2c` to be backward compatible.
+* Add more tests for base utils functions.
+* Improve `cat_apply_freq` function performance.
 * Improve documentation.
 * Improve validation.
 
