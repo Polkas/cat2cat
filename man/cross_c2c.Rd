@@ -14,14 +14,14 @@ cross_c2c(
 \arguments{
 \item{df}{`data.frame` like result of the `cat2cat` function for a specific period.}
 
-\item{cols}{`character` vector default all columns follow regex like "wei_.*_c2c"}
+\item{cols}{`character` vector default all columns under the regex "wei_.*_c2c".}
 
-\item{weis}{`numeric` vector  Default vector the same length as cols and with equally spaced values summing to 1.}
+\item{weis}{`numeric` vector weighs for columns in the `cols` argument. By default a vector of the same length as `cols` argument and with equally spaced probability (summing to 1).}
 
-\item{na.rm}{`logical` if NA should be skipped, default TRUE}
+\item{na.rm}{`logical(1)` if `NA` values should be omitted, default TRUE.}
 }
 \value{
-`data.frame` with an additional column `wei_cross_c2c`
+`data.frame` with the additional column `wei_cross_c2c`.
 }
 \description{
 adding the additional column which is a mix of weights columns by each row.

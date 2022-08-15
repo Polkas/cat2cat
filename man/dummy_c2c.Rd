@@ -7,9 +7,9 @@
 dummy_c2c(df, cat_var, ml = NULL)
 }
 \arguments{
-\item{df}{`data.frame`}
+\item{df}{`data.frame`.}
 
-\item{cat_var}{`character` a categorical variable name.}
+\item{cat_var}{`character(1)` a categorical variable name.}
 
 \item{ml}{`character` vector of ml models applied, any of `c("knn", "rf", "lda")`.}
 }
@@ -24,5 +24,6 @@ dummy_c2c(airquality, "Month")
 data(occup_small)
 occup_old <- occup_small[occup_small$year == 2008, ]
 dummy_c2c(occup_old, "code")
+dummy_c2c(occup_old, "code", "knn")
 }
 }

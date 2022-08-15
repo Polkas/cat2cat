@@ -3,13 +3,13 @@
 #' @description user could specify one of four methods to prune replications created in the cat2cat procedure.
 #'
 #' @param df `data.frame` like result of the `cat2cat` function for a specific period.
-#' @param index `character` default wei_freq_c2c
-#' @param column `character` default index_c2c
-#' @param method `character` one of four available methods: default "nonzero", "highest", "highest1", "morethan"
-#' @param percent `integer` from 0 to 99
+#' @param index `character(1)` a column name with the `cat2cat` identifier. Should not be updated in most cases. Default `index_c2c`.
+#' @param column `character(1)` a column name with weights, default `wei_freq_c2c`.
+#' @param method `character(1)` one of four available methods: "nonzero" (default), "highest", "highest1" or "morethan".
+#' @param percent `integer(1)` from 0 to 99
 #' @return `data.frame` with the same structure and possibly reduced number of rows
 #' @details
-#' method - specify method to reduce number of replications
+#' method - specify a method to reduce number of replications
 #' \itemize{
 #'  \item{"nonzero"}{ remove nonzero probabilities}
 #'  \item{"highest"} { leave only highest probabilities for each subject- accepting ties}
@@ -72,10 +72,10 @@ prune_c2c <- function(df, index = "index_c2c", column = "wei_freq_c2c", method =
 #' Ensemble of a few methods usually produces more accurate solutions than a single model would.
 #'
 #' @param df `data.frame` like result of the `cat2cat` function for a specific period.
-#' @param cols `character` vector default all columns follow regex like "wei_.*_c2c"
-#' @param weis `numeric` vector  Default vector the same length as cols and with equally spaced values summing to 1.
-#' @param na.rm `logical` if NA should be skipped, default TRUE
-#' @return `data.frame` with an additional column `wei_cross_c2c`
+#' @param cols `character` vector default all columns under the regex "wei_.*_c2c".
+#' @param weis `numeric` vector weighs for columns in the `cols` argument. By default a vector of the same length as `cols` argument and with equally spaced probability (summing to 1).
+#' @param na.rm `logical(1)` if `NA` values should be omitted, default TRUE.
+#' @return `data.frame` with the additional column `wei_cross_c2c`.
 #' @export
 #' @examples
 #' \dontrun{
@@ -127,8 +127,8 @@ cross_c2c <- function(df,
 #' Add default cat2cat columns to a `data.frame`
 #' @description a utils function to add default cat2cat columns to a `data.frame`.
 #' It will be useful e.g. for a boarder periods which will not have additional `cat2cat` columns.
-#' @param df `data.frame`
-#' @param cat_var `character` a categorical variable name.
+#' @param df `data.frame`.
+#' @param cat_var `character(1)` a categorical variable name.
 #' @param ml `character` vector of ml models applied, any of `c("knn", "rf", "lda")`.
 #' @export
 #' @examples
@@ -138,6 +138,7 @@ cross_c2c <- function(df,
 #' data(occup_small)
 #' occup_old <- occup_small[occup_small$year == 2008, ]
 #' dummy_c2c(occup_old, "code")
+#' dummy_c2c(occup_old, "code", "knn")
 #' }
 dummy_c2c <- function(df, cat_var, ml = NULL) {
   stopifnot(is.data.frame(df))
@@ -154,7 +155,7 @@ dummy_c2c <- function(df, cat_var, ml = NULL) {
   }
 
   if (!is.null(ml)) {
-    ml_cols <- if (any(grepl("_c2c", ml))) ml else paste0("wei_", ml, "_c2c")
+    ml_cols <- if (any(grepl("wei_.*_c2c", ml))) ml else paste0("wei_", ml, "_c2c")
     df[, setdiff(ml_cols, colnames(df))] <- 1
   }
 

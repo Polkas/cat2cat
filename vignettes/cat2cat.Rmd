@@ -21,13 +21,15 @@ knitr::opts_chunk$set(message = F)
 knitr::opts_chunk$set(warning = F)
 ```
 
-## `cat2cat`
+## `cat2cat` procedure
 
 The introduced `cat2cat` procedure was designed to offer an easy and clear interface to apply a mapping (transition) table which was provided by the data maintainer or built by a researcher. The objective is to unify an inconsistent coded categorical variable in a panel dataset, where a transition table is the core element of the process.
 
 Examples of datasets with such inconsistent coded categorical variable are ISCO (The International Standard Classification of Occupations) or ICD (International Classification of Diseases) based one. The both classifications are regularly updated to adjust to e.g. new science achievements. More clearly we might image that e.g. new science achievements brings new occupations types on the market or enable recognition of new diseases types.
 
-The categorical variable encoding changes are typically provided by datasets providers in the mapping (transition) table form, for each time point the changes occurred. A mapping table conveys information needed for matching all categories between two periods of time. More precisely it contains two columns where the first column contains old categories and the second column contains the new ones.
+The categorical variable encoding changes are typically provided by datasets providers in the mapping (transition) table form, for each time point the changes occurred. 
+The mapping (transition) table is the core element of the procedure
+A mapping table conveys information needed for matching all categories between two periods of time. More precisely it contains two columns where the first column contains old categories and the second column contains the new ones.
 Sometimes a mapping (transition) table has to be created manually by a researcher.
 
 The main rule is to replicate the observation if it could be assigned to a few categories.
@@ -35,11 +37,25 @@ More precisely for each observation we look across a mapping (transition) table 
 For each observation that was replicated, the probabilities have to add up to one.
 The algorithm distinguishes different mechanics for panel data with and without unique identifiers.
 
+## cat2cat function
+
+The `cat2cat::cat2cat` function is the implementation of the `cat2cat` procedure.
+The `cat2cat::cat2cat` function has three arguments `data`, `mappings`, and `ml`. Each
+of these arguments is of a `list` type, wherein the
+`ml` argument is optional. Arguments are separated to
+identify the core elements of the `cat2cat` procedure. 
+Although this function seems
+complex initially, it is built to offer a wide range of
+applications for complex tasks. The function contains
+many validation checks to prevent incorrect usage.
+The function has to be applied iteratively for each two neighboring periods of a panel dataset.
+The `cat2cat::prune_c2c` function could be needed to limit growing number of replications.
+
 ## Core elements
 
 There are 3 important elements:
 
-1. Mapping (Transition) table, possibly a few for longer panels. 
+1. Mapping (Transition) table, possibly a few for longer panels. Typically provided by the data maintainers like a statistical office.
 2. Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers and aggregate data vs non-aggragate data.
 3. Direction of a mapping process, forward or backward - a new or an old encoding as a base one.
 
@@ -464,7 +480,8 @@ agg %>%
     group_by(v_date, vertical) %>%
     summarise(sales = sum(sales * prop_c2c),
               counts = sum(counts * prop_c2c),
-              v_date = first(v_date))
+              v_date = first(v_date), 
+              .groups = "drop")
 ```
 
 ## Dataset with unique identifiers
@@ -488,7 +505,6 @@ trans_v <- vert_old %>%
 ```
 
 ```{r}
-#
 ## cat2cat
 ## it is important to set id_var as then we merging categories 1 to 1
 ## for this identifier which exists in both periods.

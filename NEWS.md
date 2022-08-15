@@ -1,3 +1,8 @@
+# cat2cat 0.4.3.9000
+
+* Improve validation.
+* Improve documentation.
+
 # cat2cat 0.4.3
 
 * Fix `dummy_c2c` to be backward compatible.

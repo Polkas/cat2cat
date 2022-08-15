@@ -4,7 +4,7 @@
 #' An association list where unique categories codes are keys and matching categories from next or previous time point are values.
 #' A mapping (transition) table is used to build such associative lists.
 #' @param x `data.frame` or `matrix` - mapping (transition) table with 2 columns where first column is assumed to be the older encoding.
-#' @details the `named list` will be a almost equally efficient solution as hash map (`environment`) as we are not expecting more than a few thousand keys and R has an in-build multi-element subset operator for lists.
+#' @details the `named list` will be almost equally efficient solution as the hash map (`environment`) as we are not expecting more than a few thousand keys and R has an in-build multi-element subset operator for lists.
 #' @return a list with 2 named lists `to_old` and `to_new`.
 #' @examples
 #' data(trans)

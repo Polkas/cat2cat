@@ -15,13 +15,13 @@ prune_c2c(
 \arguments{
 \item{df}{`data.frame` like result of the `cat2cat` function for a specific period.}
 
-\item{index}{`character` default wei_freq_c2c}
+\item{index}{`character(1)` a column name with the `cat2cat` identifier. Should not be updated in most cases. Default `index_c2c`.}
 
-\item{column}{`character` default index_c2c}
+\item{column}{`character(1)` a column name with weights, default `wei_freq_c2c`.}
 
-\item{method}{`character` one of four available methods: default "nonzero", "highest", "highest1", "morethan"}
+\item{method}{`character(1)` one of four available methods: "nonzero" (default), "highest", "highest1" or "morethan".}
 
-\item{percent}{`integer` from 0 to 99}
+\item{percent}{`integer(1)` from 0 to 99}
 }
 \value{
 `data.frame` with the same structure and possibly reduced number of rows
@@ -30,7 +30,7 @@ prune_c2c(
 user could specify one of four methods to prune replications created in the cat2cat procedure.
 }
 \details{
-method - specify method to reduce number of replications
+method - specify a method to reduce number of replications
 \itemize{
  \item{"nonzero"}{ remove nonzero probabilities}
  \item{"highest"} { leave only highest probabilities for each subject- accepting ties}

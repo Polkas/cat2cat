@@ -5,8 +5,8 @@
 \title{Automatic mapping in a panel dataset}
 \usage{
 cat2cat(
-  data = list(old = NULL, new = NULL, cat_var = NULL, cat_var_old = NULL, cat_var_new =
-    NULL, id_var = NULL, time_var = NULL, multiplier_var = NULL, freqs_df = NULL),
+  data = list(old = NULL, new = NULL, time_var = NULL, cat_var = NULL, cat_var_old =
+    NULL, cat_var_new = NULL, id_var = NULL, multiplier_var = NULL, freqs_df = NULL),
   mappings = list(trans = NULL, direction = NULL),
   ml = list(data = NULL, cat_var = NULL, method = NULL, features = NULL, args = NULL)
 )
@@ -21,7 +21,7 @@ cat2cat(
 \value{
 `named list` with 2 fields old and new - 2 data.frames.
 There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
-Additional columns will be informative only for a one data.frame as we always make a changes to one direction.
+Additional columns will be informative only for a one data.frame as we always make the changes to one direction.
 }
 \description{
 The objective is to unify an inconsistently coded categorical variable in a panel
@@ -42,15 +42,15 @@ data args
 \itemize{
  \item{"old"}{ data.frame older time point in a panel}
  \item{"new"} { data.frame more recent time point in a panel}
- \item{"cat_var"}{ character name of the categorical variable.}
- \item{"cat_var_old"}{ optional character name of the categorical variable in the older time point. Default `cat_var`.}
- \item{"cat_var_new"}{ optional character name of the categorical variable in the newer time point. Default `cat_var`.}
- \item{"time_var"}{ character name of the time variable.}
- \item{"id_var"}{ optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
- \item{"multiplier_var"}{ optional character name of the multiplier variable - number of replication needed to reproduce the population}
- \item{"freqs_df"}{ optional - data.frame with 2 columns where first one is category name and second counts.
- It is optional nevertheless will be very often needed, as give more control.
- It will be used to assess the probabilities. The multiplier variable is omit so sb has to apply it in this table.}
+ \item{"time_var"}{ character(1) name of the time variable.}
+ \item{"cat_var"}{ character(1) name of the categorical variable.}
+ \item{"cat_var_old"}{ Optional character(1) name of the categorical variable in the older time point. Default `cat_var`.}
+ \item{"cat_var_new"}{ Optional character(1) name of the categorical variable in the newer time point. Default `cat_var`.}
+ \item{"id_var"}{ Optional character(1) name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
+ \item{"multiplier_var"}{ Optional character(1) name of the multiplier variable - number of replication needed to reproduce the population}
+ \item{"freqs_df"}{ Optional - data.frame with 2 columns where first one is category name and second counts.
+ It is optional nevertheless will be often needed, as gives more control.
+ It will be used to assess the probabilities. The multiplier variable is omied so sb has to apply it in this table.}
 }
 mappings args
 \itemize{
@@ -58,12 +58,12 @@ mappings args
   First column contains an old encoding and second a new one.
   The mapping (transition) table should to have a candidate for each category from the targeted for an update period.
 }
- \item{"direction"}{ character direction - "backward" or "forward"}
+ \item{"direction"}{ character(1) direction - "backward" or "forward"}
 }
-optional ml args
+Optional ml args
 \itemize{
  \item{"data"}{ data.frame - dataset with features and the `cat_var`.}
- \item{"cat_var"}{ character - the dependent variable name.}
+ \item{"cat_var"}{ character(1) - the dependent variable name.}
  \item{"method"}{ character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination Analysis, "rf" Random Forest }
  \item{"features"}{ character vector of features names where all have to be numeric or logical}
  \item{"args"}{ optional - list parameters: knn: k ; rf: ntree  }

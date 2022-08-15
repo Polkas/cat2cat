@@ -19,7 +19,7 @@ An association list where unique categories codes are keys and matching categori
 A mapping (transition) table is used to build such associative lists.
 }
 \details{
-the `named list` will be a almost equally efficient solution as hash map (`environment`) as we are not expecting more than a few thousand keys and R has an in-build multi-element subset operator for lists.
+the `named list` will be almost equally efficient solution as the hash map (`environment`) as we are not expecting more than a few thousand keys and R has an in-build multi-element subset operator for lists.
 }
 \examples{
 data(trans)
