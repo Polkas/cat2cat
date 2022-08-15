@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.2.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@
 <h2 id="handling-an-inconsistent-coded-categorical-variable-in-a-panel-dataset">Handling an Inconsistent Coded Categorical Variable in a Panel Dataset<a class="anchor" aria-label="anchor" href="#handling-an-inconsistent-coded-categorical-variable-in-a-panel-dataset"></a>
 </h2>
 <p>Unifying an inconsistent coded categorical variable in a panel/longtitudal dataset.<br>
-There is offered the <code>cat2cat</code> procedure to map a categorical variable according to a transition table between two different time points. The transition table should to have a candidate for each category from the targeted for an update period. The main rule is to replicate the observation if it could be assigned to a few categories, then using simple frequencies or statistical methods to approximate probabilities of being assigned to each of them.</p>
+There is offered the <code>cat2cat</code> procedure to map a categorical variable according to a mapping (transition) table between two different time points. The mapping (transition) table should to have a candidate for each category from the targeted for an update period. The main rule is to replicate the observation if it could be assigned to a few categories, then using simple frequencies or statistical methods to approximate probabilities of being assigned to each of them.</p>
 <p><strong>This algorithm was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <a href="doi:10.24425/cejeme.2020.134747" class="uri">doi:10.24425/cejeme.2020.134747</a>).</strong></p>
 <p><a href="https://polkas.github.io/cat2cat/articles/cat2cat.html" class="external-link"><strong>Please visit the cat2cat webpage for more information</strong></a></p>
 </div>
@@ -98,7 +98,7 @@ There is offered the <code>cat2cat</code> procedure to map a categorical variabl
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p><code>occup</code> dataset is an example of unbalance panel dataset. This is a simulated data although there are applied a real world characteristics from national statistical office survey. The original survey is anonymous and take place <strong>every two years</strong>.</p>
-<p><code>trans</code> dataset containing transitions between old (2008) and new (2010) occupational codes. This table could be used to map encodings in both directions.</p>
+<p><code>trans</code> dataset containing mappings (transitions) between old (2008) and new (2010) occupational codes. This table could be used to map encodings in both directions.</p>
 <p>Panel dataset without the unique identifiers and only two periods, backward and simple frequencies:</p>
 <pre class="{r}"><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Polkas/cat2cat" class="external-link">cat2cat</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span></span>

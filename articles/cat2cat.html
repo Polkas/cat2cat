@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.2.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
       </span>
     </div>
 
@@ -85,26 +85,26 @@
 <h2 id="cat2cat">
 <code>cat2cat</code><a class="anchor" aria-label="anchor" href="#cat2cat"></a>
 </h2>
-<p>The introduced <code>cat2cat</code> algorithm was designed to offer an easy and clear interface to apply a mapping table (transition table) which was provided by a data maintainer or built by a researcher. The objective is to unify an inconsistent coded categorical variable in a panel dataset, where a transition table is the core element of the process.</p>
-<p>Examples of a dataset with such inconsistent coded categorical variable are ISCO (The International Standard Classification of Occupations) or ICD (International Classification of Diseases) based one. The both classifications are regularly updated to adjust to e.g. new science achievements. More clearly we might image that e.g. new science achievements brings new occupations types on the market or enable recognition of new diseases types.</p>
-<p>The categorical variable encoding changes are typically provided by datasets providers in the transition table form, for each time point the changes occurred. A transition table conveys information needed for matching all categories between two periods of time. More precisely it contains two columns where the first column contains old categories and the second column contains the new ones. Sometimes a transition table has to be created manually by a researcher.</p>
-<p>The main rule is to replicate the observation if it could be assigned to a few categories. More precisely for each observation we look across a transition table to check how the original category could be mapped to the opposite period one. Then using simple frequencies or statistical methods to approximate weights (probabilities) of being assigned to each of them. For each observation that was replicated, the probabilities have to add up to one. The algorithm distinguishes different mechanics for panel data with and without unique identifiers.</p>
+<p>The introduced <code>cat2cat</code> procedure was designed to offer an easy and clear interface to apply a mapping (transition) table which was provided by the data maintainer or built by a researcher. The objective is to unify an inconsistent coded categorical variable in a panel dataset, where a transition table is the core element of the process.</p>
+<p>Examples of datasets with such inconsistent coded categorical variable are ISCO (The International Standard Classification of Occupations) or ICD (International Classification of Diseases) based one. The both classifications are regularly updated to adjust to e.g. new science achievements. More clearly we might image that e.g. new science achievements brings new occupations types on the market or enable recognition of new diseases types.</p>
+<p>The categorical variable encoding changes are typically provided by datasets providers in the mapping (transition) table form, for each time point the changes occurred. A mapping table conveys information needed for matching all categories between two periods of time. More precisely it contains two columns where the first column contains old categories and the second column contains the new ones. Sometimes a mapping (transition) table has to be created manually by a researcher.</p>
+<p>The main rule is to replicate the observation if it could be assigned to a few categories. More precisely for each observation we look across a mapping (transition) table to check how the original category could be mapped to the opposite period one. Then using simple frequencies or statistical methods to approximate weights (probabilities) of being assigned to each of them. For each observation that was replicated, the probabilities have to add up to one. The algorithm distinguishes different mechanics for panel data with and without unique identifiers.</p>
 </div>
 <div class="section level2">
 <h2 id="core-elements">Core elements<a class="anchor" aria-label="anchor" href="#core-elements"></a>
 </h2>
 <p>There are 3 important elements:</p>
 <ol style="list-style-type: decimal">
-<li>Transition table, possibly a few for longer panels.</li>
+<li>Mapping (Transition) table, possibly a few for longer panels.</li>
 <li>Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers and aggregate data vs non-aggragate data.</li>
-<li>Direction of a transition, forward or backward - a new or an old encoding as a base one.</li>
+<li>Direction of a mapping process, forward or backward - a new or an old encoding as a base one.</li>
 </ol>
 </div>
 <div class="section level2">
 <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
 </h2>
 <p><code>occup</code> dataset is an example of unbalance panel dataset. This is a simulated data although there are applied a real world characteristics from national statistical office survey. The original survey is anonymous and take place <strong>every two years</strong>.</p>
-<p><code>trans</code> dataset containing transitions between old (2008) and new (2010) occupational codes. This table could be used to map encodings in both directions.</p>
+<p><code>trans</code> mapping (transition) table contains mappings between old (2008) and new (2010) occupational codes. This table could be used to map encodings in both directions.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Polkas/cat2cat" class="external-link">cat2cat</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
@@ -120,7 +120,7 @@
 <div class="section level2">
 <h2 id="dataset-without-unique-identifiers">Dataset without unique identifiers<a class="anchor" aria-label="anchor" href="#dataset-without-unique-identifiers"></a>
 </h2>
-<p>There were prepared two graphs for forward and backward mapping. These graphs present how the <code><a href="../reference/cat2cat.html">cat2cat::cat2cat</a></code> function works, in this case under a panel dataset without the unique identifiers and only two periods.</p>
+<p>There were prepared two graphs for forward and backward mapping. These graphs present how the <code><a href="../reference/cat2cat.html">cat2cat::cat2cat</a></code> procedure works, in this case under a panel dataset without the unique identifiers and only two periods.</p>
 <div class="figure">
 <img src="https://raw.githubusercontent.com/Polkas/cat2cat/master/man/figures/back_nom.png" alt=""><p class="caption">Backward Mapping</p>
 </div>
@@ -181,16 +181,16 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">wei_knn_c2c</span>, <span class="va">wei_rf_c2c</span>, <span class="va">wei_lda_c2c</span>, <span class="va">wei_freq_c2c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##              wei_knn_c2c wei_rf_c2c wei_lda_c2c wei_freq_c2c</span></span>
-<span><span class="co">## wei_knn_c2c    1.0000000  0.8635038   0.8350984    0.8989887</span></span>
-<span><span class="co">## wei_rf_c2c     0.8635038  1.0000000   0.8776758    0.8745738</span></span>
-<span><span class="co">## wei_lda_c2c    0.8350984  0.8776758   1.0000000    0.8807702</span></span>
-<span><span class="co">## wei_freq_c2c   0.8989887  0.8745738   0.8807702    1.0000000</span></span></code></pre>
+<span><span class="co">## wei_knn_c2c    1.0000000  0.8630052   0.8350984    0.8989887</span></span>
+<span><span class="co">## wei_rf_c2c     0.8630052  1.0000000   0.8768348    0.8737694</span></span>
+<span><span class="co">## wei_lda_c2c    0.8350984  0.8768348   1.0000000    0.8807702</span></span>
+<span><span class="co">## wei_freq_c2c   0.8989887  0.8737694   0.8807702    1.0000000</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="example---more-than-2-periods">Example - More than 2 periods<a class="anchor" aria-label="anchor" href="#example---more-than-2-periods"></a>
 </h3>
-<p>When we have to map more than 2 time points, then cat2cat has to be used recursively. However when only three periods have to be mapped, the middle one might be used as the base one.<br>
-If we have to apply many mapping tables across time then pruning methods might be needed to limit the exponentially growing number of replications. Such pruning methods are used to remove some of the replications, for example, leaving only one observation with the highest probability for each observation replication. Another strategy might be removing the zero probability replications. As such, pruning methods could be used before transferring a dataset to the next iteration to reduce the problem of the exponentially growing number of observations.</p>
+<p>When we have to map more than 2 time points, then cat2cat has to be used iteratively. However when only three periods have to be mapped, the middle one could be used as the base one.<br>
+If we have to apply many different mapping (transition) tables over time then pruning methods could be needed to limit the exponentially growing number of replications. Such pruning methods are used to remove some of the replications, for example, leaving only one observation with the highest probability for each observation replication. Another strategy might be removing the zero probability replications. As such, pruning methods could be used before transferring a dataset to the next iteration to reduce the problem of the exponentially growing number of observations.</p>
 <p>Example with 4 period and only one mapping table:</p>
 <div class="section level4">
 <h4 id="backward">Backward<a class="anchor" aria-label="anchor" href="#backward"></a>
@@ -577,7 +577,7 @@ If we have to apply many mapping tables across time then pruning methods might b
 </div>
 </div>
 <div class="section level2">
-<h2 id="manual-transitions">Manual transitions<a class="anchor" aria-label="anchor" href="#manual-transitions"></a>
+<h2 id="manual-mappings">Manual mappings<a class="anchor" aria-label="anchor" href="#manual-mappings"></a>
 </h2>
 <p><code>cat2cat_agg</code> is mainly useful for aggregate datasets.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
@@ -639,7 +639,7 @@ If we have to apply many mapping tables across time then pruning methods might b
 <span><span class="va">vert_old</span> <span class="op">&lt;-</span> <span class="va">verticals2</span><span class="op">[</span><span class="va">verticals2</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-04-01"</span>, <span class="op">]</span></span>
 <span><span class="va">vert_new</span> <span class="op">&lt;-</span> <span class="va">verticals2</span><span class="op">[</span><span class="va">verticals2</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-05-01"</span>, <span class="op">]</span></span>
 <span></span>
-<span><span class="co">## get transitions table</span></span>
+<span><span class="co">## get mapping (transition) table</span></span>
 <span><span class="va">trans_v</span> <span class="op">&lt;-</span> <span class="va">vert_old</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">vert_new</span>, by <span class="op">=</span> <span class="st">"ean"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">vertical.x</span>, <span class="va">vertical.y</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
