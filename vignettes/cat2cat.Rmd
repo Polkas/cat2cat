@@ -23,15 +23,15 @@ knitr::opts_chunk$set(warning = F)
 
 ## `cat2cat`
 
-The introduced `cat2cat` algorithm was designed to offer an easy and clear interface to apply a mapping table (transition table) which was provided by a data maintainer or built by a researcher. The objective is to unify an inconsistent coded categorical variable in a panel dataset, where a transition table is the core element of the process.
+The introduced `cat2cat` procedure was designed to offer an easy and clear interface to apply a mapping (transition) table which was provided by the data maintainer or built by a researcher. The objective is to unify an inconsistent coded categorical variable in a panel dataset, where a transition table is the core element of the process.
 
-Examples of a dataset with such inconsistent coded categorical variable are ISCO (The International Standard Classification of Occupations) or ICD (International Classification of Diseases) based one. The both classifications are regularly updated to adjust to e.g. new science achievements. More clearly we might image that e.g. new science achievements brings new occupations types on the market or enable recognition of new diseases types.
+Examples of datasets with such inconsistent coded categorical variable are ISCO (The International Standard Classification of Occupations) or ICD (International Classification of Diseases) based one. The both classifications are regularly updated to adjust to e.g. new science achievements. More clearly we might image that e.g. new science achievements brings new occupations types on the market or enable recognition of new diseases types.
 
-The categorical variable encoding changes are typically provided by datasets providers in the transition table form, for each time point the changes occurred. A transition table conveys information needed for matching all categories between two periods of time. More precisely it contains two columns where the first column contains old categories and the second column contains the new ones.
-Sometimes a transition table has to be created manually by a researcher.
+The categorical variable encoding changes are typically provided by datasets providers in the mapping (transition) table form, for each time point the changes occurred. A mapping table conveys information needed for matching all categories between two periods of time. More precisely it contains two columns where the first column contains old categories and the second column contains the new ones.
+Sometimes a mapping (transition) table has to be created manually by a researcher.
 
 The main rule is to replicate the observation if it could be assigned to a few categories.
-More precisely for each observation we look across a transition table to check how the original category could be mapped to the opposite period one. Then using simple frequencies or statistical methods to approximate weights (probabilities) of being assigned to each of them.
+More precisely for each observation we look across a mapping (transition) table to check how the original category could be mapped to the opposite period one. Then using simple frequencies or statistical methods to approximate weights (probabilities) of being assigned to each of them.
 For each observation that was replicated, the probabilities have to add up to one.
 The algorithm distinguishes different mechanics for panel data with and without unique identifiers.
 
@@ -39,9 +39,9 @@ The algorithm distinguishes different mechanics for panel data with and without 
 
 There are 3 important elements:
 
-1. Transition table, possibly a few for longer panels. 
+1. Mapping (Transition) table, possibly a few for longer panels. 
 2. Type of the data - panel dataset with unique identifiers vs panel dataset without unique identifiers and aggregate data vs non-aggragate data.
-3. Direction of a transition, forward or backward - a new or an old encoding as a base one.
+3. Direction of a mapping process, forward or backward - a new or an old encoding as a base one.
 
 ## Data
 
@@ -49,8 +49,7 @@ There are 3 important elements:
 This is a simulated data although there are applied a real world characteristics from national statistical office survey.
 The original survey is anonymous and take place **every two years**.
 
-`trans` dataset containing transitions between old (2008) and new (2010) occupational codes.
-This table could be used to map encodings in both directions.
+`trans` mapping (transition) table contains mappings between old (2008) and new (2010) occupational codes. This table could be used to map encodings in both directions.
 
 ```{r, message=FALSE, warning=FALSE}
 library(cat2cat)
@@ -68,7 +67,7 @@ occup_2012 <- occup[occup$year == 2012, ]
 ## Dataset without unique identifiers
 
 There were prepared two graphs for forward and backward mapping.
-These graphs present how the `cat2cat::cat2cat` function works, in this case under a panel dataset without the unique identifiers and only two periods.
+These graphs present how the `cat2cat::cat2cat` procedure works, in this case under a panel dataset without the unique identifiers and only two periods.
 
 ![Backward Mapping](https://raw.githubusercontent.com/Polkas/cat2cat/master/man/figures/back_nom.png)
 
@@ -139,10 +138,10 @@ occup_2_mix$old %>%
 ### Example - More than 2 periods
 
 When we have to map more than 2 time points, then
-cat2cat has to be used recursively. 
+cat2cat has to be used iteratively.
 However when only three periods have to be mapped, the middle one
-might be used as the base one.  
-If we have to apply many mapping tables across time then pruning methods might be needed to limit the exponentially growing number of replications.
+could be used as the base one.  
+If we have to apply many different mapping (transition) tables over time then pruning methods could be needed to limit the exponentially growing number of replications.
 Such pruning methods are used to remove some of the replications, for example, leaving only
 one observation with the highest probability for each observation
 replication. Another strategy might be removing the zero probability
@@ -432,7 +431,7 @@ head(oo)
 oo$lm[[2]]
 ```
 
-## Manual transitions
+## Manual mappings
 
 `cat2cat_agg` is mainly useful for aggregate datasets.
 
@@ -481,7 +480,7 @@ data(verticals2)
 vert_old <- verticals2[verticals2$v_date == "2020-04-01", ]
 vert_new <- verticals2[verticals2$v_date == "2020-05-01", ]
 
-## get transitions table
+## get mapping (transition) table
 trans_v <- vert_old %>%
   inner_join(vert_new, by = "ean") %>%
   select(vertical.x, vertical.y) %>%

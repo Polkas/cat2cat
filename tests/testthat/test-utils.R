@@ -9,10 +9,10 @@ testthat::test_that("get_freqs", {
   expect_identical(elem1, elem2)
 })
 
-transition_table <- data.frame(old = c(1, 1, 1, 2, 2, 3, NA, NA), new = c(NA, 1, 2, 2, 3, 2, NA, 3), stringsAsFactors = FALSE)
+mapping_table <- data.frame(old = c(1, 1, 1, 2, 2, 3, NA, NA), new = c(NA, 1, 2, 2, 3, 2, NA, 3), stringsAsFactors = FALSE)
 
 testthat::test_that("get_mappings", {
-  mappings <- get_mappings(transition_table)
+  mappings <- get_mappings(mapping_table)
   expect_identical(length(mappings$to_new), 4L)
   expect_identical(lengths(mappings$to_new), structure(c(3L, 2L, 1L, 2L), names = c("1", "2", "3", NA)))
   expect_identical(length(mappings$to_old), 4L)
@@ -20,7 +20,7 @@ testthat::test_that("get_mappings", {
 })
 
 testthat::test_that("cat_apply_freq", {
-  mappings <- get_mappings(transition_table)
+  mappings <- get_mappings(mapping_table)
   mappings_freq <- cat_apply_freq(mappings$to_new, get_freqs(c(1, 1, 1, 1, 2, 3, 3, NA, NA)))
   expect_identical(mappings_freq$`1`, c(2/7, 4/7, 1/7))
   expect_identical(length(mappings_freq), 4L)

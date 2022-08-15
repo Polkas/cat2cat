@@ -172,7 +172,7 @@ data(verticals2)
 vert_old <- verticals2[verticals2$v_date == "2020-04-01", ]
 vert_new <- verticals2[verticals2$v_date == "2020-05-01", ]
 
-## get transitions table
+## get mapping (transition) table
 trans_v <- vert_old %>%
   inner_join(vert_new, by = "ean") %>%
   select(vertical.x, vertical.y) %>%

@@ -57,7 +57,7 @@
 #' occup_small <- occup[sort(sample(nrow(occup), 8000)), ]
 "occup_small"
 
-#' trans dataset containing transitions between old (2008) and new (2010) occupational codes.
+#' trans dataset containing mappings (transitions) between old (2008) and new (2010) occupational codes.
 #' This table could be used to map encodings in both directions.
 #'
 #' @usage trans
@@ -67,7 +67,7 @@
 #' \item{old}{	character an old encoding of a certain occupation}
 #' \item{new}{	character a new encoding of a certain occupation}
 #' }
-#' @details transition table for occupations where first column contains old encodings and second one a new encoding
+#' @details mapping (transition) table for occupations where first column contains old encodings and second one a new encoding
 #'
 "trans"
 

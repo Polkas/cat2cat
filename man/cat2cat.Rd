@@ -25,12 +25,12 @@ Additional columns will be informative only for a one data.frame as we always ma
 }
 \description{
 The objective is to unify an inconsistently coded categorical variable in a panel
-dataset  according to a transition (mapping) table.
-The transition (mapping) table is the core element of the process.
+dataset according to a mapping (transition) table.
+The mapping (transition) table is the core element of the process.
 There are three arguments `data`, `mappings`, and `ml`. Each
 of these arguments is of a `list` type, wherein the
 `ml` argument is optional. Arguments are separated to
-identify the core elements of the procedure. Although this function seems
+identify the core elements of the `cat2cat` procedure. Although this function seems
 complex initially, it is built to offer a wide range of
 applications for complex tasks. The function contains
 many validation checks to prevent incorrect usage.
@@ -54,9 +54,9 @@ data args
 }
 mappings args
 \itemize{
- \item{"trans"}{ data.frame with 2 columns - transition (mapping) table - all categories for cat_var in old and new datasets have to be included.
+ \item{"trans"}{ data.frame with 2 columns - mapping (transition) table - all categories for cat_var in old and new datasets have to be included.
   First column contains an old encoding and second a new one.
-  The transition (mapping) table should to have a candidate for each category from the targeted for an update period.
+  The mapping (transition) table should to have a candidate for each category from the targeted for an update period.
 }
  \item{"direction"}{ character direction - "backward" or "forward"}
 }
@@ -74,7 +74,7 @@ When ml model is broken then weights from simple frequencies are taken.
 `knn` method is recommended for smaller datasets.
 }
 \note{
-The transition (mapping) table should to have a candidate for each category from the targeted for an update period.
+The mapping (transition) table should to have a candidate for each category from the targeted for an update period.
 The observation from targeted for an updated period without a matched category from base period is removed.
 If you want to leave NA values add `c(NA, NA)` row to the `trans` table.
 Please check the vignette for more information.
