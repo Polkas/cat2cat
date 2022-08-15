@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3.9000</span>
       </span>
     </div>
 
@@ -72,19 +72,19 @@
 
 
 <dt>index</dt>
-<dd><p>`character` default wei_freq_c2c</p></dd>
+<dd><p>`character(1)` a column name with the `cat2cat` identifier. Should not be updated in most cases. Default `index_c2c`.</p></dd>
 
 
 <dt>column</dt>
-<dd><p>`character` default index_c2c</p></dd>
+<dd><p>`character(1)` a column name with weights, default `wei_freq_c2c`.</p></dd>
 
 
 <dt>method</dt>
-<dd><p>`character` one of four available methods: default "nonzero", "highest", "highest1", "morethan"</p></dd>
+<dd><p>`character(1)` one of four available methods: "nonzero" (default), "highest", "highest1" or "morethan".</p></dd>
 
 
 <dt>percent</dt>
-<dd><p>`integer` from 0 to 99</p></dd>
+<dd><p>`integer(1)` from 0 to 99</p></dd>
 
 </dl></div>
     <div id="value">
@@ -95,7 +95,7 @@
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>method - specify method to reduce number of replications</p><ul><li><p>"nonzero" remove nonzero probabilities</p></li>
+    <p>method - specify a method to reduce number of replications</p><ul><li><p>"nonzero" remove nonzero probabilities</p></li>
 <li><p>"highest"  leave only highest probabilities for each subject- accepting ties</p></li>
 <li><p>"highest1"  leave only highest probabilities for each subject- not accepting ties so always one is returned</p></li>
 <li><p>"morethan" leave rows where a probability is higher than value specify by percent argument</p></li>

@@ -28,7 +28,7 @@ The prune_c2c function could be needed to limit growing number of replications."
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3.9000</span>
       </span>
     </div>
 
@@ -79,8 +79,8 @@ The <code>prune_c2c</code> function could be needed to limit growing number of r
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cat2cat</span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="cn">NULL</span>, new <span class="op">=</span> <span class="cn">NULL</span>, cat_var <span class="op">=</span> <span class="cn">NULL</span>, cat_var_old <span class="op">=</span> <span class="cn">NULL</span>, cat_var_new <span class="op">=</span></span>
-<span>    <span class="cn">NULL</span>, id_var <span class="op">=</span> <span class="cn">NULL</span>, time_var <span class="op">=</span> <span class="cn">NULL</span>, multiplier_var <span class="op">=</span> <span class="cn">NULL</span>, freqs_df <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="cn">NULL</span>, new <span class="op">=</span> <span class="cn">NULL</span>, time_var <span class="op">=</span> <span class="cn">NULL</span>, cat_var <span class="op">=</span> <span class="cn">NULL</span>, cat_var_old <span class="op">=</span></span>
+<span>    <span class="cn">NULL</span>, cat_var_new <span class="op">=</span> <span class="cn">NULL</span>, id_var <span class="op">=</span> <span class="cn">NULL</span>, multiplier_var <span class="op">=</span> <span class="cn">NULL</span>, freqs_df <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
 <span>  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="cn">NULL</span>, direction <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
 <span>  ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>data <span class="op">=</span> <span class="cn">NULL</span>, cat_var <span class="op">=</span> <span class="cn">NULL</span>, method <span class="op">=</span> <span class="cn">NULL</span>, features <span class="op">=</span> <span class="cn">NULL</span>, args <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -106,27 +106,27 @@ The <code>prune_c2c</code> function could be needed to limit growing number of r
 
 <p>`named list` with 2 fields old and new - 2 data.frames.
 There will be added additional columns like index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
-Additional columns will be informative only for a one data.frame as we always make a changes to one direction.</p>
+Additional columns will be informative only for a one data.frame as we always make the changes to one direction.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>data args</p><ul><li><p>"old" data.frame older time point in a panel</p></li>
 <li><p>"new"  data.frame more recent time point in a panel</p></li>
-<li><p>"cat_var" character name of the categorical variable.</p></li>
-<li><p>"cat_var_old" optional character name of the categorical variable in the older time point. Default `cat_var`.</p></li>
-<li><p>"cat_var_new" optional character name of the categorical variable in the newer time point. Default `cat_var`.</p></li>
-<li><p>"time_var" character name of the time variable.</p></li>
-<li><p>"id_var" optional character name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.</p></li>
-<li><p>"multiplier_var" optional character name of the multiplier variable - number of replication needed to reproduce the population</p></li>
-<li><p>"freqs_df" optional - data.frame with 2 columns where first one is category name and second counts.
- It is optional nevertheless will be very often needed, as give more control.
- It will be used to assess the probabilities. The multiplier variable is omit so sb has to apply it in this table.</p></li>
+<li><p>"time_var" character(1) name of the time variable.</p></li>
+<li><p>"cat_var" character(1) name of the categorical variable.</p></li>
+<li><p>"cat_var_old" Optional character(1) name of the categorical variable in the older time point. Default `cat_var`.</p></li>
+<li><p>"cat_var_new" Optional character(1) name of the categorical variable in the newer time point. Default `cat_var`.</p></li>
+<li><p>"id_var" Optional character(1) name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.</p></li>
+<li><p>"multiplier_var" Optional character(1) name of the multiplier variable - number of replication needed to reproduce the population</p></li>
+<li><p>"freqs_df" Optional - data.frame with 2 columns where first one is category name and second counts.
+ It is optional nevertheless will be often needed, as gives more control.
+ It will be used to assess the probabilities. The multiplier variable is omied so sb has to apply it in this table.</p></li>
 </ul><p>mappings args</p><ul><li><p>"trans" data.frame with 2 columns - mapping (transition) table - all categories for cat_var in old and new datasets have to be included.
   First column contains an old encoding and second a new one.
   The mapping (transition) table should to have a candidate for each category from the targeted for an update period.</p></li>
-<li><p>"direction" character direction - "backward" or "forward"</p></li>
-</ul><p>optional ml args</p><ul><li><p>"data" data.frame - dataset with features and the `cat_var`.</p></li>
-<li><p>"cat_var" character - the dependent variable name.</p></li>
+<li><p>"direction" character(1) direction - "backward" or "forward"</p></li>
+</ul><p>Optional ml args</p><ul><li><p>"data" data.frame - dataset with features and the `cat_var`.</p></li>
+<li><p>"cat_var" character(1) - the dependent variable name.</p></li>
 <li><p>"method" character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination Analysis, "rf" Random Forest</p></li>
 <li><p>"features" character vector of features names where all have to be numeric or logical</p></li>
 <li><p>"args" optional - list parameters: knn: k ; rf: ntree</p></li>

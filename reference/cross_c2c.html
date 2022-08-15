@@ -18,7 +18,7 @@ Ensemble of a few methods usually produces more accurate solutions than a single
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3.9000</span>
       </span>
     </div>
 
@@ -73,22 +73,22 @@ Ensemble of a few methods usually produces more accurate solutions than a single
 
 
 <dt>cols</dt>
-<dd><p>`character` vector default all columns follow regex like "wei_.*_c2c"</p></dd>
+<dd><p>`character` vector default all columns under the regex "wei_.*_c2c".</p></dd>
 
 
 <dt>weis</dt>
-<dd><p>`numeric` vector  Default vector the same length as cols and with equally spaced values summing to 1.</p></dd>
+<dd><p>`numeric` vector weighs for columns in the `cols` argument. By default a vector of the same length as `cols` argument and with equally spaced probability (summing to 1).</p></dd>
 
 
 <dt>na.rm</dt>
-<dd><p>`logical` if NA should be skipped, default TRUE</p></dd>
+<dd><p>`logical(1)` if `NA` values should be omitted, default TRUE.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     
 
-<p>`data.frame` with an additional column `wei_cross_c2c`</p>
+<p>`data.frame` with the additional column `wei_cross_c2c`.</p>
     </div>
 
     <div id="ref-examples">

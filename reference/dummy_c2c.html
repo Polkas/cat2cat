@@ -18,7 +18,7 @@ It will be useful e.g. for a boarder periods which will not have additional `cat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.3.9000</span>
       </span>
     </div>
 
@@ -64,11 +64,11 @@ It will be useful e.g. for a boarder periods which will not have additional `cat
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>df</dt>
-<dd><p>`data.frame`</p></dd>
+<dd><p>`data.frame`.</p></dd>
 
 
 <dt>cat_var</dt>
-<dd><p>`character` a categorical variable name.</p></dd>
+<dd><p>`character(1)` a categorical variable name.</p></dd>
 
 
 <dt>ml</dt>
@@ -84,6 +84,7 @@ It will be useful e.g. for a boarder periods which will not have additional `cat
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup_small</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">occup_old</span> <span class="op">&lt;-</span> <span class="va">occup_small</span><span class="op">[</span><span class="va">occup_small</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2008</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span><span class="fu">dummy_c2c</span><span class="op">(</span><span class="va">occup_old</span>, <span class="st">"code"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">dummy_c2c</span><span class="op">(</span><span class="va">occup_old</span>, <span class="st">"code"</span>, <span class="st">"knn"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
