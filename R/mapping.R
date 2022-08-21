@@ -85,7 +85,9 @@ get_freqs <- function(x, multiplier = NULL) {
 #' @param to_x `list` object returned by `get_mappings`.
 #' @param freqs `data.frame` object like the one returned by the `get_freqs` function.
 #' @return a `list` with a structure like `to_x` object but with probabilities for each category.
-#' @note The uniform distribution (outcomes are equally likely) is assumed for no match for all possible categories.
+#' @note
+#' `freqs` arg first column (keys) and the to_x arg values have to be of the same type.
+#' The uniform distribution (outcomes are equally likely) is assumed for no match for all possible categories.
 #' @examples
 #' data(trans)
 #' data(occup)

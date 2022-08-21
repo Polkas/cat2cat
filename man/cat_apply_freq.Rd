@@ -20,6 +20,7 @@ We will get a symmetric object to the one returned by the `get_mappings` functio
 Frequencies for each category/key are sum to 1, so could be interpreted as probabilities.
 }
 \note{
+`freqs` arg first column (keys) and the to_x arg values have to be of the same type.
 The uniform distribution (outcomes are equally likely) is assumed for no match for all possible categories.
 }
 \examples{

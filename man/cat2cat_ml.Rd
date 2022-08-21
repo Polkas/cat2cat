@@ -13,7 +13,7 @@ cat2cat_ml(ml, mapp, target_data, cat_var_target)
 
 \item{target_data}{`data.frame`}
 
-\item{cat_var_target}{`character` name of the categorical variable in the target period.}
+\item{cat_var_target}{`character(1)` name of the categorical variable in the target period.}
 }
 \description{
 apply the ml models to the cat2cat data

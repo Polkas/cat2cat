@@ -12,8 +12,8 @@
 #' many validation checks to prevent incorrect usage.
 #' The function has to be applied iteratively for each two neighboring periods of a panel dataset.
 #' The \code{prune_c2c} function could be needed to limit growing number of replications.
-#' @param data `named list` with fields `old`, `new`, `cat_var` (or `cat_var_old` and `cat_var_new`), `time_var` and optional `id_var`,`multiplier_var`,`freq_df`.
-#' @param mappings `named list` with 2 fields `trans` and `direction`.
+#' @param data `named list` with fields `old`, `new`, `cat_var` (or `cat_var_old` and `cat_var_new`), `time_var` and optional `id_var`,`multiplier_var`.
+#' @param mappings `named list` with 3 fields `trans`, `direction` and optional `freq_df`.
 #' @param ml `named list` (optional) with up to 5 fields `data`, `cat_var`, `method`, `features` and optional `args`.
 #' @details
 #' data args
@@ -26,9 +26,7 @@
 #'  \item{"cat_var_new"}{ Optional character(1) name of the categorical variable in the newer time point. Default `cat_var`.}
 #'  \item{"id_var"}{ Optional character(1) name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
 #'  \item{"multiplier_var"}{ Optional character(1) name of the multiplier variable - number of replication needed to reproduce the population}
-#'  \item{"freqs_df"}{ Optional - data.frame with 2 columns where first one is category name and second counts.
-#'  It is optional nevertheless will be often needed, as gives more control.
-#'  It will be used to assess the probabilities. The multiplier variable is omied so sb has to apply it in this table.}
+#'  \item{"freqs_df"}{ For backward compaibility check the definition in the description. of the mappings argument }
 #' }
 #' mappings args
 #' \itemize{
@@ -37,6 +35,11 @@
 #'   The mapping (transition) table should to have a candidate for each category from the targeted for an update period.
 #' }
 #'  \item{"direction"}{ character(1) direction - "backward" or "forward"}
+#'  \item{"freqs_df"}{ Optional - data.frame with 2 columns where first one is category name (base period) and second counts.
+#'  If It is not provided then is assessed automatically.
+#'  Artificial counts for each variable level in the base period.
+#'  It is optional nevertheless will be often needed, as gives more control.
+#'  It will be used to assess the probabilities. The multiplier variable is omitted so sb has to apply it in this table.}
 #' }
 #' Optional ml args
 #' \itemize{
@@ -51,10 +54,12 @@
 #' Additional columns will be informative only for a one data.frame as we always make the changes to one direction.
 #' @importFrom stats predict complete.cases setNames
 #' @importFrom MASS lda
-#' @details Without ml section only simple frequencies are assessed.
+#' @details
+#' Without ml section only simple frequencies are assessed.
 #' When ml model is broken then weights from simple frequencies are taken.
 #' `knn` method is recommended for smaller datasets.
 #' @note
+#' `trans` arg columns and the `cat_var` column have to be of the same type.
 #' The mapping (transition) table should to have a candidate for each category from the targeted for an update period.
 #' The observation from targeted for an updated period without a matched category from base period is removed.
 #' If you want to leave NA values add `c(NA, NA)` row to the `trans` table.
@@ -135,6 +140,10 @@ cat2cat <- function(data = list(
     is.null(data$multiplier_var) ||
       (data$multiplier_var %in% colnames(data$new) && data$multiplier_var %in% colnames(data$old))
   )
+
+  # mappings validation
+
+  # For backward compatibility
   stopifnot(is.null(data$freqs_df) || (is.data.frame(data$freqs_df) && ncol(data$freqs_df) == 2))
   stopifnot((length(unique(data$old[[data$time_var]])) == 1) && (length(unique(data$new[[data$time_var]])) == 1))
   stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
@@ -142,7 +151,6 @@ cat2cat <- function(data = list(
     !anyDuplicated(data$old[[data$id_var]]) &&
     !anyDuplicated(data$new[[data$id_var]])))
 
-  # mappings validation
   stopifnot(all(vapply(mappings, Negate(is.null), logical(1))))
   stopifnot(all(c("trans", "direction") %in% names(mappings)))
   stopifnot(isTRUE(mappings$direction %in% c("forward", "backward")))
@@ -166,21 +174,23 @@ cat2cat <- function(data = list(
   }
 
   if (mappings$direction == "forward") {
+    base_name = "old"
+    target_name = "new"
     cat_var_base <- data$cat_var_old
     cat_var_target <- data$cat_var_new
     cat_base_year <- data$old
     cat_target_year <- if (is_direct_match) data$new[data$new[[data$id_var]] %in% id_outer, ] else data$new
     cat_mid <- if (is_direct_match) data$new[data$new[[data$id_var]] %in% id_inner, ] else NULL
     mapp <- mapps$to_old
-    res_ord <- c(1, 2)
   } else if (mappings$direction == "backward") {
+    base_name = "new"
+    target_name = "old"
     cat_var_base <- data$cat_var_new
     cat_var_target <- data$cat_var_old
     cat_base_year <- data$new
     cat_target_year <- if (is_direct_match) data$old[data$old[[data$id_var]] %in% id_outer, ] else data$old
     cat_mid <- if (is_direct_match) data$old[data$old[[data$id_var]] %in% id_inner, ] else NULL
     mapp <- mapps$to_new
-    res_ord <- c(2, 1)
   }
 
   cats_base <- cat_base_year[[cat_var_base]]
@@ -260,8 +270,9 @@ cat2cat <- function(data = list(
 
   cat_target_rep_f <- rbind(cat_target_rep, cat_mid)
 
-  res <- list(cat_base_year, cat_target_rep_f)[res_ord]
-  names(res) <- c("old", "new")
+  res <- list()
+  res[[base_name]] <- cat_base_year
+  res[[target_name]] <- cat_target_rep_f
   res
 }
 
@@ -270,7 +281,7 @@ cat2cat <- function(data = list(
 #' @param ml `list` the same `ml` argument as provided to `cat2cat` function.
 #' @param mapp `list` a mapping table
 #' @param target_data `data.frame`
-#' @param cat_var_target `character` name of the categorical variable in the target period.
+#' @param cat_var_target `character(1)` name of the categorical variable in the target period.
 #' @keywords internal
 cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
   stopifnot(all(c("method", "features") %in% names(ml)))

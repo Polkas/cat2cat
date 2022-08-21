@@ -12,9 +12,9 @@ cat2cat(
 )
 }
 \arguments{
-\item{data}{`named list` with fields `old`, `new`, `cat_var` (or `cat_var_old` and `cat_var_new`), `time_var` and optional `id_var`,`multiplier_var`,`freq_df`.}
+\item{data}{`named list` with fields `old`, `new`, `cat_var` (or `cat_var_old` and `cat_var_new`), `time_var` and optional `id_var`,`multiplier_var`.}
 
-\item{mappings}{`named list` with 2 fields `trans` and `direction`.}
+\item{mappings}{`named list` with 3 fields `trans`, `direction` and optional `freq_df`.}
 
 \item{ml}{`named list` (optional) with up to 5 fields `data`, `cat_var`, `method`, `features` and optional `args`.}
 }
@@ -48,9 +48,7 @@ data args
  \item{"cat_var_new"}{ Optional character(1) name of the categorical variable in the newer time point. Default `cat_var`.}
  \item{"id_var"}{ Optional character(1) name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.}
  \item{"multiplier_var"}{ Optional character(1) name of the multiplier variable - number of replication needed to reproduce the population}
- \item{"freqs_df"}{ Optional - data.frame with 2 columns where first one is category name and second counts.
- It is optional nevertheless will be often needed, as gives more control.
- It will be used to assess the probabilities. The multiplier variable is omied so sb has to apply it in this table.}
+ \item{"freqs_df"}{ For backward compaibility check the definition in the description. of the mappings argument }
 }
 mappings args
 \itemize{
@@ -59,6 +57,11 @@ mappings args
   The mapping (transition) table should to have a candidate for each category from the targeted for an update period.
 }
  \item{"direction"}{ character(1) direction - "backward" or "forward"}
+ \item{"freqs_df"}{ Optional - data.frame with 2 columns where first one is category name (base period) and second counts.
+ If It is not provided then is assessed automatically.
+ Artificial counts for each variable level in the base period.
+ It is optional nevertheless will be often needed, as gives more control.
+ It will be used to assess the probabilities. The multiplier variable is omitted so sb has to apply it in this table.}
 }
 Optional ml args
 \itemize{
@@ -74,6 +77,7 @@ When ml model is broken then weights from simple frequencies are taken.
 `knn` method is recommended for smaller datasets.
 }
 \note{
+`trans` arg columns and the `cat_var` column have to be of the same type.
 The mapping (transition) table should to have a candidate for each category from the targeted for an update period.
 The observation from targeted for an updated period without a matched category from base period is removed.
 If you want to leave NA values add `c(NA, NA)` row to the `trans` table.
