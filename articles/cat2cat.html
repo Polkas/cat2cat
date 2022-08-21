@@ -72,7 +72,7 @@
       <h1 data-toc-skip>Get Started</h1>
                         <h4 data-toc-skip class="author">Maciej Nasinski</h4>
             
-            <h4 data-toc-skip class="date">2022-08-15</h4>
+            <h4 data-toc-skip class="date">2022-08-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Polkas/cat2cat/blob/HEAD/vignettes/cat2cat.Rmd" class="external-link"><code>vignettes/cat2cat.Rmd</code></a></small>
       <div class="hidden name"><code>cat2cat.Rmd</code></div>
@@ -186,10 +186,10 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">wei_knn_c2c</span>, <span class="va">wei_rf_c2c</span>, <span class="va">wei_lda_c2c</span>, <span class="va">wei_freq_c2c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##              wei_knn_c2c wei_rf_c2c wei_lda_c2c wei_freq_c2c</span></span>
-<span><span class="co">## wei_knn_c2c    1.0000000  0.8639272   0.8350984    0.8989887</span></span>
-<span><span class="co">## wei_rf_c2c     0.8639272  1.0000000   0.8786221    0.8752037</span></span>
-<span><span class="co">## wei_lda_c2c    0.8350984  0.8786221   1.0000000    0.8807702</span></span>
-<span><span class="co">## wei_freq_c2c   0.8989887  0.8752037   0.8807702    1.0000000</span></span></code></pre>
+<span><span class="co">## wei_knn_c2c    1.0000000  0.8650085   0.8350984    0.8989887</span></span>
+<span><span class="co">## wei_rf_c2c     0.8650085  1.0000000   0.8775747    0.8751792</span></span>
+<span><span class="co">## wei_lda_c2c    0.8350984  0.8775747   1.0000000    0.8807702</span></span>
+<span><span class="co">## wei_freq_c2c   0.8989887  0.8751792   0.8807702    1.0000000</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="example---more-than-2-periods">Example - More than 2 periods<a class="anchor" aria-label="anchor" href="#example---more-than-2-periods"></a>
@@ -629,8 +629,7 @@ If we have to apply many different mapping (transition) tables over time then pr
 <span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 2020-04-01 Home         94.3  <span style="text-decoration: underline;">2</span>414  </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 2020-04-01 Kids1       103.  <span style="text-decoration: underline;">17</span>686  </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> 2020-04-01 Kids2       111.  <span style="text-decoration: underline;">32</span>349  </span></span>
-<span><span class="co">## <span style="color: #949494;"># … with 12 more rows</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;"># … with 12 more rows</span></span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="dataset-with-unique-identifiers">Dataset with unique identifiers<a class="anchor" aria-label="anchor" href="#dataset-with-unique-identifiers"></a>

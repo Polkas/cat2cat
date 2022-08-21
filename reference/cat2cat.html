@@ -89,11 +89,11 @@ The <code>prune_c2c</code> function could be needed to limit growing number of r
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>data</dt>
-<dd><p>`named list` with fields `old`, `new`, `cat_var` (or `cat_var_old` and `cat_var_new`), `time_var` and optional `id_var`,`multiplier_var`,`freq_df`.</p></dd>
+<dd><p>`named list` with fields `old`, `new`, `cat_var` (or `cat_var_old` and `cat_var_new`), `time_var` and optional `id_var`,`multiplier_var`.</p></dd>
 
 
 <dt>mappings</dt>
-<dd><p>`named list` with 2 fields `trans` and `direction`.</p></dd>
+<dd><p>`named list` with 3 fields `trans`, `direction` and optional `freq_df`.</p></dd>
 
 
 <dt>ml</dt>
@@ -118,13 +118,16 @@ Additional columns will be informative only for a one data.frame as we always ma
 <li><p>"cat_var_new" Optional character(1) name of the categorical variable in the newer time point. Default `cat_var`.</p></li>
 <li><p>"id_var" Optional character(1) name of the unique identifier variable - if this is specified then for subjects observe in both periods the direct mapping is applied.</p></li>
 <li><p>"multiplier_var" Optional character(1) name of the multiplier variable - number of replication needed to reproduce the population</p></li>
-<li><p>"freqs_df" Optional - data.frame with 2 columns where first one is category name and second counts.
- It is optional nevertheless will be often needed, as gives more control.
- It will be used to assess the probabilities. The multiplier variable is omied so sb has to apply it in this table.</p></li>
+<li><p>"freqs_df" For backward compaibility check the definition in the description. of the mappings argument</p></li>
 </ul><p>mappings args</p><ul><li><p>"trans" data.frame with 2 columns - mapping (transition) table - all categories for cat_var in old and new datasets have to be included.
   First column contains an old encoding and second a new one.
   The mapping (transition) table should to have a candidate for each category from the targeted for an update period.</p></li>
 <li><p>"direction" character(1) direction - "backward" or "forward"</p></li>
+<li><p>"freqs_df" Optional - data.frame with 2 columns where first one is category name (base period) and second counts.
+ If It is not provided then is assessed automatically.
+ Artificial counts for each variable level in the base period.
+ It is optional nevertheless will be often needed, as gives more control.
+ It will be used to assess the probabilities. The multiplier variable is omitted so sb has to apply it in this table.</p></li>
 </ul><p>Optional ml args</p><ul><li><p>"data" data.frame - dataset with features and the `cat_var`.</p></li>
 <li><p>"cat_var" character(1) - the dependent variable name.</p></li>
 <li><p>"method" character vector - one or a few from "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors, "lda" Linear Discrimination Analysis, "rf" Random Forest</p></li>
@@ -136,7 +139,8 @@ When ml model is broken then weights from simple frequencies are taken.
     </div>
     <div id="note">
     <h2>Note</h2>
-    <p>The mapping (transition) table should to have a candidate for each category from the targeted for an update period.
+    <p>`trans` arg columns and the `cat_var` column have to be of the same type.
+The mapping (transition) table should to have a candidate for each category from the targeted for an update period.
 The observation from targeted for an updated period without a matched category from base period is removed.
 If you want to leave NA values add `c(NA, NA)` row to the `trans` table.
 Please check the vignette for more information.</p>
