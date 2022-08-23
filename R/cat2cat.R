@@ -96,7 +96,7 @@
 #'   data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
 #'   mappings = list(trans = trans, direction = "backward"),
 #'   ml = list(
-#'     data = occup_old,
+#'     data = occup_small[occup_small$year >= 2010, ],
 #'     cat_var = "code",
 #'     method = "knn",
 #'     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
@@ -318,7 +318,7 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
           length(unique(target_data_cat$g_new_c2c)) > 1 &&
             length(udc) >= 1 &&
             nrow(target_data_cat) > 0 &&
-            any(target_data_cat$g_new_c2c %in% names(cat_ml_year_g))
+            any(unique(target_data_cat$g_new_c2c) %in% names(cat_ml_year_g))
         ) {
           base_ml <- target_data_cat[!duplicated(target_data_cat[["index_c2c"]]), c("index_c2c", features)]
           cc <- complete.cases(base_ml[, features])

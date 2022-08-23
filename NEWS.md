@@ -1,7 +1,8 @@
 # cat2cat 0.4.3.9000
 
-* Improve validation.
+* Fix example in the `cat2cat` function.
 * Improve documentation.
+* Improve validation.
 
 # cat2cat 0.4.3
 
