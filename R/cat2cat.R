@@ -156,45 +156,40 @@ cat2cat <- function(data = list(
   stopifnot(isTRUE(mappings$direction %in% c("forward", "backward")))
   stopifnot(is.data.frame(mappings$trans) && ncol(mappings$trans) == 2)
 
-  is_direct_match <- !is.null(data$id_var)
   mapps <- get_mappings(mappings$trans)
-
-  if (is_direct_match) {
-    id_inner <- intersect(data$old[[data$id_var]], data$new[[data$id_var]])
-    tos <- merge(data$old[, c(data$id_var, data$cat_var_old)], data$new[, c(data$id_var, data$cat_var_new)], by = data$id_var)
-    colnames(tos) <- c(data$id_var, "cat_old", "cat_new")
-    if (mappings$direction == "forward") {
-      id_outer <- setdiff(data$new[[data$id_var]], data$old[[data$id_var]])
-      tos_df <- tos[, c(data$id_var, "cat_old")]
-    } else if (mappings$direction == "backward") {
-      id_outer <- setdiff(data$old[[data$id_var]], data$new[[data$id_var]])
-      tos_df <- tos[, c(data$id_var, "cat_new")]
-    }
-    colnames(tos_df) <- c("id", "cat")
-  }
 
   if (mappings$direction == "forward") {
     base_name = "old"
     target_name = "new"
-    cat_var_base <- data$cat_var_old
-    cat_var_target <- data$cat_var_new
-    cat_base_year <- data$old
-    cat_target_year <- if (is_direct_match) data$new[data$new[[data$id_var]] %in% id_outer, ] else data$new
-    cat_mid <- if (is_direct_match) data$new[data$new[[data$id_var]] %in% id_inner, ] else NULL
-    mapp <- mapps$to_old
   } else if (mappings$direction == "backward") {
     base_name = "new"
     target_name = "old"
-    cat_var_base <- data$cat_var_new
-    cat_var_target <- data$cat_var_old
-    cat_base_year <- data$new
-    cat_target_year <- if (is_direct_match) data$old[data$old[[data$id_var]] %in% id_outer, ] else data$old
-    cat_mid <- if (is_direct_match) data$old[data$old[[data$id_var]] %in% id_inner, ] else NULL
-    mapp <- mapps$to_new
+  }
+
+  cat_base_year <- data[[base_name]]
+  cat_target_year <- data[[target_name]]
+  cat_var_base <- data[[paste0("cat_var_", base_name)]]
+  cat_var_target <- data[[paste0("cat_var_", target_name)]]
+  cat_mid <- NULL # direct match
+
+  is_direct_match <- !is.null(data$id_var)
+  if (is_direct_match) {
+    id_inner <- intersect(data$old[[data$id_var]], data$new[[data$id_var]])
+    tos <- merge(data$old[, c(data$id_var, data$cat_var_old)], data$new[, c(data$id_var, data$cat_var_new)], by = data$id_var)
+    colnames(tos) <- c(data$id_var, "cat_old", "cat_new")
+    id_outer <- setdiff(data[[target_name]][[data$id_var]], data[[base_name]][[data$id_var]])
+    cat_target_year <- data[[target_name]][data[[target_name]][[data$id_var]] %in% id_outer, ]
+    cat_mid <- data[[target_name]][data[[target_name]][[data$id_var]] %in% id_inner, ]
+    cat_mid <- dummy_c2c(cat_mid, cat_var_base)
+    tos_df <- tos[, c(data$id_var, "cat_old")]
+    colnames(tos_df) <- c("id", "cat")
+    cat_mid$g_new_c2c <- tos_df$cat[match(cat_mid[[data$id_var]], tos_df$id)]
   }
 
   cats_base <- cat_base_year[[cat_var_base]]
   cats_target <- cat_target_year[[cat_var_target]]
+
+  mapp <- mapps[[paste0("to_", base_name)]]
 
   if (cats_target_diff_len <- length(cats_target_diff <- setdiff(unique(cats_target), names(mapp)))) {
     warning(
@@ -209,11 +204,6 @@ cat2cat <- function(data = list(
     )
   }
 
-  if (is_direct_match) {
-    cat_mid <- dummy_c2c(cat_mid, cat_var_base)
-    cat_mid$g_new_c2c <- tos_df$cat[match(cat_mid[[data$id_var]], tos_df$id)]
-  }
-
   fre <- if (is.data.frame(data$freqs_df)) {
     data$freqs_df
   } else if ("wei_freq_c2c" %in% colnames(cat_base_year)) {
@@ -223,11 +213,7 @@ cat2cat <- function(data = list(
       function(x) round(sum(x, na.rm = TRUE))
     )
   } else {
-    if (!is.null(data$multiplier_var)) {
-      get_freqs(cats_base, cat_base_year[[data$multiplier_var]])
-    } else {
-      get_freqs(cats_base)
-    }
+    get_freqs(cats_base, if (!is.null(data$multiplier_var)) cat_base_year[[data$multiplier_var]])
   }
   freqs_list <- cat_apply_freq(mapp, fre)
 
