@@ -141,8 +141,6 @@ cat2cat <- function(data = list(
       (data$multiplier_var %in% colnames(data$new) && data$multiplier_var %in% colnames(data$old))
   )
 
-  # mappings validation
-
   # For backward compatibility
   stopifnot(is.null(data$freqs_df) || (is.data.frame(data$freqs_df) && ncol(data$freqs_df) == 2))
   stopifnot((length(unique(data$old[[data$time_var]])) == 1) && (length(unique(data$new[[data$time_var]])) == 1))
@@ -151,6 +149,7 @@ cat2cat <- function(data = list(
     !anyDuplicated(data$old[[data$id_var]]) &&
     !anyDuplicated(data$new[[data$id_var]])))
 
+  # mappings validation
   stopifnot(all(vapply(mappings, Negate(is.null), logical(1))))
   stopifnot(all(c("trans", "direction") %in% names(mappings)))
   stopifnot(isTRUE(mappings$direction %in% c("forward", "backward")))
@@ -181,7 +180,7 @@ cat2cat <- function(data = list(
     cat_target_year <- data[[target_name]][data[[target_name]][[data$id_var]] %in% id_outer, ]
     cat_mid <- data[[target_name]][data[[target_name]][[data$id_var]] %in% id_inner, ]
     cat_mid <- dummy_c2c(cat_mid, cat_var_base)
-    tos_df <- tos[, c(data$id_var, "cat_old")]
+    tos_df <- tos[, c(data$id_var, paste0("cat_", base_name))]
     colnames(tos_df) <- c("id", "cat")
     cat_mid$g_new_c2c <- tos_df$cat[match(cat_mid[[data$id_var]], tos_df$id)]
   }
@@ -191,33 +190,17 @@ cat2cat <- function(data = list(
 
   mapp <- mapps[[paste0("to_", base_name)]]
 
-  if (cats_target_diff_len <- length(cats_target_diff <- setdiff(unique(cats_target), names(mapp)))) {
-    warning(
-      paste(
-        sprintf(
-          "trans table does not cover some levels for a target period, so the result will not contain all original observations. Lacking %s levels: ",
-          cats_target_diff_len
-        ),
-        paste(head(cats_target_diff, 10), collapse = ", "),
-        if (cats_target_diff_len >= 10) "..." else NULL
-      )
-    )
-  }
+  validate_cover_cats(unique(cats_target), mapp)
 
-  fre <- if (is.data.frame(data$freqs_df)) {
-    data$freqs_df
-  } else if ("wei_freq_c2c" %in% colnames(cat_base_year)) {
-    stats::aggregate(
-      if (!is.null(data$multiplier_var)) cat_base_year[["wei_freq_c2c"]] * cat_base_year[[data$multiplier_var]] else cat_base_year[["wei_freq_c2c"]],
-      list(g = cat_base_year[[cat_var_base]]),
-      function(x) round(sum(x, na.rm = TRUE))
-    )
-  } else {
-    get_freqs(cats_base, if (!is.null(data$multiplier_var)) cat_base_year[[data$multiplier_var]])
-  }
+  # frequencies
+  fre <- resolve_frequencies(
+    cat_base_year = cat_base_year, cat_var_base = cat_var_base,
+    freqs_df = data$freqs_df, multiplier_var = data$multiplier_var
+  )
+  # frequencies per category
   freqs_list <- cat_apply_freq(mapp, fre)
 
-  # Replicate and apply freq probabilities
+  # Replicate and apply freq probabilities, target period
   g_vec <- mapp[match(cats_target, names(mapp))]
   rep_vec <- unname(lengths(g_vec))
   wei_vec <- freqs_list[match(cats_target, names(freqs_list))]
@@ -253,7 +236,7 @@ cat2cat <- function(data = list(
 
     cat_target_rep <- ml_results$target_data
   }
-
+  # bind direct match if applied
   cat_target_rep_f <- rbind(cat_target_rep, cat_mid)
 
   res <- list()
@@ -368,4 +351,48 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
   target_data <- target_data[order(target_data[["index_c2c"]]), ]
 
   list(target_data = target_data)
+}
+
+#' Validate if the trans table contains all proper mappings
+#' @param cats_target vector of unique target period categories
+#' @param mapp transition (mapping) table process with `get_mappings`, the "to_base" direction is taken.
+#' @keywords internal
+validate_cover_cats <- function(u_cats_target, mapp) {
+  if (cats_target_diff_len <- length(cats_target_diff <- setdiff(u_cats_target, names(mapp)))) {
+    warning(
+      paste(
+        sprintf(
+          paste0(
+            "trans table does not cover some levels for a target period, ",
+            "so the result will not contain all original observations. Lacking %s levels: "
+          ),
+          cats_target_diff_len
+        ),
+        paste(head(cats_target_diff, 10), collapse = ", "),
+        if (cats_target_diff_len >= 10) "..." else NULL
+      )
+    )
+  }
+}
+
+#' Resolve the frequencies
+#' @param cat_base_year `data.frame` a base period dataset.
+#' @param cat_var_base `character(1)` name of the base period categorical variable.
+#' @param freqs_df `data.frame` with 2 columns, the first one with category and second with counts.
+#' @param multiplier_var `character(1)` name of the multiplier variable.
+#' @keywords internal
+resolve_frequencies <- function(cat_base_year, cat_var_base, freqs_df, multiplier_var) {
+  cats_base <- cat_base_year[[cat_var_base]]
+  freqs <- if (is.data.frame(freqs_df)) {
+    freqs_df
+  } else if ("wei_freq_c2c" %in% colnames(cat_base_year)) {
+    stats::aggregate(
+      if (!is.null(multiplier_var)) cat_base_year[["wei_freq_c2c"]] * cat_base_year[[multiplier_var]] else cat_base_year[["wei_freq_c2c"]],
+      list(g = cats_base),
+      function(x) round(sum(x, na.rm = TRUE))
+    )
+  } else {
+    get_freqs(cats_base, if (!is.null(multiplier_var)) cat_base_year[[multiplier_var]])
+  }
+  freqs
 }
