@@ -58,10 +58,16 @@
     <loc>/reference/prune_c2c.html</loc>
   </url>
   <url>
+    <loc>/reference/resolve_frequencies.html</loc>
+  </url>
+  <url>
     <loc>/reference/summary_c2c.html</loc>
   </url>
   <url>
     <loc>/reference/trans.html</loc>
+  </url>
+  <url>
+    <loc>/reference/validate_cover_cats.html</loc>
   </url>
   <url>
     <loc>/reference/verticals.html</loc>
