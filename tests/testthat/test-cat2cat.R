@@ -218,6 +218,8 @@ expect_true((all(verts2$old$wei_knn_c2c <= 1 & verts2$old$wei_knn_c2c >= 0)))
 expect_true((all(verts2$old$wei_rf_c2c <= 1 & verts2$old$wei_rf_c2c >= 0)))
 expect_true((all(verts2$old$wei_lda_c2c <= 1 & verts2$old$wei_lda_c2c >= 0)))
 
+expect_true(all(unique(verts2[["old"]][["g_new_c2c"]]) %in% trans_v[[2]]))
+
 verts3 <- cat2cat(
   data = list(old = vert_old, new = vert_new, id_var = "ean", cat_var = "vertical", time_var = "v_date"),
   mappings = list(trans = trans_v, direction = "forward"),
@@ -242,3 +244,5 @@ expect_equal(sum(verts3$new$wei_lda_c2c), nrow(vert_new))
 expect_true((all(verts3$new$wei_knn_c2c <= 1 & verts3$new$wei_knn_c2c >= 0)))
 expect_true((all(verts3$new$wei_rf_c2c <= 1 & verts3$new$wei_rf_c2c >= 0)))
 expect_true((all(verts3$new$wei_lda_c2c <= 1 & verts3$new$wei_lda_c2c >= 0)))
+
+expect_true(all(unique(verts3[["new"]][["g_new_c2c"]]) %in% trans_v[[1]]))

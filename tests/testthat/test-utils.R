@@ -22,7 +22,7 @@ testthat::test_that("get_mappings", {
 testthat::test_that("cat_apply_freq", {
   mappings <- get_mappings(mapping_table)
   mappings_freq <- cat_apply_freq(mappings$to_new, get_freqs(c(1, 1, 1, 1, 2, 3, 3, NA, NA)))
-  expect_identical(mappings_freq$`1`, c(2/7, 4/7, 1/7))
+  expect_identical(mappings_freq$`1`, c(2 / 7, 4 / 7, 1 / 7))
   expect_identical(length(mappings_freq), 4L)
   expect_equal(lengths(mappings_freq), structure(c(3L, 2L, 1L, 2L), names = c("1", "2", "3", NA)))
   mappings_freq2 <- cat_apply_freq(mappings$to_new, get_freqs(c(1, 1, 1, 1)))

@@ -158,11 +158,11 @@ cat2cat <- function(data = list(
   mapps <- get_mappings(mappings$trans)
 
   if (mappings$direction == "forward") {
-    base_name = "old"
-    target_name = "new"
+    base_name <- "old"
+    target_name <- "new"
   } else if (mappings$direction == "backward") {
-    base_name = "new"
-    target_name = "old"
+    base_name <- "new"
+    target_name <- "old"
   }
 
   cat_base_year <- data[[base_name]]
@@ -174,15 +174,14 @@ cat2cat <- function(data = list(
   is_direct_match <- !is.null(data$id_var)
   if (is_direct_match) {
     id_inner <- intersect(data$old[[data$id_var]], data$new[[data$id_var]])
-    tos <- merge(data$old[, c(data$id_var, data$cat_var_old)], data$new[, c(data$id_var, data$cat_var_new)], by = data$id_var)
-    colnames(tos) <- c(data$id_var, "cat_old", "cat_new")
     id_outer <- setdiff(data[[target_name]][[data$id_var]], data[[base_name]][[data$id_var]])
+
     cat_target_year <- data[[target_name]][data[[target_name]][[data$id_var]] %in% id_outer, ]
-    cat_mid <- data[[target_name]][data[[target_name]][[data$id_var]] %in% id_inner, ]
-    cat_mid <- dummy_c2c(cat_mid, cat_var_base)
-    tos_df <- tos[, c(data$id_var, paste0("cat_", base_name))]
-    colnames(tos_df) <- c("id", "cat")
-    cat_mid$g_new_c2c <- tos_df$cat[match(cat_mid[[data$id_var]], tos_df$id)]
+    cat_mid <- dummy_c2c(data[[target_name]][data[[target_name]][[data$id_var]] %in% id_inner, ], cat_var_base)
+
+    tos <- merge(data$old[, c(data$id_var, data$cat_var_old)], data$new[, c(data$id_var, data$cat_var_new)], by = data$id_var)
+    colnames(tos) <- c("id", "cat_old", "cat_new")
+    cat_mid$g_new_c2c <- tos[[paste0("cat_", base_name)]][match(cat_mid[[data$id_var]], tos$id)]
   }
 
   cats_base <- cat_base_year[[cat_var_base]]

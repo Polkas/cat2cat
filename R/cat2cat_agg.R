@@ -36,11 +36,13 @@
 #' ## possible processing
 #' library(dplyr)
 #' agg %>%
-#' bind_rows() %>%
+#'   bind_rows() %>%
 #'   group_by(v_date, vertical) %>%
-#'   summarise(sales = sum(sales * prop_c2c),
-#'             counts = sum(counts * prop_c2c),
-#'             v_date = first(v_date))
+#'   summarise(
+#'     sales = sum(sales * prop_c2c),
+#'     counts = sum(counts * prop_c2c),
+#'     v_date = first(v_date)
+#'   )
 cat2cat_agg <- function(data = list(
                           old = NULL,
                           new = NULL,
