@@ -1,4 +1,4 @@
-# cat2cat 0.4.3.9000
+# cat2cat 0.4.4
 
 * Fix example in the `cat2cat` function.
 * Improve documentation.
