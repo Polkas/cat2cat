@@ -11,11 +11,17 @@ dummy_c2c(df, cat_var, ml = NULL)
 
 \item{cat_var}{`character(1)` a categorical variable name.}
 
-\item{ml}{`character` vector of ml models applied, any of `c("knn", "rf", "lda")`.}
+\item{ml}{`character` vector of ml models applied,
+any of `c("knn", "rf", "lda")`.}
+}
+\value{
+the provided `data.frame` with additional `cat2cat` like columns.
 }
 \description{
-a utils function to add default cat2cat columns to a `data.frame`.
-It will be useful e.g. for a boarder periods which will not have additional `cat2cat` columns.
+a utils function to add default cat2cat columns
+to a `data.frame`.
+It will be useful e.g. for a boarder periods which will not have additional
+ `cat2cat` columns.
 }
 \examples{
 \dontrun{

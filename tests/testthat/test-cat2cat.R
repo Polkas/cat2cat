@@ -182,7 +182,10 @@ trans_v <- vert_old %>%
 ## it is important to set id_var as then we merging categories 1 to 1
 ## for this identifier which exists in both periods.
 verts <- cat2cat(
-  data = list(old = vert_old, new = vert_new, id_var = "ean", cat_var = "vertical", time_var = "v_date"),
+  data = list(
+    old = vert_old, new = vert_new, id_var = "ean",
+    cat_var = "vertical", time_var = "v_date"
+  ),
   mappings = list(trans = trans_v, direction = "backward")
 )
 
@@ -193,7 +196,10 @@ expect_equal(sum(verts$old$wei_freq_c2c), nrow(vert_old))
 
 
 verts2 <- cat2cat(
-  data = list(old = vert_old, new = vert_new, id_var = "ean", cat_var = "vertical", time_var = "v_date"),
+  data = list(
+    old = vert_old, new = vert_new, id_var = "ean",
+    cat_var = "vertical", time_var = "v_date"
+  ),
   mappings = list(trans = trans_v, direction = "backward"),
   ml = list(
     data = vert_new,
@@ -221,7 +227,10 @@ expect_true((all(verts2$old$wei_lda_c2c <= 1 & verts2$old$wei_lda_c2c >= 0)))
 expect_true(all(unique(verts2[["old"]][["g_new_c2c"]]) %in% trans_v[[2]]))
 
 verts3 <- cat2cat(
-  data = list(old = vert_old, new = vert_new, id_var = "ean", cat_var = "vertical", time_var = "v_date"),
+  data = list(
+    old = vert_old, new = vert_new, id_var = "ean",
+    cat_var = "vertical", time_var = "v_date"
+  ),
   mappings = list(trans = trans_v, direction = "forward"),
   ml = list(
     data = vert_old,

@@ -7,7 +7,8 @@
 validate_cover_cats(u_cats_target, mapp)
 }
 \arguments{
-\item{mapp}{transition (mapping) table process with `get_mappings`, the "to_base" direction is taken.}
+\item{mapp}{transition (mapping) table process with `get_mappings`,
+the "to_base" direction is taken.}
 
 \item{cats_target}{vector of unique target period categories}
 }

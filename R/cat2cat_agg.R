@@ -1,7 +1,10 @@
 #' Manual mapping for an aggregated panel dataset
-#' @description Manual mapping of an inconsistently coded categorical variable according to the user provided mappings (equations).
-#' @param data list with 5 named fields `old`, `new`, `cat_var`, `time_var`, `freq_var`.
-#' @param ... mapping equations where direction is set with any of `>`, `<`, `\%>\%`, `\%<\%`.
+#' @description Manual mapping of an inconsistently coded categorical variable
+#' according to the user provided mappings (equations).
+#' @param data list with 5 named fields
+#'  `old`, `new`, `cat_var`, `time_var`, `freq_var`.
+#' @param ... mapping equations where direction is set with any of,
+#'  `>`, `<`, `\%>\%`, `\%<\%`.
 #' @return `list` of two data.frame objects.
 #' @details data argument - list with fields
 #' \itemize{
@@ -58,7 +61,9 @@ cat2cat_agg <- function(data = list(
       all(vapply(data, Negate(is.null), logical(1))) &&
       inherits(data$old, "data.frame") &&
       inherits(data$new, "data.frame") &&
-      all(c("old", "new", "cat_var", "time_var", "freq_var") %in% names(data)) &&
+      all(
+        c("old", "new", "cat_var", "time_var", "freq_var") %in% names(data)
+      ) &&
       all(c(data$cat_var, data$freq_var) %in% colnames(data$old)) &&
       all(c(data$cat_var, data$freq_var) %in% colnames(data$new))
   )
@@ -68,7 +73,8 @@ cat2cat_agg <- function(data = list(
 
   stopifnot((d_old == 1) && (d_new == 1))
 
-  stopifnot(all(table(data$old[[data$cat_var]]) == 1) && all(table(data$new[[data$cat_var]]) == 1))
+  stopifnot(all(table(data$old[[data$cat_var]]) == 1) &&
+    all(table(data$new[[data$cat_var]]) == 1))
 
   t <- as.list(substitute(list(...))[-1])
 
@@ -95,7 +101,9 @@ cat2cat_agg <- function(data = list(
       if (length(i[[2]]) > 1) {
         base_rm <- base_rm[rep(1, length(i[[2]])), ]
         base_rm[, data$cat_var] <- i[[2]]
-        base_rm$prop_c2c <- prop.table(df_old[df_old[, data$cat_var] %in% i[[2]], data$freq_var])
+        base_rm$prop_c2c <- prop.table(
+          df_old[df_old[, data$cat_var] %in% i[[2]], data$freq_var]
+        )
       } else {
         base_rm[, data$cat_var] <- i[[2]]
         base_rm$prop_c2c <- 1
@@ -109,7 +117,9 @@ cat2cat_agg <- function(data = list(
       if (length(i[[3]]) > 1) {
         base_rm <- base_rm[rep(1, length(i[[3]])), ]
         base_rm[, data$cat_var] <- i[[3]]
-        base_rm$prop_c2c <- prop.table(df_new[df_new[, data$cat_var] %in% i[[3]], data$freq_var])
+        base_rm$prop_c2c <- prop.table(
+          df_new[df_new[, data$cat_var] %in% i[[3]], data$freq_var]
+        )
       } else {
         base_rm[, data$cat_var] <- i[[3]]
         base_rm$prop_c2c <- 1

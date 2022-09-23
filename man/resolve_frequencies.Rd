@@ -9,9 +9,11 @@ resolve_frequencies(cat_base_year, cat_var_base, freqs_df, multiplier_var)
 \arguments{
 \item{cat_base_year}{`data.frame` a base period dataset.}
 
-\item{cat_var_base}{`character(1)` name of the base period categorical variable.}
+\item{cat_var_base}{`character(1)` name of the base period
+categorical variable.}
 
-\item{freqs_df}{`data.frame` with 2 columns, the first one with category and second with counts.}
+\item{freqs_df}{`data.frame` with 2 columns, the first one with category
+and second with counts.}
 
 \item{multiplier_var}{`character(1)` name of the multiplier variable.}
 }

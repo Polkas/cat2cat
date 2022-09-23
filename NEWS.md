@@ -1,3 +1,7 @@
+# cat2cat 0.4.4.9000
+
+* `pkgcheck` related fixes.
+
 # cat2cat 0.4.4
 
 * Fix example in the `cat2cat` function.

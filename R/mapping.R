@@ -73,7 +73,7 @@ get_freqs <- function(x, multiplier = NULL) {
   } else {
     x
   }
-  res <- as.data.frame(table(input, useNA = "ifany"), stringsAsFactors = F)
+  res <- as.data.frame(table(input, useNA = "ifany"), stringsAsFactors = FALSE)
   res
 }
 
@@ -121,7 +121,7 @@ cat_apply_freq <- function(to_x, freqs) {
     to_x,
     function(x) {
       alls <- freqs[, 2, drop = TRUE][match(x, freqs[, 1, drop = TRUE])]
-      ff <- alls / sum(alls, na.rm = T)
+      ff <- alls / sum(alls, na.rm = TRUE)
       # NA to 0
       ff[is.na(ff) | is.nan(ff)] <- 0
       # all equal to zero so proportional probability

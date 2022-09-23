@@ -14,6 +14,8 @@ The mapping (transition) table should to have a candidate for each category from
 
 [**Please visit the cat2cat webpage for more information**](https://polkas.github.io/cat2cat/articles/cat2cat.html)
 
+[**Python Version**](https://pypi.org/project/cat2cat/)
+
 ## Installation
 
 ```r

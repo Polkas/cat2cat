@@ -13,29 +13,43 @@ prune_c2c(
 )
 }
 \arguments{
-\item{df}{`data.frame` like result of the `cat2cat` function for a specific period.}
+\item{df}{`data.frame` like result of the `cat2cat` function
+for a specific period.}
 
-\item{index}{`character(1)` a column name with the `cat2cat` identifier. Should not be updated in most cases. Default `index_c2c`.}
+\item{index}{`character(1)` a column name with the `cat2cat` identifier.
+Should not be updated in most cases. Default `index_c2c`.}
 
-\item{column}{`character(1)` a column name with weights, default `wei_freq_c2c`.}
+\item{column}{`character(1)` a column name with weights,
+default `wei_freq_c2c`.}
 
-\item{method}{`character(1)` one of four available methods: "nonzero" (default), "highest", "highest1" or "morethan".}
+\item{method}{`character(1)` one of four available methods:
+"nonzero" (default), "highest", "highest1" or "morethan".}
 
 \item{percent}{`integer(1)` from 0 to 99}
 }
 \value{
-`data.frame` with the same structure and possibly reduced number of rows
+`data.frame` with the same structure and possibly reduced
+number of rows
 }
 \description{
-user could specify one of four methods to prune replications created in the cat2cat procedure.
+user could specify one of four methods to prune replications
+created in the cat2cat procedure.
 }
 \details{
 method - specify a method to reduce number of replications
 \itemize{
  \item{"nonzero"}{ remove nonzero probabilities}
- \item{"highest"} { leave only highest probabilities for each subject- accepting ties}
- \item{"highest1"} { leave only highest probabilities for each subject- not accepting ties so always one is returned}
- \item{"morethan"}{ leave rows where a probability is higher than value specify by percent argument }
+ \item{"highest"} {
+ leave only highest probabilities for each subject- accepting ties
+ }
+ \item{"highest1"} {
+ leave only highest probabilities for each subject -
+ not accepting ties so always one is returned
+ }
+ \item{"morethan"}{
+ leave rows where a probability is higher than value specify
+ by percent argument
+ }
 }
 }
 \examples{
@@ -48,7 +62,9 @@ occup_old <- occup_small[occup_small$year == 2008, ]
 occup_new <- occup_small[occup_small$year == 2010, ]
 
 occup_ml <- cat2cat(
-  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  data = list(
+    old = occup_old, new = occup_new, cat_var = "code", time_var = "year"
+  ),
   mappings = list(trans = trans, direction = "backward"),
   ml = list(
     data = occup_new,
