@@ -64,11 +64,13 @@ It is recommended to run it before further processing, like next iterations.</p>
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>data</dt>
-<dd><p>`data.frame` - one of the data.frames returned by the `cat2cat` function.</p></dd>
+<dd><p>`data.frame` - one of the data.frames returned by
+the `cat2cat` function.</p></dd>
 
 
 <dt>weis</dt>
-<dd><p>`character(1)` - name of a certain wei_*_c2c column, added by cat2cat function. Default `wei_freq_c2c`.</p></dd>
+<dd><p>`character(1)` - name of a certain wei_*_c2c column,
+added by cat2cat function. Default `wei_freq_c2c`.</p></dd>
 
 
 <dt>type</dt>
@@ -93,7 +95,9 @@ It is recommended to run it before further processing, like next iterations.</p>
 <span class="r-in"><span><span class="va">occup_new</span> <span class="op">&lt;-</span> <span class="va">occup_small</span><span class="op">[</span><span class="va">occup_small</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2010</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">occup_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="cat2cat.html">cat2cat</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span>,</span></span>
 <span class="r-in"><span>  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
