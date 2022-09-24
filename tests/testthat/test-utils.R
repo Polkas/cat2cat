@@ -9,13 +9,16 @@ testthat::test_that("get_freqs", {
   elem1 <- get_freqs(input, multiplier = input_multiplier)
   input <- rep(input, times = input_multiplier)
   elem2 <- as.data.frame(table(input, useNA = "ifany"),
-                         stringsAsFactors = FALSE)
+    stringsAsFactors = FALSE
+  )
   expect_identical(elem1, elem2)
 })
 
-mapping_table <- data.frame(old = c(1, 1, 1, 2, 2, 3, NA, NA),
-                            new = c(NA, 1, 2, 2, 3, 2, NA, 3),
-                            stringsAsFactors = FALSE)
+mapping_table <- data.frame(
+  old = c(1, 1, 1, 2, 2, 3, NA, NA),
+  new = c(NA, 1, 2, 2, 3, 2, NA, 3),
+  stringsAsFactors = FALSE
+)
 
 testthat::test_that("get_mappings", {
   mappings <- get_mappings(mapping_table)
@@ -48,8 +51,10 @@ testthat::test_that("cat_apply_freq", {
   expect_identical(mappings_freq2$`2`, c(0.5, 0.5))
 })
 
-additional_cols <- c("index_c2c", "g_new_c2c", "wei_freq_c2c",
-                     "rep_c2c", "wei_naive_c2c")
+additional_cols <- c(
+  "index_c2c", "g_new_c2c", "wei_freq_c2c",
+  "rep_c2c", "wei_naive_c2c"
+)
 
 testthat::test_that("dummy_c2c", {
   expect_identical(

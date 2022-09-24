@@ -62,13 +62,11 @@
 #' prune_c2c(occup_ml$old, column = "wei_knn_c2c", method = "nonzero")
 #' }
 #'
-prune_c2c <- function(
-    df,
-    index = "index_c2c",
-    column = "wei_freq_c2c",
-    method = "nonzero",
-    percent = 50
-  ) {
+prune_c2c <- function(df,
+                      index = "index_c2c",
+                      column = "wei_freq_c2c",
+                      method = "nonzero",
+                      percent = 50) {
   stopifnot(is.data.frame(df))
   stopifnot(all(c(index, column) %in% colnames(df)))
   stopifnot(isTRUE(method %in% c("nonzero", "highest", "highest1", "morethan")))
@@ -194,8 +192,10 @@ dummy_c2c <- function(df, cat_var, ml = NULL) {
     (all(ml %in% c("knn", "rf", "lda")) ||
       all(ml %in% paste0("wei_", c("knn", "rf", "lda"), "_c2c"))))
 
-  base_cols <- c("index_c2c", "g_new_c2c", "wei_freq_c2c",
-                 "rep_c2c", "wei_naive_c2c")
+  base_cols <- c(
+    "index_c2c", "g_new_c2c", "wei_freq_c2c",
+    "rep_c2c", "wei_naive_c2c"
+  )
   if (!all(base_cols %in% colnames(df))) {
     df$index_c2c <- seq_len(nrow(df))
     df$g_new_c2c <- df[[cat_var]]

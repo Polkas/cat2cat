@@ -1,9 +1,11 @@
 #' Occupational dataset
 #'
 #' @details occup dataset is an example of unbalance panel dataset.
-#' This is a simulated data although there are applied a real world characteristics from national statistical office survey.
+#' This is a simulated data although there are applied a real world
+#' characteristics from national statistical office survey.
 #' The original survey is anonymous and take place every two years.
-#' It is presenting a characteristics from randomly selected company and then using k step procedure employees are chosen.
+#' It is presenting a characteristics from randomly selected company and then
+#' using k step procedure employees are chosen.
 #'
 #' @usage occup
 #'
@@ -12,13 +14,22 @@
 #' \item{id}{	integer	id}
 #' \item{age}{ numeric age of a subject}
 #' \item{sex}{ numeric sex of a subject}
-#' \item{edu}{ integer edu level of education of a subject where lower means higher - 1 for at least master degree}
+#' \item{edu}{
+#'  integer edu level of education of a subject where lower means
+#'  higher - 1 for at least master degree
+#' }
 #' \item{exp}{ numeric exp number of experience years for a subject}
 #' \item{district}{ integer district}
-#' \item{parttime}{ numeric contract type regards time where 1 mean full-time (work a whole week)}
+#' \item{parttime}{
+#'   numeric contract type regards time where 1 mean full-time
+#'   (work a whole week)
+#' }
 #' \item{salary}{ numeric salary per year}
 #' \item{code}{ character code - occupational code}
-#' \item{multiplier}{ numeric multiplier for the subject to reproduce a population - how many of such subjects in population}
+#' \item{multiplier}{
+#'   numeric multiplier for the subject to reproduce a population - how many
+#'   of such subjects in population
+#' }
 #' \item{year}{integer year}
 #' \item{code4}{ character code - occupational code - first 4 digits}
 #' }
@@ -29,9 +40,11 @@
 #' Occupational dataset - small one
 #'
 #' @details occup dataset is an example of unbalance panel dataset.
-#' This is a simulated data although there are applied a real world characteristics from national statistical office survey.
+#' This is a simulated data although there are applied a real world
+#' characteristics from national statistical office survey.
 #' The original survey is anonymous and take place every two years.
-#' It is presenting a characteristics from randomly selected company and then using k step procedure employees are chosen.
+#' It is presenting a characteristics from randomly selected company and
+#' then using k step procedure employees are chosen.
 #'
 #' @usage occup_small
 #'
@@ -40,13 +53,22 @@
 #' \item{id}{	integer	id}
 #' \item{age}{ numeric age of a subject}
 #' \item{sex}{ numeric sex of a subject}
-#' \item{edu}{ integer edu level of education of a subject where lower means higher - 1 for at least master degree}
+#' \item{edu}{
+#'   integer edu level of education of a subject where lower means
+#'   higher - 1 for at least master degree
+#' }
 #' \item{exp}{ numeric exp number of experience years for a subject}
 #' \item{district}{ integer district}
-#' \item{parttime}{ numeric contract type regards time where 1 mean full-time (work a whole week)}
+#' \item{parttime}{
+#'   numeric contract type regards time where 1 mean full-time
+#'   (work a whole week)
+#' }
 #' \item{salary}{ numeric salary per year}
 #' \item{code}{ character code - occupational code}
-#' \item{multiplier}{ numeric multiplier for the subject to reproduce a population - how many of such subjects in population}
+#' \item{multiplier}{
+#'   numeric multiplier for the subject to reproduce a population -
+#'   how many of such subjects in population
+#' }
 #' \item{year}{integer year}
 #' \item{code4}{ character code - occupational code - first 4 digits}
 #' }
@@ -57,7 +79,8 @@
 #' occup_small <- occup[sort(sample(nrow(occup), 8000)), ]
 "occup_small"
 
-#' trans dataset containing mappings (transitions) between old (2008) and new (2010) occupational codes.
+#' trans dataset containing mappings (transitions) between
+#' old (2008) and new (2010) occupational codes.
 #' This table could be used to map encodings in both directions.
 #'
 #' @usage trans
@@ -67,7 +90,8 @@
 #' \item{old}{	character an old encoding of a certain occupation}
 #' \item{new}{	character a new encoding of a certain occupation}
 #' }
-#' @details mapping (transition) table for occupations where first column contains old encodings and second one a new encoding
+#' @details mapping (transition) table for occupations where first column
+#' contains old encodings and second one a new encoding
 #'
 "trans"
 
@@ -146,11 +170,17 @@
 #' vert_new$v_date <- "2020-05-01"
 #' vert_new$vertical[vert_new$vertical %in% c("Kids1", "Kids2")] <- "Kids"
 #' vert_new$vertical[vert_new$vertical %in% c("Automotive")] <-
-#'   sample(c("Automotive1", "Automotive2"), sum(vert_new$vertical %in% c("Automotive")),
+#'   sample(
+#'     c("Automotive1", "Automotive2"),
+#'     sum(vert_new$vertical %in% c("Automotive")),
 #'     replace = TRUE
 #'   )
 #' vert_new$vertical[vert_new$vertical %in% c("Home")] <-
-#'   sample(c("Home", "Supermarket"), sum(vert_new$vertical %in% c("Home")), replace = TRUE)
+#'   sample(
+#'     c("Home", "Supermarket"),
+#'     sum(vert_new$vertical %in% c("Home")),
+#'      replace = TRUE
+#'   )
 #'
 #' vert_new2 <- data.frame(
 #'   ean = 90000101:90000120,

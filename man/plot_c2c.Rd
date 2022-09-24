@@ -7,9 +7,11 @@
 plot_c2c(data, weis = "wei_freq_c2c", type = c("both", "hist", "bar"))
 }
 \arguments{
-\item{data}{`data.frame` - one of the data.frames returned by the `cat2cat` function.}
+\item{data}{`data.frame` - one of the data.frames returned by
+the `cat2cat` function.}
 
-\item{weis}{`character(1)` - name of a certain wei_*_c2c column, added by cat2cat function. Default `wei_freq_c2c`.}
+\item{weis}{`character(1)` - name of a certain wei_*_c2c column,
+added by cat2cat function. Default `wei_freq_c2c`.}
 
 \item{type}{`character(1)` - one of 3 types `"both"`, `"hist"`, `"bar"`.}
 }
@@ -29,7 +31,9 @@ occup_old <- occup_small[occup_small$year == 2008, ]
 occup_new <- occup_small[occup_small$year == 2010, ]
 
 occup_2 <- cat2cat(
-  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  data = list(
+    old = occup_old, new = occup_new, cat_var = "code", time_var = "year"
+  ),
   mappings = list(trans = trans, direction = "backward")
 )
 

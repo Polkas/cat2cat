@@ -1,10 +1,13 @@
 #' Transforming a mapping (transition) table to two associative lists
-#' @description to rearrange the one classification encoding into another, an associative list that maps keys to values is used.
-#' More precisely, an association list is used which is a linked list in which each list element consists of a key and value or values.
-#' An association list where unique categories codes are keys and matching categories from next or previous time point are values.
+#' @description to rearrange the one classification encoding into another,
+#'  an associative list that maps keys to values is used.
+#' More precisely, an association list is used which is a linked list in which
+#' each list element consists of a key and value or values.
+#' An association list where unique categories codes are keys and matching
+#' categories from next or previous time point are values.
 #' A mapping (transition) table is used to build such associative lists.
-#' @param x `data.frame` or `matrix` - mapping (transition) table with 2 columns where first column is assumed to be the older encoding.
-#' @details the `named list` will be almost equally efficient solution as the hash map (`environment`) as we are not expecting more than a few thousand keys and R has an in-build multi-element subset operator for lists.
+#' @param x `data.frame` or `matrix` - mapping (transition) table with 2 columns
+#'  where first column is assumed to be the older encoding.
 #' @return a list with 2 named lists `to_old` and `to_new`.
 #' @examples
 #' data(trans)
@@ -51,9 +54,11 @@ get_mappings <- function(x = data.frame()) {
 #' Getting frequencies from a vector with an optional multiplier
 #' @description getting frequencies for a vector with an optional multiplier.
 #' @param x `vector` categorical variable to summarize.
-#' @param multiplier `numeric` vector how many times to repeat certain value, additional weights.
+#' @param multiplier `numeric` vector how many times to repeat certain value,
+#' additional weights.
 #' @return `data.frame` with two columns `input` `Freq`
-#' @note without multiplier variable it is a basic `table` function wrapped with the `as.data.frame` function.
+#' @note without multiplier variable it is a basic `table` function wrapped with
+#'  the `as.data.frame` function.
 #' The `table` function is used with the `useNA = "ifany"` argument.
 #' @export
 #' @examples
@@ -62,8 +67,18 @@ get_mappings <- function(x = data.frame()) {
 #' head(get_freqs(occup$code[occup$year == "2008"]))
 #' head(get_freqs(occup$code[occup$year == "2010"]))
 #'
-#' head(get_freqs(occup$code[occup$year == "2008"], occup$multiplier[occup$year == "2008"]))
-#' head(get_freqs(occup$code[occup$year == "2010"], occup$multiplier[occup$year == "2010"]))
+#' head(
+#'   get_freqs(
+#'     occup$code[occup$year == "2008"],
+#'     occup$multiplier[occup$year == "2008"]
+#'    )
+#' )
+#' head(
+#'   get_freqs(
+#'     occup$code[occup$year == "2010"],
+#'     occup$multiplier[occup$year == "2010"]
+#'    )
+#' )
 get_freqs <- function(x, multiplier = NULL) {
   stopifnot(is.vector(x))
   stopifnot(is.null(multiplier) || length(x) == length(multiplier))
@@ -79,15 +94,23 @@ get_freqs <- function(x, multiplier = NULL) {
 
 
 #' Applying frequencies to the object returned by the `get_mappings` function
-#' @description applying frequencies to the object returned by the `get_mappings` function.
-#' We will get a symmetric object to the one returned by the `get_mappings` function, nevertheless categories are replaced with frequencies.
-#' Frequencies for each category/key are sum to 1, so could be interpreted as probabilities.
+#' @description applying frequencies to the object returned by
+#' the `get_mappings` function.
+#' We will get a symmetric object to the one returned by
+#' the `get_mappings` function, nevertheless categories are replaced
+#' with frequencies.
+#' Frequencies for each category/key are sum to 1, so could be interpreted
+#' as probabilities.
 #' @param to_x `list` object returned by `get_mappings`.
-#' @param freqs `data.frame` object like the one returned by the `get_freqs` function.
-#' @return a `list` with a structure like `to_x` object but with probabilities for each category.
+#' @param freqs `data.frame` object like the one returned by
+#' the `get_freqs` function.
+#' @return a `list` with a structure like `to_x` object but with probabilities
+#' for each category.
 #' @note
-#' `freqs` arg first column (keys) and the to_x arg values have to be of the same type.
-#' The uniform distribution (outcomes are equally likely) is assumed for no match for all possible categories.
+#' `freqs` arg first column (keys) and the to_x arg values have to be of
+#' the same type.
+#' The uniform distribution (outcomes are equally likely) is assumed
+#' for no match for all possible categories.
 #' @examples
 #' data(trans)
 #' data(occup)

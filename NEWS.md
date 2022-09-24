@@ -1,5 +1,6 @@
 # cat2cat 0.4.4.9000
 
+* The `freqs_df` argument in the `cat2cat` function is moved from data to mappings part, with the backward compatibility.
 * `pkgcheck` related fixes.
 
 # cat2cat 0.4.4

@@ -9,16 +9,21 @@ summary_c2c(x, df_old, df_new = x$df.residual)
 \arguments{
 \item{x}{lm object}
 
-\item{df_old}{integer number of d.f in original dataset. For bigger datasets `nrow` should be sufficient.}
+\item{df_old}{integer number of d.f in original dataset. For bigger datasets
+`nrow` should be sufficient.}
 
-\item{df_new}{integer number of d.f in dataset with replicated rows, Default: x$df.residual}
+\item{df_new}{integer number of d.f in dataset with replicated rows,
+Default: x$df.residual}
 }
 \value{
-data.frame with additional columns over a regular summary.lm output, like correct and statistics adjusted by it.
+data.frame with additional columns over a regular summary.lm output,
+like correct and statistics adjusted by it.
 }
 \description{
-adjusting lm object results according to original number of degree of freedom.
-The standard errors, t statistics and p values have to be adjusted because of replicated observations.
+adjusting lm object results according to original number of
+degree of freedom.
+The standard errors, t statistics and p values have to be adjusted because of
+ replicated observations.
 }
 \details{
 The size of the correction is equal to sqrt(df_new / df_old).
@@ -33,7 +38,12 @@ occup_old <- occup_small[occup_small$year == 2008, ]
 occup_new <- occup_small[occup_small$year == 2010, ]
 
 occup_2 <- cat2cat(
-  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  data = list(
+    old = occup_old,
+    new = occup_new,
+    cat_var = "code",
+    time_var = "year"
+  ),
   mappings = list(trans = trans, direction = "backward"),
   ml = list(
     data = occup_new,
@@ -46,7 +56,9 @@ occup_2 <- cat2cat(
 
 # Regression
 # we have to adjust size of std as we artificialy enlarge degrees of freedom
-lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old,
+lms <- lm(
+  formula = I(log(salary)) ~ age + sex + factor(edu) + parttime + exp,
+  data = occup_2$old,
   weights = multiplier * wei_freq_c2c
 )
 

@@ -9,19 +9,27 @@ cat_apply_freq(to_x, freqs)
 \arguments{
 \item{to_x}{`list` object returned by `get_mappings`.}
 
-\item{freqs}{`data.frame` object like the one returned by the `get_freqs` function.}
+\item{freqs}{`data.frame` object like the one returned by
+the `get_freqs` function.}
 }
 \value{
-a `list` with a structure like `to_x` object but with probabilities for each category.
+a `list` with a structure like `to_x` object but with probabilities
+for each category.
 }
 \description{
-applying frequencies to the object returned by the `get_mappings` function.
-We will get a symmetric object to the one returned by the `get_mappings` function, nevertheless categories are replaced with frequencies.
-Frequencies for each category/key are sum to 1, so could be interpreted as probabilities.
+applying frequencies to the object returned by
+the `get_mappings` function.
+We will get a symmetric object to the one returned by
+the `get_mappings` function, nevertheless categories are replaced
+with frequencies.
+Frequencies for each category/key are sum to 1, so could be interpreted
+as probabilities.
 }
 \note{
-`freqs` arg first column (keys) and the to_x arg values have to be of the same type.
-The uniform distribution (outcomes are equally likely) is assumed for no match for all possible categories.
+`freqs` arg first column (keys) and the to_x arg values have to be of
+the same type.
+The uniform distribution (outcomes are equally likely) is assumed
+for no match for all possible categories.
 }
 \examples{
 data(trans)

@@ -199,10 +199,9 @@ occup_back_2006_2008 <- cat2cat(
     new = occup_back_2008_2010$old,
     cat_var_new = "g_new_c2c",
     cat_var_old = "code",
-    time_var = "year",
-    freqs_df = freq_df
+    time_var = "year"
   ),
-  mappings = list(trans = trans, direction = "backward")
+  mappings = list(trans = trans, direction = "backward", freqs_df = freq_df)
 )
 
 occup_2006_new <- occup_back_2006_2008$old
@@ -281,10 +280,9 @@ occup_for_2010_2012 <- cat2cat(
     new = occup_2012,
     cat_var_old = "g_new_c2c",
     cat_var_new = "code",
-    time_var = "year",
-    freqs_df = freq_df
+    time_var = "year"
   ),
-  mappings = list(trans = trans2, direction = "forward")
+  mappings = list(trans = trans2, direction = "forward", freqs_df = freq_df)
 )
 
 # use ml argument when applied ml models
@@ -470,6 +468,7 @@ formula_oo <- formula(
 oo <- final_data_back %>%
   prune_c2c(method = "nonzero") %>% # many prune methods like highest
   group_by(g_new_c2c) %>%
+  filter(n() >= 15) %>% 
   do(
     lm = tryCatch(
       summary(lm(formula_oo, ., weights = multiplier * wei_freq_c2c)),

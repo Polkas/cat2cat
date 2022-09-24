@@ -49,16 +49,21 @@ testthat::test_that("multi-period cat2cat neutral for base period", {
 
 testthat::test_that("multi-period cat2cat probabilities", {
   expect_true(
-    !identical(occup_back_2006_2008_1$old$wei_freq_c2c,
-               occup_back_2006_2008_1$old$wei_naive_c2c)
+    !identical(
+      occup_back_2006_2008_1$old$wei_freq_c2c,
+      occup_back_2006_2008_1$old$wei_naive_c2c
+    )
   )
   expect_true(
-    !identical(occup_back_2006_2008_1$old$wei_freq_c2c,
-               occup_back_2006_2008_1$old$wei_knn_c2c)
+    !identical(
+      occup_back_2006_2008_1$old$wei_freq_c2c,
+      occup_back_2006_2008_1$old$wei_knn_c2c
+    )
   )
-  expect_true(!identical(occup_back_2006_2008_1$old$wei_naive_c2c,
-                         occup_back_2006_2008_1$old$wei_knn_c2c)
-  )
+  expect_true(!identical(
+    occup_back_2006_2008_1$old$wei_naive_c2c,
+    occup_back_2006_2008_1$old$wei_knn_c2c
+  ))
 
   expect_equal(
     sum(occup_back_2006_2008_1$old$wei_freq_c2c),
@@ -70,9 +75,9 @@ testthat::test_that("multi-period cat2cat probabilities", {
   )
 
   expect_true((all(occup_back_2006_2008_1$old$wei_freq_c2c <= 1 &
-                     occup_back_2006_2008_1$old$wei_freq_c2c >= 0)))
+    occup_back_2006_2008_1$old$wei_freq_c2c >= 0)))
   expect_true((all(occup_back_2006_2008_1$old$wei_knn_c2c <= 1 &
-                     occup_back_2006_2008_1$old$wei_knn_c2c >= 0)))
+    occup_back_2006_2008_1$old$wei_knn_c2c >= 0)))
 })
 
 occup_2006_new <- occup_back_2006_2008_1$old
@@ -117,8 +122,10 @@ occup_2012 <- occup[occup$year == 2012, ]
 
 trans2 <- rbind(
   trans,
-  data.frame(old = "no_cat",
-             new = setdiff(c(occup_2010$code, occup_2012$code), trans$new))
+  data.frame(
+    old = "no_cat",
+    new = setdiff(c(occup_2010$code, occup_2012$code), trans$new)
+  )
 )
 
 # 2008 -> 2010
@@ -149,6 +156,21 @@ occup_for_2010_2012 <- cat2cat(
   mappings = list(trans = trans2, direction = "forward"),
   ml = ml_setup
 )
+
+# 2010 -> 2012
+occup_for_2010_2012_2 <- cat2cat(
+  data = list(
+    old = occup_for_2008_2010$new,
+    new = occup_2012,
+    cat_var_old = "g_new_c2c",
+    cat_var_new = "code",
+    time_var = "year"
+  ),
+  mappings = list(trans = trans2, direction = "forward", freqs_df = freq_df),
+  ml = ml_setup
+)
+
+expect_identical(occup_for_2010_2012_2, occup_for_2010_2012)
 
 # use ml argument when applied ml models
 occup_2006_new <- dummy_c2c(occup_2006, "code", ml = c("knn"))

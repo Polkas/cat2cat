@@ -6,17 +6,21 @@
 \usage{
 cat2cat(
   data = list(old = NULL, new = NULL, time_var = NULL, cat_var = NULL, cat_var_old =
-    NULL, cat_var_new = NULL, id_var = NULL, multiplier_var = NULL, freqs_df = NULL),
-  mappings = list(trans = NULL, direction = NULL),
+    NULL, cat_var_new = NULL, id_var = NULL, multiplier_var = NULL),
+  mappings = list(trans = NULL, direction = NULL, freqs_df = NULL),
   ml = list(data = NULL, cat_var = NULL, method = NULL, features = NULL, args = NULL)
 )
 }
 \arguments{
-\item{data}{`named list` with fields `old`, `new`, `cat_var` (or `cat_var_old` and `cat_var_new`), `time_var` and optional `id_var`,`multiplier_var`.}
+\item{data}{`named list` with fields `old`, `new`,
+`cat_var` (or `cat_var_old` and `cat_var_new`), `time_var` and
+optional `id_var`,`multiplier_var`.}
 
-\item{mappings}{`named list` with 3 fields `trans`, `direction` and optional `freq_df`.}
+\item{mappings}{`named list` with 3 fields `trans`, `direction` and
+optional `freq_df`.}
 
-\item{ml}{`named list` (optional) with up to 5 fields `data`, `cat_var`, `method`, `features` and optional `args`.}
+\item{ml}{`named list` (optional) with up to 5 fields
+`data`, `cat_var`, `method`, `features` and optional `args`.}
 }
 \value{
 `named list` with 2 fields old and new - 2 data.frames.
@@ -26,18 +30,21 @@ Additional columns will be informative only for a one data.frame
 as we always make the changes to one direction.
 }
 \description{
-The objective is to unify an inconsistently coded categorical variable in a panel
-dataset according to a mapping (transition) table.
+The objective is to unify an inconsistently coded categorical variable
+in a panel dataset according to a mapping (transition) table.
 The mapping (transition) table is the core element of the process.
 There are three arguments `data`, `mappings`, and `ml`. Each
 of these arguments is of a `list` type, wherein the
 `ml` argument is optional. Arguments are separated to
-identify the core elements of the `cat2cat` procedure. Although this function seems
+identify the core elements of the `cat2cat` procedure.
+Although this function seems
 complex initially, it is built to offer a wide range of
 applications for complex tasks. The function contains
 many validation checks to prevent incorrect usage.
-The function has to be applied iteratively for each two neighboring periods of a panel dataset.
-The \code{prune_c2c} function could be needed to limit growing number of replications.
+The function has to be applied iteratively for each two neighboring periods
+of a panel dataset.
+The \code{prune_c2c} function could be needed to limit growing number
+of replications.
 }
 \details{
 data args
@@ -63,7 +70,7 @@ data args
  number of replication needed to reproduce the population
  }
  \item{"freqs_df"}{
- For backward compaibility check the definition in the description
+ Only for the backward compatibility check the definition in the description
  of the mappings argument
  }
 }

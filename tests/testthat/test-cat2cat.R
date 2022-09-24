@@ -8,17 +8,23 @@ occup_old <- occup[occup$year == 2008, ]
 occup_new <- occup[occup$year == 2010, ]
 
 occup_1a <- cat2cat(
-  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  data = list(
+    old = occup_old, new = occup_new, cat_var = "code", time_var = "year"
+  ),
   mappings = list(trans = trans, direction = "backward")
 )
 
-expect_true((all(occup_1a$old$wei_freq_c2c <= 1 & occup_1a$old$wei_freq_c2c >= 0)))
-expect_true((all(occup_1a$old$wei_naive_c2c <= 1 & occup_1a$old$wei_naive_c2c >= 0)))
+expect_true(all(occup_1a$old$wei_freq_c2c <= 1 &
+  occup_1a$old$wei_freq_c2c >= 0))
+expect_true(all(occup_1a$old$wei_naive_c2c <= 1 &
+  occup_1a$old$wei_naive_c2c >= 0))
 expect_equal(sum(occup_1a$old$wei_naive_c2c), nrow(occup_old))
 expect_equal(sum(occup_1a$old$wei_freq_c2c), nrow(occup_old))
 
 occup_2 <- cat2cat(
-  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  data = list(
+    old = occup_old, new = occup_new, cat_var = "code", time_var = "year"
+  ),
   mappings = list(trans = trans, direction = "backward"),
   ml = list(
     data = occup_new,
@@ -40,21 +46,25 @@ expect_equal(sum(occup_2$old$wei_rf_c2c), nrow(occup_old))
 expect_equal(sum(occup_2$old$wei_lda_c2c), nrow(occup_old))
 expect_equal(sum(occup_2$old$wei_naive_c2c), nrow(occup_old))
 
-expect_true((all(occup_2$old$wei_freq_c2c <= 1 & occup_2$old$wei_freq_c2c >= 0)))
-expect_true((all(occup_2$old$wei_freq_c2c <= 1 & occup_2$old$wei_freq_c2c >= 0)))
-expect_true((all(occup_2$old$wei_knn_c2c <= 1 & occup_2$old$wei_knn_c2c >= 0)))
-expect_true((all(occup_2$old$wei_rf_c2c <= 1 & occup_2$old$wei_rf_c2c >= 0)))
-expect_true((all(occup_2$old$wei_lda_c2c <= 1 & occup_2$old$wei_lda_c2c >= 0)))
+expect_true(all(occup_2$old$wei_freq_c2c <= 1 & occup_2$old$wei_freq_c2c >= 0))
+expect_true(all(occup_2$old$wei_freq_c2c <= 1 & occup_2$old$wei_freq_c2c >= 0))
+expect_true(all(occup_2$old$wei_knn_c2c <= 1 & occup_2$old$wei_knn_c2c >= 0))
+expect_true(all(occup_2$old$wei_rf_c2c <= 1 & occup_2$old$wei_rf_c2c >= 0))
+expect_true(all(occup_2$old$wei_lda_c2c <= 1 & occup_2$old$wei_lda_c2c >= 0))
 
 expect_equal(
-  occup_2$old %>% cross_c2c(., c("wei_freq_c2c", "wei_knn_c2c"), c(1 / 2, 1 / 2)) %>% pull("wei_cross_c2c"),
+  occup_2$old %>%
+    cross_c2c(., c("wei_freq_c2c", "wei_knn_c2c"), c(1 / 2, 1 / 2)) %>%
+    pull("wei_cross_c2c"),
   (occup_2$old$wei_knn_c2c + occup_2$old$wei_freq_c2c) / 2
 )
 
 expect_warning(
   {
     cat2cat(
-      data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+      data = list(
+        old = occup_old, new = occup_new, cat_var = "code", time_var = "year"
+      ),
       mappings = list(trans = head(trans, -50), direction = "backward"),
       ml = list(
         data = occup_new,
@@ -70,12 +80,18 @@ expect_warning(
 
 ###############
 
-lms <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old, weights = multiplier * wei_freq_c2c)
+lms <- lm(
+  I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_2$old,
+  weights = multiplier * wei_freq_c2c
+)
 ss_c2c <- summary_c2c(lms, df_old = nrow(occup_old) - length(lms$assign))
 lms$df.residual <- nrow(occup_old) - length(lms$assign)
 ss1 <- suppressWarnings(summary(lms))
 
-lms2 <- lm(I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old, weights = multiplier)
+lms2 <- lm(
+  I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, occup_old,
+  weights = multiplier
+)
 ss2 <- summary(lms2)
 
 expect_true(sum((ss2$coefficients[, 2] - ss1$coefficients[, 2])**2) < 0.01)
@@ -84,18 +100,40 @@ expect_true(sum((ss2$coefficients[, 2] - ss_c2c$std.error_c)**2) < 0.01)
 ############################
 
 occup_3 <- cat2cat(
-  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year", multiplier_var = "multiplier"),
+  data = list(
+    old = occup_old,
+    new = occup_new,
+    cat_var = "code",
+    time_var = "year",
+    multiplier_var = "multiplier"
+  ),
   mappings = list(trans = trans, direction = "backward")
 )
 
 expect_equal(sum(occup_3$old$wei_freq_c2c), nrow(occup_old))
-expect_true((all(occup_3$old$wei_freq_c2c <= 1 & occup_3$old$wei_freq_c2c >= 0)))
+expect_true(all(occup_3$old$wei_freq_c2c <= 1 & occup_3$old$wei_freq_c2c >= 0))
 expect_false(identical(occup_3$old$wei_freq_c2c, occup_1a$old$wei_freq_c2c))
-expect_identical(nrow(occup_old), occup_3$old %>% prune_c2c(method = "highest1") %>% nrow())
+expect_identical(
+  nrow(occup_old),
+  occup_3$old %>%
+    prune_c2c(method = "highest1") %>%
+    nrow()
+)
+
+expect_true(
+  (occup_3$old %>%
+    prune_c2c(method = "highest") %>%
+    nrow()) >=
+  (occup_3$old %>%
+    prune_c2c(method = "highest1") %>%
+    nrow())
+)
 
 expect_equal(
   nrow(occup_old),
-  occup_3$old %>% prune_c2c(method = "morethan", percent = 0.2) %>% pull("wei_freq_c2c") %>% sum()
+  occup_3$old %>%
+    prune_c2c(method = "morethan", percent = 0.2) %>% pull("wei_freq_c2c") %>%
+    sum()
 )
 
 ############################
@@ -105,8 +143,17 @@ na_row$code <- NA
 na_row2 <- occup_new[1, ]
 na_row2$code <- NA
 occup_3b <- cat2cat(
-  data = list(old = rbind(occup_old, na_row), new = rbind(occup_new, na_row2), cat_var = "code", time_var = "year", multiplier_var = "multiplier"),
-  mappings = list(trans = do.call(rbind, list(trans, c(NA, NA), c(NA, "432190"))), direction = "backward"),
+  data = list(
+    old = rbind(occup_old, na_row),
+    new = rbind(occup_new, na_row2),
+    cat_var = "code",
+    time_var = "year",
+    multiplier_var = "multiplier"
+  ),
+  mappings = list(
+    trans = do.call(rbind, list(trans, c(NA, NA), c(NA, "432190"))),
+    direction = "backward"
+  ),
   ml = list(
     data = rbind(occup_new, na_row2),
     cat_var = "code",
@@ -117,13 +164,20 @@ occup_3b <- cat2cat(
 )
 
 expect_identical(nrow(occup_3b$old) - 2L, nrow(occup_3$old))
-expect_true((all(occup_3b$old$wei_freq_c2c <= 1 & occup_3b$old$wei_freq_c2c >= 0)))
-expect_true((all(occup_3b$old$wei_knn_c2c <= 1 & occup_3b$old$wei_knn_c2c >= 0)))
+expect_true(all(occup_3b$old$wei_freq_c2c <= 1 &
+  occup_3b$old$wei_freq_c2c >= 0))
+expect_true(all(occup_3b$old$wei_knn_c2c <= 1 & occup_3b$old$wei_knn_c2c >= 0))
 
 na_row <- occup_old[1, ]
 na_row$code <- "NA"
 occup_3c <- cat2cat(
-  data = list(old = rbind(occup_old, na_row), new = occup_new, cat_var = "code", time_var = "year", multiplier_var = "multiplier"),
+  data = list(
+    old = rbind(occup_old, na_row),
+    new = occup_new,
+    cat_var = "code",
+    time_var = "year",
+    multiplier_var = "multiplier"
+  ),
   mappings = list(trans = rbind(trans, c("NA", "NA")), direction = "backward"),
   ml = list(
     method = c("knn"),
@@ -133,8 +187,9 @@ occup_3c <- cat2cat(
 )
 
 expect_identical(nrow(occup_3b$old), nrow(occup_3c$old) + 1L)
-expect_true((all(occup_3c$old$wei_freq_c2c <= 1 & occup_3c$old$wei_freq_c2c >= 0)))
-expect_true((all(occup_3c$old$wei_knn_c2c <= 1 & occup_3c$old$wei_knn_c2c >= 0)))
+expect_true(all(occup_3c$old$wei_freq_c2c <= 1 &
+  occup_3c$old$wei_freq_c2c >= 0))
+expect_true(all(occup_3c$old$wei_knn_c2c <= 1 & occup_3c$old$wei_knn_c2c >= 0))
 
 occup_4 <- expect_warning(
   {
@@ -149,21 +204,29 @@ occup_4 <- expect_warning(
 )
 
 # not in trans table
-expect_equal(sum(occup_4$new$wei_freq_c2c) + sum(occup_new$code %in% setdiff(occup_new$code, trans$new)), nrow(occup_new))
-expect_true((all(occup_4$new$wei_freq_c2c <= 1 & occup_4$new$wei_freq_c2c >= 0)))
+expect_equal(
+  sum(occup_4$new$wei_freq_c2c) + sum(occup_new$code %in% setdiff(occup_new$code, trans$new)),
+  nrow(occup_new)
+)
+expect_true(all(occup_4$new$wei_freq_c2c <= 1 &
+  occup_4$new$wei_freq_c2c >= 0))
 
 occup_4b <- cat2cat(
   data = list(
     old = occup_old, new = occup_new, cat_var = "code", time_var = "year"
   ),
   mappings = list(
-    trans = rbind(trans, data.frame(old = "no_cat", new = setdiff(occup_new$code, trans$new))),
+    trans = rbind(
+      trans,
+      data.frame(old = "no_cat", new = setdiff(occup_new$code, trans$new))
+    ),
     direction = "forward"
   )
 )
 
 expect_identical(nrow(occup_4b$old), nrow(occup_4b$old))
-expect_true((all(occup_4b$old$wei_freq_c2c <= 1 & occup_4b$old$wei_freq_c2c >= 0)))
+expect_true(all(occup_4b$old$wei_freq_c2c <= 1 &
+  occup_4b$old$wei_freq_c2c >= 0))
 
 ##########################################
 ## the ean variable is an unique identifier

@@ -9,7 +9,8 @@ get_freqs(x, multiplier = NULL)
 \arguments{
 \item{x}{`vector` categorical variable to summarize.}
 
-\item{multiplier}{`numeric` vector how many times to repeat certain value, additional weights.}
+\item{multiplier}{`numeric` vector how many times to repeat certain value,
+additional weights.}
 }
 \value{
 `data.frame` with two columns `input` `Freq`
@@ -18,7 +19,8 @@ get_freqs(x, multiplier = NULL)
 getting frequencies for a vector with an optional multiplier.
 }
 \note{
-without multiplier variable it is a basic `table` function wrapped with the `as.data.frame` function.
+without multiplier variable it is a basic `table` function wrapped with
+ the `as.data.frame` function.
 The `table` function is used with the `useNA = "ifany"` argument.
 }
 \examples{
@@ -27,6 +29,16 @@ data(occup)
 head(get_freqs(occup$code[occup$year == "2008"]))
 head(get_freqs(occup$code[occup$year == "2010"]))
 
-head(get_freqs(occup$code[occup$year == "2008"], occup$multiplier[occup$year == "2008"]))
-head(get_freqs(occup$code[occup$year == "2010"], occup$multiplier[occup$year == "2010"]))
+head(
+  get_freqs(
+    occup$code[occup$year == "2008"],
+    occup$multiplier[occup$year == "2008"]
+   )
+)
+head(
+  get_freqs(
+    occup$code[occup$year == "2010"],
+    occup$multiplier[occup$year == "2010"]
+   )
+)
 }
