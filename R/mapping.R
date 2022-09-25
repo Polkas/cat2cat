@@ -10,7 +10,7 @@
 #'  where first column is assumed to be the older encoding.
 #' @return a list with 2 named lists `to_old` and `to_new`.
 #' @examples
-#' data(trans)
+#' data("trans", package = "cat2cat")
 #'
 #' mappings <- get_mappings(trans)
 #' mappings$to_old[1:4]
@@ -62,7 +62,7 @@ get_mappings <- function(x = data.frame()) {
 #' The `table` function is used with the `useNA = "ifany"` argument.
 #' @export
 #' @examples
-#' data(occup)
+#' data("occup", package = "cat2cat")
 #'
 #' head(get_freqs(occup$code[occup$year == "2008"]))
 #' head(get_freqs(occup$code[occup$year == "2010"]))
@@ -112,8 +112,8 @@ get_freqs <- function(x, multiplier = NULL) {
 #' The uniform distribution (outcomes are equally likely) is assumed
 #' for no match for all possible categories.
 #' @examples
-#' data(trans)
-#' data(occup)
+#' data("trans", package = "cat2cat")
+#' data("occup", package = "cat2cat")
 #'
 #' mappings <- get_mappings(trans)
 #'

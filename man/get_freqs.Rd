@@ -24,7 +24,7 @@ without multiplier variable it is a basic `table` function wrapped with
 The `table` function is used with the `useNA = "ifany"` argument.
 }
 \examples{
-data(occup)
+data("occup", package = "cat2cat")
 
 head(get_freqs(occup$code[occup$year == "2008"]))
 head(get_freqs(occup$code[occup$year == "2010"]))

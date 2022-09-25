@@ -34,7 +34,7 @@ data argument - list with fields
 }
 }
 \examples{
-data(verticals)
+data("verticals", package = "cat2cat")
 agg_old <- verticals[verticals$v_date == "2020-04-01", ]
 agg_new <- verticals[verticals$v_date == "2020-05-01", ]
 
@@ -55,7 +55,7 @@ agg <- cat2cat_agg(
 )
 
 ## possible processing
-library(dplyr)
+library("dplyr")
 agg \%>\%
   bind_rows() \%>\%
   group_by(v_date, vertical) \%>\%

@@ -12,7 +12,7 @@
 #' @note It will work only for data.frame produced by cat2cat function.
 #' @export
 #' @examples
-#' data(occup_small)
+#' data("occup_small", package = "cat2cat")
 #' occup_old <- occup_small[occup_small$year == 2008, ]
 #' occup_new <- occup_small[occup_small$year == 2010, ]
 #'
@@ -34,10 +34,12 @@ plot_c2c <- function(
   stopifnot(is.data.frame(data))
   stopifnot(is.character(weis) && (length(weis) == 1))
   stopifnot(
-    "There are no cat2cat additional wei_* columns/variables" = weis %in% colnames(data)
+    "There are no cat2cat additional wei_* columns/variables" =
+      weis %in% colnames(data)
   )
   stopifnot(
-    "There are no replications. Probably you should switch between old/new period." = nrow(data) != sum(data[[weis]])
+    "There are no replications. Probably you should switch between old/new period." =
+      nrow(data) != sum(data[[weis]])
   )
   type <- match.arg(type)
 

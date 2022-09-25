@@ -26,7 +26,7 @@ It is recommended to run it before further processing, like next iterations.
 It will work only for data.frame produced by cat2cat function.
 }
 \examples{
-data(occup_small)
+data("occup_small", package = "cat2cat")
 occup_old <- occup_small[occup_small$year == 2008, ]
 occup_new <- occup_small[occup_small$year == 2010, ]
 

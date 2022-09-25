@@ -32,8 +32,8 @@ The uniform distribution (outcomes are equally likely) is assumed
 for no match for all possible categories.
 }
 \examples{
-data(trans)
-data(occup)
+data("trans", package = "cat2cat")
+data("occup", package = "cat2cat")
 
 mappings <- get_mappings(trans)
 

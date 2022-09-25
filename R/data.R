@@ -75,7 +75,7 @@
 #' @details occupational dataset
 #' @examples
 #' set.seed(1234)
-#' data(occup)
+#' data("occup", package = "cat2cat")
 #' occup_small <- occup[sort(sample(nrow(occup), 8000)), ]
 "occup_small"
 

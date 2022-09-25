@@ -1,8 +1,8 @@
-library(dplyr)
+library("dplyr")
 set.seed(1234)
 
-data(occup)
-data(trans)
+data("occup", package = "cat2cat")
+data("trans", package = "cat2cat")
 
 occup_2006 <- occup[occup$year == 2006, ]
 occup_2008 <- occup[occup$year == 2008, ]

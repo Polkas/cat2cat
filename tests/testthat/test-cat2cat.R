@@ -1,8 +1,8 @@
-library(dplyr)
+library("dplyr")
 set.seed(1234)
 
-data(occup)
-data(trans)
+data("occup", package = "cat2cat")
+data("trans", package = "cat2cat")
 
 occup_old <- occup[occup$year == 2008, ]
 occup_new <- occup[occup$year == 2010, ]
@@ -200,12 +200,16 @@ occup_4 <- expect_warning(
       mappings = list(trans = trans, direction = "forward")
     )
   },
-  "741103, 712604, 732201, 818116, 732301, 816003, 741201, 713201, 818115, 815204"
+  paste(
+    "741103, 712604, 732201, 818116, 732301,",
+    "816003, 741201, 713201, 818115, 815204"
+  )
 )
 
 # not in trans table
 expect_equal(
-  sum(occup_4$new$wei_freq_c2c) + sum(occup_new$code %in% setdiff(occup_new$code, trans$new)),
+  sum(occup_4$new$wei_freq_c2c) +
+    sum(occup_new$code %in% setdiff(occup_new$code, trans$new)),
   nrow(occup_new)
 )
 expect_true(all(occup_4$new$wei_freq_c2c <= 1 &
@@ -230,7 +234,7 @@ expect_true(all(occup_4b$old$wei_freq_c2c <= 1 &
 
 ##########################################
 ## the ean variable is an unique identifier
-data(verticals2)
+data("verticals2", package = "cat2cat")
 
 vert_old <- verticals2[verticals2$v_date == "2020-04-01", ]
 vert_new <- verticals2[verticals2$v_date == "2020-05-01", ]

@@ -106,9 +106,9 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' data(occup_small)
-#' data(occup)
-#' data(trans)
+#' data("occup_small", package = "cat2cat")
+#' data("occup", package = "cat2cat")
+#' data("trans", package = "cat2cat")
 #'
 #' occup_old <- occup_small[occup_small$year == 2008, ]
 #' occup_new <- occup_small[occup_small$year == 2010, ]

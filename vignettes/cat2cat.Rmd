@@ -68,11 +68,11 @@ The original survey is anonymous and take place **every two years**.
 `trans` mapping (transition) table contains mappings between old (2008) and new (2010) occupational codes. This table could be used to map encodings in both directions.
 
 ```{r, message=FALSE, warning=FALSE}
-library(cat2cat)
-library(dplyr)
+library("cat2cat")
+library("dplyr")
 
-data(occup)
-data(trans)
+data("occup", package = "cat2cat")
+data("trans", package = "cat2cat")
 
 occup_2006 <- occup[occup$year == 2006, ]
 occup_2008 <- occup_old <- occup[occup$year == 2008, ]
@@ -487,8 +487,8 @@ oo$lm[[2]]
 `cat2cat_agg` is mainly useful for aggregate datasets.
 
 ```{r}
-library(cat2cat)
-data(verticals)
+library("cat2cat")
+data("verticals", package = "cat2cat")
 
 agg_old <- verticals[verticals$v_date == "2020-04-01", ]
 agg_new <- verticals[verticals$v_date == "2020-05-01", ]
@@ -509,7 +509,7 @@ agg <- cat2cat_agg(
 )
 
 ## possible processing
-library(dplyr)
+library("dplyr")
 agg %>%
     bind_rows() %>%
     group_by(v_date, vertical) %>%
@@ -527,7 +527,7 @@ Unfortunately we have to assume that a subject could not change the category lev
 ```{r}
 library(cat2cat)
 ## the ean variable is a unique identifier
-data(verticals2)
+data("verticals2", package = "cat2cat")
 
 vert_old <- verticals2[verticals2$v_date == "2020-04-01", ]
 vert_new <- verticals2[verticals2$v_date == "2020-05-01", ]

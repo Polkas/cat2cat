@@ -37,9 +37,9 @@ This table could be used to map encodings in both directions.
 Panel dataset without the unique identifiers and only two periods, backward and simple frequencies:
 
 ```{r}
-library(cat2cat)
-data(occup)
-data(trans)
+library("cat2cat")
+data("occup", package = "cat2cat")
+data("trans", package = "cat2cat")
 
 occup_old <- occup[occup$year == 2008, ]
 occup_new <- occup[occup$year == 2010, ]
@@ -53,9 +53,9 @@ occup_simple <- cat2cat(
 Panel dataset without the unique identifiers and four periods, backward and simple frequencies:
 
 ```{r}
-library(cat2cat)
-data(occup)
-data(trans)
+library("cat2cat")
+data("occup", package = "cat2cat")
+data("trans", package = "cat2cat")
 
 occup_2006 <- occup[occup$year == 2006,]
 occup_2008 <- occup[occup$year == 2008,]

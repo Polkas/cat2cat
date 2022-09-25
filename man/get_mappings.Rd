@@ -23,7 +23,7 @@ categories from next or previous time point are values.
 A mapping (transition) table is used to build such associative lists.
 }
 \examples{
-data(trans)
+data("trans", package = "cat2cat")
 
 mappings <- get_mappings(trans)
 mappings$to_old[1:4]
