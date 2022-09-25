@@ -17,7 +17,7 @@ cat2cat(
 optional `id_var`,`multiplier_var`.}
 
 \item{mappings}{`named list` with 3 fields `trans`, `direction` and
-optional `freq_df`.}
+optional `freqs_df`.}
 
 \item{ml}{`named list` (optional) with up to 5 fields
 `data`, `cat_var`, `method`, `features` and optional `args`.}

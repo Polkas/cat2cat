@@ -19,7 +19,7 @@
 #' `cat_var` (or `cat_var_old` and `cat_var_new`), `time_var` and
 #' optional `id_var`,`multiplier_var`.
 #' @param mappings `named list` with 3 fields `trans`, `direction` and
-#' optional `freq_df`.
+#' optional `freqs_df`.
 #' @param ml `named list` (optional) with up to 5 fields
 #' `data`, `cat_var`, `method`, `features` and optional `args`.
 #' @details

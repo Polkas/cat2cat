@@ -26,7 +26,7 @@ occup_back_2008_2010 <- cat2cat(
 )
 
 # the counts could be any of wei_* or their combination
-freq_df <- occup_back_2008_2010$old[, c("g_new_c2c", "wei_freq_c2c")] %>%
+freqs_df <- occup_back_2008_2010$old[, c("g_new_c2c", "wei_freq_c2c")] %>%
   cross_c2c() %>%
   group_by(g_new_c2c) %>%
   summarise(counts = round(sum(wei_cross_c2c, na.rm = TRUE)))
@@ -139,7 +139,7 @@ occup_for_2008_2010 <- cat2cat(
 
 # optional, give more control
 # the counts could be any of wei_* or their combination
-freq_df <- occup_for_2008_2010$new[, c("g_new_c2c", "wei_freq_c2c")] %>%
+freqs_df <- occup_for_2008_2010$new[, c("g_new_c2c", "wei_freq_c2c")] %>%
   group_by(g_new_c2c) %>%
   summarise(counts = round(sum(wei_freq_c2c)))
 
@@ -151,7 +151,7 @@ occup_for_2010_2012 <- cat2cat(
     cat_var_old = "g_new_c2c",
     cat_var_new = "code",
     time_var = "year",
-    freqs_df = freq_df
+    freqs_df = freqs_df
   ),
   mappings = list(trans = trans2, direction = "forward"),
   ml = ml_setup
@@ -166,7 +166,7 @@ occup_for_2010_2012_2 <- cat2cat(
     cat_var_new = "code",
     time_var = "year"
   ),
-  mappings = list(trans = trans2, direction = "forward", freqs_df = freq_df),
+  mappings = list(trans = trans2, direction = "forward", freqs_df = freqs_df),
   ml = ml_setup
 )
 
