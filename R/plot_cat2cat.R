@@ -38,7 +38,7 @@ plot_c2c <- function(
       weis %in% colnames(data)
   )
   stopifnot(
-    "There are no replications. Probably you should switch between old/new period." =
+    "There are no replications. Try to switch between old/new period." =
       nrow(data) != sum(data[[weis]])
   )
   type <- match.arg(type)
