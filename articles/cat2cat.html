@@ -72,7 +72,7 @@
       <h1 data-toc-skip>Get Started</h1>
                         <h4 data-toc-skip class="author">Maciej Nasinski</h4>
             
-            <h4 data-toc-skip class="date">2022-09-24</h4>
+            <h4 data-toc-skip class="date">2022-09-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/Polkas/cat2cat/blob/HEAD/vignettes/cat2cat.Rmd" class="external-link"><code>vignettes/cat2cat.Rmd</code></a></small>
       <div class="hidden name"><code>cat2cat.Rmd</code></div>
@@ -111,11 +111,11 @@
 <p><code>occup</code> dataset is an example of unbalance panel dataset. This is a simulated data although there are applied a real world characteristics from national statistical office survey. The original survey is anonymous and take place <strong>every two years</strong>.</p>
 <p><code>trans</code> mapping (transition) table contains mappings between old (2008) and new (2010) occupational codes. This table could be used to map encodings in both directions.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Polkas/cat2cat" class="external-link">cat2cat</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/Polkas/cat2cat" class="external-link">"cat2cat"</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org" class="external-link">"dplyr"</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">occup</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">trans</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"occup"</span>, package <span class="op">=</span> <span class="st">"cat2cat"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"trans"</span>, package <span class="op">=</span> <span class="st">"cat2cat"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">occup_2006</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2006</span>, <span class="op">]</span></span>
 <span><span class="va">occup_2008</span> <span class="op">&lt;-</span> <span class="va">occup_old</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2008</span>, <span class="op">]</span></span>
@@ -192,10 +192,10 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">wei_knn_c2c</span>, <span class="va">wei_rf_c2c</span>, <span class="va">wei_lda_c2c</span>, <span class="va">wei_freq_c2c</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##              wei_knn_c2c wei_rf_c2c wei_lda_c2c wei_freq_c2c</span></span>
-<span><span class="co">## wei_knn_c2c    1.0000000  0.8643244   0.8350984    0.8989887</span></span>
-<span><span class="co">## wei_rf_c2c     0.8643244  1.0000000   0.8785885    0.8751456</span></span>
-<span><span class="co">## wei_lda_c2c    0.8350984  0.8785885   1.0000000    0.8807702</span></span>
-<span><span class="co">## wei_freq_c2c   0.8989887  0.8751456   0.8807702    1.0000000</span></span></code></pre>
+<span><span class="co">## wei_knn_c2c    1.0000000  0.8638875   0.8350984    0.8989887</span></span>
+<span><span class="co">## wei_rf_c2c     0.8638875  1.0000000   0.8772244    0.8745885</span></span>
+<span><span class="co">## wei_lda_c2c    0.8350984  0.8772244   1.0000000    0.8807702</span></span>
+<span><span class="co">## wei_freq_c2c   0.8989887  0.8745885   0.8807702    1.0000000</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="example---more-than-2-periods">Example - More than 2 periods<a class="anchor" aria-label="anchor" href="#example---more-than-2-periods"></a>
@@ -621,8 +621,8 @@ If we have to apply many different mapping (transition) tables over time then pr
 </h2>
 <p><code>cat2cat_agg</code> is mainly useful for aggregate datasets.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Polkas/cat2cat" class="external-link">cat2cat</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">verticals</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/Polkas/cat2cat" class="external-link">"cat2cat"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"verticals"</span>, package <span class="op">=</span> <span class="st">"cat2cat"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">agg_old</span> <span class="op">&lt;-</span> <span class="va">verticals</span><span class="op">[</span><span class="va">verticals</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-04-01"</span>, <span class="op">]</span></span>
 <span><span class="va">agg_new</span> <span class="op">&lt;-</span> <span class="va">verticals</span><span class="op">[</span><span class="va">verticals</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-05-01"</span>, <span class="op">]</span></span>
@@ -643,7 +643,7 @@ If we have to apply many different mapping (transition) tables over time then pr
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## possible processing</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org" class="external-link">"dplyr"</a></span><span class="op">)</span></span>
 <span><span class="va">agg</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">v_date</span>, <span class="va">vertical</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -673,7 +673,7 @@ If we have to apply many different mapping (transition) tables over time then pr
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Polkas/cat2cat" class="external-link">cat2cat</a></span><span class="op">)</span></span>
 <span><span class="co">## the ean variable is a unique identifier</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">verticals2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"verticals2"</span>, package <span class="op">=</span> <span class="st">"cat2cat"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">vert_old</span> <span class="op">&lt;-</span> <span class="va">verticals2</span><span class="op">[</span><span class="va">verticals2</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-04-01"</span>, <span class="op">]</span></span>
 <span><span class="va">vert_new</span> <span class="op">&lt;-</span> <span class="va">verticals2</span><span class="op">[</span><span class="va">verticals2</span><span class="op">$</span><span class="va">v_date</span> <span class="op">==</span> <span class="st">"2020-05-01"</span>, <span class="op">]</span></span>
