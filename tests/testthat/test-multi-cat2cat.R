@@ -128,7 +128,7 @@ trans2 <- rbind(
   )
 )
 
-# 2008 -> 2010
+# from 2008 to 2010
 occup_for_2008_2010 <- cat2cat(
   data = list(
     old = occup_2008, new = occup_2010, cat_var = "code", time_var = "year"
@@ -143,7 +143,7 @@ freqs_df <- occup_for_2008_2010$new[, c("g_new_c2c", "wei_freq_c2c")] %>%
   group_by(g_new_c2c) %>%
   summarise(counts = round(sum(wei_freq_c2c)))
 
-# 2010 -> 2012
+# from 2010 to 2012
 occup_for_2010_2012 <- cat2cat(
   data = list(
     old = occup_for_2008_2010$new,
@@ -157,7 +157,7 @@ occup_for_2010_2012 <- cat2cat(
   ml = ml_setup
 )
 
-# 2010 -> 2012
+# from 2010 to 2012
 occup_for_2010_2012_2 <- cat2cat(
   data = list(
     old = occup_for_2008_2010$new,

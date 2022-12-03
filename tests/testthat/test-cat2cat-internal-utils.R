@@ -50,29 +50,3 @@ testthat::test_that("cat_apply_freq", {
   expect_identical(mappings_freq2$`1`, c(0, 1L, 0))
   expect_identical(mappings_freq2$`2`, c(0.5, 0.5))
 })
-
-additional_cols <- c(
-  "index_c2c", "g_new_c2c", "wei_freq_c2c",
-  "rep_c2c", "wei_naive_c2c"
-)
-
-testthat::test_that("dummy_c2c", {
-  expect_identical(
-    c(colnames(airquality), additional_cols),
-    colnames(dummy_c2c(airquality, "Month"))
-  )
-})
-
-testthat::test_that("dummy_c2c", {
-  expect_identical(
-    c(colnames(airquality), additional_cols, "wei_knn_c2c"),
-    colnames(dummy_c2c(airquality, "Month", ml = "knn"))
-  )
-})
-
-testthat::test_that("dummy_c2c backward", {
-  expect_identical(
-    c(colnames(airquality), additional_cols, "wei_knn_c2c"),
-    colnames(dummy_c2c(airquality, "Month", ml = "wei_knn_c2c"))
-  )
-})

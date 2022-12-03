@@ -1,3 +1,8 @@
+# cat2cat 0.4.5.9000
+
+* Add some `ropensci` standards, like CONTRIBUTING file and `testthat` version 3.
+* Improve tests and lintr related issues.
+
 # cat2cat 0.4.5
 
 * The `freqs_df` argument in the `cat2cat` function is moved from data to mappings part, it is backward compatible. 

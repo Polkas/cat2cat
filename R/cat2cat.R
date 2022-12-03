@@ -89,6 +89,11 @@
 #' index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
 #' Additional columns will be informative only for a one data.frame
 #' as we always make the changes to one direction.
+#' The new columns are added instead of the additional metadata as
+#' we are working with new datasets
+#' where observations could be replicated.
+#' For the transparency the probability and number of replications are part
+#'  of each observation in the `data.frame`.
 #' @importFrom stats predict complete.cases setNames
 #' @importFrom MASS lda
 #' @details
@@ -246,7 +251,6 @@ cat2cat <- function(data = list(
       tos[[paste0("cat_", base_name)]][match(cat_mid[[data$id_var]], tos$id)]
   }
 
-  cats_base <- cat_base_year[[cat_var_base]]
   cats_target <- cat_target_year[[cat_var_target]]
 
   mapp <- mapps[[paste0("to_", base_name)]]
@@ -459,7 +463,7 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
             )
             resso <- ress[order(ress$index_c2c), ]
             target_data_cat_c2c[[
-            match(cat, names(target_data_cat_c2c))
+              match(cat, names(target_data_cat_c2c))
             ]][[ml_name]] <- resso$val
           }
         }

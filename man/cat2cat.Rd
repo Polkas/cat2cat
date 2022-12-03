@@ -28,6 +28,11 @@ There will be added additional columns like
 index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
 Additional columns will be informative only for a one data.frame
 as we always make the changes to one direction.
+The new columns are added instead of the additional metadata as
+we are working with new datasets
+where observations could be replicated.
+For the transparency the probability and number of replications are part
+ of each observation in the `data.frame`.
 }
 \description{
 The objective is to unify an inconsistently coded categorical variable

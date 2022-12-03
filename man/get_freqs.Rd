@@ -33,12 +33,12 @@ head(
   get_freqs(
     occup$code[occup$year == "2008"],
     occup$multiplier[occup$year == "2008"]
-   )
+  )
 )
 head(
   get_freqs(
     occup$code[occup$year == "2010"],
     occup$multiplier[occup$year == "2010"]
-   )
+  )
 )
 }

@@ -71,13 +71,13 @@ get_mappings <- function(x = data.frame()) {
 #'   get_freqs(
 #'     occup$code[occup$year == "2008"],
 #'     occup$multiplier[occup$year == "2008"]
-#'    )
+#'   )
 #' )
 #' head(
 #'   get_freqs(
 #'     occup$code[occup$year == "2010"],
 #'     occup$multiplier[occup$year == "2010"]
-#'    )
+#'   )
 #' )
 get_freqs <- function(x, multiplier = NULL) {
   stopifnot(is.vector(x))

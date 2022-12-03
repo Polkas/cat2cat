@@ -1,29 +1,30 @@
 Package: cat2cat
 Title: Handling an Inconsistently Coded Categorical Variable in a Panel Dataset
-Version: 0.4.5
+Version: 0.4.5.9000
 Authors@R: person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre"))
 Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
 Description: 
   Unifying of an inconsistently coded categorical variable between two different time points in accordance with a mapping table.
   The main rule is to replicate the observation if it could be assign to a few categories.
-  Then using simple frequencies or statistical methods to approximate probabilities of being assign to each of them.
-  This procedure was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <doi:10.24425/cejeme.2020.134747>).
+  Then using simple frequencies or modern statistical methods to approximate probabilities of being assign to each of them.
+  This novel procedure was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <doi:10.24425/cejeme.2020.134747>).
 Depends: R (>= 3.6)
 License: GPL (>= 2)
 URL: https://github.com/Polkas/cat2cat, https://polkas.github.io/cat2cat/
 BugReports: https://github.com/Polkas/cat2cat/issues
 Encoding: UTF-8
 Imports:
-  MASS
+    MASS
 Suggests:
-  caret,
-  randomForest,
-  knitr,
-  rmarkdown,
-  pacman,
-  testthat,
-  magrittr,
-  dplyr
+    caret,
+    randomForest,
+    knitr,
+    rmarkdown,
+    pacman,
+    testthat (>= 3.0.0),
+    magrittr,
+    dplyr
 LazyData: true
 VignetteBuilder: knitr
 RoxygenNote: 7.2.1
+Config/testthat/edition: 3

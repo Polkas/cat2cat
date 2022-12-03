@@ -26,11 +26,9 @@
 #' plot_c2c(occup_2$old, type = c("both"))
 #' plot_c2c(occup_2$old, type = c("hist"))
 #' plot_c2c(occup_2$old, type = c("bar"))
-plot_c2c <- function(
-    data,
-    weis = "wei_freq_c2c",
-    type = c("both", "hist", "bar")
-  ) {
+plot_c2c <- function(data,
+                     weis = "wei_freq_c2c",
+                     type = c("both", "hist", "bar")) {
   stopifnot(is.data.frame(data))
   stopifnot(is.character(weis) && (length(weis) == 1))
   stopifnot(

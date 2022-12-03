@@ -179,17 +179,18 @@
 #'   sample(
 #'     c("Home", "Supermarket"),
 #'     sum(vert_new$vertical %in% c("Home")),
-#'      replace = TRUE
+#'     replace = TRUE
 #'   )
 #'
 #' vert_new2 <- data.frame(
 #'   ean = 90000101:90000120,
-#'   vertical = sample(c(
-#'     "Electronics", "Supermarket", "Kids", "Automotive1",
-#'     "Automotive2", "Books", "Clothes", "Home",
-#'     "Fashion", "Health", "Sport"
-#'   ), 20,
-#'   replace = TRUE
+#'   vertical = sample(
+#'     c(
+#'       "Electronics", "Supermarket", "Kids", "Automotive1",
+#'       "Automotive2", "Books", "Clothes", "Home",
+#'       "Fashion", "Health", "Sport"
+#'     ), 20,
+#'     replace = TRUE
 #'   ),
 #'   sales = rnorm(20, 100, 10),
 #'   v_date = rep("2020-05-01", 20), stringsAsFactors = FALSE

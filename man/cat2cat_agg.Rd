@@ -5,7 +5,8 @@
 \title{Manual mapping for an aggregated panel dataset}
 \usage{
 cat2cat_agg(
-  data = list(old = NULL, new = NULL, cat_var = NULL, time_var = NULL, freq_var = NULL),
+  data = list(old = NULL, new = NULL, cat_var_old = NULL, cat_var_new = NULL, time_var =
+    NULL, freq_var = NULL),
   ...
 )
 }
@@ -17,7 +18,13 @@ cat2cat_agg(
 `>`, `<`, `\%>\%`, `\%<\%`.}
 }
 \value{
-`list` of two data.frame objects.
+`named list` with 2 fields old and new - 2 data.frames.
+There will be added additional columns to each.
+The new columns are added instead of the additional metadata as
+we are working with new datasets
+where observations could be replicated.
+For the transparency the probability and number of replications are part of
+each observation in the `data.frame`.
 }
 \description{
 Manual mapping of an inconsistently coded categorical variable
@@ -28,10 +35,21 @@ data argument - list with fields
 \itemize{
  \item{"old"}{ data.frame older time point in the panel}
  \item{"new"} { data.frame more recent time point in the panel}
- \item{"cat_var"}{ character name of the categorical variable}
+ \item{"cat_var"}{
+   character - deprecated - name of the categorical variable
+ }
+ \item{"cat_var_old"}{
+   character name of the categorical variable in the old period
+ }
+ \item{"cat_var_new"}{
+   character name of the categorical variable in the new period
+ }
  \item{"time_var"}{ character name of time variable}
  \item{"freq_var"}{ character name of frequency variable}
 }
+}
+\note{
+All mapping equations have to be valid ones.
 }
 \examples{
 data("verticals", package = "cat2cat")
@@ -45,7 +63,8 @@ agg <- cat2cat_agg(
   data = list(
     old = agg_old,
     new = agg_new,
-    cat_var = "vertical",
+    cat_var_old = "vertical",
+    cat_var_new = "vertical",
     time_var = "v_date",
     freq_var = "counts"
   ),
