@@ -31,7 +31,7 @@ of replications."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.5.9000</span>
       </span>
     </div>
 
@@ -118,7 +118,12 @@ optional `freqs_df`.</p></dd>
 There will be added additional columns like
 index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
 Additional columns will be informative only for a one data.frame
-as we always make the changes to one direction.</p>
+as we always make the changes to one direction.
+The new columns are added instead of the additional metadata as
+we are working with new datasets
+where observations could be replicated.
+For the transparency the probability and number of replications are part
+ of each observation in the `data.frame`.</p>
     </div>
     <div id="details">
     <h2>Details</h2>

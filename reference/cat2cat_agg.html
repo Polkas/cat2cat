@@ -18,7 +18,7 @@ according to the user provided mappings (equations)."><!-- mathjax --><script sr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.5.9000</span>
       </span>
     </div>
 
@@ -59,7 +59,8 @@ according to the user provided mappings (equations).</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cat2cat_agg</span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="cn">NULL</span>, new <span class="op">=</span> <span class="cn">NULL</span>, cat_var <span class="op">=</span> <span class="cn">NULL</span>, time_var <span class="op">=</span> <span class="cn">NULL</span>, freq_var <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="cn">NULL</span>, new <span class="op">=</span> <span class="cn">NULL</span>, cat_var_old <span class="op">=</span> <span class="cn">NULL</span>, cat_var_new <span class="op">=</span> <span class="cn">NULL</span>, time_var <span class="op">=</span></span>
+<span>    <span class="cn">NULL</span>, freq_var <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -80,16 +81,31 @@ according to the user provided mappings (equations).</p>
     <h2>Value</h2>
     
 
-<p>`list` of two data.frame objects.</p>
+<p>`named list` with 2 fields old and new - 2 data.frames.
+There will be added additional columns to each.
+The new columns are added instead of the additional metadata as
+we are working with new datasets
+where observations could be replicated.
+For the transparency the probability and number of replications are part of
+each observation in the `data.frame`.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>data argument - list with fields</p><ul><li><p>"old" data.frame older time point in the panel</p></li>
 <li><p>"new"  data.frame more recent time point in the panel</p></li>
-<li><p>"cat_var" character name of the categorical variable</p></li>
+<li><p>"cat_var"
+   character - deprecated - name of the categorical variable</p></li>
+<li><p>"cat_var_old"
+   character name of the categorical variable in the old period</p></li>
+<li><p>"cat_var_new"
+   character name of the categorical variable in the new period</p></li>
 <li><p>"time_var" character name of time variable</p></li>
 <li><p>"freq_var" character name of frequency variable</p></li>
 </ul></div>
+    <div id="note">
+    <h2>Note</h2>
+    <p>All mapping equations have to be valid ones.</p>
+    </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
@@ -104,7 +120,8 @@ according to the user provided mappings (equations).</p>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    old <span class="op">=</span> <span class="va">agg_old</span>,</span></span>
 <span class="r-in"><span>    new <span class="op">=</span> <span class="va">agg_new</span>,</span></span>
-<span class="r-in"><span>    cat_var <span class="op">=</span> <span class="st">"vertical"</span>,</span></span>
+<span class="r-in"><span>    cat_var_old <span class="op">=</span> <span class="st">"vertical"</span>,</span></span>
+<span class="r-in"><span>    cat_var_new <span class="op">=</span> <span class="st">"vertical"</span>,</span></span>
 <span class="r-in"><span>    time_var <span class="op">=</span> <span class="st">"v_date"</span>,</span></span>
 <span class="r-in"><span>    freq_var <span class="op">=</span> <span class="st">"counts"</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span>,</span></span>
