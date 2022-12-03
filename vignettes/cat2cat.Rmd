@@ -85,9 +85,9 @@ occup_2012 <- occup[occup$year == 2012, ]
 There were prepared two graphs for forward and backward mapping.
 These graphs present how the `cat2cat::cat2cat` procedure works, in this case under a panel dataset without the unique identifiers and only two periods.
 
-![Backward Mapping](https://raw.githubusercontent.com/Polkas/cat2cat/master/man/figures/back_nom.png)
+![Backward Mapping](https://raw.githubusercontent.com/Polkas/cat2cat/main/man/figures/back_nom.png)
 
-![Forward Mapping](https://raw.githubusercontent.com/Polkas/cat2cat/master/man/figures/for_nom.png)
+![Forward Mapping](https://raw.githubusercontent.com/Polkas/cat2cat/main/man/figures/for_nom.png)
 
 ### Example - 2 periods
 
