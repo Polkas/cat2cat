@@ -7,8 +7,8 @@
 ## Handling an Inconsistent Coded Categorical Variable in a Panel Dataset
 
 Unifying an inconsistent coded categorical variable in a panel/longtitudal dataset.  
-There is offered the `cat2cat` procedure to map a categorical variable according to a mapping (transition) table between two different time points.
-The mapping (transition) table should to have a candidate for each category from the targeted for an update period. The main rule is to replicate the observation if it could be assigned to a few categories, then using simple frequencies or statistical methods to approximate probabilities of being assigned to each of them.
+There is offered the novel `cat2cat` procedure to map a categorical variable according to a mapping (transition) table between two different time points.
+The mapping (transition) table should to have a candidate for each category from the targeted for an update period. The main rule is to replicate the observation if it could be assigned to a few categories, then using simple frequencies or modern statistical methods to approximate probabilities of being assigned to each of them.
 
 **This algorithm was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <doi:10.24425/cejeme.2020.134747>).**
 
@@ -36,7 +36,7 @@ This table could be used to map encodings in both directions.
 
 Panel dataset without the unique identifiers and only two periods, backward and simple frequencies:
 
-```{r}
+```r
 library("cat2cat")
 data("occup", package = "cat2cat")
 data("trans", package = "cat2cat")
@@ -45,14 +45,17 @@ occup_old <- occup[occup$year == 2008, ]
 occup_new <- occup[occup$year == 2010, ]
 
 occup_simple <- cat2cat(
-  data = list(old = occup_old, new = occup_new, cat_var = "code", time_var = "year"),
+  data = list(
+    old = occup_old, new = occup_new,
+    cat_var_old = "code", cat_var_new = "code", time_var = "year"
+  ),
   mappings = list(trans = trans, direction = "backward")
 )
 ```
 
-Panel dataset without the unique identifiers and four periods, backward and simple frequencies:
+Panel dataset without the unique identifiers and four periods, backward direction and ml models:
 
-```{r}
+```r
 library("cat2cat")
 data("occup", package = "cat2cat")
 data("trans", package = "cat2cat")
@@ -62,36 +65,58 @@ occup_2008 <- occup[occup$year == 2008,]
 occup_2010 <- occup[occup$year == 2010,]
 occup_2012 <- occup[occup$year == 2012,]
 
-# 2010 -> 2008
+library("caret")
+ml_setup <- list(
+  data = occup_2010,
+  cat_var = "code",
+  method = c("knn"),
+  features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+  args = list(k = 10, ntree = 50)
+)
+
+# from 2010 to 2008
 occup_back_2008_2010 <- cat2cat(
-  data = list(old = occup_2008, new = occup_2010, cat_var = "code", time_var = "year"),
-  mappings = list(trans = trans, direction = "backward")
+  data = list(
+    old = occup_2008, new = occup_2010, 
+    cat_var_old = "code", cat_var_new = "code", time_var = "year"
+  ),
+  mappings = list(trans = trans, direction = "backward"),
+  ml = ml_setup
 )
 
-# 2008 -> 2006
+# from 2008 to 2006
 occup_back_2006_2008 <- cat2cat(
-  data = list(old = occup_2006,
-              new = occup_back_2008_2010$old,
-              cat_var_new = "g_new_c2c",
-              cat_var_old = "code",
-              time_var = "year"),
-  mappings = list(trans = trans, direction = "backward")
+  data = list(
+    old = occup_2006, new = occup_back_2008_2010$old,
+    cat_var_new = "g_new_c2c", cat_var_old = "code", time_var = "year"
+  ),
+  mappings = list(trans = trans, direction = "backward"),
+  ml = ml_setup
 )
 
-occup_2006_new <- occup_back_2006_2008$old
-occup_2008_new <- occup_back_2008_2010$old # or occup_back_2006_2008$new
-occup_2010_new <- occup_back_2008_2010$new
-occup_2012_new <- dummy_c2c(occup_2012, cat_var = "code")
+o_2006_new <- occup_back_2006_2008$old
+o_2008_new <- occup_back_2008_2010$old # or occup_back_2006_2008$new
+o_2010_new <- occup_back_2008_2010$new
+o_2012_new <- dummy_c2c(
+  occup_2012, cat_var = "code", ml = c("knn")
+)
 
-final_data_back <- do.call(rbind, list(occup_2006_new, occup_2008_new, occup_2010_new, occup_2012_new))
+final_data_back <- do.call(
+  rbind, 
+  list(o_2006_new, o_2008_new, o_2010_new, o_2012_new)
+)
 
 # possible processing, leaving only one obs per subject and period
 # still it is recommended to leave all replications and use the weights in the statistical models
 library(magrittr)
 ff <- final_data_back %>% 
   split(.$year) %>% 
-  lapply(function(x) prune_c2c(x, method = "highest1")) %>% 
+  lapply(function(x) cross_c2c(x)) %>% 
+  lapply(function(x) 
+    prune_c2c(x, column = "wei_cross_c2c", method = "highest1")
+  ) %>% 
   do.call(rbind, .)
+all.equal(nrow(ff), sum(ff$wei_cross_c2c))
 all.equal(nrow(ff), sum(final_data_back$wei_freq_c2c))
 ```
 

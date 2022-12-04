@@ -105,7 +105,7 @@ occup_simple <- cat2cat(
 ## where probability will be assessed as fraction of closest points.
 occup_2 <- cat2cat(
   data = list(
-    old = occup_old, new = occup_new, 
+    old = occup_old, new = occup_new,
     cat_var = "code", time_var = "year"
   ),
   mappings = list(trans = trans, direction = "backward"),
@@ -132,7 +132,7 @@ Example for the 2 period panel dataset.
 # mix of methods
 occup_2_mix <- cat2cat(
   data = list(
-    old = occup_old, new = occup_new, 
+    old = occup_old, new = occup_new,
     cat_var = "code", time_var = "year"
   ),
   mappings = list(trans = trans, direction = "backward"),
@@ -191,7 +191,7 @@ occup_back_2008_2010 <- cat2cat(
 
 # optional, give more control
 # the counts could be any of wei_* or their combination
-freqs_df <- 
+freqs_df <-
   occup_back_2008_2010$old[, c("g_new_c2c", "wei_freq_c2c")] %>%
   group_by(g_new_c2c) %>%
   summarise(counts = round(sum(wei_freq_c2c)))
@@ -205,8 +205,10 @@ occup_back_2006_2008 <- cat2cat(
     cat_var_old = "code",
     time_var = "year"
   ),
-  mappings = list(trans = trans, direction = "backward",
-                  freqs_df = freqs_df)
+  mappings = list(
+    trans = trans, direction = "backward",
+    freqs_df = freqs_df
+  )
 )
 
 o_2006_new <- occup_back_2006_2008$old
@@ -260,7 +262,7 @@ trans2 <- rbind(
   data.frame(
     old = "no_cat",
     new = setdiff(
-      c(occup_2010$code, occup_2012$code), 
+      c(occup_2010$code, occup_2012$code),
       trans$new
     )
   )
@@ -281,7 +283,7 @@ occup_for_2008_2010 <- cat2cat(
 
 # optional, give more control
 # the counts could be any of wei_* or their combination
-freqs_df <- 
+freqs_df <-
   occup_for_2008_2010$new[, c("g_new_c2c", "wei_freq_c2c")] %>%
   group_by(g_new_c2c) %>%
   summarise(counts = round(sum(wei_freq_c2c)))
@@ -295,8 +297,10 @@ occup_for_2010_2012 <- cat2cat(
     cat_var_new = "code",
     time_var = "year"
   ),
-  mappings = list(trans = trans2, direction = "forward",
-                  freqs_df = freqs_df)
+  mappings = list(
+    trans = trans2, direction = "forward",
+    freqs_df = freqs_df
+  )
 )
 
 # use ml argument when applied ml models
@@ -378,7 +382,7 @@ occup_back_2006_2008 <- cat2cat(
 
 o_2006_new <- occup_back_2006_2008$old
 # or occup_back_2006_2008$new
-o_2008_new <- occup_back_2008_2010$old 
+o_2008_new <- occup_back_2008_2010$old
 o_2010_new <- occup_back_2008_2010$new
 o_2012_new <- dummy_c2c(occup_2012, cat_var = "code", ml = c("knn"))
 
@@ -442,7 +446,7 @@ The next 3 regressions have the same results.
 ```{r}
 ## orginal dataset
 lms2 <- lm(
-  I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, 
+  I(log(salary)) ~ age + sex + factor(edu) + parttime + exp,
   data = occup_old,
   weights = multiplier
 )
@@ -456,23 +460,23 @@ occup_old_2 <- occup_2$old %>%
   cross_c2c(., c("wei_freq_c2c", "wei_knn_c2c"), c(1, 1) / 2) %>%
   prune_c2c(., column = "wei_cross_c2c", method = "highest1")
 lms <- lm(
-  I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, 
+  I(log(salary)) ~ age + sex + factor(edu) + parttime + exp,
   data = occup_old_2,
   weights = multiplier
 )
 summary(lms)
 
-## we have to adjust size of stds 
+## we have to adjust size of stds
 ## as we artificialy enlarge degrees of freedom
 occup_old_3 <- occup_2$old %>%
   prune_c2c(method = "nonzero") # many prune methods like highest
 lms_replicated <- lm(
-  I(log(salary)) ~ age + sex + factor(edu) + parttime + exp, 
+  I(log(salary)) ~ age + sex + factor(edu) + parttime + exp,
   data = occup_old_3,
   weights = multiplier * wei_freq_c2c
 )
 # Adjusted R2 is meaningless here
-lms_replicated$df.residual <- 
+lms_replicated$df.residual <-
   nrow(occup_old) - length(lms_replicated$assign)
 suppressWarnings(summary(lms_replicated))
 ```

@@ -6,7 +6,7 @@
 # * https://r-pkgs.org/tests.html
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
-library(testthat)
-library(cat2cat)
+library("testthat")
+library("cat2cat")
 
 test_check("cat2cat")

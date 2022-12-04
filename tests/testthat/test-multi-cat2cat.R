@@ -1,4 +1,3 @@
-library("dplyr")
 set.seed(1234)
 
 data("occup", package = "cat2cat")

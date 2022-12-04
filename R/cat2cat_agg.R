@@ -81,8 +81,10 @@ cat2cat_agg <- function(data = list(
       inherits(data$old, "data.frame") &&
       inherits(data$new, "data.frame") &&
       all(
-        c("old", "new", "cat_var_old", "cat_var_new",
-          "time_var", "freq_var") %in% names(data)
+        c(
+          "old", "new", "cat_var_old", "cat_var_new",
+          "time_var", "freq_var"
+        ) %in% names(data)
       ) &&
       all(c(data$cat_var, data$freq_var) %in% colnames(data$old)) &&
       all(c(data$cat_var, data$freq_var) %in% colnames(data$new))
