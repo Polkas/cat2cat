@@ -81,7 +81,7 @@
 <h2 id="handling-an-inconsistent-coded-categorical-variable-in-a-panel-dataset">Handling an Inconsistent Coded Categorical Variable in a Panel Dataset<a class="anchor" aria-label="anchor" href="#handling-an-inconsistent-coded-categorical-variable-in-a-panel-dataset"></a>
 </h2>
 <p>Unifying an inconsistent coded categorical variable in a panel/longtitudal dataset.<br>
-There is offered the <code>cat2cat</code> procedure to map a categorical variable according to a mapping (transition) table between two different time points. The mapping (transition) table should to have a candidate for each category from the targeted for an update period. The main rule is to replicate the observation if it could be assigned to a few categories, then using simple frequencies or statistical methods to approximate probabilities of being assigned to each of them.</p>
+There is offered the novel <code>cat2cat</code> procedure to map a categorical variable according to a mapping (transition) table between two different time points. The mapping (transition) table should to have a candidate for each category from the targeted for an update period. The main rule is to replicate the observation if it could be assigned to a few categories, then using simple frequencies or modern statistical methods to approximate probabilities of being assigned to each of them.</p>
 <p><strong>This algorithm was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <a href="doi:10.24425/cejeme.2020.134747" class="uri">doi:10.24425/cejeme.2020.134747</a>).</strong></p>
 <p><a href="https://polkas.github.io/cat2cat/articles/cat2cat.html" class="external-link"><strong>Please visit the cat2cat webpage for more information</strong></a></p>
 <p><a href="https://pypi.org/project/cat2cat/" class="external-link"><strong>Python Version</strong></a></p>
@@ -101,7 +101,8 @@ There is offered the <code>cat2cat</code> procedure to map a categorical variabl
 <p><code>occup</code> dataset is an example of unbalance panel dataset. This is a simulated data although there are applied a real world characteristics from national statistical office survey. The original survey is anonymous and take place <strong>every two years</strong>.</p>
 <p><code>trans</code> dataset containing mappings (transitions) between old (2008) and new (2010) occupational codes. This table could be used to map encodings in both directions.</p>
 <p>Panel dataset without the unique identifiers and only two periods, backward and simple frequencies:</p>
-<pre class="{r}"><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/Polkas/cat2cat" class="external-link">"cat2cat"</a></span><span class="op">)</span></span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/Polkas/cat2cat" class="external-link">"cat2cat"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"occup"</span>, package <span class="op">=</span> <span class="st">"cat2cat"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"trans"</span>, package <span class="op">=</span> <span class="st">"cat2cat"</span><span class="op">)</span></span>
 <span></span>
@@ -109,11 +110,15 @@ There is offered the <code>cat2cat</code> procedure to map a categorical variabl
 <span><span class="va">occup_new</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2010</span>, <span class="op">]</span></span>
 <span></span>
 <span><span class="va">occup_simple</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cat2cat.html">cat2cat</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    old <span class="op">=</span> <span class="va">occup_old</span>, new <span class="op">=</span> <span class="va">occup_new</span>,</span>
+<span>    cat_var_old <span class="op">=</span> <span class="st">"code"</span>, cat_var_new <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span></span>
+<span>  <span class="op">)</span>,</span>
 <span>  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre>
-<p>Panel dataset without the unique identifiers and four periods, backward and simple frequencies:</p>
-<pre class="{r}"><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/Polkas/cat2cat" class="external-link">"cat2cat"</a></span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Panel dataset without the unique identifiers and four periods, backward direction and ml models:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/Polkas/cat2cat" class="external-link">"cat2cat"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"occup"</span>, package <span class="op">=</span> <span class="st">"cat2cat"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"trans"</span>, package <span class="op">=</span> <span class="st">"cat2cat"</span><span class="op">)</span></span>
 <span></span>
@@ -122,37 +127,59 @@ There is offered the <code>cat2cat</code> procedure to map a categorical variabl
 <span><span class="va">occup_2010</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2010</span>,<span class="op">]</span></span>
 <span><span class="va">occup_2012</span> <span class="op">&lt;-</span> <span class="va">occup</span><span class="op">[</span><span class="va">occup</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2012</span>,<span class="op">]</span></span>
 <span></span>
-<span><span class="co"># 2010 -&gt; 2008</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/topepo/caret/" class="external-link">"caret"</a></span><span class="op">)</span></span>
+<span><span class="va">ml_setup</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">occup_2010</span>,</span>
+<span>  cat_var <span class="op">=</span> <span class="st">"code"</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"knn"</span><span class="op">)</span>,</span>
+<span>  features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"edu"</span>, <span class="st">"exp"</span>, <span class="st">"parttime"</span>, <span class="st">"salary"</span><span class="op">)</span>,</span>
+<span>  args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span>, ntree <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># from 2010 to 2008</span></span>
 <span><span class="va">occup_back_2008_2010</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cat2cat.html">cat2cat</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_2008</span>, new <span class="op">=</span> <span class="va">occup_2010</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,</span>
-<span>  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span></span>
+<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    old <span class="op">=</span> <span class="va">occup_2008</span>, new <span class="op">=</span> <span class="va">occup_2010</span>, </span>
+<span>    cat_var_old <span class="op">=</span> <span class="st">"code"</span>, cat_var_new <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>,</span>
+<span>  ml <span class="op">=</span> <span class="va">ml_setup</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># 2008 -&gt; 2006</span></span>
+<span><span class="co"># from 2008 to 2006</span></span>
 <span><span class="va">occup_back_2006_2008</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cat2cat.html">cat2cat</a></span><span class="op">(</span></span>
-<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>old <span class="op">=</span> <span class="va">occup_2006</span>,</span>
-<span>              new <span class="op">=</span> <span class="va">occup_back_2008_2010</span><span class="op">$</span><span class="va">old</span>,</span>
-<span>              cat_var_new <span class="op">=</span> <span class="st">"g_new_c2c"</span>,</span>
-<span>              cat_var_old <span class="op">=</span> <span class="st">"code"</span>,</span>
-<span>              time_var <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span>,</span>
-<span>  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span></span>
+<span>  data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    old <span class="op">=</span> <span class="va">occup_2006</span>, new <span class="op">=</span> <span class="va">occup_back_2008_2010</span><span class="op">$</span><span class="va">old</span>,</span>
+<span>    cat_var_new <span class="op">=</span> <span class="st">"g_new_c2c"</span>, cat_var_old <span class="op">=</span> <span class="st">"code"</span>, time_var <span class="op">=</span> <span class="st">"year"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  mappings <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">trans</span>, direction <span class="op">=</span> <span class="st">"backward"</span><span class="op">)</span>,</span>
+<span>  ml <span class="op">=</span> <span class="va">ml_setup</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">occup_2006_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2006_2008</span><span class="op">$</span><span class="va">old</span></span>
-<span><span class="va">occup_2008_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2008_2010</span><span class="op">$</span><span class="va">old</span> <span class="co"># or occup_back_2006_2008$new</span></span>
-<span><span class="va">occup_2010_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2008_2010</span><span class="op">$</span><span class="va">new</span></span>
-<span><span class="va">occup_2012_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dummy_c2c.html">dummy_c2c</a></span><span class="op">(</span><span class="va">occup_2012</span>, cat_var <span class="op">=</span> <span class="st">"code"</span><span class="op">)</span></span>
+<span><span class="va">o_2006_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2006_2008</span><span class="op">$</span><span class="va">old</span></span>
+<span><span class="va">o_2008_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2008_2010</span><span class="op">$</span><span class="va">old</span> <span class="co"># or occup_back_2006_2008$new</span></span>
+<span><span class="va">o_2010_new</span> <span class="op">&lt;-</span> <span class="va">occup_back_2008_2010</span><span class="op">$</span><span class="va">new</span></span>
+<span><span class="va">o_2012_new</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dummy_c2c.html">dummy_c2c</a></span><span class="op">(</span></span>
+<span>  <span class="va">occup_2012</span>, cat_var <span class="op">=</span> <span class="st">"code"</span>, ml <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"knn"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">final_data_back</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">occup_2006_new</span>, <span class="va">occup_2008_new</span>, <span class="va">occup_2010_new</span>, <span class="va">occup_2012_new</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">final_data_back</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span></span>
+<span>  <span class="va">rbind</span>, </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">o_2006_new</span>, <span class="va">o_2008_new</span>, <span class="va">o_2010_new</span>, <span class="va">o_2012_new</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># possible processing, leaving only one obs per subject and period</span></span>
 <span><span class="co"># still it is recommended to leave all replications and use the weights in the statistical models</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
 <span><span class="va">ff</span> <span class="op">&lt;-</span> <span class="va">final_data_back</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">year</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="reference/prune_c2c.html">prune_c2c</a></span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"highest1"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="reference/cross_c2c.html">cross_c2c</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> </span>
+<span>    <span class="fu"><a href="reference/prune_c2c.html">prune_c2c</a></span><span class="op">(</span><span class="va">x</span>, column <span class="op">=</span> <span class="st">"wei_cross_c2c"</span>, method <span class="op">=</span> <span class="st">"highest1"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">.</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">ff</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">final_data_back</span><span class="op">$</span><span class="va">wei_freq_c2c</span><span class="op">)</span><span class="op">)</span></span></code></pre>
+<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">ff</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">ff</span><span class="op">$</span><span class="va">wei_cross_c2c</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">ff</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">final_data_back</span><span class="op">$</span><span class="va">wei_freq_c2c</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><strong>More complex examples are presented in the “Get Started” vignette.</strong></p>
 </div>
 <div class="section level2">
