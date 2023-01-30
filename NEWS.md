@@ -1,6 +1,9 @@
 # cat2cat 0.4.5.9000
 
 * Add some `ropensci` standards, like CONTRIBUTING file and `testthat` version 3.
+* Add LICENSE file.
+* Update DESCRIPTION file.
+* Update outdated URLs.
 * `cat2cat_agg` has updated `cat_var` argument to two new ones, `cat_var_old` and `cat_var_new`.
 * Rename the `master` to `main` branch.
 * Improve tests and lintr related issues.
