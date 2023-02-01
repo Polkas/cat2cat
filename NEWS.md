@@ -1,4 +1,4 @@
-# cat2cat 0.4.5.9000
+# cat2cat 0.4.6
 
 * Add some `ropensci` standards, like CONTRIBUTING file and `testthat` version 3.
 * Add LICENSE file.

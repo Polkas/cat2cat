@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/Polkas/cat2cat/branch/main/graph/badge.svg)](https://app.codecov.io/gh/Polkas/cat2cat)
 [![Dependencies](https://tinyverse.netlify.com/badge/cat2cat)](https://cran.r-project.org/package=cat2cat)
 
-## Handling an Inconsistent Coded Categorical Variable in a Panel Dataset
+## Handling an Inconsistent Coded Categorical Variable in a Longitudinal Dataset
 
 Unifying an inconsistent coded categorical variable in a panel/longtitudal dataset.  
 There is offered the novel `cat2cat` procedure to map a categorical variable according to a mapping (transition) table between two different time points.
