@@ -3,7 +3,7 @@
 #' The objective is to unify an inconsistently coded categorical variable
 #' in a panel dataset according to a mapping (transition) table.
 #' The mapping (transition) table is the core element of the process.
-#' There are three arguments `data`, `mappings`, and `ml`. Each
+#' The function has a modular design with three arguments `data`, `mappings`, and `ml`. Each
 #' of these arguments is of a `list` type, wherein the
 #' `ml` argument is optional. Arguments are separated to
 #' identify the core elements of the `cat2cat` procedure.
