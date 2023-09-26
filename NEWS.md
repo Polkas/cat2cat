@@ -1,3 +1,7 @@
+# cat2cat 0.4.6.9000
+
+* Add tests for cat2cat related journal (softwarex) paper.
+
 # cat2cat 0.4.6
 
 * Add some `ropensci` standards, like CONTRIBUTING file and `testthat` version 3.
