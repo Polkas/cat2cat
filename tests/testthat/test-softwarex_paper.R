@@ -1,107 +1,3 @@
-testthat::test_that("html back cat2cat back graph", {
-  testthat::expect_silent(nomnoml::nomnoml("
-[<frame>Backward|
-[<table>panel|
-name|code|year ||
-...|...|... ||
-Smith |1111|2020 ||
-Doe|1212|2020 ||
-...|...|... ||
-Johnson |111111|2021 ||
-Williams|222222|2021 ||
-...|...|...]
-[<table>2020 (target)|
-name|code|year ||
-Smith |1111|2020 ||
-Doe|1212|2020 ||
-...|...|...]
-[<table>2021 (base)|
-name|code|year ||
-Johnson |111111|2021 ||
-Williams|222222|2021 ||
-...|...|...]
-[<table>updated 2020|
-name|code|year|code2|prob||
-Smith|1111|2020|111111|0.68||
-Smith|1111|2020|111122|0.32||
-Doe|1212|2020|121211|1.00||
-...|...|...|...|...]
-[<table>mapping table|
-code 2020 | code 2021 ||
-1111|111111 ||
-1111|111122 ||
-1212 | 121211 ||
-2212 | 222222 ||
-...|...]
-[<table> panel]->[<table> 2020 (target)]
-[<table> panel]->[<table> 2021 (base)]
-[<table>2020 (target)]-[<table>mapping table]
-[<table>mapping table]replications & code2->[<table>updated 2020]
-[<table>2021 (base)]prob-->[<table>updated 2020]
-]"))
-})
-
-
-testthat::test_that("html for cat2cat back graph", {
-  # Build nomnoml graph for the cat2cat procedure - forward direction
-  testthat::expect_silent(nomnoml::nomnoml("[<frame>Forward|
-[<table>panel|
-name|code|year || ...|...|... ||
-Smith |1111|2020 ||
-Doe|1212|2020 || ...|...|... ||
-Johnson |111111|2021 ||
-Williams|222222|2021||
-...|...|...]
-[<table>2020 (base)|
-name|code|year ||
-Smith |1111|2020 ||
-Doe|1212|2020 ||
-...|...|...]
-[<table>2021 (target)|
-name|code|year ||
-Johnson |111111|2021 ||
-Williams|222222|2021||
-...|...|...]
-[<table>updated 2021|
-name|code|year|code2|prob||
-Johnson|111111|2021|1111|1.00||
-Williams|121211|2021|1212|1.00||
-...|...|...|...|...]
-[<table>mapping table|
-code 2020 | code 2021 ||
-1111|111111 ||
-1111|111122 ||
-1212 | 121211 ||
-2212 | 222222 ||
-...|...]
-[<table> panel]->[<table> 2020 (base)]
-[<table> panel]->[<table> 2021 (target)]
-[<table>2021 (target)]-[<table>mapping table]
-[<table>mapping table]replications & code2->[<table>updated 2021]
-[<table>2020 (base)]prob-->[<table>updated 2021]
-]"))
-
-})
-
-data("trans", package = "cat2cat")
-
-testthat::test_that("Build a graph from a data.frame", {
-  gg <- igraph::graph_from_data_frame(d = trans[1:30, ])
-  testthat::expect_silent(
-    igraph::plot.igraph(
-      x = gg,
-      edge.arrow.size = .5,
-      vertex.color = "gold",
-      vertex.size = 15,
-      vertex.frame.color = "gray",
-      vertex.label.color = "black",
-      vertex.label.cex = 0.6,
-      vertex.label.dist = 2,
-      edge.curved = 0.2
-    )
-  )
-})
-
 data("occup", package = "cat2cat")
 # Split the panel dataset to separate years
 occup_2006 <- occup[occup$year == 2006, ]
@@ -248,16 +144,25 @@ testthat::test_that("Backward mapping, with four periods, one mapping table, and
 })
 
 testthat::test_that("Correlations between ml methods", {
-  corr_separate <- final_data_back_ml |>
-    dplyr::filter(rep_c2c >= 10) |>
-    dplyr::group_by(index_c2c) |>
-    dplyr::select(matches("wei.*c2c")) |>
-    dplyr::select(-wei_naive_c2c) |>
-    dplyr::do(corr = tryCatch(
-      cor(.[, -1]),
-      error = function(e) NA, warning = function(w) NA
-    )) |>
-    dplyr::filter(!any(is.na(corr)))
+  corr_separate <-
+    dplyr::filter(
+      dplyr::do(
+        dplyr::select(
+          dplyr::select(
+            dplyr::group_by(
+              dplyr::filter(final_data_back_ml, rep_c2c >= 10),
+              index_c2c
+            ),
+            matches("wei.*c2c")
+          ),
+          -wei_naive_c2c
+        ),
+        corr = tryCatch(
+          cor(.[, -1]),
+          error = function(e) NA, warning = function(w) NA
+        )
+      ), !any(is.na(corr))
+    )
   corr_table <- Reduce("+", corr_separate$corr) / length(corr_separate$corr)
   # Build average correlations between different statistical methods table
   res_tab <- knitr::kable(
@@ -279,42 +184,49 @@ testthat::test_that("Correlations between ml methods", {
 })
 
 testthat::test_that("Counts for a few random levels in the unified variable over time", {
-  data_count_plot <- final_data_back_ml |> cat2cat::prune_c2c(df = _)
-  data_count_plot2 <- data_count_plot |>
-    dplyr::filter(
-      g_new_c2c %in% c("261102", "325502", "352111")
-    ) |>
-    dplyr::mutate(
-      g_new_c2c_nams = forcats::fct_recode(
-        g_new_c2c,
-        `OHS Inspector` = "325502",
-        `Sound Engineer` = "352111",
-        `Prosecutor` = "261102"
-      )
-    ) |>
-    dplyr::select(
-      "wei_freq_c2c", "wei_rf_c2c", "year", "g_new_c2c_nams", -"g_new_c2c"
-    ) |>
-    dplyr::group_by(g_new_c2c_nams, year) |>
-    dplyr::summarise_all(sum)
+  data_count_plot <- cat2cat::prune_c2c(df = final_data_back_ml)
+  data_count_plot2 <-
+    dplyr::summarise_all(
+      dplyr::group_by(
+        dplyr::select(
+          dplyr::mutate(
+            dplyr::filter(
+              data_count_plot,
+              g_new_c2c %in% c("261102", "325502", "352111")
+            ),
+            g_new_c2c_nams = forcats::fct_recode(
+              g_new_c2c,
+              `OHS Inspector` = "325502",
+              `Sound Engineer` = "352111",
+              `Prosecutor` = "261102"
+            )
+          ),
+          "wei_freq_c2c", "wei_rf_c2c", "year", "g_new_c2c_nams", -"g_new_c2c"
+        ),
+        g_new_c2c_nams, year
+      ),
+    sum
+  )
   # Build counts across a 3 random categories table
-  counts_base <- data_count_plot2 |>
+  counts_base <-
     tidyr::pivot_wider(
+      data_count_plot2,
       names_from = "year",
       values_from = c("wei_freq_c2c", "wei_rf_c2c"),
       names_sep = " "
     )
-  res_tab <- counts_base |>
-    dplyr::select(
-      g_new_c2c_nams,
-      `rf 2006` = `wei_rf_c2c 2006`,
-      `freq 2006` = `wei_freq_c2c 2006`,
-      `rf 2008` = `wei_rf_c2c 2008`,
-      `freq 2008` = `wei_freq_c2c 2008`,
-      `2010` = `wei_rf_c2c 2010`,
-      `2012` = `wei_rf_c2c 2012`
-    ) |>
+  res_tab <-
     knitr::kable(
+      dplyr::select(
+        counts_base,
+        g_new_c2c_nams,
+        `rf 2006` = `wei_rf_c2c 2006`,
+        `freq 2006` = `wei_freq_c2c 2006`,
+        `rf 2008` = `wei_rf_c2c 2008`,
+        `freq 2008` = `wei_freq_c2c 2008`,
+        `2010` = `wei_rf_c2c 2010`,
+        `2012` = `wei_rf_c2c 2012`
+      ),
       "latex",
       caption = "Counts across a 3 random categories."
     )
@@ -380,18 +292,26 @@ testthat::test_that("Regression - neutral impact of the unified variable", {
 
 testthat::test_that("Regression for each level in the unified variable", {
   # Separate regression for each occupational group under newest classification
-  regression_sep <- final_data_back_ml |>
-    cat2cat::prune_c2c(df = _, method = "nonzero") |> # many prune methods like highest
-    dplyr::group_by(g_new_c2c) |>
-    dplyr::mutate(n = dplyr::n()) |>
-    dplyr::filter(n >= 30) |>
-    dplyr::do(
-      lm = tryCatch(
-        lm(formula_micer, .data, weights = multiplier * wei_freq_c2c),
-        error = function(e) NULL
-      )
-    ) |>
-    dplyr::filter(!is.null(lm))
+  regression_sep <-
+    dplyr::filter(
+      dplyr::do(
+        dplyr::filter(
+          dplyr::mutate(
+            dplyr::group_by(
+              cat2cat::prune_c2c(df = final_data_back_ml, method = "nonzero"),
+              g_new_c2c
+            ),
+            n = dplyr::n()
+          ),
+          n >= 30
+        ),
+        lm = tryCatch(
+          lm(formula_micer, .data, weights = multiplier * wei_freq_c2c),
+          error = function(e) NULL
+        )
+      ),
+      !is.null(lm)
+    )
   # Regression results for the first group
   res_tab <- capture.output(stargazer::stargazer(
     regression_sep$lm[[1]],
