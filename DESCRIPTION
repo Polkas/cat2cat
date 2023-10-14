@@ -1,6 +1,6 @@
 Package: cat2cat
 Title: Handling an Inconsistently Coded Categorical Variable in a Longitudinal Dataset
-Version: 0.4.6.9002
+Version: 0.4.6.9003
 Authors@R: person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre"))
 Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
 Description: 
@@ -17,17 +17,20 @@ Imports:
     MASS
 Suggests:
     caret,
-    randomForest,
-    knitr,
+    dplyr,
+    forcats,
+    htmlwidgets,
     igraph,
-    rmarkdown,
-    pacman,
-    testthat (>= 3.0.0),
+    knitr,
     magrittr,
     nomnoml,
-    webshot,
-    htmlwidgets,
-    dplyr
+    pacman,
+    randomForest,
+    rmarkdown,
+    stargazer,
+    testthat (>= 3.0.0),
+    tidyr,
+    webshot
 LazyData: true
 VignetteBuilder: knitr
 RoxygenNote: 7.2.2
