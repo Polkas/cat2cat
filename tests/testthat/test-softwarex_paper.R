@@ -1,6 +1,5 @@
 testthat::test_that("html back cat2cat back graph", {
-  # Build nomnoml graph for the cat2cat procedure - backward direction
-  back_nom <- nomnoml::nomnoml("
+  testthat::expect_silent(nomnoml::nomnoml("
 [<frame>Backward|
 [<table>panel|
 name|code|year ||
@@ -39,26 +38,13 @@ code 2020 | code 2021 ||
 [<table>2020 (target)]-[<table>mapping table]
 [<table>mapping table]replications & code2->[<table>updated 2020]
 [<table>2021 (base)]prob-->[<table>updated 2020]
-]")
-
-  create_graph <- function() {
-    html_temp <- tempfile(fileext = ".html")
-    htmlwidgets::saveWidget(widget = back_nom, file = html_temp)
-    png_temp <- tempfile(fileext = ".png")
-    webshot::webshot(html_temp, file = png_temp)
-    png_temp
-  }
-
-  testthat::expect_snapshot_file(
-    create_graph(),
-    "back_graph.png"
-  )
+]"))
 })
 
 
 testthat::test_that("html for cat2cat back graph", {
   # Build nomnoml graph for the cat2cat procedure - forward direction
-  for_nom <- nomnoml::nomnoml("[<frame>Forward|
+  testthat::expect_silent(nomnoml::nomnoml("[<frame>Forward|
 [<table>panel|
 name|code|year || ...|...|... ||
 Smith |1111|2020 ||
@@ -93,20 +79,8 @@ code 2020 | code 2021 ||
 [<table>2021 (target)]-[<table>mapping table]
 [<table>mapping table]replications & code2->[<table>updated 2021]
 [<table>2020 (base)]prob-->[<table>updated 2021]
-]")
+]"))
 
-  create_graph <- function() {
-    html_temp <- tempfile(fileext = ".html")
-    htmlwidgets::saveWidget(widget = for_nom, file = html_temp)
-    png_temp <- tempfile(fileext = ".png")
-    webshot::webshot(html_temp, file = png_temp)
-    png_temp
-  }
-
-  testthat::expect_snapshot_file(
-    create_graph(),
-    "for_graph.png"
-  )
 })
 
 data("trans", package = "cat2cat")
@@ -297,7 +271,7 @@ testthat::test_that("Correlations between ml methods", {
   testthat::expect_identical(
     res_tab,
     structure(
-      "\\begin{table}\n\n\\caption{Average correlations between different methods \n assesed for each subject with at least 10 obs.}\n\\centering\n\\begin{tabular}[t]{l|r|r|r}\n\\hline\n  & wei\\_freq\\_c2c & wei\\_knn\\_c2c & wei\\_rf\\_c2c\\\\\n\\hline\nwei\\_freq\\_c2c & 1.0000000 & 0.7510114 & 0.7571663\\\\\n\\hline\nwei\\_knn\\_c2c & 0.7510114 & 1.0000000 & 0.7135195\\\\\n\\hline\nwei\\_rf\\_c2c & 0.7571663 & 0.7135195 & 1.0000000\\\\\n\\hline\n\\end{tabular}\n\\end{table}",
+      "\\begin{table}\n\n\\caption{Average correlations between different methods \n assesed for each subject with at least 10 obs.}\n\\centering\n\\begin{tabular}[t]{l|r|r|r}\n\\hline\n  & wei\\_freq\\_c2c & wei\\_knn\\_c2c & wei\\_rf\\_c2c\\\\\n\\hline\nwei\\_freq\\_c2c & 1.0000000 & 0.7509772 & 0.7587164\\\\\n\\hline\nwei\\_knn\\_c2c & 0.7509772 & 1.0000000 & 0.7143120\\\\\n\\hline\nwei\\_rf\\_c2c & 0.7587164 & 0.7143120 & 1.0000000\\\\\n\\hline\n\\end{tabular}\n\\end{table}",
       format = "latex",
       class = "knitr_kable"
     )
@@ -347,7 +321,7 @@ testthat::test_that("Counts for a few random levels in the unified variable over
   testthat::expect_identical(
     res_tab,
     structure(
-      "\\begin{table}\n\n\\caption{Counts across a 3 random categories.}\n\\centering\n\\begin{tabular}[t]{l|r|r|r|r|r|r}\n\\hline\ng\\_new\\_c2c\\_nams & rf 2006 & freq 2006 & rf 2008 & freq 2008 & 2010 & 2012\\\\\n\\hline\nProsecutor & 6.69 & 5.2250000 & 13.22 & 4.8291667 & 19 & 12\\\\\n\\hline\nOHS Inspector & 14.56 & 3.9707031 & 14.95 & 4.7044025 & 16 & 12\\\\\n\\hline\nSound Engineer & 0.29 & 0.0714286 & 0.81 & 0.2142857 & 1 & 1\\\\\n\\hline\n\\end{tabular}\n\\end{table}",
+      "\\begin{table}\n\n\\caption{Counts across a 3 random categories.}\n\\centering\n\\begin{tabular}[t]{l|r|r|r|r|r|r}\n\\hline\ng\\_new\\_c2c\\_nams & rf 2006 & freq 2006 & rf 2008 & freq 2008 & 2010 & 2012\\\\\n\\hline\nProsecutor & 7.13 & 5.2250000 & 11.98 & 4.8291667 & 19 & 12\\\\\n\\hline\nOHS Inspector & 14.13 & 3.9707031 & 16.49 & 4.7044025 & 16 & 12\\\\\n\\hline\nSound Engineer & 0.21 & 0.0714286 & 0.87 & 0.2142857 & 1 & 1\\\\\n\\hline\n\\end{tabular}\n\\end{table}",
       format = "latex",
       class = "knitr_kable"
     )

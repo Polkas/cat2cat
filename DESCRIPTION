@@ -1,6 +1,6 @@
 Package: cat2cat
 Title: Handling an Inconsistently Coded Categorical Variable in a Longitudinal Dataset
-Version: 0.4.6.9003
+Version: 0.4.6.9004
 Authors@R: person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre"))
 Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
 Description: 
