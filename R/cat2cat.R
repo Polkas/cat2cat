@@ -179,37 +179,13 @@ cat2cat <- function(data = list(
   stopifnot(is.list(mappings))
   stopifnot(is.list(ml))
 
-  # data validation
-  stopifnot(inherits(data$old, "data.frame"))
-  stopifnot(inherits(data$new, "data.frame"))
-  stopifnot(!is.null(data$cat_var) ||
-    (!is.null(data$cat_var_old) && !is.null(data$cat_var_new)))
+  # Backward compatibility
+  if (is.null(data$freqs_df)) data$freqs_df <- mappings$freqs_df
   if (is.null(data$cat_var_old)) data$cat_var_old <- data$cat_var
   if (is.null(data$cat_var_new)) data$cat_var_new <- data$cat_var
-  stopifnot(all(c(data$cat_var_old, data$time_var) %in% colnames(data$old)))
-  stopifnot(all(c(data$cat_var_new, data$time_var) %in% colnames(data$new)))
-  stopifnot(
-    is.null(data$multiplier_var) ||
-      (data$multiplier_var %in% colnames(data$new) &&
-        data$multiplier_var %in% colnames(data$old))
-  )
 
-  # For backward compatibility
-  if (is.null(data$freqs_df)) data$freqs_df <- mappings$freqs_df
-  stopifnot(is.null(data$freqs_df) ||
-    (is.data.frame(data$freqs_df) && ncol(data$freqs_df) == 2))
-  stopifnot((length(unique(data$old[[data$time_var]])) == 1) &&
-    (length(unique(data$new[[data$time_var]])) == 1))
-  stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
-    (data$id_var %in% colnames(data$new)) &&
-    !anyDuplicated(data$old[[data$id_var]]) &&
-    !anyDuplicated(data$new[[data$id_var]])))
-
-  # mappings validation
-  stopifnot(all(vapply(mappings, Negate(is.null), logical(1))))
-  stopifnot(all(c("trans", "direction") %in% names(mappings)))
-  stopifnot(isTRUE(mappings$direction %in% c("forward", "backward")))
-  stopifnot(is.data.frame(mappings$trans) && ncol(mappings$trans) == 2)
+  validate_data(data)
+  validate_mappings(mappings)
 
   mapps <- get_mappings(mappings$trans)
 
@@ -320,9 +296,23 @@ cat2cat <- function(data = list(
 #' in the target period.
 #' @keywords internal
 cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
+
   stopifnot(all(c("method", "features") %in% names(ml)))
+  stopifnot(all(ml$method %in% c("knn", "rf", "lda")))
+
+  if ("rf" %in% ml$method) {
+    delayed_package_load("randomForest", "rf")
+  }
+
+  if ("knn" %in% ml$method) {
+    delayed_package_load("caret", "knn")
+  }
+
+  stopifnot(ml$cat_var %in% colnames(ml$data))
   stopifnot(all(ml$features %in% colnames(target_data)))
   stopifnot(all(ml$features %in% colnames(ml$data)))
+  stopifnot(cat_var_target %in% colnames(target_data))
+
   stopifnot(all(vapply(
     target_data[, ml$features, drop = FALSE],
     function(x) is.numeric(x) || is.logical(x), logical(1)
@@ -331,9 +321,6 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
     ml$data[, ml$features, drop = FALSE],
     function(x) is.numeric(x) || is.logical(x), logical(1)
   )))
-  stopifnot(all(ml$method %in% c("knn", "rf", "lda")))
-  stopifnot(ml$cat_var %in% colnames(ml$data))
-  stopifnot(cat_var_target %in% colnames(target_data))
 
   features <- unique(ml$features)
   methods <- unique(ml$method)
@@ -375,64 +362,43 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
               c("index_c2c", features)
             ]
           cc <- complete.cases(base_ml[, features])
+
           for (m in methods) {
+
             ml_name <- paste0("wei_", m, "_c2c")
+
             if (m == "knn") {
-              if (
-                suppressPackageStartupMessages(
-                  requireNamespace("caret", quietly = TRUE)
+              group_prediction <- suppressWarnings(
+                caret::knn3(
+                  x = dis[, features, drop = FALSE],
+                  y = factor(dis[[ml$cat_var]]),
+                  k = min(ml$args$k, ceiling(nrow(dis) / 4))
                 )
-              ) {
-                kkk <- suppressWarnings(
-                  caret::knn3(
-                    x = dis[, features, drop = FALSE],
-                    y = factor(dis[[ml$cat_var]]),
-                    k = min(ml$args$k, ceiling(nrow(dis) / 4))
-                  )
+              )
+              pp <- as.data.frame(
+                stats::predict(
+                  group_prediction,
+                  base_ml[cc, features, drop = FALSE],
+                  type = "prob"
                 )
-                pp <- as.data.frame(
-                  stats::predict(
-                    kkk,
-                    base_ml[cc, features, drop = FALSE],
-                    type = "prob"
-                  )
-                )
-              } else {
-                stop(
-                  paste(
-                    "Please install caret package to use the knn model",
-                    "in the cat2cat function."
-                  )
-                )
-              }
+              )
             } else if (m == "rf") {
-              if (
-                suppressPackageStartupMessages(
-                  requireNamespace("randomForest", quietly = TRUE)
+              group_prediction <- suppressWarnings(
+                randomForest::randomForest(
+                  y = factor(dis[[ml$cat_var]]),
+                  x = dis[, features, drop = FALSE],
+                  ntree = min(ml$args$ntree, 100)
                 )
-              ) {
-                kkk <- suppressWarnings(
-                  randomForest::randomForest(
-                    y = factor(dis[[ml$cat_var]]),
-                    x = dis[, features, drop = FALSE],
-                    ntree = min(ml$args$ntree, 100)
-                  )
+              )
+              pp <- as.data.frame(
+                stats::predict(
+                  group_prediction,
+                  base_ml[cc, features, drop = FALSE],
+                  type = "prob"
                 )
-                pp <- as.data.frame(
-                  stats::predict(
-                    kkk,
-                    base_ml[cc, features, drop = FALSE],
-                    type = "prob"
-                  )
-                )
-              } else {
-                stop(paste(
-                  "Please install randomForest package to use",
-                  "the rf model in the cat2cat function."
-                ))
-              }
+              )
             } else if (m == "lda") {
-              kkk <- suppressWarnings(
+              group_prediction <- suppressWarnings(
                 MASS::lda(
                   grouping = factor(dis[[ml$cat_var]]),
                   x = as.matrix(dis[, features, drop = FALSE])
@@ -440,7 +406,7 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
               )
               pp <- as.data.frame(
                 stats::predict(
-                  kkk,
+                  group_prediction,
                   as.matrix(base_ml[cc, features, drop = FALSE])
                 )$posterior
               )
@@ -537,4 +503,52 @@ resolve_frequencies <- function(cat_base_year,
     )
   }
   freqs
+}
+
+#" Validate cat2cat data
+#' @keywords internal
+validate_data <- function(data) {
+  stopifnot(inherits(data$old, "data.frame"))
+  stopifnot(inherits(data$new, "data.frame"))
+  stopifnot(!is.null(data$cat_var_old) && !is.null(data$cat_var_new))
+
+  stopifnot(all(c(data$cat_var_old, data$time_var) %in% colnames(data$old)))
+  stopifnot(all(c(data$cat_var_new, data$time_var) %in% colnames(data$new)))
+  stopifnot(
+    is.null(data$multiplier_var) ||
+      (data$multiplier_var %in% colnames(data$new) &&
+         data$multiplier_var %in% colnames(data$old))
+  )
+
+
+  stopifnot(is.null(data$freqs_df) ||
+              (is.data.frame(data$freqs_df) && ncol(data$freqs_df) == 2))
+  stopifnot((length(unique(data$old[[data$time_var]])) == 1) &&
+              (length(unique(data$new[[data$time_var]])) == 1))
+  stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
+                                       (data$id_var %in% colnames(data$new)) &&
+                                       !anyDuplicated(data$old[[data$id_var]]) &&
+                                       !anyDuplicated(data$new[[data$id_var]])))
+}
+
+#" Validate cat2cat mappings
+#' @keywords internal
+validate_mappings <- function(mappings) {
+  stopifnot(all(vapply(mappings, Negate(is.null), logical(1))))
+  stopifnot(all(c("trans", "direction") %in% names(mappings)))
+  stopifnot(isTRUE(mappings$direction %in% c("forward", "backward")))
+  stopifnot(is.data.frame(mappings$trans) && ncol(mappings$trans) == 2)
+}
+
+#" Delayed load of a package
+#' @keywords internal
+delayed_package_load <- function(package, name) {
+  if (isFALSE(suppressPackageStartupMessages(requireNamespace(package, quietly = TRUE)))) {
+    stop(
+      sprintf(
+        "Please install %s package to use the %s model in the cat2cat function.",
+        package, name
+      )
+    )
+  }
 }
