@@ -26,8 +26,8 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: windows-latest, r: '3.6'}
           # Deliberately check on older ubuntu to maximise backward compatibility
-          - {os: ubuntu-18.04,   r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-18.04,   r: 'release'}
+          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
+          - {os: ubuntu-latest,   r: 'release'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -45,7 +45,7 @@ jobs:
           use-public-rspm: true
 
       - name: Install dependencies
-        run: Rscript -e "install.packages('rcmdcheck')" -e "install.packages(c('MASS', 'assertthat', 'caret', 'knitr', 'rmarkdown', 'pacman', 'testthat' , 'magrittr', 'dplyr', 'igraph', 'nomnoml', 'webshot', 'htmlwidgets', 'forcats', 'stargazer', 'tidyr')"
+        run: Rscript -e "install.packages('rcmdcheck')" -e "install.packages(c('MASS', 'assertthat', 'caret', 'knitr', 'rmarkdown', 'pacman', 'testthat' , 'magrittr', 'dplyr', 'igraph', 'nomnoml', 'webshot', 'htmlwidgets', 'forcats', 'stargazer', 'tidyr'))"
 
       - name: Install randomForest old
         if: "${{ matrix.config.r == '3.6'}}"
