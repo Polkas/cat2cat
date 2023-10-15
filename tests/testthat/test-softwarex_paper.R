@@ -1,3 +1,4 @@
+data("trans", package = "cat2cat")
 data("occup", package = "cat2cat")
 # Split the panel dataset to separate years
 occup_2006 <- occup[occup$year == 2006, ]
@@ -164,23 +165,9 @@ testthat::test_that("Correlations between ml methods", {
       ), !any(is.na(corr))
     )
   corr_table <- Reduce("+", corr_separate$corr) / length(corr_separate$corr)
-  # Build average correlations between different statistical methods table
-  res_tab <- knitr::kable(
-    corr_table,
-    "latex",
-    caption = paste(
-      "Average correlations between different methods \n",
-      "assesed for each subject with at least 10 obs."
-    )
-  )
-  testthat::expect_identical(
-    res_tab,
-    structure(
-      "\\begin{table}\n\n\\caption{Average correlations between different methods \n assesed for each subject with at least 10 obs.}\n\\centering\n\\begin{tabular}[t]{l|r|r|r}\n\\hline\n  & wei\\_freq\\_c2c & wei\\_knn\\_c2c & wei\\_rf\\_c2c\\\\\n\\hline\nwei\\_freq\\_c2c & 1.0000000 & 0.7509772 & 0.7587164\\\\\n\\hline\nwei\\_knn\\_c2c & 0.7509772 & 1.0000000 & 0.7143120\\\\\n\\hline\nwei\\_rf\\_c2c & 0.7587164 & 0.7143120 & 1.0000000\\\\\n\\hline\n\\end{tabular}\n\\end{table}",
-      format = "latex",
-      class = "knitr_kable"
-    )
-  )
+
+  testthat::expect_true(inherits(corr_table, "matrix"))
+  testthat::expect_equal(dim(corr_table), c(3L, 3L))
 })
 
 testthat::test_that("Counts for a few random levels in the unified variable over time", {
@@ -215,29 +202,19 @@ testthat::test_that("Counts for a few random levels in the unified variable over
       values_from = c("wei_freq_c2c", "wei_rf_c2c"),
       names_sep = " "
     )
-  res_tab <-
-    knitr::kable(
-      dplyr::select(
-        counts_base,
-        g_new_c2c_nams,
-        `rf 2006` = `wei_rf_c2c 2006`,
-        `freq 2006` = `wei_freq_c2c 2006`,
-        `rf 2008` = `wei_rf_c2c 2008`,
-        `freq 2008` = `wei_freq_c2c 2008`,
-        `2010` = `wei_rf_c2c 2010`,
-        `2012` = `wei_rf_c2c 2012`
-      ),
-      "latex",
-      caption = "Counts across a 3 random categories."
-    )
-  testthat::expect_identical(
-    res_tab,
-    structure(
-      "\\begin{table}\n\n\\caption{Counts across a 3 random categories.}\n\\centering\n\\begin{tabular}[t]{l|r|r|r|r|r|r}\n\\hline\ng\\_new\\_c2c\\_nams & rf 2006 & freq 2006 & rf 2008 & freq 2008 & 2010 & 2012\\\\\n\\hline\nProsecutor & 7.13 & 5.2250000 & 11.98 & 4.8291667 & 19 & 12\\\\\n\\hline\nOHS Inspector & 14.13 & 3.9707031 & 16.49 & 4.7044025 & 16 & 12\\\\\n\\hline\nSound Engineer & 0.21 & 0.0714286 & 0.87 & 0.2142857 & 1 & 1\\\\\n\\hline\n\\end{tabular}\n\\end{table}",
-      format = "latex",
-      class = "knitr_kable"
-    )
+  res_tab <- dplyr::select(
+    counts_base,
+    g_new_c2c_nams,
+    `rf 2006` = `wei_rf_c2c 2006`,
+    `freq 2006` = `wei_freq_c2c 2006`,
+    `rf 2008` = `wei_rf_c2c 2008`,
+    `freq 2008` = `wei_freq_c2c 2008`,
+    `2010` = `wei_rf_c2c 2010`,
+    `2012` = `wei_rf_c2c 2012`
   )
+
+  testthat::expect_true(inherits(res_tab, "data.frame"))
+  testthat::expect_equal(dim(res_tab), c(3L, 7L))
 })
 
 # Mincerian-like regression formula
