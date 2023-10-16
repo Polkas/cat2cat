@@ -1,0 +1,12 @@
+bibentry(
+  bibtype  = "Article",
+  header = "To cite cat2cat in publications, please use",
+  title = "Handling an inconsistently coded categorical variable in a longitudinal dataset with cat2cat",
+  author = "Maciej Nasiński and Krzysztof Gajowniczek",
+  journal = "SoftwareX",
+  year = "2023",
+  volume = "24",
+  pages = "101525",
+  issn = "2352-7110",
+  doi = "https://doi.org/10.1016/j.softx.2023.101525",
+)

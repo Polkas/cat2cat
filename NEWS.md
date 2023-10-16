@@ -1,6 +1,7 @@
-# cat2cat 0.4.6.9006
+# cat2cat 0.4.6.9007
 
 * Add tests for cat2cat related journal (softwarex) paper.
+* Add CITATION file, .
 * Internal changes to make the code base more clear.
 
 # cat2cat 0.4.6
