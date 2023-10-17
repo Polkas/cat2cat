@@ -7,29 +7,13 @@
 #' in the target period.
 #' @keywords internal
 cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
+  validate_ml(ml)
 
-  stopifnot(all(c("method", "features") %in% names(ml)))
-  stopifnot(all(ml$method %in% c("knn", "rf", "lda")))
-
-  if ("rf" %in% ml$method) {
-    delayed_package_load("randomForest", "rf")
-  }
-
-  if ("knn" %in% ml$method) {
-    delayed_package_load("caret", "knn")
-  }
-
-  stopifnot(ml$cat_var %in% colnames(ml$data))
   stopifnot(all(ml$features %in% colnames(target_data)))
-  stopifnot(all(ml$features %in% colnames(ml$data)))
   stopifnot(cat_var_target %in% colnames(target_data))
 
   stopifnot(all(vapply(
     target_data[, ml$features, drop = FALSE],
-    function(x) is.numeric(x) || is.logical(x), logical(1)
-  )))
-  stopifnot(all(vapply(
-    ml$data[, ml$features, drop = FALSE],
     function(x) is.numeric(x) || is.logical(x), logical(1)
   )))
 
@@ -155,16 +139,81 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
   list(target_data = target_data)
 }
 
+#" Validate cat2cat ml
 #' @keywords internal
-cat2cat_ml_run <- function(ml, trans, ...) {
-  stopifnot(is.list(ml_setup))
-  stopifnot(is.list(trans))
-  elargs <- list(...)
+validate_ml <- function(ml) {
+  stopifnot(all(c("method", "features", "data") %in% names(ml)))
+  stopifnot(all(ml$method %in% c("knn", "rf", "lda")))
 
+  if ("rf" %in% ml$method) {
+    delayed_package_load("randomForest", "rf")
+  }
+
+  if ("knn" %in% ml$method) {
+    delayed_package_load("caret", "knn")
+  }
+
+  stopifnot(ml$cat_var %in% colnames(ml$data))
+  stopifnot(all(ml$features %in% colnames(ml$data)))
+  stopifnot(all(vapply(
+    ml$data[, ml$features, drop = FALSE],
+    function(x) is.numeric(x) || is.logical(x), logical(1)
+  )))
+}
+
+#" Delayed load of a package
+#' @keywords internal
+delayed_package_load <- function(package, name) {
+  if (isFALSE(suppressPackageStartupMessages(requireNamespace(package, quietly = TRUE)))) {
+    stop(
+      sprintf(
+        "Please install %s package to use the %s model in the cat2cat function.",
+        package, name
+      )
+    )
+  }
+}
+
+
+#' @keywords internal
+#' @examples
+#' \dontrun{
+#' library("cat2cat")
+#' data("occup", package = "cat2cat")
+#' data("trans", package = "cat2cat")
+#'
+#' occup_2006 <- occup[occup$year == 2006,]
+#' occup_2008 <- occup[occup$year == 2008,]
+#' occup_2010 <- occup[occup$year == 2010,]
+#' occup_2012 <- occup[occup$year == 2012,]
+#'
+#' library("caret")
+#' ml_setup <- list(
+#'   data = occup_2010,
+#'   cat_var = "code",
+#'   method = c("knn", "rf", "lda"),
+#'   features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+#'   args = list(k = 10, ntree = 50)
+#' )
+#' data <- list(
+#'   old = occup_2008, new = occup_2010,
+#'   cat_var_old = "code", cat_var_new = "code", time_var = "year"
+#' )
+#' mappings <- list(trans = trans, direction = "backward")
+#' res <- cat2cat_ml_run( mappings, ml_setup, test_prop = 0.2)
+#' mean(unlist(res), na.rm = TRUE)
+#' sum(is.na(res)) / length(res)
+#' }
+#'
+cat2cat_ml_run <- function(mappings, ml, ...) {
+  stopifnot(is.list(ml))
+  stopifnot(is.list(mappings))
+  elargs <- list(...)
+  if (is.null(elargs$test_prop)) elargs$test_prop <- 0.2
   stopifnot(elargs$test_prop > 0 && elargs$test_prop < 1)
 
-  validate_data(data)
   validate_mappings(mappings)
+  validate_ml(ml)
 
   mapps <- get_mappings(mappings$trans)
 
@@ -180,20 +229,85 @@ cat2cat_ml_run <- function(ml, trans, ...) {
 
   #train, test split
   nobs <- nrow(ml$data)
-  index_tt <- sample(c(0, 1), nobs, prob = c(1 - test_prop, test_prop))
-  data_test <- ml$data[index_tt == 1, ]
-  data_train <- ml$data[index_tt == 0, ]
 
-  #on train
-  ml$data <- data_train
+  features <- unique(ml$features)
+  methods <- unique(ml$method)
 
-  ml_results <- cat2cat_ml(
-    ml = ml,
-    mapp = mapp,
-    target_data = data_test,
-    cat_var_target = ml$cat_var_target
+  train_g <- split(
+    ml$data[, c(features, ml$cat_var), drop = FALSE],
+    factor(ml$data[[ml$cat_var]], exclude = NULL)
   )
 
-  #providate performance on test
+  res <- list()
+  res_dummy <- list()
+  for (cat in unique(names(mapp))) {
+    try(
+      {
+        matched_cat <- mapp[[match(cat, names(mapp))]]
+        res_dummy <- c(list(1/length(matched_cat)), res_dummy)
+        data_small_g <- do.call(rbind, train_g[matched_cat])
 
+        if (isTRUE(is.null(data_small_g) || nrow(data_small_g) < 5 || length(matched_cat) < 2)) {
+          res <- c(list(NA), res)
+          next
+        }
+
+        index_tt <- sample(c(0, 1), nrow(data_small_g), prob = c(1 - elargs$test_prop, elargs$test_prop), replace = TRUE)
+        data_test_small <- data_small_g[index_tt == 1, ]
+        data_train_small <- data_small_g[index_tt == 0, ]
+
+        if (isTRUE(nrow(data_test_small) == 0 || nrow(data_train_small) < 5)) {
+          res <- c(list(NA), res)
+          next
+        }
+
+          cc <- complete.cases(data_test_small[, features])
+
+          for (m in methods) {
+
+            ml_name <- paste0("wei_", m, "_c2c")
+
+            if (m == "knn") {
+              group_prediction <- suppressWarnings(
+                caret::knn3(
+                  x = data_train_small[, features, drop = FALSE],
+                  y = factor(data_train_small[[ml$cat_var]]),
+                  k = min(ml$args$k, ceiling(nrow(data_train_small) / 4))
+                )
+              )
+              pred <- stats::predict(
+                group_prediction,
+                data_test_small[cc, features, drop = FALSE], type = "class"
+              )
+            } else if (m == "rf") {
+              group_prediction <- suppressWarnings(
+                randomForest::randomForest(
+                  y = factor(data_train_small[[ml$cat_var]]),
+                  x = data_train_small[, features, drop = FALSE],
+                  ntree = min(ml$args$ntree, 100)
+                )
+              )
+              pred <- stats::predict(
+                group_prediction,
+                data_test_small[cc, features, drop = FALSE]
+              )
+            } else if (m == "lda") {
+              group_prediction <- suppressWarnings(
+                MASS::lda(
+                  grouping = factor(data_train_small[[ml$cat_var]]),
+                  x = as.matrix(data_train_small[, features, drop = FALSE])
+                )
+              )
+                pred <- stats::predict(
+                  group_prediction,
+                  as.matrix(data_test_small[cc, features, drop = FALSE])
+                )$class
+            }
+          }
+          res <- c(list(mean(pred == data_test_small[[ml$cat_var]])), res)
+      }, silent = TRUE
+    )
+  }
+
+  list(res, res_dummy)
 }

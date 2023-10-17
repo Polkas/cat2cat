@@ -382,16 +382,3 @@ validate_mappings <- function(mappings) {
   stopifnot(isTRUE(mappings$direction %in% c("forward", "backward")))
   stopifnot(is.data.frame(mappings$trans) && ncol(mappings$trans) == 2)
 }
-
-#" Delayed load of a package
-#' @keywords internal
-delayed_package_load <- function(package, name) {
-  if (isFALSE(suppressPackageStartupMessages(requireNamespace(package, quietly = TRUE)))) {
-    stop(
-      sprintf(
-        "Please install %s package to use the %s model in the cat2cat function.",
-        package, name
-      )
-    )
-  }
-}
