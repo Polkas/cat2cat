@@ -202,9 +202,15 @@ delayed_package_load <- function(package, name) {
 #' mappings <- list(trans = trans, direction = "backward")
 #' res <- cat2cat_ml_run( mappings, ml_setup, test_prop = 0.2)
 #' # Average accurecy - please take into account it is multi-level classification
-#' mean(unlist(lapply(res, function(x) x$acc)), na.rm = T)
-#' # How often accurecy is bigger than naive guess
-#' mean(unlist(lapply(res, function(x) x$naive < x$acc)), na.rm = T)
+#' mean(unlist(lapply(res, function(x) x$acc['knn'])), na.rm = T)
+#' mean(unlist(lapply(res, function(x) x$acc['rf'])), na.rm = T)
+#' mean(unlist(lapply(res, function(x) x$acc['lda'])), na.rm = T)
+#' mean(unlist(lapply(res, function(x) x$freq)), na.rm = T)
+#' mean(unlist(lapply(res, function(x) x$naive)), na.rm = T)
+#' # How often ml models are better than naive guess (equal prob)
+#' mean(unlist(lapply(res, function(x) x$naive < mean(x$acc, na.rm = TRUE))), na.rm = T)
+#' # How often most frequent category solution is bigger than ml models
+#' mean(unlist(lapply(res, function(x) x$freq < mean(x$acc, na.rm = TRUE))), na.rm = T)
 #' }
 #'
 cat2cat_ml_run <- function(mappings, ml, ...) {
@@ -262,6 +268,11 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
         data_test_small <- data_small_g[index_tt == 1, ]
         data_train_small <- data_small_g[index_tt == 0, ]
 
+        gcounts <- table(data_train_small[[ml$cat_var]])
+        gfreq <- names(gcounts)[which.max(gcounts)]
+
+        res[[g_name]][["freq"]] <- mean(gfreq == data_test_small[[ml$cat_var]])
+
         if (isTRUE(nrow(data_test_small) == 0 || nrow(data_train_small) < 5)) {
           next
         }
@@ -284,6 +295,8 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
                 group_prediction,
                 data_test_small[cc, features, drop = FALSE], type = "class"
               )
+              res[[g_name]][["acc"]]["knn"] <- mean(pred == data_test_small[[ml$cat_var]])
+
             } else if (m == "rf") {
               group_prediction <- suppressWarnings(
                 randomForest::randomForest(
@@ -296,6 +309,7 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
                 group_prediction,
                 data_test_small[cc, features, drop = FALSE]
               )
+              res[[g_name]][["acc"]]["rf"] <- mean(pred == data_test_small[[ml$cat_var]])
             } else if (m == "lda") {
               group_prediction <- suppressWarnings(
                 MASS::lda(
@@ -307,9 +321,10 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
                   group_prediction,
                   as.matrix(data_test_small[cc, features, drop = FALSE])
                 )$class
+                res[[g_name]][["acc"]]["lda"] <- mean(pred == data_test_small[[ml$cat_var]])
+
             }
           }
-          res[[g_name]][["acc"]] <- mean(pred == data_test_small[[ml$cat_var]])
 
       }, silent = TRUE
     )
