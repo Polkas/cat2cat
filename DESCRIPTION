@@ -31,5 +31,5 @@ Suggests:
     webshot
 LazyData: true
 VignetteBuilder: knitr
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Config/testthat/edition: 3

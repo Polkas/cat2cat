@@ -176,6 +176,7 @@ delayed_package_load <- function(package, name) {
 
 
 #' @keywords internal
+#' @export
 #' @examples
 #' \dontrun{
 #' library("cat2cat")
@@ -189,7 +190,7 @@ delayed_package_load <- function(package, name) {
 #'
 #' library("caret")
 #' ml_setup <- list(
-#'   data = occup_2010,
+#'   data = rbind(occup_2010, occup_2012),
 #'   cat_var = "code",
 #'   method = c("knn", "rf", "lda"),
 #'   features = c("age", "sex", "edu", "exp", "parttime", "salary"),
@@ -200,17 +201,8 @@ delayed_package_load <- function(package, name) {
 #'   cat_var_old = "code", cat_var_new = "code", time_var = "year"
 #' )
 #' mappings <- list(trans = trans, direction = "backward")
-#' res <- cat2cat_ml_run( mappings, ml_setup, test_prop = 0.2)
-#' # Average accurecy - please take into account it is multi-level classification
-#' mean(unlist(lapply(res, function(x) x$acc['knn'])), na.rm = T)
-#' mean(unlist(lapply(res, function(x) x$acc['rf'])), na.rm = T)
-#' mean(unlist(lapply(res, function(x) x$acc['lda'])), na.rm = T)
-#' mean(unlist(lapply(res, function(x) x$freq)), na.rm = T)
-#' mean(unlist(lapply(res, function(x) x$naive)), na.rm = T)
-#' # How often ml models are better than naive guess (equal prob)
-#' mean(unlist(lapply(res, function(x) x$naive < mean(x$acc, na.rm = TRUE))), na.rm = T)
-#' # How often most frequent category solution is bigger than ml models
-#' mean(unlist(lapply(res, function(x) x$freq < mean(x$acc, na.rm = TRUE))), na.rm = T)
+#' res <- cat2cat_ml_run(mappings, ml_setup, test_prop = 0.2)
+#' res
 #' }
 #'
 cat2cat_ml_run <- function(mappings, ml, ...) {
@@ -255,14 +247,14 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
         g_name <- paste(matched_cat, collapse = "&")
         res[[g_name]][["ncat"]] <- length(matched_cat)
         res[[g_name]][["naive"]] <- 1 / length(matched_cat)
-        res[[g_name]][["acc"]] <- NA
+        res[[g_name]][["acc"]] <- NA_real_
+        res[[g_name]][["freq"]]  <- NA_real_
 
         data_small_g <- do.call(rbind, train_g[matched_cat])
 
-        if (isTRUE(is.null(data_small_g) || nrow(data_small_g) < 5 || length(matched_cat) < 2)) {
+        if (isTRUE(is.null(data_small_g) || nrow(data_small_g) < 5 || length(matched_cat) < 2 || sum(matched_cat %in% data_small_g[[ml$cat_var]]) == 1)) {
           next
         }
-
 
         index_tt <- sample(c(0, 1), nrow(data_small_g), prob = c(1 - elargs$test_prop, elargs$test_prop), replace = TRUE)
         data_test_small <- data_small_g[index_tt == 1, ]
@@ -274,6 +266,10 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
         res[[g_name]][["freq"]] <- mean(gfreq == data_test_small[[ml$cat_var]])
 
         if (isTRUE(nrow(data_test_small) == 0 || nrow(data_train_small) < 5)) {
+          next
+        }
+
+        if (isFALSE(sum(matched_cat %in% data_train_small[[ml$cat_var]]) > 1)) {
           next
         }
 
@@ -330,5 +326,56 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
     )
   }
 
-  res
+  invisible(structure(res, ml_models = methods, class = c("cat2cat_ml_run", "list")))
+}
+
+
+#' @export
+print.cat2cat_ml_run <- function(x, ...) {
+  # Average accurecy - please take into account it is multi-level classification
+  ml_models <- attr(x, "ml_models")
+
+  ml_message <- NULL
+  how_ml_message_n <- NULL
+  how_ml_message_f <- NULL
+  na_message <- NULL
+  for (m in ml_models) {
+    acc <- mean(vapply(x, function(i) i$acc[m], numeric(1)), na.rm = T)
+    ml_message <- c(ml_message,
+                     sprintf("Average (groups) accurecy for %s ml models: %f", m, acc))
+    howaccn <- mean(vapply(x, function(i) i$naive < mean(i$acc[m], na.rm = TRUE), numeric(1)), na.rm = T)
+    how_ml_message_n <- c(how_ml_message_n,
+                        sprintf("How often %s ml model is better than naive guess: %f", m, howaccn))
+    howaccf <- mean(vapply(x, function(i) i$freq < mean(i$acc[m], na.rm = TRUE), numeric(1)), na.rm = T)
+    how_ml_message_f <- c(how_ml_message_f,
+                        sprintf("How often %s ml model is better than most frequent category solution: %f", m, howaccf))
+    nna <- vapply(x, function(i) is.na(i$acc[m]), logical(1))
+    pna <- sum(nna) / length(nna) * 100
+    na_message <- c(na_message,
+                    sprintf("Percent of failed %s ml models: %f", m, pna))
+  }
+
+  acc_freq <- mean(vapply(x, function(i) i$freq, numeric(1)), na.rm = T)
+  acc_naive <- mean(vapply(x, function(i) i$naive, numeric(1)), na.rm = T)
+
+  ml_over_freq <- mean(vapply(x, function(i) i$freq < mean(i$acc, na.rm = TRUE), numeric(1)), na.rm = T)
+  cat(
+   paste(
+     c(
+       "Selected prediction stats:",
+       "",
+       sprintf("Average naive (equal probabilities) guess: %f", acc_naive),
+       sprintf("Average (groups) accurecy for most frequent category solution: %f", acc_freq),
+       ml_message,
+       "",
+       na_message,
+       "",
+       how_ml_message_n,
+       "",
+       how_ml_message_f
+       ),
+     collapse = "\n"
+   ),
+   "\n"
+  )
 }
