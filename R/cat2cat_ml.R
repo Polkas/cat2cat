@@ -47,9 +47,9 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
         }
         if (
           length(unique(target_data_cat$g_new_c2c)) > 1 &&
-          length(udc) >= 1 &&
-          nrow(target_data_cat) > 0 &&
-          any(unique(target_data_cat$g_new_c2c) %in% names(cat_ml_year_g))
+            length(udc) >= 1 &&
+            nrow(target_data_cat) > 0 &&
+            any(unique(target_data_cat$g_new_c2c) %in% names(cat_ml_year_g))
         ) {
           base_ml <-
             target_data_cat[
@@ -59,7 +59,6 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
           cc <- complete.cases(base_ml[, features])
 
           for (m in methods) {
-
             ml_name <- paste0("wei_", m, "_c2c")
 
             if (m == "knn") {
@@ -139,7 +138,7 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
   list(target_data = target_data)
 }
 
-#" Validate cat2cat ml
+# " Validate cat2cat ml
 #' @keywords internal
 validate_ml <- function(ml) {
   stopifnot(all(c("method", "features", "data") %in% names(ml)))
@@ -161,7 +160,7 @@ validate_ml <- function(ml) {
   )))
 }
 
-#" Delayed load of a package
+# " Delayed load of a package
 #' @keywords internal
 delayed_package_load <- function(package, name) {
   if (isFALSE(suppressPackageStartupMessages(requireNamespace(package, quietly = TRUE)))) {
@@ -190,10 +189,10 @@ delayed_package_load <- function(package, name) {
 #' data("occup", package = "cat2cat")
 #' data("trans", package = "cat2cat")
 #'
-#' occup_2006 <- occup[occup$year == 2006,]
-#' occup_2008 <- occup[occup$year == 2008,]
-#' occup_2010 <- occup[occup$year == 2010,]
-#' occup_2012 <- occup[occup$year == 2012,]
+#' occup_2006 <- occup[occup$year == 2006, ]
+#' occup_2008 <- occup[occup$year == 2008, ]
+#' occup_2010 <- occup[occup$year == 2010, ]
+#' occup_2012 <- occup[occup$year == 2012, ]
 #'
 #' library("caret")
 #' ml_setup <- list(
@@ -236,17 +235,17 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
   cat_var_vals <- unlist(mappings$trans[, base_name])
   if (sum(cat_var %in% cat_var_vals) / length(cat_var) < elargs$min_match) {
     stop(
-      paste0("There is no mappings to group the cat_var variable.\n",
-             "Probably you should change the direction in the mappings argument.\n")
+      paste0(
+        "There is no mappings to group the cat_var variable.\n",
+        "Probably you should change the direction in the mappings argument.\n"
+      )
     )
   }
 
   mapps <- get_mappings(mappings$trans)
   mapp <- mapps[[paste0("to_", base_name)]]
 
-  #train, test split
   nobs <- nrow(ml$data)
-
   features <- unique(ml$features)
   methods <- unique(ml$method)
 
@@ -259,13 +258,12 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
   for (cat in unique(names(mapp))) {
     try(
       {
-
         matched_cat <- mapp[[match(cat, names(mapp))]]
         g_name <- paste(matched_cat, collapse = "&")
         res[[g_name]][["ncat"]] <- length(matched_cat)
         res[[g_name]][["naive"]] <- 1 / length(matched_cat)
         res[[g_name]][["acc"]] <- NA_real_
-        res[[g_name]][["freq"]]  <- NA_real_
+        res[[g_name]][["freq"]] <- NA_real_
 
         data_small_g <- do.call(rbind, train_g[matched_cat])
 
@@ -285,61 +283,58 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
         if (isTRUE(nrow(data_test_small) == 0 || nrow(data_train_small) < 5)) {
           next
         }
-
         if (isFALSE(sum(matched_cat %in% data_train_small[[ml$cat_var]]) > 1)) {
           next
         }
 
-          cc <- complete.cases(data_test_small[, features])
+        cc <- complete.cases(data_test_small[, features])
 
-          for (m in methods) {
+        for (m in methods) {
+          ml_name <- paste0("wei_", m, "_c2c")
 
-            ml_name <- paste0("wei_", m, "_c2c")
-
-            if (m == "knn") {
-              group_prediction <- suppressWarnings(
-                caret::knn3(
-                  x = data_train_small[, features, drop = FALSE],
-                  y = factor(data_train_small[[ml$cat_var]]),
-                  k = min(ml$args$k, ceiling(nrow(data_train_small) / 4))
-                )
+          if (m == "knn") {
+            group_prediction <- suppressWarnings(
+              caret::knn3(
+                x = data_train_small[, features, drop = FALSE],
+                y = factor(data_train_small[[ml$cat_var]]),
+                k = min(ml$args$k, ceiling(nrow(data_train_small) / 4))
               )
-              pred <- stats::predict(
-                group_prediction,
-                data_test_small[cc, features, drop = FALSE], type = "class"
+            )
+            pred <- stats::predict(
+              group_prediction,
+              data_test_small[cc, features, drop = FALSE],
+              type = "class"
+            )
+            res[[g_name]][["acc"]]["knn"] <- mean(pred == data_test_small[[ml$cat_var]])
+          } else if (m == "rf") {
+            group_prediction <- suppressWarnings(
+              randomForest::randomForest(
+                y = factor(data_train_small[[ml$cat_var]]),
+                x = data_train_small[, features, drop = FALSE],
+                ntree = min(ml$args$ntree, 100)
               )
-              res[[g_name]][["acc"]]["knn"] <- mean(pred == data_test_small[[ml$cat_var]])
-
-            } else if (m == "rf") {
-              group_prediction <- suppressWarnings(
-                randomForest::randomForest(
-                  y = factor(data_train_small[[ml$cat_var]]),
-                  x = data_train_small[, features, drop = FALSE],
-                  ntree = min(ml$args$ntree, 100)
-                )
+            )
+            pred <- stats::predict(
+              group_prediction,
+              data_test_small[cc, features, drop = FALSE]
+            )
+            res[[g_name]][["acc"]]["rf"] <- mean(pred == data_test_small[[ml$cat_var]])
+          } else if (m == "lda") {
+            group_prediction <- suppressWarnings(
+              MASS::lda(
+                grouping = factor(data_train_small[[ml$cat_var]]),
+                x = as.matrix(data_train_small[, features, drop = FALSE])
               )
-              pred <- stats::predict(
-                group_prediction,
-                data_test_small[cc, features, drop = FALSE]
-              )
-              res[[g_name]][["acc"]]["rf"] <- mean(pred == data_test_small[[ml$cat_var]])
-            } else if (m == "lda") {
-              group_prediction <- suppressWarnings(
-                MASS::lda(
-                  grouping = factor(data_train_small[[ml$cat_var]]),
-                  x = as.matrix(data_train_small[, features, drop = FALSE])
-                )
-              )
-                pred <- stats::predict(
-                  group_prediction,
-                  as.matrix(data_test_small[cc, features, drop = FALSE])
-                )$class
-                res[[g_name]][["acc"]]["lda"] <- mean(pred == data_test_small[[ml$cat_var]])
-
-            }
+            )
+            pred <- stats::predict(
+              group_prediction,
+              as.matrix(data_test_small[cc, features, drop = FALSE])
+            )$class
+            res[[g_name]][["acc"]]["lda"] <- mean(pred == data_test_small[[ml$cat_var]])
           }
-
-      }, silent = TRUE
+        }
+      },
+      silent = TRUE
     )
   }
 
@@ -358,18 +353,26 @@ print.cat2cat_ml_run <- function(x, ...) {
   na_message <- NULL
   for (m in ml_models) {
     acc <- mean(vapply(x, function(i) i$acc[m], numeric(1)), na.rm = T)
-    ml_message <- c(ml_message,
-                     sprintf("Average (groups) accurecy for %s ml models: %f", m, acc))
+    ml_message <- c(
+      ml_message,
+      sprintf("Average (groups) accurecy for %s ml models: %f", m, acc)
+    )
     howaccn <- mean(vapply(x, function(i) i$naive < mean(i$acc[m], na.rm = TRUE), numeric(1)), na.rm = T)
-    how_ml_message_n <- c(how_ml_message_n,
-                        sprintf("How often %s ml model is better than naive guess: %f", m, howaccn))
+    how_ml_message_n <- c(
+      how_ml_message_n,
+      sprintf("How often %s ml model is better than naive guess: %f", m, howaccn)
+    )
     howaccf <- mean(vapply(x, function(i) i$freq < mean(i$acc[m], na.rm = TRUE), numeric(1)), na.rm = T)
-    how_ml_message_f <- c(how_ml_message_f,
-                        sprintf("How often %s ml model is better than most frequent category solution: %f", m, howaccf))
+    how_ml_message_f <- c(
+      how_ml_message_f,
+      sprintf("How often %s ml model is better than most frequent category solution: %f", m, howaccf)
+    )
     nna <- vapply(x, function(i) is.na(i$acc[m]), logical(1))
     pna <- sum(nna) / length(nna) * 100
-    na_message <- c(na_message,
-                    sprintf("Percent of failed %s ml models: %f", m, pna))
+    na_message <- c(
+      na_message,
+      sprintf("Percent of failed %s ml models: %f", m, pna)
+    )
   }
 
   acc_freq <- mean(vapply(x, function(i) i$freq, numeric(1)), na.rm = T)
@@ -377,22 +380,22 @@ print.cat2cat_ml_run <- function(x, ...) {
 
   ml_over_freq <- mean(vapply(x, function(i) i$freq < mean(i$acc, na.rm = TRUE), numeric(1)), na.rm = T)
   cat(
-   paste(
-     c(
-       "Selected prediction stats:",
-       "",
-       sprintf("Average naive (equal probabilities) guess: %f", acc_naive),
-       sprintf("Average (groups) accurecy for most frequent category solution: %f", acc_freq),
-       ml_message,
-       "",
-       na_message,
-       "",
-       how_ml_message_n,
-       "",
-       how_ml_message_f
-       ),
-     collapse = "\n"
-   ),
-   "\n"
+    paste(
+      c(
+        "Selected prediction stats:",
+        "",
+        sprintf("Average naive (equal probabilities) guess: %f", acc_naive),
+        sprintf("Average (groups) accurecy for most frequent category solution: %f", acc_freq),
+        ml_message,
+        "",
+        na_message,
+        "",
+        how_ml_message_n,
+        "",
+        how_ml_message_f
+      ),
+      collapse = "\n"
+    ),
+    "\n"
   )
 }

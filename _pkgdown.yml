@@ -3,6 +3,8 @@ reference:
 - contents:
   - cat2cat
   - cat2cat_agg
+- title: cat2cat ml functions
+- contents:
   - cat2cat_ml_run
 - title: Datasets
 - contents:
