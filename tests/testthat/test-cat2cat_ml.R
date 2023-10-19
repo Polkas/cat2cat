@@ -21,11 +21,21 @@ data <- list(
   old = occup_2008, new = occup_2010,
   cat_var_old = "code", cat_var_new = "code", time_var = "year"
 )
-mappings <- list(trans = trans, direction = "backward")
 
 testthat::test_that("cat2cat_ml_run", {
+  mappings <- list(trans = trans, direction = "backward")
+
   res <- cat2cat_ml_run(mappings, ml_setup, test_prop = 0.2)
   testthat::expect_s3_class(res, c("cat2cat_ml_run", "list"))
   testthat::expect_output(print(res), "Selected prediction stats:")
   testthat::expect_output(print(res), "Percent of failed knn ml models: 32.73")
+})
+
+testthat::test_that("cat2cat_ml_run wrong direction", {
+  mappings <- list(trans = trans, direction = "forward")
+
+  testthat::expect_error(
+    cat2cat_ml_run(mappings, ml_setup, test_prop = 0.2),
+    "There is no mappings to group the cat_var variable"
+  )
 })

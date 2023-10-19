@@ -174,8 +174,15 @@ delayed_package_load <- function(package, name) {
   }
 }
 
-
-#' @keywords internal
+#' Function to check cat2cat ml models performance
+#' @description ml and mappings arguments in \code{\link{cat2cat}} function can be used to run cross validation across all groups.
+#' @param ... additional options.
+#' \itemize{
+#'   \item{test_prop}{numeric(1) percent for test sample, Default 0.2}
+#'   \item{min_match}{numeric(1) minimal match for cat_var variable with mappings, Default 0.8}
+#' }
+#' @inheritParams cat2cat
+#' @seealso \code{\link{cat2cat}}
 #' @export
 #' @examples
 #' \dontrun{
@@ -210,12 +217,12 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
   stopifnot(is.list(mappings))
   elargs <- list(...)
   if (is.null(elargs$test_prop)) elargs$test_prop <- 0.2
-  stopifnot(elargs$test_prop > 0 && elargs$test_prop < 1)
+  stopifnot(length(elargs$test_prop) == 1 && elargs$test_prop > 0 && elargs$test_prop < 1)
+  if (is.null(elargs$min_match)) elargs$min_match <- 0.8
+  stopifnot(length(elargs$min_match) == 1 && elargs$min_match >= 0 && elargs$min_match < 1)
 
   validate_mappings(mappings)
   validate_ml(ml)
-
-  mapps <- get_mappings(mappings$trans)
 
   if (mappings$direction == "forward") {
     base_name <- "old"
@@ -225,6 +232,16 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
     target_name <- "old"
   }
 
+  cat_var <- ml$data[[ml$cat_var]]
+  cat_var_vals <- unlist(mappings$trans[, base_name])
+  if (sum(cat_var %in% cat_var_vals) / length(cat_var) < elargs$min_match) {
+    stop(
+      paste0("There is no mappings to group the cat_var variable.\n",
+             "Probably you should change the direction in the mappings argument.\n")
+    )
+  }
+
+  mapps <- get_mappings(mappings$trans)
   mapp <- mapps[[paste0("to_", base_name)]]
 
   #train, test split
