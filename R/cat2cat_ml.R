@@ -260,18 +260,20 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
       {
         matched_cat <- mapp[[match(cat, names(mapp))]]
         g_name <- paste(matched_cat, collapse = "&")
-        res[[g_name]][["ncat"]] <- length(matched_cat)
-        res[[g_name]][["naive"]] <- 1 / length(matched_cat)
-        res[[g_name]][["acc"]] <- NA_real_
-        res[[g_name]][["freq"]] <- NA_real_
+
+        res[[g_name]] <- list(ncat = length(matched_cat), naive = 1 / length(matched_cat),
+                              acc = stats::setNames(rep(NA_real_, length(methods)), methods), freq = NA_real_)
 
         data_small_g <- do.call(rbind, train_g[matched_cat])
 
-        if (isTRUE(is.null(data_small_g) || nrow(data_small_g) < 5 || length(matched_cat) < 2 || sum(matched_cat %in% data_small_g[[ml$cat_var]]) == 1)) {
+        if (isTRUE(is.null(data_small_g) || nrow(data_small_g) < 5 ||
+                   length(matched_cat) < 2 || sum(matched_cat %in% data_small_g[[ml$cat_var]]) == 1)) {
           next
         }
 
-        index_tt <- sample(c(0, 1), nrow(data_small_g), prob = c(1 - elargs$test_prop, elargs$test_prop), replace = TRUE)
+        index_tt <- sample(c(0, 1),
+                           nrow(data_small_g),
+                           prob = c(1 - elargs$test_prop, elargs$test_prop), replace = TRUE)
         data_test_small <- data_small_g[index_tt == 1, ]
         data_train_small <- data_small_g[index_tt == 0, ]
 
@@ -305,7 +307,6 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
               data_test_small[cc, features, drop = FALSE],
               type = "class"
             )
-            res[[g_name]][["acc"]]["knn"] <- mean(pred == data_test_small[[ml$cat_var]])
           } else if (m == "rf") {
             group_prediction <- suppressWarnings(
               randomForest::randomForest(
@@ -318,7 +319,6 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
               group_prediction,
               data_test_small[cc, features, drop = FALSE]
             )
-            res[[g_name]][["acc"]]["rf"] <- mean(pred == data_test_small[[ml$cat_var]])
           } else if (m == "lda") {
             group_prediction <- suppressWarnings(
               MASS::lda(
@@ -330,8 +330,8 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
               group_prediction,
               as.matrix(data_test_small[cc, features, drop = FALSE])
             )$class
-            res[[g_name]][["acc"]]["lda"] <- mean(pred == data_test_small[[ml$cat_var]])
           }
+          res[[g_name]][["acc"]][m] <- mean(pred == data_test_small[[ml$cat_var]])
         }
       },
       silent = TRUE

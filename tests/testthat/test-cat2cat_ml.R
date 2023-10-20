@@ -25,7 +25,11 @@ data <- list(
 testthat::test_that("cat2cat_ml_run", {
   mappings <- list(trans = trans, direction = "backward")
 
-  res <- cat2cat_ml_run(mappings, ml_setup, test_prop = 0.2)
+  set.seed(1234)
+  res <- cat2cat_ml_run(mappings, ml_setup)
+  set.seed(1234)
+  res2 <- cat2cat_ml_run(mappings, ml_setup, test_prop = 0.2)
+  testthat::expect_equal(res, res2)
   testthat::expect_s3_class(res, c("cat2cat_ml_run", "list"))
   testthat::expect_output(print(res), "Selected prediction stats:")
   testthat::expect_output(print(res), "Percent of failed knn ml models: 32.73")
