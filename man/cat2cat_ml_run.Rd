@@ -28,10 +28,10 @@ library("cat2cat")
 data("occup", package = "cat2cat")
 data("trans", package = "cat2cat")
 
-occup_2006 <- occup[occup$year == 2006,]
-occup_2008 <- occup[occup$year == 2008,]
-occup_2010 <- occup[occup$year == 2010,]
-occup_2012 <- occup[occup$year == 2012,]
+occup_2006 <- occup[occup$year == 2006, ]
+occup_2008 <- occup[occup$year == 2008, ]
+occup_2010 <- occup[occup$year == 2010, ]
+occup_2012 <- occup[occup$year == 2012, ]
 
 library("caret")
 ml_setup <- list(

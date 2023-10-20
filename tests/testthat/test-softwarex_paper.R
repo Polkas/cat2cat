@@ -137,7 +137,8 @@ testthat::test_that("Backward mapping, with four periods, one mapping table, and
   )
   testthat::expect_identical(
     colnames(final_data_back_ml),
-    c("id", "age", "sex", "edu", "exp", "district", "parttime", "salary",
+    c(
+      "id", "age", "sex", "edu", "exp", "district", "parttime", "salary",
       "code", "multiplier", "year", "code4", "index_c2c", "g_new_c2c",
       "wei_freq_c2c", "rep_c2c", "wei_naive_c2c", "wei_knn_c2c", "wei_rf_c2c"
     )
@@ -192,8 +193,8 @@ testthat::test_that("Counts for a few random levels in the unified variable over
         ),
         g_new_c2c_nams, year
       ),
-    sum
-  )
+      sum
+    )
   # Build counts across a 3 random categories table
   counts_base <-
     tidyr::pivot_wider(
@@ -235,36 +236,12 @@ testthat::test_that("Regression - neutral impact of the unified variable", {
     data = occup,
     weights = multiplier
   )
-  # Build a table with regression results
-  res_tab <- capture.output(stargazer::stargazer(
-    lms_replicated,
-    lms_original,
-    header = FALSE,
-    column.labels = c("replicated", "original"),
-    omit.stat = "adj.rsq",
-    label = "regression_res",
-    title = "Regressions for original and replicated data."
-  ))
 
-  testthat::expect_identical(
-    res_tab,
-    c("", "\\begin{table}[!htbp] \\centering ", "  \\caption{Regressions for original and replicated data.} ",
-      "  \\label{regression_res} ", "\\begin{tabular}{@{\\extracolsep{5pt}}lcc} ",
-      "\\\\[-1.8ex]\\hline ", "\\hline \\\\[-1.8ex] ", " & \\multicolumn{2}{c}{\\textit{Dependent variable:}} \\\\ ",
-      "\\cline{2-3} ", "\\\\[-1.8ex] & \\multicolumn{2}{c}{I(log(salary))} \\\\ ",
-      " & replicated & original \\\\ ", "\\\\[-1.8ex] & (1) & (2)\\\\ ",
-      "\\hline \\\\[-1.8ex] ", " sex & 0.254$^{***}$ & 0.254$^{***}$ \\\\ ",
-      "  & (0.004) & (0.004) \\\\ ", "  & & \\\\ ", " parttime & 1.964$^{***}$ & 1.964$^{***}$ \\\\ ",
-      "  & (0.009) & (0.009) \\\\ ", "  & & \\\\ ", " edu & $-$0.120$^{***}$ & $-$0.120$^{***}$ \\\\ ",
-      "  & (0.001) & (0.001) \\\\ ", "  & & \\\\ ", " exp & 0.020$^{***}$ & 0.020$^{***}$ \\\\ ",
-      "  & (0.001) & (0.001) \\\\ ", "  & & \\\\ ", " I(exp$\\hat{\\mkern6mu}$2) & $-$0.0002$^{***}$ & $-$0.0002$^{***}$ \\\\ ",
-      "  & (0.00001) & (0.00001) \\\\ ", "  & & \\\\ ", " Constant & 8.573$^{***}$ & 8.573$^{***}$ \\\\ ",
-      "  & (0.009) & (0.009) \\\\ ", "  & & \\\\ ", "\\hline \\\\[-1.8ex] ",
-      "Observations & 475,543 & 69,126 \\\\ ", "R$^{2}$ & 0.566 & 0.566 \\\\ ",
-      "Residual Std. Error (df = 69120) & 10.214 & 10.214 \\\\ ", "F Statistic (df = 5; 69120) & 18,019.060$^{***}$ & 18,019.060$^{***}$ \\\\ ",
-      "\\hline ", "\\hline \\\\[-1.8ex] ", "\\textit{Note:}  & \\multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\\\ ",
-      "\\end{tabular} ", "\\end{table} ")
-  )
+  summary_replicated <- suppressWarnings(summary(lms_replicated))
+  summary_original <- summary(lms_original)
+
+  testthat::expect_equal(summary_replicated$coefficients, summary_original$coefficients)
+  testthat::expect_equal(summary_replicated$r.squared, summary_original$r.squared)
 })
 
 testthat::test_that("Regression for each level in the unified variable", {
@@ -290,27 +267,21 @@ testthat::test_that("Regression for each level in the unified variable", {
       !is.null(lm)
     )
   # Regression results for the first group
-  res_tab <- capture.output(stargazer::stargazer(
-    regression_sep$lm[[1]],
-    header = FALSE,
-    label = "regression_sep",
-    title = "Regression for one of the unified vairable levels."
-  ))
-  testthat::expect_identical(
-    res_tab,
-    c("", "\\begin{table}[!htbp] \\centering ", "  \\caption{Regression for one of the unified vairable levels.} ",
-      "  \\label{regression_sep} ", "\\begin{tabular}{@{\\extracolsep{5pt}}lc} ",
-      "\\\\[-1.8ex]\\hline ", "\\hline \\\\[-1.8ex] ", " & \\multicolumn{1}{c}{\\textit{Dependent variable:}} \\\\ ",
-      "\\cline{2-2} ", "\\\\[-1.8ex] & I(log(salary)) \\\\ ", "\\hline \\\\[-1.8ex] ",
-      " sex & 0.515$^{***}$ \\\\ ", "  & (0.100) \\\\ ", "  & \\\\ ",
-      " parttime & 1.870$^{***}$ \\\\ ", "  & (0.496) \\\\ ", "  & \\\\ ",
-      " edu & $-$0.253$^{***}$ \\\\ ", "  & (0.071) \\\\ ", "  & \\\\ ",
-      " exp & 0.001 \\\\ ", "  & (0.018) \\\\ ", "  & \\\\ ", " I(exp$\\hat{\\mkern6mu}$2) & 0.0001 \\\\ ",
-      "  & (0.0004) \\\\ ", "  & \\\\ ", " Constant & 9.500$^{***}$ \\\\ ",
-      "  & (0.461) \\\\ ", "  & \\\\ ", "\\hline \\\\[-1.8ex] ", "Observations & 66 \\\\ ",
-      "R$^{2}$ & 0.601 \\\\ ", "Adjusted R$^{2}$ & 0.568 \\\\ ", "Residual Std. Error & 1.717 (df = 60) \\\\ ",
-      "F Statistic & 18.107$^{***}$ (df = 5; 60) \\\\ ", "\\hline ",
-      "\\hline \\\\[-1.8ex] ", "\\textit{Note:}  & \\multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\\\ ",
-      "\\end{tabular} ", "\\end{table} ")
+  summary_group <- summary(regression_sep$lm[[1]])
+
+  testthat::expect_equal(
+    round(summary_group$coefficients, 2),
+    structure(
+      c(
+        9.5, 0.52, 1.87, -0.25, 0, 0, 0.46, 0.1, 0.5, 0.07,
+        0.02, 0, 20.63, 5.17, 3.77, -3.55, 0.08, 0.29, 0, 0, 0, 0, 0.94,
+        0.77
+      ),
+      dim = c(6L, 4L),
+      dimnames = list(
+        c("(Intercept)", "sexTRUE", "parttime", "edu", "exp", "I(exp^2)"),
+        c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
+      )
+    )
   )
 })

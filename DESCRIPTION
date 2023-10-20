@@ -19,16 +19,12 @@ Suggests:
     caret,
     dplyr,
     forcats,
-    htmlwidgets,
     knitr,
     magrittr,
-    pacman,
     randomForest,
     rmarkdown,
-    stargazer,
     testthat (>= 3.0.0),
-    tidyr,
-    webshot
+    tidyr
 LazyData: true
 VignetteBuilder: knitr
 RoxygenNote: 7.2.3
