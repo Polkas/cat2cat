@@ -19,6 +19,28 @@ testthat::test_that("validate_mappings correct", {
 
 testthat::test_that("validate_data incorrect", {
   testthat::expect_error(validate_data(list()), 'inherits\\(data\\$old, "data.frame"\\) is not TRUE')
+
+  data_simple <- list(old = occup_old, new = occup_new, cat_var_old = "code", cat_var_new = "code", time_var = "WRONG")
+
+  testthat::expect_error(
+    validate_data(data_simple),
+    'all\\(c\\(data\\$cat_var_old, data\\$time_var\\) \\%in\\% colnames\\(data\\$old\\)\\) is not TRUE'
+  )
+
+  data_simple <- list(old = occup_old, new = occup_new, cat_var_old = "WRONG", cat_var_new = "code", time_var = "year")
+
+  testthat::expect_error(
+    validate_data(data_simple),
+    'all\\(c\\(data\\$cat_var_old, data\\$time_var\\) \\%in\\% colnames\\(data\\$old\\)\\) is not TRUE'
+  )
+
+  data_simple <- list(old = occup_old, new = occup_new, cat_var_old = "code", cat_var_new = "WRONG", time_var = "year")
+
+  testthat::expect_error(
+    validate_data(data_simple),
+    'all\\(c\\(data\\$cat_var_new, data\\$time_var\\) \\%in\\% colnames\\(data\\$new\\)\\) is not TRUE'
+  )
+
 })
 
 testthat::test_that("validate_data correct", {
