@@ -66,6 +66,7 @@ occup_2010 <- occup[occup$year == 2010,]
 occup_2012 <- occup[occup$year == 2012,]
 
 library("caret")
+
 ml_setup <- list(
   data = occup_2010,
   cat_var = "code",
@@ -74,13 +75,18 @@ ml_setup <- list(
   args = list(k = 10, ntree = 50)
 )
 
+mappings <- list(trans = trans, direction = "backward")
+
+# ml model performance check
+print(cat2cat_ml_run(mappings, ml_setup))
+
 # from 2010 to 2008
 occup_back_2008_2010 <- cat2cat(
   data = list(
     old = occup_2008, new = occup_2010, 
     cat_var_old = "code", cat_var_new = "code", time_var = "year"
   ),
-  mappings = list(trans = trans, direction = "backward"),
+  mappings = mappings,
   ml = ml_setup
 )
 
@@ -90,7 +96,7 @@ occup_back_2006_2008 <- cat2cat(
     old = occup_2006, new = occup_back_2008_2010$old,
     cat_var_new = "g_new_c2c", cat_var_old = "code", time_var = "year"
   ),
-  mappings = list(trans = trans, direction = "backward"),
+  mappings = mappings,
   ml = ml_setup
 )
 
