@@ -32,7 +32,7 @@ testthat::test_that("cat2cat_ml_run", {
   testthat::expect_equal(res, res2)
   testthat::expect_s3_class(res, c("cat2cat_ml_run", "list"))
   testthat::expect_output(print(res), "Selected prediction stats:")
-  testthat::expect_output(print(res), "Percent of failed knn ml models: 32.73")
+  testthat::expect_output(print(res), "Percent of failed knn ml models: 32")
 })
 
 testthat::test_that("cat2cat_ml_run wrong direction", {

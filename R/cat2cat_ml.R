@@ -145,11 +145,17 @@ validate_ml <- function(ml) {
   stopifnot(all(ml$method %in% c("knn", "rf", "lda")))
 
   if ("rf" %in% ml$method) {
-    delayed_package_load("randomForest", "rf")
+    delayed_package_load(
+      "randomForest",
+      sprintf("Please install %s package to use the %s model in the cat2cat function.", "randomForest", "rf")
+    )
   }
 
   if ("knn" %in% ml$method) {
-    delayed_package_load("caret", "knn")
+    delayed_package_load(
+      "caret",
+      sprintf("Please install %s package to use the %s model in the cat2cat function.", "caret", "knn")
+    )
   }
 
   stopifnot(ml$cat_var %in% colnames(ml$data))
@@ -162,14 +168,9 @@ validate_ml <- function(ml) {
 
 # " Delayed load of a package
 #' @keywords internal
-delayed_package_load <- function(package, name) {
+delayed_package_load <- function(package, msg = sprintf("Please install %s package.", package)) {
   if (isFALSE(suppressPackageStartupMessages(requireNamespace(package, quietly = TRUE)))) {
-    stop(
-      sprintf(
-        "Please install %s package to use the %s model in the cat2cat function.",
-        package, name
-      )
-    )
+    stop(msg)
   }
 }
 
@@ -283,9 +284,6 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
         res[[g_name]][["freq"]] <- mean(gfreq == data_test_small[[ml$cat_var]])
 
         if (isTRUE(nrow(data_test_small) == 0 || nrow(data_train_small) < 5)) {
-          next
-        }
-        if (isFALSE(sum(matched_cat %in% data_train_small[[ml$cat_var]]) > 1)) {
           next
         }
 
