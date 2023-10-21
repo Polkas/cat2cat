@@ -40,6 +40,7 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
         target_data_cat <- target_data_cat_c2c[[matched_cat]]
         dis <- do.call(rbind, cat_ml_year_g[mapp[[match(cat, names(mapp))]]])
         udc <- unique(dis[[ml$cat_var]])
+
         if (length(udc) <= 1) {
           target_data_cat_c2c[[matched_cat]][ml_names] <-
             target_data_cat$wei_freq_c2c
