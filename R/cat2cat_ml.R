@@ -176,15 +176,16 @@ delayed_package_load <- function(package, msg = sprintf("Please install %s packa
 }
 
 #' Function to check cat2cat ml models performance
-#' @description ml and mappings arguments in \code{\link{cat2cat}} function can be used to run cross validation across all groups.
+#' @description ml and mappings arguments in \code{\link{cat2cat}} function can be used to run cross validation across all groups in ml data.
 #' @param ... additional options.
 #' \itemize{
-#'   \item{test_prop}{numeric(1) percent for test sample, Default 0.2}
-#'   \item{min_match}{numeric(1) minimal match for cat_var variable with mappings, Default 0.8}
+#'   \item{test_prop}{ numeric(1) percent for test sample, Default 0.2}
+#'   \item{min_match}{ numeric(1) minimal match for cat_var variable with mappings, Default 0.5}
 #' }
 #' @inheritParams cat2cat
 #' @seealso \code{\link{cat2cat}}
 #' @export
+#' @rdname cat2cat_ml_run
 #' @examples
 #' \dontrun{
 #' library("cat2cat")
@@ -216,10 +217,11 @@ delayed_package_load <- function(package, msg = sprintf("Please install %s packa
 cat2cat_ml_run <- function(mappings, ml, ...) {
   stopifnot(is.list(ml))
   stopifnot(is.list(mappings))
+
   elargs <- list(...)
   if (is.null(elargs$test_prop)) elargs$test_prop <- 0.2
   stopifnot(length(elargs$test_prop) == 1 && elargs$test_prop > 0 && elargs$test_prop < 1)
-  if (is.null(elargs$min_match)) elargs$min_match <- 0.8
+  if (is.null(elargs$min_match)) elargs$min_match <- 0.5
   stopifnot(length(elargs$min_match) == 1 && elargs$min_match >= 0 && elargs$min_match < 1)
 
   validate_mappings(mappings)
@@ -341,6 +343,11 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
 }
 
 
+#' @rdname cat2cat_ml_run
+#' @param x cat2cat_ml_run instance created with \code{\link{cat2cat_ml_run}} function.
+#' @param ... other arguments
+#' @return argument x invisibly
+#' @method print cat2cat_ml_run
 #' @export
 print.cat2cat_ml_run <- function(x, ...) {
   # Average accurecy - please take into account it is multi-level classification
@@ -397,4 +404,5 @@ print.cat2cat_ml_run <- function(x, ...) {
     ),
     "\n"
   )
+  invisible(x)
 }

@@ -2,9 +2,12 @@
 % Please edit documentation in R/cat2cat_ml.R
 \name{cat2cat_ml_run}
 \alias{cat2cat_ml_run}
+\alias{print.cat2cat_ml_run}
 \title{Function to check cat2cat ml models performance}
 \usage{
 cat2cat_ml_run(mappings, ml, ...)
+
+\method{print}{cat2cat_ml_run}(x, ...)
 }
 \arguments{
 \item{mappings}{`named list` with 3 fields `trans`, `direction` and
@@ -13,14 +16,15 @@ optional `freqs_df`.}
 \item{ml}{`named list` (optional) with up to 5 fields
 `data`, `cat_var`, `method`, `features` and optional `args`.}
 
-\item{...}{additional options.
-\itemize{
-  \item{test_prop}{numeric(1) percent for test sample, Default 0.2}
-  \item{min_match}{numeric(1) minimal match for cat_var variable with mappings, Default 0.8}
-}}
+\item{...}{other arguments}
+
+\item{x}{cat2cat_ml_run instance created with \code{\link{cat2cat_ml_run}} function.}
+}
+\value{
+argument x invisibly
 }
 \description{
-ml and mappings arguments in \code{\link{cat2cat}} function can be used to run cross validation across all groups.
+ml and mappings arguments in \code{\link{cat2cat}} function can be used to run cross validation across all groups in ml data.
 }
 \examples{
 \dontrun{

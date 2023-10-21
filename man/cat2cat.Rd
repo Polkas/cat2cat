@@ -155,19 +155,26 @@ occup_simple <- cat2cat(
   mappings = list(trans = trans2, direction = "forward")
 )
 
-# additional probabilities from knn
-occup_ml <- cat2cat(
-  data = list(
-    old = occup_old, new = occup_new, cat_var = "code", time_var = "year"
-  ),
-  mappings = list(trans = trans, direction = "backward"),
-  ml = list(
+mappings <- list(trans = trans, direction = "backward")
+
+ml_setup <- list(
     data = occup_small[occup_small$year >= 2010, ],
     cat_var = "code",
     method = "knn",
     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
     args = list(k = 10)
-  )
+)
+
+# ml model performance check
+print(cat2cat_ml_run(mappings, ml_setup))
+
+# additional probabilities from knn
+occup_ml <- cat2cat(
+  data = list(
+    old = occup_old, new = occup_new, cat_var = "code", time_var = "year"
+  ),
+  mappings = mappings,
+  ml = ml_setup
 )
 }
 
