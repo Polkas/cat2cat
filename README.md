@@ -10,7 +10,9 @@ Unifying an inconsistent coded categorical variable in a panel/longtitudal datas
 There is offered the novel `cat2cat` procedure to map a categorical variable according to a mapping (transition) table between two different time points.
 The mapping (transition) table should to have a candidate for each category from the targeted for an update period. The main rule is to replicate the observation if it could be assigned to a few categories, then using simple frequencies or modern statistical methods to approximate probabilities of being assigned to each of them.
 
-**This algorithm was invented and implemented in the paper by (Nasinski, Majchrowska and Broniatowska (2020) <\doi:10.24425/cejeme.2020.134747>).**
+**This algorithm was invented and implemented in the paper by [(Nasinski, Majchrowska and Broniatowska (2020))](https://doi.org/10.24425/cejeme.2020.134747).**
+
+**For more details please read the paper by [(Nasinski, Gajowniczek (2023))](https://doi.org/10.1016/j.softx.2023.101525).**
 
 [**Please visit the cat2cat webpage for more information**](https://polkas.github.io/cat2cat/articles/cat2cat.html)
 
@@ -66,6 +68,7 @@ occup_2010 <- occup[occup$year == 2010,]
 occup_2012 <- occup[occup$year == 2012,]
 
 library("caret")
+
 ml_setup <- list(
   data = occup_2010,
   cat_var = "code",
@@ -74,13 +77,18 @@ ml_setup <- list(
   args = list(k = 10, ntree = 50)
 )
 
+mappings <- list(trans = trans, direction = "backward")
+
+# ml model performance check
+print(cat2cat_ml_run(mappings, ml_setup))
+
 # from 2010 to 2008
 occup_back_2008_2010 <- cat2cat(
   data = list(
     old = occup_2008, new = occup_2010, 
     cat_var_old = "code", cat_var_new = "code", time_var = "year"
   ),
-  mappings = list(trans = trans, direction = "backward"),
+  mappings = mappings,
   ml = ml_setup
 )
 
@@ -90,7 +98,7 @@ occup_back_2006_2008 <- cat2cat(
     old = occup_2006, new = occup_back_2008_2010$old,
     cat_var_new = "g_new_c2c", cat_var_old = "code", time_var = "year"
   ),
-  mappings = list(trans = trans, direction = "backward"),
+  mappings = mappings,
   ml = ml_setup
 )
 
