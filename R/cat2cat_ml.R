@@ -235,6 +235,9 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
     target_name <- "old"
   }
 
+  mapps <- get_mappings(mappings$trans)
+  mapp <- mapps[[paste0("to_", base_name)]]
+
   cat_var <- ml$data[[ml$cat_var]]
   cat_var_vals <- unlist(mappings$trans[, base_name])
   if (sum(cat_var %in% cat_var_vals) / length(cat_var) < elargs$min_match) {
@@ -246,10 +249,6 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
     )
   }
 
-  mapps <- get_mappings(mappings$trans)
-  mapp <- mapps[[paste0("to_", base_name)]]
-
-  nobs <- nrow(ml$data)
   features <- unique(ml$features)
   methods <- unique(ml$method)
 
@@ -286,15 +285,13 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
 
         res[[g_name]][["freq"]] <- mean(gfreq == data_test_small[[ml$cat_var]])
 
-        if (isTRUE(nrow(data_test_small) == 0 || nrow(data_train_small) < 5)) {
+        cc <- complete.cases(data_test_small[, features])
+
+        if (isTRUE(nrow(data_test_small[cc, ]) == 0 || nrow(data_train_small) < 5)) {
           next
         }
 
-        cc <- complete.cases(data_test_small[, features])
-
         for (m in methods) {
-          ml_name <- paste0("wei_", m, "_c2c")
-
           if (m == "knn") {
             group_prediction <- suppressWarnings(
               caret::knn3(
@@ -361,7 +358,7 @@ print.cat2cat_ml_run <- function(x, ...) {
     acc <- mean(vapply(x, function(i) i$acc[m], numeric(1)), na.rm = T)
     ml_message <- c(
       ml_message,
-      sprintf("Average (groups) accurecy for %s ml models: %f", m, acc)
+      sprintf("Average (groups) accuracy for %s ml models: %f", m, acc)
     )
     howaccn <- mean(vapply(x, function(i) i$naive < mean(i$acc[m], na.rm = TRUE), numeric(1)), na.rm = T)
     how_ml_message_n <- c(
@@ -391,7 +388,7 @@ print.cat2cat_ml_run <- function(x, ...) {
         "Selected prediction stats:",
         "",
         sprintf("Average naive (equal probabilities) guess: %f", acc_naive),
-        sprintf("Average (groups) accurecy for most frequent category solution: %f", acc_freq),
+        sprintf("Average (groups) accuracy for most frequent category solution: %f", acc_freq),
         ml_message,
         "",
         na_message,
