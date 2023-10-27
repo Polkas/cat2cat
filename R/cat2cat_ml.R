@@ -258,14 +258,13 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
   )
 
   res <- list()
-  for (cat in unique(names(mapp))) {
+  for (cat in names(mapp)) {
     try(
       {
         matched_cat <- mapp[[match(cat, names(mapp))]]
-        g_name <- paste(matched_cat, collapse = "&")
-
-        res[[g_name]] <- list(ncat = length(matched_cat), naive = 1 / length(matched_cat),
-                              acc = stats::setNames(rep(NA_real_, length(methods)), methods), freq = NA_real_)
+        cat_nam <- if (cat == "") " " else cat
+        res[[cat_nam]] <- list(naive = NA_real_,
+                               acc = stats::setNames(rep(NA_real_, length(methods)), methods), freq = NA_real_)
 
         data_small_g <- do.call(rbind, train_g[matched_cat])
 
@@ -274,22 +273,22 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
           next
         }
 
+        res[[cat_nam]][["naive"]] <- 1 / length(matched_cat)
+
         index_tt <- sample(c(0, 1),
                            nrow(data_small_g),
                            prob = c(1 - elargs$test_prop, elargs$test_prop), replace = TRUE)
         data_test_small <- data_small_g[index_tt == 1, ]
         data_train_small <- data_small_g[index_tt == 0, ]
-
-        gcounts <- table(data_train_small[[ml$cat_var]])
-        gfreq <- names(gcounts)[which.max(gcounts)]
-
-        res[[g_name]][["freq"]] <- mean(gfreq == data_test_small[[ml$cat_var]])
-
         cc <- complete.cases(data_test_small[, features])
 
         if (isTRUE(nrow(data_test_small[cc, ]) == 0 || nrow(data_train_small) < 5)) {
           next
         }
+
+        gcounts <- table(data_train_small[[ml$cat_var]])
+        gfreq <- names(gcounts)[which.max(gcounts)]
+        res[[cat_nam]][["freq"]] <- mean(gfreq == data_test_small[[ml$cat_var]])
 
         for (m in methods) {
           if (m == "knn") {
@@ -329,7 +328,7 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
               as.matrix(data_test_small[cc, features, drop = FALSE])
             )$class
           }
-          res[[g_name]][["acc"]][m] <- mean(pred == data_test_small[[ml$cat_var]])
+          res[[cat_nam]][["acc"]][m] <- mean(pred == data_test_small[[ml$cat_var]])
         }
       },
       silent = TRUE
