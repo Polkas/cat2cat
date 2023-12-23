@@ -129,13 +129,3 @@ all.equal(nrow(ff), sum(final_data_back$wei_freq_c2c))
 ```
 
 **More complex examples are presented in the "Get Started" vignette.**
-
-## Graph
-
-The graphs present how the `cat2cat::cat2cat` function works, in this case under a panel dataset without the unique identifiers and only two periods.
-
-![Backward Mapping](./man/figures/back_nom.png)
-
-![Forward Mapping](./man/figures/for_nom.png)
-
-
