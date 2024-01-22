@@ -7,10 +7,10 @@
 validate_cover_cats(u_cats_target, mapp)
 }
 \arguments{
+\item{u_cats_target}{vector of unique target period categories}
+
 \item{mapp}{transition (mapping) table process with `get_mappings`,
 the "to_base" direction is taken.}
-
-\item{cats_target}{vector of unique target period categories}
 }
 \description{
 Validate if the trans table contains all proper mappings

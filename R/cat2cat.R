@@ -24,7 +24,7 @@
 #' `data`, `cat_var`, `method`, `features` and optional `args`.
 #' @details
 #' data args
-#' \itemize{
+#' \describe{
 #'  \item{"old"}{ data.frame older time point in a panel}
 #'  \item{"new"} { data.frame more recent time point in a panel}
 #'  \item{"time_var"}{ character(1) name of the time variable.}
@@ -51,7 +51,7 @@
 #'  }
 #' }
 #' mappings args
-#' \itemize{
+#' \describe{
 #'  \item{"trans"}{ data.frame with 2 columns - mapping (transition) table -
 #'   all categories for cat_var in old and new datasets have to be included.
 #'   First column contains an old encoding and second a new one.
@@ -70,7 +70,7 @@
 #'  }
 #' }
 #' Optional ml args
-#' \itemize{
+#' \describe{
 #'  \item{"data"}{ data.frame - dataset with features and the `cat_var`.}
 #'  \item{"cat_var"}{ character(1) - the dependent variable name.}
 #'  \item{"method"}{
@@ -295,7 +295,7 @@ cat2cat <- function(data = list(
 }
 
 #' Validate if the trans table contains all proper mappings
-#' @param cats_target vector of unique target period categories
+#' @param u_cats_target vector of unique target period categories
 #' @param mapp transition (mapping) table process with `get_mappings`,
 #'  the "to_base" direction is taken.
 #' @keywords internal

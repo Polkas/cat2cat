@@ -37,7 +37,7 @@ created in the cat2cat procedure.
 }
 \details{
 method - specify a method to reduce number of replications
-\itemize{
+\describe{
  \item{"nonzero"}{ remove nonzero probabilities}
  \item{"highest"} {
  leave only highest probabilities for each subject- accepting ties

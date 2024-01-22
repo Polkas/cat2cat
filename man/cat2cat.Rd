@@ -53,7 +53,7 @@ of replications.
 }
 \details{
 data args
-\itemize{
+\describe{
  \item{"old"}{ data.frame older time point in a panel}
  \item{"new"} { data.frame more recent time point in a panel}
  \item{"time_var"}{ character(1) name of the time variable.}
@@ -80,7 +80,7 @@ data args
  }
 }
 mappings args
-\itemize{
+\describe{
  \item{"trans"}{ data.frame with 2 columns - mapping (transition) table -
   all categories for cat_var in old and new datasets have to be included.
   First column contains an old encoding and second a new one.
@@ -99,7 +99,7 @@ mappings args
  }
 }
 Optional ml args
-\itemize{
+\describe{
  \item{"data"}{ data.frame - dataset with features and the `cat_var`.}
  \item{"cat_var"}{ character(1) - the dependent variable name.}
  \item{"method"}{
