@@ -15,7 +15,7 @@
 #' @details data argument - list with fields
 #' \describe{
 #'  \item{"old"}{ data.frame older time point in the panel}
-#'  \item{"new"} { data.frame more recent time point in the panel}
+#'  \item{"new"}{ data.frame more recent time point in the panel}
 #'  \item{"cat_var"}{
 #'    character - deprecated - name of the categorical variable
 #'  }
