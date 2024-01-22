@@ -18,10 +18,10 @@
 #' method - specify a method to reduce number of replications
 #' \describe{
 #'  \item{"nonzero"}{ remove nonzero probabilities}
-#'  \item{"highest"} {
+#'  \item{"highest"}{
 #'  leave only highest probabilities for each subject- accepting ties
 #'  }
-#'  \item{"highest1"} {
+#'  \item{"highest1"}{
 #'  leave only highest probabilities for each subject -
 #'  not accepting ties so always one is returned
 #'  }

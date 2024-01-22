@@ -55,7 +55,7 @@ of replications.
 data args
 \describe{
  \item{"old"}{ data.frame older time point in a panel}
- \item{"new"} { data.frame more recent time point in a panel}
+ \item{"new"}{ data.frame more recent time point in a panel}
  \item{"time_var"}{ character(1) name of the time variable.}
  \item{"cat_var"}{ character(1) name of the categorical variable.}
  \item{"cat_var_old"}{
