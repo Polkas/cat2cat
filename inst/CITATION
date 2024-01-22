@@ -8,5 +8,5 @@ bibentry(
   volume = "24",
   pages = "101525",
   issn = "2352-7110",
-  doi = "https://doi.org/10.1016/j.softx.2023.101525",
+  doi = "10.1016/j.softx.2023.101525",
 )
