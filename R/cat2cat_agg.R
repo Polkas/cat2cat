@@ -13,7 +13,7 @@
 #' For the transparency the probability and number of replications are part of
 #' each observation in the `data.frame`.
 #' @details data argument - list with fields
-#' \itemize{
+#' \describe{
 #'  \item{"old"}{ data.frame older time point in the panel}
 #'  \item{"new"} { data.frame more recent time point in the panel}
 #'  \item{"cat_var"}{
