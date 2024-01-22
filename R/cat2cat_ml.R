@@ -235,6 +235,9 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
     target_name <- "old"
   }
 
+  mapps <- get_mappings(mappings$trans)
+  mapp <- mapps[[paste0("to_", base_name)]]
+
   cat_var <- ml$data[[ml$cat_var]]
   cat_var_vals <- unlist(mappings$trans[, base_name])
   if (sum(cat_var %in% cat_var_vals) / length(cat_var) < elargs$min_match) {
@@ -246,10 +249,6 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
     )
   }
 
-  mapps <- get_mappings(mappings$trans)
-  mapp <- mapps[[paste0("to_", base_name)]]
-
-  nobs <- nrow(ml$data)
   features <- unique(ml$features)
   methods <- unique(ml$method)
 
@@ -259,14 +258,13 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
   )
 
   res <- list()
-  for (cat in unique(names(mapp))) {
+  for (cat in names(mapp)) {
     try(
       {
         matched_cat <- mapp[[match(cat, names(mapp))]]
-        g_name <- paste(matched_cat, collapse = "&")
-
-        res[[g_name]] <- list(ncat = length(matched_cat), naive = 1 / length(matched_cat),
-                              acc = stats::setNames(rep(NA_real_, length(methods)), methods), freq = NA_real_)
+        cat_nam <- if (cat == "") " " else cat
+        res[[cat_nam]] <- list(naive = NA_real_,
+                               acc = stats::setNames(rep(NA_real_, length(methods)), methods), freq = NA_real_)
 
         data_small_g <- do.call(rbind, train_g[matched_cat])
 
@@ -275,26 +273,24 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
           next
         }
 
+        res[[cat_nam]][["naive"]] <- 1 / length(matched_cat)
+
         index_tt <- sample(c(0, 1),
                            nrow(data_small_g),
                            prob = c(1 - elargs$test_prop, elargs$test_prop), replace = TRUE)
         data_test_small <- data_small_g[index_tt == 1, ]
         data_train_small <- data_small_g[index_tt == 0, ]
+        cc <- complete.cases(data_test_small[, features])
 
-        gcounts <- table(data_train_small[[ml$cat_var]])
-        gfreq <- names(gcounts)[which.max(gcounts)]
-
-        res[[g_name]][["freq"]] <- mean(gfreq == data_test_small[[ml$cat_var]])
-
-        if (isTRUE(nrow(data_test_small) == 0 || nrow(data_train_small) < 5)) {
+        if (isTRUE(nrow(data_test_small[cc, ]) == 0 || nrow(data_train_small) < 5)) {
           next
         }
 
-        cc <- complete.cases(data_test_small[, features])
+        gcounts <- table(data_train_small[[ml$cat_var]])
+        gfreq <- names(gcounts)[which.max(gcounts)]
+        res[[cat_nam]][["freq"]] <- mean(gfreq == data_test_small[[ml$cat_var]])
 
         for (m in methods) {
-          ml_name <- paste0("wei_", m, "_c2c")
-
           if (m == "knn") {
             group_prediction <- suppressWarnings(
               caret::knn3(
@@ -332,7 +328,7 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
               as.matrix(data_test_small[cc, features, drop = FALSE])
             )$class
           }
-          res[[g_name]][["acc"]][m] <- mean(pred == data_test_small[[ml$cat_var]])
+          res[[cat_nam]][["acc"]][m] <- mean(pred == data_test_small[[ml$cat_var]])
         }
       },
       silent = TRUE
@@ -361,7 +357,7 @@ print.cat2cat_ml_run <- function(x, ...) {
     acc <- mean(vapply(x, function(i) i$acc[m], numeric(1)), na.rm = T)
     ml_message <- c(
       ml_message,
-      sprintf("Average (groups) accurecy for %s ml models: %f", m, acc)
+      sprintf("Average (groups) accuracy for %s ml models: %f", m, acc)
     )
     howaccn <- mean(vapply(x, function(i) i$naive < mean(i$acc[m], na.rm = TRUE), numeric(1)), na.rm = T)
     how_ml_message_n <- c(
@@ -391,7 +387,7 @@ print.cat2cat_ml_run <- function(x, ...) {
         "Selected prediction stats:",
         "",
         sprintf("Average naive (equal probabilities) guess: %f", acc_naive),
-        sprintf("Average (groups) accurecy for most frequent category solution: %f", acc_freq),
+        sprintf("Average (groups) accuracy for most frequent category solution: %f", acc_freq),
         ml_message,
         "",
         na_message,
