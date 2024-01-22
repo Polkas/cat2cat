@@ -31,7 +31,7 @@ of replications."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cat2cat</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.6.9008</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.6.9009</span>
       </span>
     </div>
 
@@ -127,50 +127,80 @@ For the transparency the probability and number of replications are part
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>data args</p><ul><li><p>"old" data.frame older time point in a panel</p></li>
-<li><p>"new"  data.frame more recent time point in a panel</p></li>
-<li><p>"time_var" character(1) name of the time variable.</p></li>
-<li><p>"cat_var" character(1) name of the categorical variable.</p></li>
-<li><p>"cat_var_old"
- Optional character(1) name of the categorical variable
- in the older time point. Default `cat_var`.</p></li>
-<li><p>"cat_var_new"
- Optional character(1) name of the categorical variable
- in the newer time point. Default `cat_var`.</p></li>
-<li><p>"id_var"Optional character(1) name of the unique identifier variable
+    <p>data args</p><dl><dt>"old"</dt>
+<dd><p>data.frame older time point in a panel</p></dd>
+
+ <dt>"new"</dt>
+<dd><p>data.frame more recent time point in a panel</p></dd>
+
+ <dt>"time_var"</dt>
+<dd><p>character(1) name of the time variable.</p></dd>
+
+ <dt>"cat_var"</dt>
+<dd><p>character(1) name of the categorical variable.</p></dd>
+
+ <dt>"cat_var_old"</dt>
+<dd><p>Optional character(1) name of the categorical variable
+ in the older time point. Default `cat_var`.</p></dd>
+
+ <dt>"cat_var_new"</dt>
+<dd><p>Optional character(1) name of the categorical variable
+ in the newer time point. Default `cat_var`.</p></dd>
+
+ <dt>"id_var"</dt>
+<dd><p>Optional character(1) name of the unique identifier variable
   - if this is specified then for subjects observed in both periods,
- the direct mapping is applied.</p></li>
-<li><p>"multiplier_var"
- Optional character(1) name of the multiplier variable -
- number of replication needed to reproduce the population</p></li>
-<li><p>"freqs_df"
- Only for the backward compatibility check the definition in the description
- of the mappings argument</p></li>
-</ul><p>mappings args</p><ul><li><p>"trans" data.frame with 2 columns - mapping (transition) table -
+ the direct mapping is applied.</p></dd>
+
+ <dt>"multiplier_var"</dt>
+<dd><p>Optional character(1) name of the multiplier variable -
+ number of replication needed to reproduce the population</p></dd>
+
+ <dt>"freqs_df"</dt>
+<dd><p>Only for the backward compatibility check the definition in the description
+ of the mappings argument</p></dd>
+
+
+</dl><p>mappings args</p><dl><dt>"trans"</dt>
+<dd><p>data.frame with 2 columns - mapping (transition) table -
   all categories for cat_var in old and new datasets have to be included.
   First column contains an old encoding and second a new one.
   The mapping (transition) table should to have a candidate for each category
-  from the targeted for an update period.</p></li>
-<li><p>"direction" character(1) direction - "backward" or "forward"</p></li>
-<li><p>"freqs_df"
- Optional - data.frame with 2 columns where first one
+  from the targeted for an update period.</p></dd>
+
+ <dt>"direction"</dt>
+<dd><p>character(1) direction - "backward" or "forward"</p></dd>
+
+ <dt>"freqs_df"</dt>
+<dd><p>Optional - data.frame with 2 columns where first one
  is category name (base period) and second counts.
  If It is not provided then is assessed automatically.
  Artificial counts for each variable level in the base period.
  It is optional nevertheless will be often needed, as gives more control.
  It will be used to assess the probabilities.
- The multiplier variable is omitted so sb has to apply it in this table.</p></li>
-</ul><p>Optional ml args</p><ul><li><p>"data" data.frame - dataset with features and the `cat_var`.</p></li>
-<li><p>"cat_var" character(1) - the dependent variable name.</p></li>
-<li><p>"method"
- character vector - one or a few from
+ The multiplier variable is omitted so sb has to apply it in this table.</p></dd>
+
+
+</dl><p>Optional ml args</p><dl><dt>"data"</dt>
+<dd><p>data.frame - dataset with features and the `cat_var`.</p></dd>
+
+ <dt>"cat_var"</dt>
+<dd><p>character(1) - the dependent variable name.</p></dd>
+
+ <dt>"method"</dt>
+<dd><p>character vector - one or a few from
  "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors,
- "lda" Linear Discrimination Analysis, "rf" Random Forest</p></li>
-<li><p>"features"
- character vector of features names where all
- have to be numeric or logical</p></li>
-<li><p>"args" optional - list parameters: knn: k ; rf: ntree</p></li>
-</ul><p>Without ml section only simple frequencies are assessed.
+ "lda" Linear Discrimination Analysis, "rf" Random Forest</p></dd>
+
+ <dt>"features"</dt>
+<dd><p>character vector of features names where all
+ have to be numeric or logical</p></dd>
+
+ <dt>"args"</dt>
+<dd><p>optional - list parameters: knn: k ; rf: ntree</p></dd>
+
+
+</dl><p>Without ml section only simple frequencies are assessed.
 When ml model is broken then weights from simple frequencies are taken.
 `knn` method is recommended for smaller datasets.</p>
     </div>
