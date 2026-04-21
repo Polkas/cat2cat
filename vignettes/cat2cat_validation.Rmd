@@ -1,0 +1,356 @@
+---
+title: "Sensitivity Analysis & Holdout Validation"
+author: "Maciej Nasinski"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Sensitivity Analysis & Holdout Validation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE, message = FALSE, warning = FALSE,
+  collapse = TRUE, comment = "#>"
+)
+```
+
+This vignette shows how to check whether your `cat2cat()` results are robust to methodological choices and how to validate ML weights before using them.
+
+```{r load-data}
+library(cat2cat)
+library(dplyr)
+library(tidyr)
+library(e1071)
+library(randomForest)
+
+data(occup, package = "cat2cat")
+data(trans, package = "cat2cat")
+
+occup_2008 <- occup[occup$year == 2008, ]
+occup_2010 <- occup[occup$year == 2010, ]
+occup_2012 <- occup[occup$year == 2012, ]
+```
+
+## Weight methods overview
+
+`cat2cat` offers several ways to assign probability weights to replicated observations. Each method encodes a different **distributional assumption** about how ambiguous observations split across candidate categories. When a downstream estimand depends on the mapped category, this is the identifying assumption for that estimand - so always check sensitivity.
+
+**Naive weights** (`wei_naive_c2c`) are always computed. Each replicated observation gets uniform probability $1/k$ where $k$ is the number of candidate categories.
+
+- *Assumption*: All candidates equally likely (maximum entropy / uninformative prior)
+- *Requires*: Only the mapping table - no data from either period
+- *Use when*: No information favoring any candidate, or as a robustness lower bound
+
+**Frequency-based weights** (`wei_freq_c2c`) are the default. They use category counts from the base period.
+
+- *Assumption*: Ambiguous observations distribute like the base period population
+- *Requires*: Observed counts in base period (falls back to naive if all zero)
+- *Use when*: Base period is large and representative; ambiguous cases resemble the general population
+
+**ML weights** (`wei_knn_c2c`, `wei_lda_c2c`, `wei_rf_c2c`, `wei_nb_c2c`) use individual features to predict category membership.
+
+- *Assumption*: Features (age, education, etc.) predict true category: $P(j \mid X, g)$
+- *Requires*: Training data with both category labels and predictive features
+- *Use when*: Features are informative - verify with `cat2cat_ml_run()`
+
+Available ML methods:
+
+- **knn**: k-Nearest Neighbours. Non-parametric, handles non-linear boundaries. Sensitive to choice of `k`.
+- **lda**: Linear Discriminant Analysis. Fast, interpretable. Assumes multivariate normality and equal covariance.
+- **rf**: Random Forest. Handles interactions well. Slower, needs `ntree` tuning.
+- **nb**: Naive Bayes via `e1071`. Fast, handles mixed types. Assumes conditional independence of features.
+
+You can run multiple methods at once and compare or combine them:
+
+```{r mixed-ml-weights}
+occup_2_mix <- cat2cat(
+  data = list(
+    old = occup_2008, new = occup_2010,
+    cat_var = "code", time_var = "year"
+  ),
+  mappings = list(trans = trans, direction = "backward"),
+  ml = list(
+    data = occup_2010,
+    cat_var = "code",
+    method = c("knn", "rf", "lda", "nb"),
+    features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+    args = list(k = 10, ntree = 50)
+  )
+)
+```
+
+Correlations between weight methods:
+
+```{r weight-correlations}
+occup_2_mix$old %>%
+  select(wei_knn_c2c, wei_rf_c2c, wei_lda_c2c, wei_nb_c2c, wei_freq_c2c) %>%
+  cor()
+```
+
+**Interpreting correlations:**
+
+- **r > 0.95**: Methods agree strongly; any choice reasonable. Prefer simpler (freq) unless ML has theoretical motivation.
+- **0.80 < r < 0.95**: Moderate agreement; results likely robust. Report sensitivity across methods.
+- **r < 0.80**: Substantial disagreement; weights carry meaningful different information. Investigate *which* observations differ and *why* - this often reveals edge cases where features help (favoring ML) or categories with sparse training data (favoring freq).
+
+Ensemble weights with `cross_c2c()` and pruning with `prune_c2c()`:
+
+```{r ensemble-prune}
+occup_old_mix <- occup_2_mix$old %>%
+  cross_c2c(.) %>%
+  prune_c2c(., column = "wei_cross_c2c", method = "highest1")
+```
+
+## Sensitivity analysis
+
+Different weight methods affect regression coefficients when you filter to a specific occupation group and combine both periods. This is the proper sensitivity analysis: subjects from the base period (new, no replication) plus subjects from the target period (old, weighted by probability of belonging to this group).
+
+### Comparing weight methods
+
+Run backward mapping with all ML methods:
+
+```{r sensitivity-result}
+result_all <- cat2cat(
+  data = list(old = occup_2008, new = occup_2010,
+              cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "backward"),
+  ml = list(
+    data = occup_2010, cat_var = "code",
+    method = c("knn", "rf", "lda", "nb"),
+    features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+    args = list(k = 10, ntree = 50)
+  )
+)
+```
+
+**Weighted counts per group** - compare how weight methods redistribute observations:
+ 
+```{r sensitivity-counts}
+weight_cols <- c("wei_naive_c2c", "wei_freq_c2c", "wei_knn_c2c", "wei_rf_c2c", "wei_lda_c2c", "wei_nb_c2c")
+
+# Pick groups with high replication
+top_groups <- result_all$old %>%
+  filter(rep_c2c > 1) %>%
+  count(g_new_c2c, sort = TRUE) %>%
+  head(6) %>%
+  pull(g_new_c2c)
+
+# Weighted counts from OLD period (replicated)
+old_counts <- lapply(weight_cols, function(wcol) {
+  result_all$old %>%
+    filter(g_new_c2c %in% top_groups) %>%
+    group_by(g_new_c2c) %>%
+    summarise(n = sum(.data[[wcol]]), .groups = "drop")
+}) %>%
+  setNames(gsub("wei_|_c2c", "", weight_cols)) %>%
+  bind_rows(.id = "method") %>%
+  tidyr::pivot_wider(names_from = method, values_from = n)
+
+# Counts from NEW period (no replication, exact)
+new_counts <- result_all$new %>%
+  filter(code %in% top_groups) %>%
+  count(code, name = "new_period") %>%
+  rename(g_new_c2c = code)
+
+# Combine for comparison
+left_join(old_counts, new_counts, by = "g_new_c2c")
+```
+
+The `new_period` column shows the actual counts in 2010. The other columns show how the 2008 observations are redistributed under each weight method. `naive` assigns uniform probability (1/n candidates), `freq` uses base period frequencies, and ML methods (`knn`, `rf`, `lda`, `nb`) use predicted probabilities.
+
+Pick a specific group for regression analysis:
+
+```{r sensitivity-weights}
+# New-period counts per category (no replication, so plain tally)
+new_counts_all <- result_all$new %>%
+  count(code, name = "n_new") %>%
+  rename(g_new_c2c = code)
+
+# Old-period weighted counts, joined to new-period counts
+group_sizes <- result_all$old %>%
+  group_by(g_new_c2c) %>%
+  summarise(n_old = sum(wei_freq_c2c), .groups = "drop") %>%
+  left_join(new_counts_all, by = "g_new_c2c") %>%
+  filter(n_old >= 10, n_new >= 10) %>%
+  arrange(desc(n_old))
+
+# Pick a group for regression analysis
+target_group <- group_sizes$g_new_c2c[1]
+cat("Analysing occupation group:", target_group, "\n")
+```
+
+**Regression within a single occupation group** - combine both periods and compare coefficients:
+
+```{r sensitivity-group-reg}
+# Subset old period to target group (with weights)
+old_subset <- result_all$old %>%
+  filter(g_new_c2c == target_group)
+
+# Subset new period to target group (no replication, weight = 1)
+new_subset <- result_all$new %>%
+  filter(code == target_group) %>%
+  mutate(
+    wei_naive_c2c = 1, wei_freq_c2c = 1, wei_knn_c2c = 1,
+    wei_rf_c2c = 1, wei_lda_c2c = 1, wei_nb_c2c = 1
+  )
+
+# Combine both periods
+d <- bind_rows(old_subset, new_subset)
+
+# Compare all regression coefficients across weight methods
+f <- I(log(salary)) ~ age + sex + factor(edu) + exp + parttime
+
+coefs <- sapply(weight_cols, function(wcol) {
+  d$w <- d$multiplier * d[[wcol]]
+  coef(lm(f, data = d, weights = w))
+})
+colnames(coefs) <- gsub("wei_|_c2c", "", weight_cols)
+round(coefs, 4)
+```
+
+All coefficients can vary because weight methods change which old-period subjects contribute to this occupation group.
+
+### Comparing pruning strategies
+
+> **Note**: Pruning discards probability information and should be used only after analysis with full weights. Prefer `prune_c2c(method = "nonzero")` to remove impossible candidates while preserving the probability distribution. More aggressive pruning (`highest1`) is appropriate only for descriptive tables or when you need exactly one category per observation.
+
+```{r sensitivity-pruning}
+# Compare regression coefficients under different pruning strategies
+prune_methods <- c("nonzero", "highest", "highest1")
+
+prune_coefs <- sapply(prune_methods, function(pm) {
+  old_pruned <- result_all$old %>%
+    prune_c2c(method = pm) %>%
+    filter(g_new_c2c == target_group)
+  
+  d <- bind_rows(old_pruned, new_subset)
+  d$w <- d$multiplier * d$wei_freq_c2c
+  coef(lm(f, data = d, weights = w))
+})
+round(prune_coefs, 4)
+```
+
+### Comparing ensemble compositions
+
+`cross_c2c()` creates a weighted average of multiple weight columns. Vary the mix:
+
+```{r sensitivity-ensemble}
+configs <- list(
+  equal      = c(1, 1) / 2,
+  freq_heavy = c(3, 1) / 4,
+  ml_heavy   = c(1, 3) / 4
+)
+
+ens_coefs <- sapply(names(configs), function(nm) {
+  old_ens <- result_all$old %>%
+    cross_c2c(c("wei_freq_c2c", "wei_knn_c2c"), configs[[nm]]) %>%
+    filter(g_new_c2c == target_group)
+  
+  new_ens <- new_subset %>% mutate(wei_cross_c2c = 1)
+  d <- bind_rows(old_ens, new_ens)
+  d$w <- d$multiplier * d$wei_cross_c2c
+  coef(lm(f, data = d, weights = w))
+})
+round(ens_coefs, 4)
+```
+
+When regression coefficients are stable across weight methods, pruning strategies, and ensemble compositions, report with confidence. When they diverge, the mapping introduces uncertainty - report the range or investigate the source.
+
+## Holdout validation: do ML weights actually help?
+
+The `ml` argument in `cat2cat()` adds ML-based probability weights, but ML is not guaranteed to improve over simpler baselines. `cat2cat_ml_run()` provides per-group holdout (single train/test split) diagnostics to answer this question *before* committing to a method.
+
+### How it works
+
+For each mapping group (set of candidate categories linked by the transition table) `cat2cat_ml_run()`:
+
+1. Collects all observations from `ml$data` whose category belongs to the group.
+2. Randomly splits them into training (`1 - test_prop`) and test (`test_prop`) sets.
+3. Computes two baselines on the test set:
+   - **naive** - accuracy of a random guess ($1 / k$ where $k$ is the number of candidate categories).
+   - **freq** - accuracy of always predicting the most frequent training-set category.
+4. Trains each specified ML method on the training set and records test-set classification accuracy.
+
+Groups with fewer than 5 observations or only one candidate category are skipped.
+
+### Basic usage
+
+```{r cv-basic}
+cv_knn <- cat2cat_ml_run(
+  mappings = list(trans = trans, direction = "backward"),
+  ml = list(
+    data = bind_rows(occup_2010, occup_2012),
+    cat_var = "code",
+    method = "knn",
+    features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+    args = list(k = 10)
+  )
+)
+print(cv_knn)
+```
+
+The `print()` summary reports:
+
+- **Average naive guess** - baseline random accuracy across groups.
+- **Average freq accuracy** - how well "predict the majority class" does.
+- **Average ML accuracy** - how well each ML method does on held-out data.
+- **How often ML beats naive/freq** - fraction of groups where ML outperforms each baseline.
+- **Percent of failed models** - groups where the model could not be fit (too few data, collinearity, etc.).
+
+### Comparing multiple methods
+
+```{r cv-multiple}
+cv_all <- cat2cat_ml_run(
+  mappings = list(trans = trans, direction = "backward"),
+  ml = list(
+    data = bind_rows(occup_2010, occup_2012),
+    cat_var = "code",
+    method = c("knn", "lda"),
+    features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+    args = list(k = 10)
+  )
+)
+print(cv_all)
+```
+
+### Inspecting per-group results
+
+The returned object is a named list. Each element corresponds to one mapping group:
+
+```{r cv-inspect}
+# Pick a group with multiple candidates
+group_names <- names(cv_all)
+example_group <- group_names[
+  which(vapply(cv_all, function(g) !is.na(g$freq) && g$naive < 1, logical(1)))[1]
+]
+cv_all[[example_group]]
+```
+
+Each group entry has three fields:
+
+- `$naive` - $1/k$ random-guess accuracy
+- `$freq` - most-frequent-category accuracy on the test set
+- `$acc` - named numeric vector with test-set accuracy per ML method
+
+### Interpreting the results
+
+**Understanding accuracy in context**: This is **multi-class classification** - each mapping group can have 3-10+ candidate categories. A naive random guess yields only ~18% accuracy (1/k where k is the number of candidates). Achieving 50%+ is substantial improvement over random - do not compare these numbers to binary classification benchmarks where 80%+ is typical. The key question is whether ML beats the *frequency* baseline, not whether it reaches some absolute threshold.
+
+| Scenario | Recommendation |
+|----------|---------------|
+| ML accuracy >> freq across most groups | ML weights add genuine signal; use them |
+| ML accuracy $\approx$ freq | ML is no better than frequency; prefer `wei_freq_c2c` (simpler, faster) |
+| ML accuracy < freq for many groups | ML is adding noise; do **not** use ML weights |
+| High failure rate (>20%) | Features may have too many missing values or groups are too small |
+
+Because the train/test split is random, results vary between runs. For more stable estimates, pool more data into `ml$data` (e.g. multiple survey waves) or run `cat2cat_ml_run()` several times and average the summaries.
+
+> **Caveat**: high `cat2cat_ml_run()` accuracy means the model discriminates well *within* mapping groups. It does not validate the mapping table itself. A perfect model with a wrong transition table will still produce wrong results.
+
+## Next steps
+
+- [Multi-Period Chaining](cat2cat_multi_period.html) - chaining across 3+ time periods
+- [Regression on Replicated Data](cat2cat_regression.html) - SE correction with `summary_c2c()`
+- [Panel Data with Subject Identifiers](cat2cat_panel.html) - `id_var` for rotational panels

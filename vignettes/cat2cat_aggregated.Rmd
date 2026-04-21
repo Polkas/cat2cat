@@ -1,0 +1,241 @@
+---
+title: "Aggregated Data & Special Cases"
+author: "Maciej Nasinski"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Aggregated Data & Special Cases}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE, message = FALSE, warning = FALSE,
+  collapse = TRUE, comment = "#>"
+)
+```
+
+This vignette covers `cat2cat_agg()` for pre-aggregated data, building mapping tables from hierarchical codes, and comparison with alternative approaches. It assumes you've read [Get Started with cat2cat](cat2cat.html).
+
+```{r load-data}
+library(cat2cat)
+library(dplyr)
+library(tidyr)
+
+data(trans, package = "cat2cat")
+```
+
+## Aggregated data with `cat2cat_agg()`
+
+When you have **pre-aggregated** data (counts or totals per category, not micro-level observations), use `cat2cat_agg()` with explicit mapping equations instead of a transition table.
+
+### The verticals dataset
+
+```{r agg-data}
+data("verticals", package = "cat2cat")
+
+agg_old <- verticals[verticals$v_date == "2020-04-01", ]
+agg_new <- verticals[verticals$v_date == "2020-05-01", ]
+
+agg_old
+agg_new
+```
+
+The `verticals` dataset contains **aggregated** e-commerce category statistics:
+
+- `vertical` - product category name
+- `sales` - total sales value in that category
+- `counts` - number of products in that category
+- `v_date` - date of the snapshot
+
+Between April and May 2020, the e-commerce platform reorganised its category structure:
+
+| Change | Old categories | New categories |
+|--------|---------------|----------------|
+| Split  | Automotive    | Automotive1, Automotive2 |
+| Merge  | Kids1, Kids2  | Kids |
+| Rename + split | Home | Home, Supermarket |
+
+### Equation syntax
+
+Each mapping equation has the form:
+
+```
+OLD_SIDE  DIRECTION  NEW_SIDE
+```
+
+**Direction operators**:
+
+- `%<%` or `<` - **backward**: replicates/splits the OLD period to match new encoding
+- `%>%` or `>` - **forward**: replicates/splits the NEW period to match old encoding
+
+**Wrapping multiple categories**: use `c(Cat1, Cat2)` to group several category names.
+
+**Rule**: exactly one side must have a single category (one-to-many). Many-to-many equations are not allowed.
+
+### Applying the equations
+
+```{r agg-mapping}
+agg <- cat2cat_agg(
+  data = list(
+    old = agg_old,
+    new = agg_new,
+    cat_var = "vertical",
+    time_var = "v_date",
+    freq_var = "counts"
+  ),
+  # Backward: split old "Automotive" into new codes
+  Automotive %<% c(Automotive1, Automotive2),
+  # Forward: split new "Kids" back into old codes
+  c(Kids1, Kids2) %>% c(Kids),
+  # Forward: new "Home" & "Supermarket" both map to old "Home"
+  Home %>% c(Home, Supermarket)
+)
+```
+
+### How proportions work
+
+When one category splits into many, proportions come from the **target** encoding's `freq_var`:
+
+- **Backward** (`%<%`): proportions from the NEW period counts
+- **Forward** (`%>%`): proportions from the OLD period counts
+
+For example, `Automotive %<% c(Automotive1, Automotive2)` splits old "Automotive" using the ratio of Automotive1 to Automotive2 counts in the new period.
+
+### Variance for proportional splits
+
+When splitting aggregates by proportion $p$, the variance of the allocated count depends on the original variance and the split:
+
+$$\text{Var}(n \cdot p) = p^2 \cdot \text{Var}(n) + n^2 \cdot \text{Var}(p) + \text{Var}(n) \cdot \text{Var}(p)$$
+
+If the original count $n$ is observed without error and only $p$ has sampling uncertainty, this simplifies to $\text{Var}(n \cdot p) = n^2 \cdot \text{Var}(p)$. Estimate $\text{Var}(p)$ from the target period’s category frequencies using the multinomial variance: $\text{Var}(\hat{p}_j) = \hat{p}_j(1-\hat{p}_j)/N$ where $N$ is the total count used to compute proportions.
+
+### Inspecting the result
+
+```{r agg-inspect}
+# Old period - "Automotive" was split into two rows
+agg$old[agg$old$vertical %in% c("Automotive1", "Automotive2"), ]
+
+# New period - "Kids" was split into two rows  
+agg$new[agg$new$vertical %in% c("Kids1", "Kids2"), ]
+```
+
+The `prop_c2c` column tells you how much of the original row's values to count. Rows not affected by any equation have `prop_c2c = 1`.
+
+### Aggregating to a unified encoding
+
+```{r agg-unified}
+agg %>%
+  bind_rows() %>%
+  group_by(v_date, vertical) %>%
+  summarise(
+    sales = sum(sales * prop_c2c),
+    counts = sum(counts * prop_c2c),
+    .groups = "drop"
+  ) %>%
+  arrange(vertical, v_date)
+```
+
+Now both periods use the same category names and values are redistributed proportionally.
+
+### When to use `cat2cat_agg()`
+
+| Data type | Function | Example |
+|-----------|----------|---------|
+| Micro-data (individual observations) | `cat2cat()` | Survey responses, individual transactions |
+| Aggregated data (counts/totals per category) | `cat2cat_agg()` | Published statistics, summary reports |
+
+`cat2cat_agg()` is necessary when:
+
+- You only have access to published summary statistics, not the underlying micro-data
+- Privacy restrictions prevent access to individual-level data
+- The data was collected at the aggregate level (e.g., industry reports)
+
+## Combining micro-data and aggregated data
+
+A common scenario: you have micro-data for some periods and only published aggregates for others. The workflow combines `cat2cat()` and `cat2cat_agg()`:
+
+```{r combined-workflow, eval=FALSE}
+# Micro-data periods: use cat2cat()
+micro_result <- cat2cat(
+  data = list(old = survey_2008, new = survey_2010,
+              cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "backward")
+)
+
+# Aggregate periods: use cat2cat_agg() with same mapping logic
+agg_result <- cat2cat_agg(
+  data = list(old = published_2006, new = published_2008,
+              cat_var = "sector", time_var = "year",
+              freq_var = "employment"),
+  sector_old %<% c(sector_new1, sector_new2)
+)
+
+# Combine: aggregate the micro results to match published format
+micro_aggregated <- micro_result$old %>%
+  group_by(g_new_c2c) %>%
+  summarise(employment = sum(wei_freq_c2c * weight))
+
+# Now both can be analyzed together at the aggregate level
+```
+
+The key insight: aggregate-level comparisons remain valid as long as you apply consistent mapping equations across periods.
+
+## Building mapping tables from hierarchical codes
+
+When an official transition table is **not available**, you can build one from the hierarchical structure of the codes themselves. Many classifications use a digit hierarchy: the first digit encodes the major group, the first two digits the sub-major group, and so on.
+
+In the `trans` table, old codes are 4 digits and new codes are 6 digits. You can construct a coarser mapping by truncating to the first N digits:
+
+```{r hierarchical-codes}
+head(trans, 5)
+
+# Build a 2-digit mapping from the full codes
+trans_2digit <- data.frame(
+  old = substr(trans$old, 1, 2),
+  new = substr(trans$new, 1, 2)
+)
+trans_2digit <- unique(trans_2digit)
+cat("2-digit mapping rows:", nrow(trans_2digit),
+    "vs full mapping rows:", nrow(trans))
+```
+
+The coarser the grouping, the fewer many-to-many relationships (and fewer replications), but the unified categories are broader. This approach works for any classification where codes share a hierarchical prefix structure (ISCO, ICD, NACE, CPC, HS trade codes, etc.).
+
+### Validation: filtering mapped data to coarser groups
+
+A key property of cat2cat is that **filtering replicated data to a coarser grouping recovers the original population** (with proper weights). For complete validation examples with regression comparisons, see the [Sensitivity Analysis & Holdout Validation](cat2cat_validation.html) vignette.
+
+Briefly: truncating codes to fewer digits creates coarser mappings with fewer many-to-many relationships. Weighted counts from mapped data at any aggregation level match original counts - confirming the replication-and-weighting procedure is neutral.
+
+### Common hierarchical classifications
+
+| Classification | Domain | Hierarchy |
+|---------------|--------|-----------|
+| ISCO | Occupations | 1-digit -> 2-digit -> 3-digit -> 4-digit |
+| ICD | Diseases | Chapter -> Block -> Category -> Subcategory |
+| NACE | Industries | Section -> Division -> Group -> Class |
+| CPC | Products | Section -> Division -> Group -> Class -> Subclass |
+
+## Alternative approaches
+
+**Manual expert mapping**: A domain specialist assigns each old-to-new category pair manually. Gold standard for few, well-understood mappings; does not scale to large many-to-many tables.
+
+**`cat2cat_agg()` for aggregated data**: When only aggregate counts are available (not micro-data), uses mapping equations to redistribute counts proportionally.
+
+**Analyse periods separately**: Each period under its own classification. Avoids the mapping problem but precludes longitudinal modelling and trend analysis.
+
+**When to prefer `cat2cat()`**: Many-to-many mappings, micro-data available, need a unified variable across time, and probabilistic uncertainty should be reflected in the analysis.
+
+## Comparison with Multiple Imputation
+
+Readers familiar with Multiple Imputation (MI) may notice a surface similarity: both create multiple versions of observations. However, **cat2cat is not MI**. MI draws independent datasets from a posterior; cat2cat uses deterministic replication from mapping tables. MI uses Rubin’s combining rules for variance; cat2cat uses a d.f. scaling correction. The methods address different problems - MI handles missing data under MAR assumptions, while cat2cat handles classification changes with known mapping structure.
+
+## Next steps
+
+- [Get Started with cat2cat](cat2cat.html) - basic two-period workflow
+- [Multi-Period Chaining](cat2cat_multi_period.html) - chaining across 3+ time periods
+- [Sensitivity Analysis & Holdout Validation](cat2cat_validation.html) - weight methods, pruning, ML validation
+- [Regression on Replicated Data](cat2cat_regression.html) - SE correction with `summary_c2c()`, fixed effects models
+- [Panel Data with Subject Identifiers](cat2cat_panel.html) - `id_var` for rotational panels with consistent subject IDs

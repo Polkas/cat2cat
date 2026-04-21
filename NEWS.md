@@ -1,3 +1,27 @@
+# cat2cat 0.6.0.9000
+
+This release incorporates feedback from the PhD dissertation reviewers: dr hab. Andrzej Dudek, dr hab. Joanna Landmesser-Rusek, and dr hab. Paweł Andrzej Strzelecki.
+
+## New features
+
+* New `occup_panel` dataset - a rotational panel covering 2009Q1--2010Q4 - used to illustrate `id_var` direct matching and to exercise the panel-data code path in tests.
+* Naive Bayes (`"nb"`) added to the supported ML methods, via `e1071` (Suggests).
+* `summary_c2c()` now supports both `lm` and `glm`, adds input/shape validation (`df_old`/`df_new`, coefficient table checks), and reports the reference distribution used for p-values (`t` or normal). Added edge-case tests and aligned regression/panel vignette examples with current `summary_c2c()` output and FE inference guidance.
+* `cat2cat_ml_run()` now reports the Brier score and mean P(true class) in addition to accuracy. Reporting a proper scoring rule matters because `cat2cat` weights are *probabilities*, not classifications - a model can be accurate and still be poorly calibrated.
+* All `stopifnot()` assertions now carry descriptive messages, so failures point the user at the offending argument instead of printing the raw expression.
+
+## Documentation
+
+* Vignettes reorganised into six focused articles: *Get Started*, *Regression*, *Multi-Period Chaining*, *Sensitivity Analysis & Holdout Validation*, *Panel Data*, and *Aggregated Data*. The previous single long vignette grew unwieldy as the package evolved.
+* Added an *Identification & Assumptions* section to *Get Started* that documents the three weighting schemes (naive, frequency, ML), the distributional assumption each imposes, and how to check it empirically. cat2cat itself is a deterministic transformation; the weighting choice becomes an identifying assumption only for downstream estimands that depend on the mapped category (e.g. occupation fixed effects, interactions with `g_new_c2c`). The full model-level treatment is in *Regression on Replicated Data*.
+* Added a *When cat2cat won't help* section distinguishing hard blockers (no mapping table, unobserved category) from method-specific limitations with available workarounds.
+* Corrected the $R^2$ guidance: it is preserved by the replication only when the harmonised category is *not* used as a covariate; with occupation fixed effects the inflation is real and `summary_c2c()` does not repair it.
+* Roxygen for `cat2cat()` and `cat2cat_agg()` trimmed - argument documentation kept, conceptual material moved to the vignettes where it belongs.
+
+## Bug fixes
+
+* Fixed the `nomnoml` diagram that previously mislabelled the base/target sides under forward mapping.
+
 # cat2cat 0.4.7
 
 * New `cat2cat_ml_run` function to check the ml models performance before `cat2cat` with ml option is run. Now, the ml models are more transparent.

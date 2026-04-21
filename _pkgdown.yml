@@ -1,3 +1,37 @@
+template:
+  bootstrap: 5
+url: https://polkas.github.io/cat2cat
+
+navbar:
+  structure:
+    left: [home, vignettes, reference]
+  components:
+    vignettes:
+      text: Vignettes
+      menu:
+      - text: Get Started with cat2cat
+        href: articles/cat2cat.html
+      - text: Sensitivity Analysis & Holdout Validation
+        href: articles/cat2cat_validation.html
+      - text: Multi-Period Chaining
+        href: articles/cat2cat_multi_period.html
+      - text: Aggregated Data & Special Cases
+        href: articles/cat2cat_aggregated.html
+      - text: Regression on Replicated Data
+        href: articles/cat2cat_regression.html
+      - text: Panel Data with Subject Identifiers
+        href: articles/cat2cat_panel.html
+
+articles:
+- title: Vignettes
+  contents:
+  - cat2cat
+  - cat2cat_validation
+  - cat2cat_multi_period
+  - cat2cat_aggregated
+  - cat2cat_regression
+  - cat2cat_panel
+
 reference:
 - title: main functions
 - contents:
@@ -10,6 +44,7 @@ reference:
 - contents:
   - occup
   - occup_small
+  - occup_panel
   - verticals
   - verticals2
   - trans

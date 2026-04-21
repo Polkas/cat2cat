@@ -1,0 +1,500 @@
+---
+title: "Regression on Replicated Data"
+author: "Maciej Nasinski"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Regression on Replicated Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE, message = FALSE, warning = FALSE,
+  collapse = TRUE, comment = "#>"
+)
+```
+
+This vignette covers regression analysis on cat2cat-processed data: SE correction with `summary_c2c()`, fixed effects models, and the proof that coefficients for non-mapped variables are unbiased. It assumes you've read [Get Started with cat2cat](cat2cat.html).
+ 
+```{r load-data}
+library(cat2cat)
+library(dplyr)
+library(tidyr)
+library(fixest)
+
+data(occup, package = "cat2cat")
+data(trans, package = "cat2cat")
+
+occup_2006 <- occup[occup$year == 2006, ]
+occup_2008 <- occup[occup$year == 2008, ]
+occup_2010 <- occup[occup$year == 2010, ]
+occup_2012 <- occup[occup$year == 2012, ]
+
+# Aliases for two-period examples
+occup_old <- occup_2008
+occup_new <- occup_2010
+```
+
+## Building the example data
+
+For regression examples, we first map 2008 occupations to 2010 codes:
+
+```{r build-data}
+occup_2 <- cat2cat(
+  data = list(
+    old = occup_old, new = occup_new,
+    cat_var = "code", time_var = "year"
+  ),
+  mappings = list(trans = trans, direction = "backward"),
+  ml = list(
+    data = occup_new, cat_var = "code", method = "knn",
+    features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+    args = list(k = 10)
+  )
+)
+```
+
+For multi-period examples, we build a 4-period panel using backward chaining (see [Multi-Period Chaining](cat2cat_multi_period.html) for details):
+
+```{r build-panel}
+# Step 1: 2008 -> 2010
+step1 <- cat2cat(
+  data = list(old = occup_2008, new = occup_2010,
+              cat_var = "code", time_var = "year"),
+  mappings = list(trans = trans, direction = "backward")
+)
+
+freqs_2008 <- step1$old %>%
+  group_by(g_new_c2c) %>%
+  summarise(counts = round(sum(wei_freq_c2c)))
+
+# Step 2: 2006 -> mapped-2008
+step2 <- cat2cat(
+  data = list(old = occup_2006, new = step1$old,
+              cat_var_old = "code", cat_var_new = "g_new_c2c",
+              time_var = "year"),
+  mappings = list(trans = trans, direction = "backward",
+                  freqs_df = freqs_2008)
+)
+
+# Assemble the 4-period panel
+panel_back <- bind_rows(
+  step2$old,                       # 2006
+  step1$old,                       # 2008
+  step1$new,                       # 2010
+  dummy_c2c(occup_2012, "code")    # 2012
+)
+```
+
+## Neutral impact demonstration
+
+The replication is neutral for the first two central moments because per-subject weights sum to one. 
+These regressions produce the same coefficients:
+
+```{r regression-neutral}
+## original dataset - no replication
+lms_orig <- lm(
+  I(log(salary)) ~ age + sex + factor(edu) + parttime + exp,
+  data = occup_old,
+  weights = multiplier
+)
+summary(lms_orig)
+
+## after pruning to highest1 - one obs per subject, same as original
+occup_old_h1 <- occup_2$old %>%
+  cross_c2c(., c("wei_freq_c2c", "wei_knn_c2c"), c(1, 1) / 2) %>%
+  prune_c2c(., column = "wei_cross_c2c", method = "highest1")
+lms_h1 <- lm(
+  I(log(salary)) ~ age + sex + factor(edu) + parttime + exp,
+  data = occup_old_h1,
+  weights = multiplier
+)
+summary(lms_h1)
+
+## with frequency weights - needs SE correction
+occup_old_nz <- occup_2$old %>%
+  prune_c2c(method = "nonzero")
+lms_rep <- lm(
+  I(log(salary)) ~ age + sex + factor(edu) + parttime + exp,
+  data = occup_old_nz,
+  weights = multiplier * wei_freq_c2c
+)
+summary_c2c(lms_rep, df_old = nrow(occup_old))
+```
+
+## SE correction details
+
+**The replication process requires SE and p-value adjustment.** Standard regression software treats each row as an independent observation. After replication, this inflates the apparent sample size and produces artificially small standard errors and p-values. You must correct for this or your statistical inferences will be invalid.
+
+`summary_c2c()` applies the following correction:
+
+$$\text{correct} = \sqrt{\frac{n_{\text{rep}}}{n_{\text{orig}}}}$$
+
+$$\text{SE}_{\text{corrected}} = \text{SE}_{\text{naive}} \times \text{correct}$$
+
+$$\text{statistic}_{\text{corrected}} = \frac{\text{statistic}_{\text{naive}}}{\text{correct}}$$
+
+P-values are recomputed from the matching reference distribution: $t(n_{\text{orig}})$ for t-based summaries and standard normal for z-based summaries.
+
+> **Note on goodness-of-fit statistics:**
+>
+> - **R²** is preserved when the model does not include `g_new_c2c` (e.g., `salary ~ age + sex + edu`). Since weights sum to 1 per subject, weighted SS_tot and SS_res scale identically.
+> - **R² with occupation FE** may differ from the original because category group membership differs after mapping.
+> - **Adjusted R²** uses $n_{\text{rep}}$ in the formula, so it may differ slightly from the original.
+> - **AIC/BIC** use $n_{\text{rep}}$ in the penalty term - do not compare models across different replication levels.
+
+### Empirical demonstration: R² behavior
+
+```{r r2-demo}
+result_nz <- prune_c2c(occup_2$old, method = "nonzero")
+result_h1 <- prune_c2c(occup_2$old, method = "highest1")
+
+# Without occupation variable - R² identical
+m_orig <- feols(log(salary) ~ age + sex + factor(edu), data = occup_old, weights = ~multiplier)
+m_rep <- feols(log(salary) ~ age + sex + factor(edu), data = result_nz, weights = ~multiplier * wei_freq_c2c)
+m_h1 <- feols(log(salary) ~ age + sex + factor(edu), data = result_h1, weights = ~multiplier)
+
+cat("=== WITHOUT occupation FE ===\n")
+cat("Original R²:   ", round(r2(m_orig, "r2"), 6), "\n")
+cat("Replicated R²: ", round(r2(m_rep, "r2"), 6), "\n")
+cat("Highest1 R²:   ", round(r2(m_h1, "r2"), 6), "\n")
+
+# With occupation FE - R² differs (different category structure)
+fe_orig <- feols(log(salary) ~ age + sex + factor(edu) | code, data = occup_old, weights = ~multiplier)
+fe_rep <- feols(log(salary) ~ age + sex + factor(edu) | g_new_c2c, data = result_nz, weights = ~multiplier * wei_freq_c2c)
+fe_h1 <- feols(log(salary) ~ age + sex + factor(edu) | g_new_c2c, data = result_h1, weights = ~multiplier)
+
+cat("\n=== WITH occupation FE ===\n")
+cat("Original R²:   ", round(r2(fe_orig, "r2"), 6), "\n")
+cat("Replicated R²: ", round(r2(fe_rep, "r2"), 6), "\n")
+cat("Highest1 R²:   ", round(r2(fe_h1, "r2"), 6), "\n")
+
+# AIC - not comparable across replication levels
+m_orig_lm <- lm(log(salary) ~ age + sex + factor(edu), data = occup_old, weights = multiplier)
+m_rep_lm <- lm(log(salary) ~ age + sex + factor(edu), data = result_nz, weights = multiplier * wei_freq_c2c)
+
+cat("\n=== AIC (not comparable) ===\n")
+cat("Original AIC:   ", round(AIC(m_orig_lm), 0), "\n")
+cat("Replicated AIC: ", round(AIC(m_rep_lm), 0), " (inflated by n_rep)\n")
+```
+
+### When to use `summary_c2c()`
+
+| Scenario | Action |
+|----------|--------|
+| Regression on replicated data with probability weights | Use `summary_c2c(model, df_old = n_original)` |
+| Data pruned to `highest1` (one row per subject) | Standard `summary()` is fine - no replication |
+| Base period only (no replication) | Standard `summary()` is fine |
+
+### Compact GLM example (logit)
+
+`summary_c2c()` also supports `glm` objects. For binomial models, it adjusts the z-statistics and recomputes p-values from the standard normal distribution.
+
+```{r regression-glm-compact}
+glm_rep <- glm(
+  I(salary > median(salary, na.rm = TRUE)) ~ age + sex + factor(edu) + parttime + exp,
+  data = occup_old_nz,
+  family = binomial(),
+  weights = multiplier * wei_freq_c2c
+)
+
+summary_c2c(glm_rep, df_old = nrow(occup_old))
+```
+
+## Regression with the unified variable
+
+Fit a separate model for each occupational group using the unified `g_new_c2c` variable across all 4 periods:
+
+```{r regression-grouped}
+formula_oo <- formula(
+  I(log(salary)) ~ age + sex + factor(edu) + parttime + exp + factor(year)
+)
+oo <- panel_back %>%
+  prune_c2c(method = "nonzero") %>%
+  group_by(g_new_c2c) %>%
+  filter(n() >= 15) %>%
+  do(
+    lm = tryCatch(
+      summary(lm(formula_oo, ., weights = multiplier * wei_freq_c2c)),
+      error = function(e) NULL
+    )
+  ) %>%
+  filter(!is.null(lm))
+
+head(oo)
+oo$lm[[2]]
+```
+
+## Fixed effects regression
+
+Fixed effects models absorb unobserved heterogeneity at the group level. With cat2cat, the unified occupation variable `g_new_c2c` enables **occupation fixed effects** across multiple periods - something impossible without harmonising the encoding first.
+
+We use the `fixest` package for fixed effects estimation due to its computational efficiency with large datasets and native support for multi-way fixed effects (occupation + year). Alternative packages like `plm` or `lfe` would work, but `fixest` offers superior speed and cleaner syntax for complex FE structures.
+
+**Why this matters:** Occupation-level confounders (skill requirements, working conditions, union density) are absorbed by occupation FE, isolating the within-occupation effect of individual characteristics on wages.
+
+```{r regression-fe}
+library(fixest)
+
+# Use the 4-period panel built earlier (panel_back)
+panel_fe <- panel_back %>%
+  prune_c2c(method = "nonzero") %>%
+  filter(!is.na(g_new_c2c), !is.na(salary), salary > 0)
+
+# Occupation + Year fixed effects
+fe_model <- feols(
+  log(salary) ~ age + sex + factor(edu) + parttime + exp | g_new_c2c + year,
+  data = panel_fe,
+  weights = ~multiplier * wei_freq_c2c
+)
+
+# Preferred inference: cluster at original-observation level (index_c2c)
+fe_model_cluster <- feols(
+  log(salary) ~ age + sex + factor(edu) + parttime + exp | g_new_c2c + year,
+  data = panel_fe,
+  weights = ~multiplier * wei_freq_c2c,
+  cluster = ~index_c2c
+)
+summary(fe_model_cluster)
+```
+
+**Interpretation:**
+- `g_new_c2c` FE: Controls for time-invariant occupation characteristics (e.g., skill requirements, industry norms)
+- `year` FE: Controls for economy-wide time trends (e.g., inflation, business cycle)
+- Coefficients reflect within-occupation, within-year variation
+
+### Comparing with pooled OLS
+
+```{r regression-fe-compare}
+# Pooled OLS for comparison
+pooled <- feols(
+  log(salary) ~ age + sex + factor(edu) + parttime + exp,
+  data = panel_fe,
+  weights = ~multiplier * wei_freq_c2c
+)
+
+# Compare coefficients
+etable(pooled, fe_model, 
+       headers = c("Pooled OLS", "Occupation + Year FE"))
+```
+
+**Key differences:**
+- Education coefficients often shrink with occupation FE (education sorts into occupations)
+- Age/experience effects may change (occupation-specific career trajectories)
+
+### SE correction for fixed effects
+
+`summary_c2c()` currently supports `lm` and `glm`. For `feols`, use clustered inference at `index_c2c` as the default. The manual scaling below is a pragmatic fallback (and useful as a diagnostic comparison).
+
+```{r regression-fe-cluster-se}
+# Cluster-robust SEs at original-observation level
+se_cluster <- se(fe_model_cluster)
+
+data.frame(
+  coefficient = names(coef(fe_model_cluster)),
+  estimate = coef(fe_model_cluster),
+  se_cluster = se_cluster
+) %>%
+  mutate(across(where(is.numeric), ~round(.x, 4)))
+```
+
+Fallback: replication-factor adjustment (without clustering):
+
+```{r regression-fe-se}
+# Manual SE correction factor from the FE estimation sample
+est_idx <- obs(fe_model)
+n_rep <- length(est_idx)
+n_orig <- n_distinct(panel_fe$index_c2c[est_idx])
+
+if (all(is.na(panel_fe$index_c2c[est_idx]))) {
+  stop("index_c2c is missing in the FE estimation sample; cannot compute effective original N.")
+}
+
+correction <- sqrt(n_rep / n_orig)
+
+cat("Replication factor (estimation sample):", round(n_rep / n_orig, 2), "\n")
+cat("SE correction multiplier:", round(correction, 2), "\n")
+
+# Compare naive vs manual fallback
+se_naive <- se(fe_model)
+se_corrected <- se_naive * correction
+data.frame(
+  coefficient = names(coef(fe_model)),
+  estimate = coef(fe_model),
+  se_naive = se_naive,
+  se_corrected = se_corrected
+) %>% 
+  mutate(across(where(is.numeric), ~round(.x, 4)))
+```
+
+> **Note:** For clustered standard errors (e.g., clustering by occupation or individual), the relationship with cat2cat replication is more complex. The replication creates artificial within-cluster correlation. 
+**Best practice:** cluster at the original observation level using `index_c2c` - this treats all replications of the same subject as a single cluster, recovering the correct effective sample size. With `fixest`, use `cluster = ~index_c2c` in the model call.
+
+### When to use occupation FE
+
+| Scenario | Recommendation |
+|----------|---------------|
+| Wage determinants within occupations | Use occupation FE - absorbs occupation-level confounders |
+| Occupation wage premiums | Do NOT use occupation FE - premiums are absorbed |
+| Time trends in occupation composition | Use year FE + occupation FE |
+| Individual career trajectories | Need true panel (same individuals over time), not repeated cross-sections |
+
+## Proposition: Coefficients for non-mapped variables are unbiased
+
+> **Proposition 1.** *Let $\hat{\beta}$ denote OLS coefficients for regressors $X$ that are constant across replications (i.e., not the mapped category variable). Under cat2cat replication with weights $w_{ij} \geq 0, \sum_j w_{ij} = 1$, weighted least squares on the replicated data yields $\hat{\beta}_{WLS} = \hat{\beta}_{OLS}$ on the original data.*
+
+A key property of cat2cat is that **replication with proper weights does not bias coefficients for non-mapped variables**. The weights sum to 1 per original observation, so the effective contribution of each subject remains unchanged.
+
+We demonstrate this by comparing:
+1. Regression on **original data** (no replication)
+2. Regression on **cat2cat-processed data** with `wei_freq_c2c` weights
+
+```{r fe-proof-setup}
+# ORIGINAL DATA: 2010 period (base period - no replication needed)
+occup_2010_orig <- occup %>%
+  filter(year == 2010, !is.na(code4), !is.na(salary), salary > 0)
+
+# Regression on original data (year FE meaningless with single year)
+model_orig <- feols(
+  log(salary) ~ age + sex + factor(edu) + parttime + exp | code4,
+  data = occup_2010_orig,
+  weights = ~multiplier
+)
+
+# CAT2CAT DATA: 2008 period (target period - replicated via backward mapping)
+panel_2008 <- panel_back %>%
+  filter(year == 2008, !is.na(g_new_c2c), !is.na(salary), salary > 0)
+
+# Regression on cat2cat data with freq weights
+model_c2c <- feols(
+  log(salary) ~ age + sex + factor(edu) + parttime + exp | g_new_c2c,
+  data = panel_2008,
+  weights = ~multiplier * wei_freq_c2c
+)
+```
+
+```{r fe-proof-compare}
+# Compare coefficients side by side
+comparison <- data.frame(
+  variable = names(coef(model_orig)),
+  original_2010 = coef(model_orig),
+  cat2cat_2008 = coef(model_c2c)[names(coef(model_orig))]
+)
+comparison$difference <- comparison$cat2cat_2008 - comparison$original_2010
+comparison %>% mutate(across(where(is.numeric), ~round(.x, 6)))
+```
+
+The coefficients differ slightly because they come from **different periods** (2010 vs 2008) with different underlying populations. To isolate the effect of replication alone, we compare the same period before and after cat2cat processing:
+
+```{r fe-proof-same-period}
+# The BASE period (2010) appears in panel_back WITHOUT replication
+# (base period rows are kept as-is with wei_freq_c2c = 1)
+panel_2010 <- panel_back %>%
+  filter(year == 2010, !is.na(g_new_c2c), !is.na(salary), salary > 0)
+
+# Original 2010 vs cat2cat-processed 2010 (same data, just with c2c columns)
+model_c2c_2010 <- feols(
+  log(salary) ~ age + sex + factor(edu) + parttime + exp | g_new_c2c,
+  data = panel_2010,
+  weights = ~multiplier * wei_freq_c2c
+)
+
+comparison_same <- data.frame(
+  variable = names(coef(model_orig)),
+  original = coef(model_orig),
+  cat2cat = coef(model_c2c_2010)[names(coef(model_orig))]
+)
+comparison_same$difference <- comparison_same$cat2cat - comparison_same$original
+comparison_same %>% mutate(across(where(is.numeric), ~round(.x, 8)))
+```
+
+**Result:** Coefficients are **identical** (differences are numerical precision only, ~1e-15). Weights sum to one per original subject, so weighted least squares on the replicated data reproduces the normal equations of OLS on the unreplicated data for regressors that are constant across replications.
+
+This confirms that:
+
+1. **Base period** (no replication): cat2cat adds columns but doesn't change the data - coefficients identical by construction.
+2. **Target period** (with replication): weighted regression recovers the same contribution per original observation - coefficients unbiased for non-mapped variables.
+
+## Interaction terms with the mapped variable
+
+**Caution:** Interactions with `g_new_c2c` inherit mapping uncertainty.
+
+A significant `age:g_new_c2c` interaction could reflect:
+
+1. **True heterogeneity** - the age effect genuinely varies across occupations
+2. **Misclassification patterns** - age correlates with how observations were mapped, creating spurious interactions
+
+**Always test stability across weight methods:**
+
+```{r interaction-warning, eval=FALSE}
+# Compare interaction significance across weights
+model_freq <- feols(log(salary) ~ age * g_new_c2c | year, data = panel_fe, 
+                    weights = ~multiplier * wei_freq_c2c)
+model_knn <- feols(log(salary) ~ age * g_new_c2c | year, data = panel_fe, 
+                   weights = ~multiplier * wei_knn_c2c)
+
+# If interaction is significant with freq but not knn (or vice versa),
+# the finding may be an artifact of the mapping, not true heterogeneity
+```
+
+If results diverge across weight methods, report this uncertainty - the interaction may not be robust to mapping assumptions.
+
+## Identification and inference
+
+cat2cat itself has no parameter to identify - it is a deterministic transformation that, given a mapping table and a weighting rule, returns a weighted data frame. The identification question lives in the **downstream estimand**.
+
+Split the regressors into two groups:
+
+1. **Non-mapped regressors** (age, sex, education, ...). The estimand does not depend on how ambiguous observations are distributed across candidate categories. By Proposition 1 above, WLS on the replicated data reproduces OLS on the original data - the coefficient is point-identified from the original data and cat2cat preserves it.
+
+2. **Mapped-category regressors** (occupation fixed effects, interactions with `g_new_c2c`). The estimand depends on $P(j \mid \text{source code}, X)$ - the probability that an observation with a given source code and features $X$ belongs to candidate target category $j$. That probability is not identified from the mapping table and the observed data alone: any weighting with $w_j \ge 0$, $\sum_j w_j = 1$ on the admissible candidates yields an observationally equivalent weighted dataset.
+
+In the second case the **choice of weighting method is the identifying assumption** for the downstream estimand (see [identifiability](https://en.wikipedia.org/wiki/Identifiability)):
+
+- `wei_naive_c2c`: uniform over candidates;
+- `wei_freq_c2c`: base-period frequencies;
+- `wei_*_c2c` (ML): $P(j \mid X, g)$ learned from features.
+
+Different assumptions yield different point estimates. Report more than one weighting and state which assumption underlies the reported estimate - see the [Identification & Assumptions](cat2cat.html#identification--assumptions) section of the introductory vignette for the scope of each.
+
+**Inference** is the separate issue: standard errors must account for replication. Use `summary_c2c()` for lm/glm; for `feols`, use clustering at `index_c2c` as the default and treat the manual scaling above as a fallback/check.
+
+**When the weighting choice matters less**: forward mapping, coarser category groupings (for hierarchical codes), and panel matching via `id_var` all reduce the share of observations with `rep_c2c > 1`. When most observations are unreplicated, the weighting rule affects only a small subset and mapped-category estimates are correspondingly less sensitive to the choice.
+
+## Reporting results from replicated data
+
+When publishing analyses based on cat2cat-processed data, follow this checklist:
+
+### Report
+
+| Element | Why |
+|---------|-----|
+| **Corrected SEs and p-values** | From `summary_c2c()` - naive values are wrong |
+| **Original sample size** | The `df_old` argument; this is your true N for inference |
+| **Replication factor** | `n_rep / n_orig` - indicates mapping complexity |
+| **Weight method used** | `wei_freq_c2c`, `wei_knn_c2c`, etc. - affects results |
+| **Sensitivity analysis** | Compare conclusions across ≥2 weight methods |
+| **R² (without `g_new_c2c`)** | Identical to original - weights sum to 1 per subject |
+
+### Do NOT report (or report with caveats)
+
+| Element | Why |
+|---------|-----|
+| **R² with `g_new_c2c` FE** | May differ from original due to category structure changes |
+| **Adjusted R²** | Uses $n_{\text{rep}}$ in formula; slight difference without FE, larger with FE |
+| **AIC / BIC** | Based on inflated likelihood; invalid for model comparison across replication levels |
+| **Naive SEs / p-values** | Artificially small due to inflated sample size |
+| **Replicated row count as "N"** | Misleading; use original observation count |
+
+### Example reporting language
+
+> "Occupations were harmonised using backward mapping with frequency-based weights (`wei_freq_c2c`). The original sample of N = 846 workers was replicated to 1,247 rows (replication factor = 1.47). Standard errors and p-values were corrected for this replication using `summary_c2c()`. Results were robust to alternative weighting (knn, ensemble) - see Appendix Table A1 for sensitivity analysis."
+
+## Next steps
+
+- [Multi-Period Chaining](cat2cat_multi_period.html) - chaining across 3+ time periods
+- [Sensitivity Analysis & Holdout Validation](cat2cat_validation.html) - weight methods, pruning, ML validation
+- [Panel Data with Subject Identifiers](cat2cat_panel.html) - `id_var` for true panels with consistent subject IDs
+- [Aggregated Data & Special Cases](cat2cat_aggregated.html) - `cat2cat_agg()` for pre-aggregated data

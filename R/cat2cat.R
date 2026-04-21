@@ -1,23 +1,12 @@
 #' Automatic mapping in a panel dataset
 #' @description
-#' The objective is to unify an inconsistently coded categorical variable
-#' in a panel dataset according to a mapping (transition) table.
-#' The mapping (transition) table is the core element of the process.
-#' The function has a modular design with three arguments `data`, `mappings`, and `ml`. Each
-#' of these arguments is of a `list` type, wherein the
-#' `ml` argument is optional. Arguments are separated to
-#' identify the core elements of the `cat2cat` procedure.
-#' Although this function seems
-#' complex initially, it is built to offer a wide range of
-#' applications for complex tasks. The function contains
-#' many validation checks to prevent incorrect usage.
-#' The function has to be applied iteratively for each two neighboring periods
-#' of a panel dataset.
-#' The \code{prune_c2c} function could be needed to limit growing number
-#' of replications.
+#' Unifies an inconsistently coded categorical variable in a panel dataset
+#' according to a mapping (transition) table.
+#' Apply iteratively for each pair of neighboring periods.
+#' Use \code{\link{prune_c2c}} to limit growing replications across steps.
 #' @param data `named list` with fields `old`, `new`,
-#' `cat_var` (or `cat_var_old` and `cat_var_new`), `time_var` and
-#' optional `id_var`,`multiplier_var`.
+#' `cat_var` (shorthand for `cat_var_old = cat_var_new = cat_var`),
+#' `time_var` and optional `id_var`, `multiplier_var`.
 #' @param mappings `named list` with 3 fields `trans`, `direction` and
 #' optional `freqs_df`.
 #' @param ml `named list` (optional) with up to 5 fields
@@ -28,7 +17,9 @@
 #'  \item{"old"}{ data.frame older time point in a panel}
 #'  \item{"new"}{ data.frame more recent time point in a panel}
 #'  \item{"time_var"}{ character(1) name of the time variable.}
-#'  \item{"cat_var"}{ character(1) name of the categorical variable.}
+#'  \item{"cat_var"}{ character(1) name of the categorical variable.
+#'   Shorthand: sets both \code{cat_var_old} and \code{cat_var_new} to the same value.
+#'  }
 #'  \item{"cat_var_old"}{
 #'  Optional character(1) name of the categorical variable
 #'  in the older time point. Default `cat_var`.
@@ -37,17 +28,20 @@
 #'  Optional character(1) name of the categorical variable
 #'  in the newer time point. Default `cat_var`.
 #'  }
-#'  \item{"id_var"}{Optional character(1) name of the unique identifier variable
-#'   - if this is specified then for subjects observed in both periods,
-#'  the direct mapping is applied.
+#'  \item{"id_var"}{Optional character(1) name of the unique identifier variable.
+#'   When specified, subjects observed in both periods are mapped 1-to-1
+#'   directly (no replication, \code{wei_freq_c2c = 1, rep_c2c = 1}).
+#'   Only subjects absent from the base period enter the replication path.
+#'   This assumes a subject's true category does not change between adjacent
+#'   waves. See \code{vignette("cat2cat_panel")} for details on when
+#'   this assumption is and is not satisfied.
 #'  }
 #'  \item{"multiplier_var"}{
 #'  Optional character(1) name of the multiplier variable -
 #'  number of replication needed to reproduce the population
 #'  }
 #'  \item{"freqs_df"}{
-#'  Only for the backward compatibility check the definition in the description
-#'  of the mappings argument
+#'  Deprecated - use \code{mappings$freqs_df} instead.
 #'  }
 #' }
 #' mappings args
@@ -75,8 +69,9 @@
 #'  \item{"cat_var"}{ character(1) - the dependent variable name.}
 #'  \item{"method"}{
 #'  character vector - one or a few from
-#'  "knn", "rf" and "lda" methods - "knn" k-NearestNeighbors,
-#'  "lda" Linear Discrimination Analysis, "rf" Random Forest
+#'  "knn", "rf", "lda" and "nb" methods - "knn" k-NearestNeighbors,
+#'  "lda" Linear Discriminant Analysis, "rf" Random Forest,
+#'  "nb" Naive Bayes
 #'  }
 #'  \item{"features"}{
 #'  character vector of features names where all
@@ -84,6 +79,10 @@
 #'  }
 #'  \item{"args"}{ optional - list parameters: knn: k ; rf: ntree  }
 #' }
+#'
+#' Without the \code{ml} argument, only frequency-based weights are computed.
+#' If an ML model fails, frequency weights are used as fallback.
+#' The \code{knn} method is recommended for smaller datasets.
 #' @return `named list` with 2 fields old and new - 2 data.frames.
 #' There will be added additional columns like
 #' index_c2c, g_new_c2c, wei_freq_c2c, rep_c2c, wei_(ml method name)_c2c.
@@ -96,18 +95,19 @@
 #'  of each observation in the `data.frame`.
 #' @importFrom stats predict complete.cases setNames
 #' @importFrom MASS lda
-#' @details
-#' Without ml section only simple frequencies are assessed.
-#' When ml model is broken then weights from simple frequencies are taken.
-#' `knn` method is recommended for smaller datasets.
 #' @note
-#' `trans` arg columns and the `cat_var` column have to be of the same type.
-#' The mapping (transition) table should to have a candidate for each category
-#' from the targeted for an update period.
-#' The observation from targeted for an updated period without a matched
-#' category from base period is removed.
-#' If you want to leave NA values add `c(NA, NA)` row to the `trans` table.
-#' Please check the vignette for more information.
+#' \code{trans} columns and \code{cat_var} must be of the same type.
+#' The mapping table must include a candidate for every category in the target
+#' period. Observations without a matched candidate are dropped; add a
+#' \code{c(NA, NA)} row to \code{trans} to retain them as \code{NA}.
+#' @seealso
+#' \itemize{
+#'   \item \code{\link{cat2cat_ml_run}} - validate ML performance before use
+#'   \item \code{\link{prune_c2c}}, \code{\link{cross_c2c}} - post-processing
+#'   \item \code{\link{summary_c2c}}, \code{\link{dummy_c2c}} - helpers
+#'   \item \code{\link{cat2cat_agg}} - for pre-aggregated data
+#'   \item \code{vignette("cat2cat")} - identification assumptions and worked examples
+#' }
 #' @export
 #' @examples
 #' \dontrun{
@@ -182,9 +182,9 @@ cat2cat <- function(data = list(
                       features = NULL,
                       args = NULL
                     )) {
-  stopifnot(is.list(data))
-  stopifnot(is.list(mappings))
-  stopifnot(is.list(ml))
+  stopifnot("`data` must be a list" = is.list(data))
+  stopifnot("`mappings` must be a list" = is.list(mappings))
+  stopifnot("`ml` must be a list (or NULL)" = is.list(ml))
 
   # Backward compatibility
   if (is.null(data$freqs_df)) data$freqs_df <- mappings$freqs_df
@@ -355,37 +355,68 @@ resolve_frequencies <- function(cat_base_year,
   freqs
 }
 
-#" Validate cat2cat data
+#' Validate cat2cat data
 #' @keywords internal
 validate_data <- function(data) {
-  stopifnot(inherits(data$old, "data.frame"))
-  stopifnot(inherits(data$new, "data.frame"))
-  stopifnot(!is.null(data$cat_var_old) && !is.null(data$cat_var_new))
-
-  stopifnot(all(c(data$cat_var_old, data$time_var) %in% colnames(data$old)))
-  stopifnot(all(c(data$cat_var_new, data$time_var) %in% colnames(data$new)))
+  stopifnot("`data$old` must be a data.frame" = inherits(data$old, "data.frame"))
+  stopifnot("`data$new` must be a data.frame" = inherits(data$new, "data.frame"))
   stopifnot(
-    is.null(data$multiplier_var) ||
-      (data$multiplier_var %in% colnames(data$new) &&
-         data$multiplier_var %in% colnames(data$old))
+    "`data$cat_var_old` and `data$cat_var_new` must be specified" =
+      !is.null(data$cat_var_old) && !is.null(data$cat_var_new)
   )
 
+  stopifnot(
+    "`cat_var_old` and `time_var` must be columns in `data$old`" =
+      all(c(data$cat_var_old, data$time_var) %in% colnames(data$old))
+  )
+  stopifnot(
+    "`cat_var_new` and `time_var` must be columns in `data$new`" =
+      all(c(data$cat_var_new, data$time_var) %in% colnames(data$new))
+  )
+  stopifnot(
+    "`multiplier_var` must be a column in both `data$old` and `data$new`" =
+      is.null(data$multiplier_var) ||
+      (data$multiplier_var %in% colnames(data$new) &&
+       data$multiplier_var %in% colnames(data$old))
+  )
 
-  stopifnot(is.null(data$freqs_df) ||
-              (is.data.frame(data$freqs_df) && ncol(data$freqs_df) == 2))
-  stopifnot((length(unique(data$old[[data$time_var]])) == 1) &&
-              (length(unique(data$new[[data$time_var]])) == 1))
-  stopifnot(is.null(data$id_var) || ((data$id_var %in% colnames(data$old)) &&
-                                       (data$id_var %in% colnames(data$new)) &&
-                                       !anyDuplicated(data$old[[data$id_var]]) &&
-                                       !anyDuplicated(data$new[[data$id_var]])))
+  stopifnot(
+    "`freqs_df` must be NULL or a 2-column data.frame" =
+      is.null(data$freqs_df) ||
+      (is.data.frame(data$freqs_df) && ncol(data$freqs_df) == 2)
+  )
+  stopifnot(
+    "Each period must have exactly one unique time value in `time_var`" =
+      (length(unique(data$old[[data$time_var]])) == 1) &&
+      (length(unique(data$new[[data$time_var]])) == 1)
+  )
+  stopifnot(
+    "`id_var` must be a column in both periods with no duplicates within each period" =
+      is.null(data$id_var) ||
+      ((data$id_var %in% colnames(data$old)) &&
+       (data$id_var %in% colnames(data$new)) &&
+       !anyDuplicated(data$old[[data$id_var]]) &&
+       !anyDuplicated(data$new[[data$id_var]]))
+  )
 }
 
-#" Validate cat2cat mappings
+#' Validate cat2cat mappings
 #' @keywords internal
 validate_mappings <- function(mappings) {
-  stopifnot(all(vapply(mappings, Negate(is.null), logical(1))))
-  stopifnot(all(c("trans", "direction") %in% names(mappings)))
-  stopifnot(isTRUE(mappings$direction %in% c("forward", "backward")))
-  stopifnot(is.data.frame(mappings$trans) && ncol(mappings$trans) == 2)
+  stopifnot(
+    "All `mappings` elements must be non-NULL" =
+      all(vapply(mappings, Negate(is.null), logical(1)))
+  )
+  stopifnot(
+    "`mappings` must contain 'trans' and 'direction'" =
+      all(c("trans", "direction") %in% names(mappings))
+  )
+  stopifnot(
+    "`mappings$direction` must be 'forward' or 'backward'" =
+      isTRUE(mappings$direction %in% c("forward", "backward"))
+  )
+  stopifnot(
+    "`mappings$trans` must be a 2-column data.frame" =
+      is.data.frame(mappings$trans) && ncol(mappings$trans) == 2
+  )
 }

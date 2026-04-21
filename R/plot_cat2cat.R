@@ -29,8 +29,11 @@
 plot_c2c <- function(data,
                      weis = "wei_freq_c2c",
                      type = c("both", "hist", "bar")) {
-  stopifnot(is.data.frame(data))
-  stopifnot(is.character(weis) && (length(weis) == 1))
+  stopifnot("`data` must be a data.frame" = is.data.frame(data))
+  stopifnot(
+    "`weis` must be a single character string" =
+      is.character(weis) && (length(weis) == 1)
+  )
   stopifnot(
     "There are no cat2cat additional wei_* columns/variables" =
       weis %in% colnames(data)

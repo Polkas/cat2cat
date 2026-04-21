@@ -1,19 +1,34 @@
-#' Adjusted summary for linear regression when based on replicated dataset
-#' @description adjusting lm object results according to original number of
+#' Adjusted summary for regressions on replicated datasets
+#' @description adjusting lm/glm object results according to original number of
 #' degree of freedom.
-#' The standard errors, t statistics and p values have to be adjusted because of
-#'  replicated observations.
-#' @param x lm object
+#' The standard errors, test statistics and p values have to be adjusted because of
+#' replicated observations.
+#' @param x lm or glm object
 #' @param df_old integer number of d.f in original dataset. For bigger datasets
 #' `nrow` should be sufficient.
 #' @param df_new integer number of d.f in dataset with replicated rows,
 #' Default: x$df.residual
-#' @return data.frame with additional columns over a regular summary.lm output,
+#' @return data.frame with additional columns over a regular summary output,
 #' like correct and statistics adjusted by it.
 #' @importFrom stats pt
-#' @details The size of the correction is equal to sqrt(df_new / df_old).
-#' Where standard errors are multiplied and t statistics divided by it.
-#' In most cases the default \code{df_new} value should be used.
+#' @details The replication step in \code{cat2cat} inflates the nominal sample
+#' size: the model sees \code{n_rep} rows but only \code{n_orig} are independent
+#' observations. Naive OLS therefore under-estimates standard errors.
+#'
+#' The correction factor is \code{sqrt(df_new / df_old)}, where \code{df_new} is
+#' the residual d.f. from the replicated model and \code{df_old} the residual
+#' d.f. from the original dataset. Standard errors are multiplied by this
+#' factor, test statistics divided by it, and p-values recomputed from the
+#' appropriate reference distribution: \code{t(df_old)} for t-based summaries
+#' and standard normal for z-based summaries.
+#'
+#' This is a pragmatic d.f. adjustment. It works well when per-subject
+#' weights sum to one and no extreme weights dominate.
+#'
+#' Note: Goodness-of-fit statistics (R-squared, AIC, BIC) from the replicated
+#' model are \strong{not meaningful} --- they reflect the inflated sample
+#' size, not explanatory power. Report only coefficient estimates and the
+#' corrected SEs/p-values from this function.
 #' @importFrom stats pnorm predict
 #' @examples
 #' data("occup_small", package = "cat2cat")
@@ -51,14 +66,43 @@
 #' @export
 #'
 summary_c2c <- function(x, df_old, df_new = x$df.residual) {
-  stopifnot(inherits(x, "lm"))
+  stopifnot("`x` must be an lm or glm object" = inherits(x, c("lm", "glm")))
+
+  if (!is.numeric(df_old) || length(df_old) != 1 || !is.finite(df_old) || df_old <= 0) {
+    stop("`df_old` must be a single positive finite numeric value.")
+  }
+  if (!is.numeric(df_new) || length(df_new) != 1 || !is.finite(df_new) || df_new <= 0) {
+    stop("`df_new` must be a single positive finite numeric value.")
+  }
+
   ss <- summary(x)
   cc <- ss$coefficients
+
+  if (is.null(cc) || !(is.matrix(cc) || is.data.frame(cc))) {
+    stop("`summary(x)$coefficients` must be a matrix or data.frame.")
+  }
+
   correct <- sqrt(df_new / df_old)
   dd <- as.data.frame(cc)
+
+  if (!"Std. Error" %in% names(dd)) {
+    stop("`summary(x)$coefficients` must contain a 'Std. Error' column.")
+  }
+
   dd$correct <- correct
   dd$std.error_c <- dd$`Std. Error` * correct
-  dd$statistic_c <- dd$`t value` / correct
-  dd$p.value_c <- 2 * pt(abs(dd$statistic_c), df_old, lower.tail = FALSE)
+
+  if ("t value" %in% names(dd)) {
+    dd$statistic_c <- dd$`t value` / correct
+    dd$p.value_c <- 2 * pt(abs(dd$statistic_c), df_old, lower.tail = FALSE)
+    dd$reference_dist <- "t"
+  } else if ("z value" %in% names(dd)) {
+    dd$statistic_c <- dd$`z value` / correct
+    dd$p.value_c <- 2 * pnorm(abs(dd$statistic_c), lower.tail = FALSE)
+    dd$reference_dist <- "normal"
+  } else {
+    stop("`summary(x)$coefficients` must contain either 't value' or 'z value'.")
+  }
+
   dd
 }
