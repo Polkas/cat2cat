@@ -128,3 +128,21 @@ testthat::test_that("cat2cat_agg scenario three", {
   colnames(agg3$new) <- cols
   expect_identical(agg2, agg3)
 })
+
+testthat::test_that("cat2cat_agg backward many-to-one sets prop_c2c to 1", {
+  agg_back_single <- cat2cat_agg(
+    data = list(
+      old = agg_old,
+      new = agg_new,
+      cat_var_old = "vertical",
+      cat_var_new = "vertical2",
+      time_var = "v_date",
+      freq_var = "counts"
+    ),
+    c(Kids1, Kids2) %<% c(Kids)
+  )
+
+  kids_rows <- agg_back_single$old$vertical %in% c("Kids")
+  expect_true(any(kids_rows))
+  expect_true(all(agg_back_single$old$prop_c2c[kids_rows] == 1))
+})

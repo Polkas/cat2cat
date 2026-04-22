@@ -203,3 +203,39 @@ testthat::test_that(
     )
   }
 )
+
+testthat::test_that(
+  "summary_c2c rejects non-tabular coefficients object",
+  {
+    summary.badcoef <- function(object, ...) {
+      list(coefficients = c(1, 2, 3))
+    }
+    assign("summary.badcoef", summary.badcoef, envir = .GlobalEnv)
+    on.exit(rm("summary.badcoef", envir = .GlobalEnv), add = TRUE)
+
+    bad <- structure(list(df.residual = 10), class = c("badcoef", "lm"))
+
+    expect_error(
+      summary_c2c(bad, df_old = 10, df_new = 20),
+      "must be a matrix or data.frame"
+    )
+  }
+)
+
+testthat::test_that(
+  "summary_c2c requires Std. Error column",
+  {
+    summary.nose <- function(object, ...) {
+      list(coefficients = cbind("Estimate" = c(1, 2), "t value" = c(3, 4)))
+    }
+    assign("summary.nose", summary.nose, envir = .GlobalEnv)
+    on.exit(rm("summary.nose", envir = .GlobalEnv), add = TRUE)
+
+    bad <- structure(list(df.residual = 10), class = c("nose", "lm"))
+
+    expect_error(
+      summary_c2c(bad, df_old = 10, df_new = 20),
+      "must contain a 'Std. Error' column"
+    )
+  }
+)
