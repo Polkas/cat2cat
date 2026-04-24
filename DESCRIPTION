@@ -4,6 +4,8 @@ Version: 0.6.0.9000
 Authors@R: c(
     person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-5236-8040")),
+    person("Krzysztof", "Gajowniczek", email = "krzysztof_gajowniczek@sggw.edu.pl", role = "ctb",
+           comment = c(ORCID = "0000-0001-6953-8907")),           
     person("Andrzej", "Dudek", email = "andrzej.dudek@ue.wroc.pl", role = "ctb",
            comment = c(ORCID = "0000-0002-4943-8703")),
     person("Joanna", "Landmesser-Rusek", email = "joanna_landmesser@sggw.edu.pl", role = "ctb",
