@@ -282,6 +282,8 @@ If subjects have stable identifiers across waves, `id_var` can reduce unnecessar
 
 Use this module only when the identifier truly tracks the same subject across adjacent waves and short-run category changes are unlikely to represent genuine transitions rather than coding changes.
 
+If you have a complete panel with every subject observed in both periods and no missing category values, you may not need probabilistic harmonisation at all. In that case, the target-period category can often be joined back to the earlier record by `id_var`, and the task is mostly a deterministic join. `cat2cat()` is more useful when the panel is incomplete, rotational, or mixed with new entrants and leavers, so some observations still need the mapping-table replication path.
+
 ```{r panel-load}
 panel_old <- occup_panel[occup_panel$quarter == "2009Q4", ]
 panel_new <- occup_panel[occup_panel$quarter == "2010Q1", ]

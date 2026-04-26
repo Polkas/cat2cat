@@ -80,3 +80,46 @@ testthat::test_that("cat2cat_ml_run supports naive bayes metrics", {
   avg_acc_nb <- mean(vapply(res, function(g) g$acc["nb"], numeric(1)), na.rm = TRUE)
   testthat::expect_true(avg_acc_nb > 0 && avg_acc_nb <= 1)
 })
+
+testthat::test_that("cat2cat_ml_run method skips are independent across methods", {
+  mappings <- list(trans = trans, direction = "backward")
+  ml_features <- c("age", "sex", "edu", "exp", "parttime", "salary")
+  methods <- c("knn", "lda", "rf", "nb")
+
+  skipped_rate <- function(res, method) {
+    mean(vapply(res, function(g) is.na(g$acc[[method]]), logical(1)))
+  }
+
+  set.seed(1234)
+  together <- cat2cat_ml_run(
+    mappings,
+    list(
+      data = occup_2010,
+      cat_var = "code",
+      method = methods,
+      features = ml_features,
+      args = list(k = 10, ntree = 50)
+    ),
+    test_prop = 0.2
+  )
+
+  alone_rates <- setNames(numeric(length(methods)), methods)
+  for (m in methods) {
+    set.seed(1234)
+    res_single <- cat2cat_ml_run(
+      mappings,
+      list(
+        data = occup_2010,
+        cat_var = "code",
+        method = m,
+        features = ml_features,
+        args = list(k = 10, ntree = 50)
+      ),
+      test_prop = 0.2
+    )
+    alone_rates[[m]] <- skipped_rate(res_single, m)
+  }
+
+  together_rates <- vapply(methods, function(m) skipped_rate(together, m), numeric(1))
+  testthat::expect_lt(max(abs(together_rates - alone_rates)), 0.05)
+})

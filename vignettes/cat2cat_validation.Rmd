@@ -86,7 +86,8 @@ occup_2_mix <- cat2cat(
     cat_var = "code",
     method = c("knn", "rf", "lda", "nb"),
     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
-    args = list(k = 10, ntree = 50)
+    args = list(k = 10, ntree = 50),
+    on_fail = "na"
   )
 )
 ```
@@ -95,8 +96,8 @@ Correlations between weight methods:
 
 ```{r weight-correlations}
 occup_2_mix$old %>%
-  select(wei_knn_c2c, wei_rf_c2c, wei_lda_c2c, wei_nb_c2c, wei_freq_c2c) %>%
-  cor()
+  select(wei_knn_c2c, wei_rf_c2c, wei_lda_c2c, wei_nb_c2c, wei_freq_c2c, wei_naive_c2c) %>%
+    cor(use = "pairwise.complete.obs")
 ```
 
 ### If ML fails on some rows: `on_fail` and `fail_warn`
@@ -111,6 +112,12 @@ Sometimes ML probabilities cannot be produced for a subset of replicated rows
 - `on_fail = "error"`: stop immediately when failed rows are detected.
 - `fail_warn = TRUE` (default): warn with affected rows/observations per method.
 - `fail_warn = FALSE`: suppress these warnings.
+
+Important: this failure accounting is specific to `cat2cat()` and the constructed
+weight columns (`wei_*_c2c`). It is different from `cat2cat_ml_run()` "SKIPPED
+GROUPS", which reports mapping groups that were not evaluated in holdout
+diagnostics (single category, too few observations, or method fit/predict error
+for that group).
 
 ```{r ml-failure-policy, eval=FALSE}
 ml_setup <- list(
@@ -133,18 +140,12 @@ ml_diag$on_fail <- "na"
 ml_diag$fail_warn <- FALSE
 ```
 
-**Interpreting correlations:**
-
-- **r > 0.95**: Methods agree strongly; any choice reasonable. Prefer simpler (freq) unless ML has theoretical motivation.
-- **0.80 < r < 0.95**: Moderate agreement; results likely robust. Report sensitivity across methods.
-- **r < 0.80**: Substantial disagreement; weights carry meaningful different information. Investigate *which* observations differ and *why* - this often reveals edge cases where features help (favoring ML) or categories with sparse training data (favoring freq).
-
 Ensemble weights with `cross_c2c()` and pruning with `prune_c2c()`:
 
 ```{r ensemble-prune}
 occup_old_mix <- occup_2_mix$old %>%
   cross_c2c(.) %>%
-  prune_c2c(., column = "wei_cross_c2c", method = "highest1")
+  prune_c2c(., column = "wei_cross_c2c", method = "nonzero")
 ```
 
 ## Step 2: Check whether conclusions are sensitive to the weight choice
@@ -320,6 +321,8 @@ For each mapping group (set of candidate categories linked by the transition tab
 4. Trains each specified ML method on the training set and records test-set model performance.
 
 Groups with fewer than 5 observations or only one candidate category are skipped.
+Also note that `cat2cat_ml_run()` does not use `on_fail`; it is a diagnostic
+tool and reports skipped groups instead of applying row-level fallback weights.
 
 ### Minimal validation workflow
 
@@ -363,13 +366,20 @@ cv_all <- cat2cat_ml_run(
   ml = list(
     data = bind_rows(occup_2010, occup_2012),
     cat_var = "code",
-    method = c("knn", "lda"),
+    method = c("knn", "lda", "rf", "nb"),
     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
-    args = list(k = 10)
+    args = list(k = 10, ntree = 50)
   )
 )
 print(cv_all)
 ```
+
+Interpretation tip for mixed outputs:
+
+- It is possible for a method to have 0 failed rows in `cat2cat()` but a non-zero
+  skipped-group rate in `cat2cat_ml_run()`.
+- This is not a contradiction: the first is row-level weight construction, the
+  second is group-level holdout evaluation coverage.
 
 ### Inspect per-group diagnostics when methods disagree
 

@@ -30,6 +30,8 @@ When one observed code can correspond to several target categories, **cat2cat** 
 
 The result is a unified categorical variable across periods, ready for longitudinal analysis, subgroup comparisons, and trend studies.
 
+NOTE: For a complete panel where every subject is observed in both periods and the target-period category is known, probabilistic harmonisation may not be needed: the target category can often be joined back by the subject identifier. `cat2cat()` is most useful when classifications change and some observations cannot be directly linked to a target-period category, such as in repeated cross-sections, rotational panels, or panels with entrants and leavers.
+
 ### Value Added of cat2cat
 
 cat2cat separates true structural change from coding-system change. This is the

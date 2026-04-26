@@ -115,6 +115,34 @@ testthat::test_that("id_var g_new_c2c comes from base period for direct matches"
   }
 })
 
+testthat::test_that("id_var complete matched panel uses only direct matches", {
+  complete_ids <- intersect(panel_2009Q4$panel_id, panel_2010Q1$panel_id)
+  complete_old <- panel_2009Q4[panel_2009Q4$panel_id %in% complete_ids, ]
+  complete_new <- panel_2010Q1[panel_2010Q1$panel_id %in% complete_ids, ]
+
+  result <- cat2cat(
+    data = list(
+      old = complete_old,
+      new = complete_new,
+      id_var = "panel_id",
+      cat_var = "code",
+      time_var = "quarter"
+    ),
+    mappings = list(trans = trans, direction = "backward")
+  )
+
+  # No observations should go through the replication path when every id matches.
+  expect_equal(nrow(result$old), nrow(complete_old))
+  expect_equal(nrow(result$new), nrow(complete_new))
+  expect_true(all(result$old$rep_c2c == 1))
+  expect_true(all(result$new$rep_c2c == 1))
+  expect_true(all(result$old$wei_freq_c2c == 1))
+  expect_true(all(result$old$wei_naive_c2c == 1))
+
+  new_codes <- complete_new$code[match(result$old$panel_id, complete_new$panel_id)]
+  expect_equal(result$old$g_new_c2c, new_codes)
+})
+
 # -----------------------------------------------------------------------------
 # Weight sum preservation tests
 # -----------------------------------------------------------------------------

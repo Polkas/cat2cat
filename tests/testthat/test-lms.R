@@ -26,7 +26,8 @@ ml <- list(
   cat_var = "code",
   method = c("knn", "rf", "lda"),
   features = c("age", "sex", "edu", "exp", "parttime", "salary"),
-  args = list(k = 10, ntree = 30)
+  args = list(k = 10, ntree = 30),
+  fail_warn = FALSE
 )
 
 testthat::test_that(

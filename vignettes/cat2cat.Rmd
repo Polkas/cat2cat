@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 | Data type | Example | Function |
 |-----------|---------|----------|
 | Longitudinal data | Survey responses, administrative records | `cat2cat()` |
-| Panel data | Subjects observed in multiple periods | `cat2cat()` with `id_var` |
+| (rotational) Panel data | Subjects observed in multiple periods | `cat2cat()` with `id_var` |
 | Aggregated counts | Published statistics, summary tables | `cat2cat_agg()` |
 
 ## How to read the documentation
@@ -61,19 +61,20 @@ Naive approaches fail:
 
 ## The Solution
 
-**cat2cat** uses a statistically principled approach:
+**cat2cat** uses an approach:
 
-1. Replicate each observation onto all candidate categories  
-2. Weight each replica by its probability (frequencies or ML)
-3. Correct standard errors for the artificial sample inflation
+1. The mapping table specifies how categories from one classification (e.g., the old one) correspond to categories from a second classification (e.g., the new one).
+2. When one category corresponds to multiple categories in another system, the observation is replicated an equal number of times.
+3. The replication probabilities (weights) sum to one and can be constructed using different rules.
+4. The weights can be based on frequencies from the previous period, a uniform split, or ML algorithms.
 
 Formally, for each original observation $i$ mapped to $k$ candidate categories, the weights satisfy:
 
 $$w_{ij} \geq 0 \quad \text{and} \quad \sum_{j=1}^{k} w_{ij} = 1$$
 
-This constraint ensures that weighted statistics equal their original values - the replication is *neutral* for the first two moments of any estimator.
+This constraint ensures that replication is *neutral* for weighted statistics that do not use the unresolved mapped category.
 
-For estimands that do not directly depend on the unresolved mapped category, the weighted analysis preserves unbiasedness under the stated assumptions. See [Nasinski et al. (2020)](https://doi.org/10.24425/cejeme.2020.134747) for the theoretical foundation and [Nasinski & Gajowniczek (2023)](https://doi.org/10.1016/j.softx.2023.101525) for R implementation details.
+For estimands that do not directly depend on the unresolved mapped category, the weighted point estimates are unchanged by replication. Inference still needs correction because replication increases the row count. See [Nasinski et al. (2020)](https://doi.org/10.24425/cejeme.2020.134747) for the theoretical foundation and [Nasinski & Gajowniczek (2023)](https://doi.org/10.1016/j.softx.2023.101525) for R implementation details.
 
 ### Value Added of cat2cat
 
@@ -90,17 +91,38 @@ After harmonisation, you can:
 Without harmonisation, measured differences between periods can be driven by
 reclassification rules rather than real changes in the population.
 
-## Identification & Assumptions
+## Harmonisation Assumptions and Sensitivity
 
-You observe a worker coded "1111" in 2008 that could be "111101", "111102", or "111103" in 2010. cat2cat assigns probability weights to each candidate. The question is: are those weights correct?
+Suppose a worker is coded "1111" in 2008 and the mapping table says this code can correspond to "111101", "111102", or "111103" in 2010. 
+The mapping table tells us the feasible target categories, but it does not tell us which target code this particular observation would have received under the 2010 classification.
 
-The mapping table alone does not imply a single weighting - each method below adds an assumption that does. 
-The choice becomes an identifying assumption for downstream estimates that depend on the mapped category (e.g. occupation fixed effects or interactions with `g_new_c2c`); estimates that do not depend on the mapped category are unaffected.
+This is the key assumption in probabilistic harmonisation. 
+`cat2cat` does not discover the true latent split from the mapping table alone. 
+Instead, it applies a transparent rule for distributing each ambiguous observation across its feasible target categories. 
+Different rules can imply different weights while remaining consistent with the same observed data.
+
+The workflow is therefore sequential. 
+First, choose a harmonisation rule: naive, frequency, or ML. 
+Conditional on that rule, `cat2cat` constructs the weights. 
+Second, estimate the substantive quantity of interest - for example a mean, trend, group comparison, or OLS coefficient - on the harmonised data.
+
+Identification is therefore a property of the estimate or model fitted after harmonisation, not of `cat2cat` alone. 
+When the harmonised category enters that model, the chosen `cat2cat` rule becomes part of the model's maintained assumptions.
+
+The weighting rule matters only for observations with `rep_c2c > 1`. 
+If a mapping is deterministic and no observation is replicated, the choice between naive, frequency, and ML weights is irrelevant. 
+A deterministic recode still relies on the mapping table being correct, but it does not require a distributional assumption over candidate categories.
+
+In anonymous repeated cross-sections, harmonisation is a counterfactual recoding exercise: it asks how an old code should be expressed in the target classification, not whether the same anonymous person kept the same occupation over time. 
+In panel data with `id_var`, returning subjects are observed in both periods, so their categories can be linked directly rather than assigned probabilistically.
+
+Sensitivity checks are most important when the final analysis uses the harmonised category itself, for example as a grouping variable, fixed effect, or interaction term. 
+If results are similar under naive, frequency, and ML weights, conclusions are less dependent on the harmonisation assumption. If results differ, report the range and explain which assumption drives the difference.
 See [Advanced Workflows](cat2cat_advanced.html#regression-on-replicated-data) for the model-level picture.
 
 ### Three weighting schemes
 
-Each weighting method adds one identifying assumption:
+Each weighting method adds one harmonisation assumption:
 
 **Naive weights** (`wei_naive_c2c`): Assume a uniform distribution - each candidate is equally likely.
 $$w_j = \frac{1}{k}$$
@@ -179,10 +201,13 @@ See [Advanced Workflows](cat2cat_advanced.html#multi-period-chaining).
 **Panel data** (subjects observed in multiple periods): 
 provide `id_var` to directly match returning subjects - no replication for them, only new entrants go through the probabilistic path. See [Advanced Workflows](cat2cat_advanced.html#panel-data-with-subject-identifiers).
 
+If every subject is observed in both periods and the target-period category is known, `cat2cat()` may not be necessary: you can often join the target category back to the earlier record by `id_var`. `cat2cat()` is useful when some records cannot be linked directly and still need the mapping-table replication path.
+
 **Aggregated data** (published counts only, no micro-data): 
 use `cat2cat_agg()` with explicit equations:
 
 ```{r use-case-agg}
+library(dplyr)
 data(verticals, package = "cat2cat")
 
 agg_old <- verticals[verticals$v_date == "2020-04-01", ]
@@ -339,13 +364,20 @@ Replication inflates the row count, so standard errors must still be corrected:
 
 $$\text{SE}_{\text{corrected}} = \text{SE}_{\text{naive}} \times \sqrt{\frac{n_{\text{rep}}}{n_{\text{orig}}}}$$
 
-`summary_c2c()` applies this correction to the pooled model:
+`summary_c2c()` applies this correction to the pooled model.
+To keep this example fast, we use a lightweight group-level control
+(`avg_age_g_new_c2c`) instead of full `factor(g_new_c2c)` fixed effects:
 
 ```{r pooled-regression}
 harmonised_two_period <- dplyr::bind_rows(result_back$old, result_back$new)
 
+harmonised_two_period <- harmonised_two_period %>%
+  dplyr::group_by(g_new_c2c) %>%
+  dplyr::mutate(avg_age_g_new_c2c = mean(age, na.rm = TRUE)) %>%
+  dplyr::ungroup()
+
 pooled_model <- lm(
-  log(salary) ~ factor(year) + age + exp + factor(g_new_c2c),
+  log(salary) ~ factor(year) + age + exp + avg_age_g_new_c2c,
   data = harmonised_two_period,
   weights = multiplier * wei_freq_c2c
 )
@@ -355,7 +387,7 @@ pooled_summary <- summary_c2c(
   df_old = nrow(occup_2008) + nrow(occup_2010) - length(coef(pooled_model))
 )
 
-pooled_summary[c("factor(year)2010", "age", "exp"),
+pooled_summary[c("factor(year)2010", "age", "avg_age_g_new_c2c"),
                c("Estimate", "std.error_c", "p.value_c")]
 ```
 
