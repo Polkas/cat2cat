@@ -22,9 +22,19 @@ knitr::opts_chunk$set(
 
 | Data type | Example | Function |
 |-----------|---------|----------|
-| Micro-data | Survey responses, administrative records | `cat2cat()` |
-| Aggregated counts | Published statistics, summary tables | `cat2cat_agg()` |
+| Longitudinal data | Survey responses, administrative records | `cat2cat()` |
 | Panel data | Subjects observed in multiple periods | `cat2cat()` with `id_var` |
+| Aggregated counts | Published statistics, summary tables | `cat2cat_agg()` |
+
+## How to read the documentation
+
+Use the package documentation in this order:
+
+1. **This vignette** for the core problem, the main assumptions, and a minimal two-period workflow.
+2. [Choosing Weights and Validating ML](cat2cat_validation.html) when you need to decide between naive, frequency, and ML weights.
+3. [Advanced Workflows](cat2cat_advanced.html) for multi-period chaining, (rotational) panels with `id_var`, aggregated data, and regression workflows.
+
+If you only need a standard two-period harmonisation with default frequency weights, this vignette is usually enough.
 
 ## The Problem
 
@@ -65,27 +75,42 @@ This constraint ensures that weighted statistics equal their original values - t
 
 For estimands that do not directly depend on the unresolved mapped category, the weighted analysis preserves unbiasedness under the stated assumptions. See [Nasinski et al. (2020)](https://doi.org/10.24425/cejeme.2020.134747) for the theoretical foundation and [Nasinski & Gajowniczek (2023)](https://doi.org/10.1016/j.softx.2023.101525) for R implementation details.
 
+### Value Added of cat2cat
+
+cat2cat separates true structural change from coding-system change. This is the
+main value for longitudinal analysis.
+
+After harmonisation, you can:
+
+- Track trends within specific groups (for example occupations, industries, diagnoses) across waves
+- Compare subgroup dynamics on one consistent coding scheme
+- Estimate models with group-level effects and interactions without period-specific recoding artifacts
+- Run sensitivity checks across weighting assumptions and report uncertainty transparently
+
+Without harmonisation, measured differences between periods can be driven by
+reclassification rules rather than real changes in the population.
+
 ## Identification & Assumptions
 
 You observe a worker coded "1111" in 2008 that could be "111101", "111102", or "111103" in 2010. cat2cat assigns probability weights to each candidate. The question is: are those weights correct?
 
 The mapping table alone does not imply a single weighting - each method below adds an assumption that does. 
 The choice becomes an identifying assumption for downstream estimates that depend on the mapped category (e.g. occupation fixed effects or interactions with `g_new_c2c`); estimates that do not depend on the mapped category are unaffected.
-See [Regression on Replicated Data](cat2cat_regression.html#identification-and-inference) for the model-level picture.
+See [Advanced Workflows](cat2cat_advanced.html#regression-on-replicated-data) for the model-level picture.
 
 ### Three weighting schemes
 
 Each weighting method adds one identifying assumption:
 
-**Naive weights** (`wei_naive_c2c`): Assume uniform distribution - each candidate equally likely.
+**Naive weights** (`wei_naive_c2c`): Assume a uniform distribution - each candidate is equally likely.
 $$w_j = \frac{1}{k}$$
 This is the maximum entropy (least informative) prior. It requires only the mapping table - no data from either period. Use when you have no information favoring any candidate, or as a robustness bound.
 
-**Frequency weights** (`wei_freq_c2c`): Assume ambiguous observations distribute like the base period population.
+**Frequency weights** (`wei_freq_c2c`): Assume that ambiguous observations are distributed as in the base-period population.
 $$w_j = \frac{n_j^{\text{base}}}{\sum_{j'} n_{j'}^{\text{base}}}$$
 This requires observed counts in the base period. It works well when ambiguous cases resemble the overall population; it breaks down when they differ systematically (e.g., workers in transitional occupations may not match the stable population).
 
-**ML weights** (`wei_*_c2c` for knn, rf, lda, nb): Assume individual features predict category membership.
+**ML weights** (`wei_*_c2c` for knn, rf, lda): Assume that individual features predict category membership.
 $$w_j = P(j \mid X_i, g)$$
 This requires training data with both the category and predictive features. ML can correct for heterogeneity that frequency weights miss - if a 25-year-old programmer is more likely in "111101" than a 55-year-old manager, ML captures this. Use `cat2cat_ml_run()` to verify ML improves over baselines.
 
@@ -99,11 +124,13 @@ This requires training data with both the category and predictive features. ML c
 
 ### Reducing assumption dependence
 
-The weighting assumption only affects observations that are replicated (`rep_c2c > 1`). Strategies to reduce replication:
+The weighting assumption only affects observations that are replicated (`rep_c2c > 1`). 
 
-- **Panel `id_var`**: returning subjects get direct matches - no replication. See [Panel Data with Subject Identifiers](cat2cat_panel.html).
+Strategies to reduce replication:
+
+- **Panel `id_var`**: returning subjects get direct matches - no replication. See [Advanced Workflows](cat2cat_advanced.html#panel-data-with-subject-identifiers).
 - **Forward mapping**: replicates the newer (more granular) period, which often maps 1-to-1 backward.
-- **Code truncation**: collapsing 6-digit to 4-digit codes creates more 1-to-1 mappings in hierarchical systems (ISCO, ICD, NACE).
+- **Code truncation**: collapsing 6-digit to 4-digit codes often creates more 1-to-1 mappings in hierarchical systems (ISCO, ICD, NACE), especially for backward mapping. For forward mapping, truncation can also increase replication in some mappings.
 
 If most observations have `rep_c2c = 1`, results depend minimally on the assumption.
 
@@ -121,19 +148,39 @@ If most observations have `rep_c2c = 1`, results depend minimally on the assumpt
 - **Empty base categories**: frequency weights fall back to naive (1/k). Use `wei_naive_c2c` or ML with external training data.
 - **Few observations per ML class**: models fail or overfit. Use frequency weights or coarser categories.
 
-Naive weights (`wei_naive_c2c`) always work - they need only the mapping table.
+Naive weights (`wei_naive_c2c`) always work - they require only the mapping table.
 
-**Diagnostic**: check `mean(result$old$rep_c2c)` and `cor(wei_freq_c2c, wei_naive_c2c)`. Very high replication or correlation near 1 suggests the mapping is too diffuse to improve over uniform weights. See [Multi-Period Chaining](cat2cat_multi_period.html#reducing-replication-via-truncation) for truncation strategies.
+**Diagnostic**: 
+
+check `mean(rep_c2c)` and `cor(wei_freq_c2c, wei_naive_c2c)`. 
+Very high replication or correlation near 1 suggests the mapping is too diffuse to improve over uniform weights. 
+See [Advanced Workflows](cat2cat_advanced.html#mapping-table-stability-and-truncation) for truncation strategies.
+
+## If you need something more advanced
+
+This vignette focuses on the standard two-period micro-data workflow. Move to the other vignettes when:
+
+- you need to decide whether ML improves on simpler baselines,
+- you need to chain mappings across 3 or more waves,
+- you have a rotational panel with stable identifiers,
+- you only have aggregated counts rather than individual observations,
+- or your main task is regression and inference after harmonisation.
 
 ## Use Cases
 
-**Repeated cross-sections** (most common): harmonize independent surveys using base-period frequencies. The Quick Example below demonstrates this.
+**Repeated cross-sections** (most common): 
+harmonize independent surveys using base-period frequencies. 
+The Quick Example below demonstrates this.
 
-**Multi-period analysis** (3+ waves): chain `cat2cat()` calls sequentially - each step uses the previous step's mapped frequencies. See [Multi-Period Chaining](cat2cat_multi_period.html).
+**Multi-period analysis** (3+ waves): 
+chain `cat2cat()` calls sequentially - each step uses the previous step's mapped frequencies. 
+See [Advanced Workflows](cat2cat_advanced.html#multi-period-chaining).
 
-**Panel data** (subjects observed in multiple periods): pass `id_var` to directly match returning subjects - no replication for them, only new entrants go through the probabilistic path. See [Panel Data with Subject Identifiers](cat2cat_panel.html).
+**Panel data** (subjects observed in multiple periods): 
+provide `id_var` to directly match returning subjects - no replication for them, only new entrants go through the probabilistic path. See [Advanced Workflows](cat2cat_advanced.html#panel-data-with-subject-identifiers).
 
-**Aggregated data** (published counts only, no micro-data): use `cat2cat_agg()` with explicit equations:
+**Aggregated data** (published counts only, no micro-data): 
+use `cat2cat_agg()` with explicit equations:
 
 ```{r use-case-agg}
 data(verticals, package = "cat2cat")
@@ -158,7 +205,7 @@ agg_result <- cat2cat_agg(
 agg_result$old[c("vertical", "prop_c2c", "counts")]
 ```
 
-See [Aggregated Data & Special Cases](cat2cat_aggregated.html) for equation syntax.
+See [Advanced Workflows](cat2cat_advanced.html#aggregated-data-and-special-cases) for details.
 
 ## Key Concepts
 
@@ -193,6 +240,13 @@ cat("Backward: old period replicated from", nrow(occup_2008), "to", nrow(backwar
 cat("Forward: new period replicated from", nrow(occup_2010), "to", nrow(forward$new), "rows")
 ```
 
+### ML weights in practice
+
+Model-based weights are optional in `cat2cat()`. 
+They are useful when individual features (age, education, experience, etc.) carry information about category assignment beyond base-period frequencies.
+
+For a compact ML workflow (`ml` setup, method comparison, and failure handling with `on_fail` / `fail_warn`), see [Advanced Workflows](cat2cat_advanced.html#ml-weights).
+
 ### Weights
 
 | Weight | Source | Use when... |
@@ -202,11 +256,14 @@ cat("Forward: new period replicated from", nrow(occup_2010), "to", nrow(forward$
 | `wei_knn_c2c` | k-Nearest Neighbours on features | Non-linear boundaries, no distributional assumption |
 | `wei_rf_c2c` | Random Forest on features | Feature interactions, larger training sets |
 | `wei_lda_c2c` | Linear Discriminant Analysis | Fast, assumes normality & equal covariance |
-| `wei_nb_c2c` | Naive Bayes (via `e1071`) | Mixed feature types, small samples |
+| `wei_nb_c2c` | Naive Bayes on features | Strong independence assumption |
 
-ML weights are added only when you pass an `ml` argument to `cat2cat()`. Validate them against naive and frequency baselines with `cat2cat_ml_run()` - see [Sensitivity Analysis & Holdout Validation](cat2cat_validation.html).
+ML weights (`wei_knn_c2c`, `wei_rf_c2c`, `wei_lda_c2c`, `wei_nb_c2c`) are added only when you pass an `ml` argument to `cat2cat()`. 
+For method selection, holdout diagnostics (`cat2cat_ml_run()`), and failed-ML handling (`on_fail`, `fail_warn`), see [Choosing Weights and Validating ML](cat2cat_validation.html).
 
 ## Quick Example
+
+First, map 2008 observations backward onto the 2010 coding scheme:
 
 ```{r quick-example}
 data(occup, package = "cat2cat")
@@ -214,7 +271,7 @@ data(occup, package = "cat2cat")
 occup_2008 <- occup[occup$year == 2008, ]
 occup_2010 <- occup[occup$year == 2010, ]
 
-result <- cat2cat(
+result_back <- cat2cat(
   data = list(
     old = occup_2008,
     new = occup_2010,
@@ -225,73 +282,132 @@ result <- cat2cat(
 )
 ```
 
-**What happened?** 2008 observations were replicated onto 2010 category codes. One worker may appear multiple times with different `g_new_c2c` values:
+**What happened?** 2008 observations were replicated onto 2010 category codes. 
+One worker may appear multiple times with different `g_new_c2c` values:
 
 ```{r show-replication}
 # A replicated observation (rep_c2c > 1 means replicated)
-result$old[result$old$rep_c2c > 1, ][1:3, 
-           c("code", "g_new_c2c", "wei_freq_c2c", "rep_c2c")]
+result_back$old[result_back$old$rep_c2c > 1, ][1:3,
+                c("code", "g_new_c2c", "wei_freq_c2c", "rep_c2c")]
 ```
 
-### Sanity Check: Weights Preserve Totals
+### Forward mapping example
 
-Weights must sum to 1 per original observation. This ensures weighted statistics equal original statistics:
+If instead you want one common 2008-style coding scheme, map 2010 observations forward onto the older codes:
 
-```{r sanity-check}
-# Row counts
-c(original = nrow(occup_2008), 
-  replicated = nrow(result$old),
-  weighted = sum(result$old$wei_freq_c2c))
+```{r forward-example}
+result_forward <- cat2cat(
+  data = list(
+    old = occup_2008,
+    new = occup_2010,
+    cat_var = "code",
+    time_var = "year"
+  ),
+  mappings = list(trans = trans, direction = "forward")
+)
 
-# Mean salary preserved
-c(original = mean(occup_2008$salary),
-  weighted = weighted.mean(result$old$salary, result$old$wei_freq_c2c))
+result_forward$new[result_forward$new$rep_c2c > 1, ][1:3,
+                   c("code", "g_new_c2c", "wei_freq_c2c", "rep_c2c")]
 ```
+
+Now the 2010 observations are replicated onto 2008-style codes. Forward mapping is often attractive when the newer classification is more detailed and you prefer the older, coarser coding scheme, but it does not guarantee fewer replications in every dataset.
 
 ### Naive vs Frequency Weights
 
-Both weight types are always available. Naive weights (`wei_naive_c2c`) assign equal probability to each candidate - useful as a robustness baseline:
+Both types of weights are always available. 
+Naive weights (`wei_naive_c2c`) assign equal probability to each candidate and serve as a useful robustness baseline:
 
 ```{r naive-vs-freq}
 # Compare weights for a replicated observation
-result$old[result$old$rep_c2c > 1, ][1:3, 
-           c("g_new_c2c", "wei_naive_c2c", "wei_freq_c2c")]
+result_back$old[result_back$old$rep_c2c > 1, ][1:3,
+                c("g_new_c2c", "wei_naive_c2c", "wei_freq_c2c")]
 
 # Same analysis with naive weights (robustness check)
-c(freq_mean = weighted.mean(result$old$salary, result$old$wei_freq_c2c),
-  naive_mean = weighted.mean(result$old$salary, result$old$wei_naive_c2c))
+c(freq_mean = weighted.mean(result_back$old$salary, result_back$old$wei_freq_c2c),
+  naive_mean = weighted.mean(result_back$old$salary, result_back$old$wei_naive_c2c))
 ```
 
-If results are similar, conclusions don't depend on the distributional assumption. Large differences warrant investigation.
+If results are similar, conclusions don't depend on the distributional assumption. 
+Large differences warrant investigation.
 
-### Standard Error Correction
- 
-Replication inflates row count -> artificially small standard errors. The correction formula scales standard errors by the replication factor:
+### Value added: pooled regression across both periods
+
+The practical payoff is that you can now combine both waves in one regression while keeping a common occupation classification. 
+Without harmonisation, a pooled model with one set of occupation effects would not make sense because the 2008 and 2010 codes are not directly comparable.
+
+Replication inflates the row count, so standard errors must still be corrected:
 
 $$\text{SE}_{\text{corrected}} = \text{SE}_{\text{naive}} \times \sqrt{\frac{n_{\text{rep}}}{n_{\text{orig}}}}$$
 
-P-values are recomputed from $t(n_{\text{orig}})$ distribution. Use `summary_c2c()` for regression:
+`summary_c2c()` applies this correction to the pooled model:
 
-```{r se-correction}
-model <- lm(log(salary) ~ age + sex + edu, 
-            data = result$old, weights = wei_freq_c2c)
+```{r pooled-regression}
+harmonised_two_period <- dplyr::bind_rows(result_back$old, result_back$new)
 
-# Corrected SEs (uses original df)
-summary_c2c(model, df_old = nrow(occup_2008))
+pooled_model <- lm(
+  log(salary) ~ factor(year) + age + exp + factor(g_new_c2c),
+  data = harmonised_two_period,
+  weights = multiplier * wei_freq_c2c
+)
+
+pooled_summary <- summary_c2c(
+  pooled_model,
+  df_old = nrow(occup_2008) + nrow(occup_2010) - length(coef(pooled_model))
+)
+
+pooled_summary[c("factor(year)2010", "age", "exp"),
+               c("Estimate", "std.error_c", "p.value_c")]
 ```
+
+This is the value added of `cat2cat`: you can estimate a period effect after controlling for one harmonised occupation structure instead of running separate regressions under incompatible code systems.
 
 ## Diagnostic Plot
 
 ```{r plot, fig.width=7, fig.height=3.5, fig.alt="Diagnostic plot displaying weight histograms and replication statistics for mapped observations"}
-plot_c2c(result$old, type = "both")
+plot_c2c(result_back$old, type = "both")
 ```
+
+## Mapping table
+
+Mapping table is a data frame with columns `old` and `new` defining the mapping between old and new categories.
+The mapping table is usually provided by the classification authority (e.g., statistical office).
+Often the classification is evolutionary, so the new codes are more detailed (e.g. more digits) than the old ones.
+In hierarchical classifications each digit adds a level of detail, so truncating to fewer digits creates coarser groupings with fewer one-to-many relationships.
+
+### Common hierarchical classifications
+
+| Classification | Domain | Hierarchy |
+|---------------|--------|-----------|
+| ISCO | Occupations | 1-digit -> 2-digit -> 3-digit -> 4-digit |
+| ICD | Diseases | Chapter -> Block -> Category -> Subcategory |
+| NACE | Industries | Section -> Division -> Group -> Class |
+| CPC | Products | Section -> Division -> Group -> Class -> Subclass |
+
+### Truncating mapping tables from hierarchical codes
+
+For example, in the `trans` table, old codes are 4 digits and new codes are 6 digits.
+You can construct a coarser mapping by truncating to the first N digits:
+
+```{r hierarchical-codes}
+head(trans, 5)
+
+# Build a 3-digit mapping from the full codes
+trans_3digit <- data.frame(
+  old = substr(trans$old, 1, 3),
+  new = substr(trans$new, 1, 3)
+)
+trans_3digit <- unique(trans_3digit)
+cat("3-digit mapping rows:", nrow(trans_3digit),
+    "vs full mapping rows:", nrow(trans))
+```
+
+Truncating codes to fewer digits creates coarser mappings and often reduces many-to-many relationships (especially for backward mapping), but the unified categories are broader. 
+Under forward mapping, truncation can also increase replication in some cases.
+This approach works for any classification where codes share a hierarchical prefix structure (ISCO, ICD, NACE, etc.).
 
 ## Learn More
 
 | Topic | Vignette |
 |-------|----------|
-| Multi-period chaining (3+ waves) | [Multi-Period Chaining](cat2cat_multi_period.html) |
-| Sensitivity analysis, ML validation | [Sensitivity Analysis & Holdout Validation](cat2cat_validation.html) |
-| SE correction theory, fixed effects models | [Regression on Replicated Data](cat2cat_regression.html) |
-| Panel data assumptions, `id_var` details | [Panel Data with Subject Identifiers](cat2cat_panel.html) |
-| Aggregated counts, equation syntax | [Aggregated Data & Special Cases](cat2cat_aggregated.html) |
+| Choosing between naive, frequency, and ML weights | [Choosing Weights and Validating ML](cat2cat_validation.html) |
+| Multi-period chaining, panels, aggregates, and regression | [Advanced Workflows](cat2cat_advanced.html) |

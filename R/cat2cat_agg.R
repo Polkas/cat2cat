@@ -95,7 +95,7 @@
 #'   \item Each category in \code{old} and \code{new} must appear exactly once
 #'     (no duplicates allowed before mapping).
 #' }
-#' @seealso \code{vignette("cat2cat_aggregated")} for a complete workflow example.
+#' @seealso \code{vignette("cat2cat_advanced")} for a complete workflow example.
 #' @export
 #' @examples
 #' data("verticals", package = "cat2cat")

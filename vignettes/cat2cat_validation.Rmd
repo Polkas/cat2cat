@@ -1,10 +1,10 @@
 ---
-title: "Sensitivity Analysis & Holdout Validation"
+title: "Choosing Weights and Validating ML"
 author: "Maciej Nasinski"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Sensitivity Analysis & Holdout Validation}
+  %\VignetteIndexEntry{Choosing Weights and Validating ML}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,7 +16,17 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette shows how to check whether your `cat2cat()` results are robust to methodological choices and how to validate ML weights before using them.
+This vignette is a decision guide for choosing and checking weights in `cat2cat()`.
+
+Read it when you want to answer one of these questions:
+
+- Are naive and frequency weights telling the same story?
+- Is ML worth trying at all?
+- If ML is used, does it improve on the frequency baseline?
+- What should I do when different weight methods disagree?
+- How should I handle failed ML predictions?
+
+If you only need the basic two-period workflow, go back to [Get Started](cat2cat.html). If you need multi-period, panel, aggregated, or regression workflows, continue to [Advanced Workflows](cat2cat_advanced.html).
 
 ```{r load-data}
 library(cat2cat)
@@ -33,7 +43,7 @@ occup_2010 <- occup[occup$year == 2010, ]
 occup_2012 <- occup[occup$year == 2012, ]
 ```
 
-## Weight methods overview
+## Step 1: Understand the competing weight assumptions
 
 `cat2cat` offers several ways to assign probability weights to replicated observations. Each method encodes a different **distributional assumption** about how ambiguous observations split across candidate categories. When a downstream estimand depends on the mapped category, this is the identifying assumption for that estimand - so always check sensitivity.
 
@@ -57,7 +67,7 @@ occup_2012 <- occup[occup$year == 2012, ]
 
 Available ML methods:
 
-- **knn**: k-Nearest Neighbours. Non-parametric, handles non-linear boundaries. Sensitive to choice of `k`.
+- **knn**: k-Nearest Neighbours. A non-parametric method that handles non-linear boundaries. Sensitive to the choice of `k`.
 - **lda**: Linear Discriminant Analysis. Fast, interpretable. Assumes multivariate normality and equal covariance.
 - **rf**: Random Forest. Handles interactions well. Slower, needs `ntree` tuning.
 - **nb**: Naive Bayes via `e1071`. Fast, handles mixed types. Assumes conditional independence of features.
@@ -89,6 +99,40 @@ occup_2_mix$old %>%
   cor()
 ```
 
+### If ML fails on some rows: `on_fail` and `fail_warn`
+
+Sometimes ML probabilities cannot be produced for a subset of replicated rows
+(for example incomplete target features or method-specific prediction failures).
+`cat2cat()` exposes explicit policy controls in `ml`:
+
+- `on_fail = "freq"` (default): failed ML rows are filled with `wei_freq_c2c`.
+- `on_fail = "naive"`: failed ML rows are filled with `wei_naive_c2c`.
+- `on_fail = "na"`: failed ML rows are kept as `NA`.
+- `on_fail = "error"`: stop immediately when failed rows are detected.
+- `fail_warn = TRUE` (default): warn with affected rows/observations per method.
+- `fail_warn = FALSE`: suppress these warnings.
+
+```{r ml-failure-policy, eval=FALSE}
+ml_setup <- list(
+  data = bind_rows(occup_2010, occup_2012),
+  cat_var = "code",
+  method = c("knn", "rf", "lda"),
+  features = c("age", "sex", "edu", "exp", "parttime", "salary"),
+  args = list(k = 10, ntree = 50),
+  on_fail = "freq",   # default policy
+  fail_warn = TRUE     # default reporting
+)
+
+# strict mode for QA pipelines
+ml_strict <- ml_setup
+ml_strict$on_fail <- "error"
+
+# diagnostic mode to inspect failures directly
+ml_diag <- ml_setup
+ml_diag$on_fail <- "na"
+ml_diag$fail_warn <- FALSE
+```
+
 **Interpreting correlations:**
 
 - **r > 0.95**: Methods agree strongly; any choice reasonable. Prefer simpler (freq) unless ML has theoretical motivation.
@@ -103,11 +147,11 @@ occup_old_mix <- occup_2_mix$old %>%
   prune_c2c(., column = "wei_cross_c2c", method = "highest1")
 ```
 
-## Sensitivity analysis
+## Step 2: Check whether conclusions are sensitive to the weight choice
 
 Different weight methods affect regression coefficients when you filter to a specific occupation group and combine both periods. This is the proper sensitivity analysis: subjects from the base period (new, no replication) plus subjects from the target period (old, weighted by probability of belonging to this group).
 
-### Comparing weight methods
+### Compare weight methods on the same mapped data
 
 Run backward mapping with all ML methods:
 
@@ -212,9 +256,11 @@ round(coefs, 4)
 
 All coefficients can vary because weight methods change which old-period subjects contribute to this occupation group.
 
-### Comparing pruning strategies
+### Compare pruning strategies only after comparing full weights
 
-> **Note**: Pruning discards probability information and should be used only after analysis with full weights. Prefer `prune_c2c(method = "nonzero")` to remove impossible candidates while preserving the probability distribution. More aggressive pruning (`highest1`) is appropriate only for descriptive tables or when you need exactly one category per observation.
+> **Note**: Pruning discards probability information and should be used only after analysis with full weights. 
+Prefer `prune_c2c(method = "nonzero")` to remove impossible candidates while preserving the probability distribution. 
+More aggressive pruning (`highest1`) is appropriate only for descriptive tables or when you need exactly one category per observation.
 
 ```{r sensitivity-pruning}
 # Compare regression coefficients under different pruning strategies
@@ -232,7 +278,7 @@ prune_coefs <- sapply(prune_methods, function(pm) {
 round(prune_coefs, 4)
 ```
 
-### Comparing ensemble compositions
+### Compare ensemble compositions when no single method dominates
 
 `cross_c2c()` creates a weighted average of multiple weight columns. Vary the mix:
 
@@ -258,11 +304,11 @@ round(ens_coefs, 4)
 
 When regression coefficients are stable across weight methods, pruning strategies, and ensemble compositions, report with confidence. When they diverge, the mapping introduces uncertainty - report the range or investigate the source.
 
-## Holdout validation: do ML weights actually help?
+## Step 3: Validate whether ML actually improves on simpler baselines
 
 The `ml` argument in `cat2cat()` adds ML-based probability weights, but ML is not guaranteed to improve over simpler baselines. `cat2cat_ml_run()` provides per-group holdout (single train/test split) diagnostics to answer this question *before* committing to a method.
 
-### How it works
+### What `cat2cat_ml_run()` is doing
 
 For each mapping group (set of candidate categories linked by the transition table) `cat2cat_ml_run()`:
 
@@ -271,11 +317,11 @@ For each mapping group (set of candidate categories linked by the transition tab
 3. Computes two baselines on the test set:
    - **naive** - accuracy of a random guess ($1 / k$ where $k$ is the number of candidate categories).
    - **freq** - accuracy of always predicting the most frequent training-set category.
-4. Trains each specified ML method on the training set and records test-set classification accuracy.
+4. Trains each specified ML method on the training set and records test-set model performance.
 
 Groups with fewer than 5 observations or only one candidate category are skipped.
 
-### Basic usage
+### Minimal validation workflow
 
 ```{r cv-basic}
 cv_knn <- cat2cat_ml_run(
@@ -293,13 +339,23 @@ print(cv_knn)
 
 The `print()` summary reports:
 
-- **Average naive guess** - baseline random accuracy across groups.
-- **Average freq accuracy** - how well "predict the majority class" does.
-- **Average ML accuracy** - how well each ML method does on held-out data.
-- **How often ML beats naive/freq** - fraction of groups where ML outperforms each baseline.
-- **Percent of failed models** - groups where the model could not be fit (too few data, collinearity, etc.).
+- **ACCURACY** - average held-out classification accuracy across non-skipped groups. `naive (1/k)` is the random-guess baseline, `freq` is the majority-class baseline, and each ML line reports top-class accuracy for that method.
+- **BRIER SCORE** - average probability error across non-skipped groups. Lower is better. This matters because `cat2cat` ultimately uses probability weights, not just hard classifications.
+- **MEAN P(TRUE CLASS)** - average probability assigned to the true category. Higher is better. This is often the most directly relevant metric for `cat2cat`, because it measures the quality of the probability weights themselves.
+- **ACCURACY: ML vs BASELINES** - the share of groups in which the ML method beats `naive` or beats `freq` on accuracy. This is a win-rate summary, not an average accuracy gap.
+- **SKIPPED GROUPS** - the percentage of mapping groups for which that ML method has no reported result because the group had only one candidate category, fewer than 5 observations, or the model could not be fit for that group.
 
-### Comparing multiple methods
+So for output like:
+
+- `knn > naive: 87.7%`
+- `knn > freq: 18.0%`
+- `knn: accuracy = 0.5108` vs `freq (most common): 0.5366`
+
+the right reading is: kNN clearly beats the naive baseline, but it does **not** beat the frequency baseline on top-class accuracy overall. In that case, `wei_freq_c2c` remains the default choice if your only goal is classification accuracy.
+
+At the same time, if kNN has a slightly lower Brier score and a higher mean P(true class) than `freq`, then it may still be producing better-calibrated probability weights even though its top prediction is less often correct. That distinction matters in `cat2cat`, because the mapped weights are probabilities distributed across candidate categories rather than single-class assignments.
+
+### Compare multiple ML methods in one run
 
 ```{r cv-multiple}
 cv_all <- cat2cat_ml_run(
@@ -315,7 +371,7 @@ cv_all <- cat2cat_ml_run(
 print(cv_all)
 ```
 
-### Inspecting per-group results
+### Inspect per-group diagnostics when methods disagree
 
 The returned object is a named list. Each element corresponds to one mapping group:
 
@@ -328,29 +384,31 @@ example_group <- group_names[
 cv_all[[example_group]]
 ```
 
-Each group entry has three fields:
+Each group entry contains the group-level diagnostics behind the printed summary:
 
-- `$naive` - $1/k$ random-guess accuracy
-- `$freq` - most-frequent-category accuracy on the test set
-- `$acc` - named numeric vector with test-set accuracy per ML method
+- `$naive` - $1/k$ random-guess accuracy for that group.
+- `$freq` - majority-class accuracy for that group.
+- `$acc` - named numeric vector with ML accuracy by method.
+- `$naive_brier` and `$freq_brier` - baseline Brier scores.
+- `$brier` - named numeric vector with ML Brier scores by method.
+- `$naive_mean_prob` and `$freq_mean_prob` - baseline mean P(true class).
+- `$mean_prob` - named numeric vector with ML mean P(true class) by method.
 
-### Interpreting the results
+### Decision rules for interpreting the output
 
-**Understanding accuracy in context**: This is **multi-class classification** - each mapping group can have 3-10+ candidate categories. A naive random guess yields only ~18% accuracy (1/k where k is the number of candidates). Achieving 50%+ is substantial improvement over random - do not compare these numbers to binary classification benchmarks where 80%+ is typical. The key question is whether ML beats the *frequency* baseline, not whether it reaches some absolute threshold.
+**Understanding model performance in context**: This is **multi-class classification** - each mapping group can have 3-10+ candidate categories. 
+A naive random guess yields only ~18% accuracy (1/k where k is the number of candidates). 
+Achieving 50%+ is substantial improvement over random - do not compare these numbers to binary classification benchmarks where 80%+ is typical. 
+The key question is whether ML beats the *frequency* baseline, not whether it reaches some absolute threshold.
 
 | Scenario | Recommendation |
 |----------|---------------|
-| ML accuracy >> freq across most groups | ML weights add genuine signal; use them |
-| ML accuracy $\approx$ freq | ML is no better than frequency; prefer `wei_freq_c2c` (simpler, faster) |
-| ML accuracy < freq for many groups | ML is adding noise; do **not** use ML weights |
+| ML model performance >> freq across most groups | ML weights add genuine signal; use them |
+| ML model performance $\approx$ freq | ML is no better than frequency; prefer `wei_freq_c2c` (simpler, faster) |
+| ML model performance < freq for many groups | ML is adding noise; do **not** use ML weights |
 | High failure rate (>20%) | Features may have too many missing values or groups are too small |
 
 Because the train/test split is random, results vary between runs. For more stable estimates, pool more data into `ml$data` (e.g. multiple survey waves) or run `cat2cat_ml_run()` several times and average the summaries.
 
-> **Caveat**: high `cat2cat_ml_run()` accuracy means the model discriminates well *within* mapping groups. It does not validate the mapping table itself. A perfect model with a wrong transition table will still produce wrong results.
-
-## Next steps
-
-- [Multi-Period Chaining](cat2cat_multi_period.html) - chaining across 3+ time periods
-- [Regression on Replicated Data](cat2cat_regression.html) - SE correction with `summary_c2c()`
-- [Panel Data with Subject Identifiers](cat2cat_panel.html) - `id_var` for rotational panels
+> **Caveat**: high `cat2cat_ml_run()` model performance means the model discriminates well *within* mapping groups. 
+It does not validate the mapping table itself. A perfect model with a wrong transition table will still produce wrong results.

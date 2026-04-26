@@ -6,14 +6,17 @@ This release incorporates feedback from the PhD dissertation reviewers: dr hab. 
 
 * New `occup_panel` dataset - a rotational panel covering 2009Q1--2010Q4 - used to illustrate `id_var` direct matching and to exercise the panel-data code path in tests.
 * Naive Bayes (`"nb"`) added to the supported ML methods, via `e1071` (Suggests).
-* `summary_c2c()` now supports both `lm` and `glm`, adds input/shape validation (`df_old`/`df_new`, coefficient table checks), and reports the reference distribution used for p-values (`t` or normal). Added edge-case tests and aligned regression/panel vignette examples with current `summary_c2c()` output and FE inference guidance.
-* `cat2cat_ml_run()` now reports the Brier score and mean P(true class) in addition to accuracy. Reporting a proper scoring rule matters because `cat2cat` weights are *probabilities*, not classifications - a model can be accurate and still be poorly calibrated.
+* `summary_c2c()` now supports both `lm` and `glm`, adds input/shape validation (`df_old`/`df_new`, coefficient table checks), and reports the reference distribution used for p-values (`t` or normal). Added edge-case tests and aligned regression/panel vignette examples with current `summary_c2c()` output and fixed-effects inference guidance.
+* `cat2cat_ml_run()` now reports the Brier score and mean P(true class) in addition to accuracy. A proper scoring rule matters because `cat2cat` weights are *probabilities*, not classifications - a model can be accurate and still be poorly calibrated.
 * All `stopifnot()` assertions now carry descriptive messages, so failures point the user at the offending argument instead of printing the raw expression.
+* `cat2cat()` ML fallback is now configurable via `ml$on_fail` (`"freq"`, `"naive"`, `"na"`, `"error"`) with optional warning control via `ml$fail_warn`. Failed ML weights are now explicitly handled according to this policy instead of always silently falling back to frequency weights.
 
 ## Documentation
 
-* Vignettes reorganised into six focused articles: *Get Started*, *Regression*, *Multi-Period Chaining*, *Sensitivity Analysis & Holdout Validation*, *Panel Data*, and *Aggregated Data*. The previous single long vignette grew unwieldy as the package evolved.
-* Added an *Identification & Assumptions* section to *Get Started* that documents the three weighting schemes (naive, frequency, ML), the distributional assumption each imposes, and how to check it empirically. cat2cat itself is a deterministic transformation; the weighting choice becomes an identifying assumption only for downstream estimands that depend on the mapped category (e.g. occupation fixed effects, interactions with `g_new_c2c`). The full model-level treatment is in *Regression on Replicated Data*.
+* Vignettes reorganised into three clearer guides: *Get Started*, *Choosing Weights and Validating ML*, and *Advanced Workflows*. The goal is a cleaner reader path: core concepts first, method choice second, advanced workflows third.
+* *Get Started* now focuses on the two-period workflow, core assumptions, and the value added of cat2cat for group-level longitudinal analysis, with sharper pointers to the more advanced guides.
+* *Choosing Weights and Validating ML* is now structured as a decision guide: understanding weight assumptions, checking robustness across methods, validating ML against naive/frequency baselines, and handling failed ML predictions.
+* *Advanced Workflows* now collects ML setup, multi-period chaining, rotational panels with `id_var`, aggregated-data workflows, hierarchical-code mappings, and regression/inference after harmonisation into one better-structured advanced reference.
 * Added a *When cat2cat won't help* section distinguishing hard blockers (no mapping table, unobserved category) from method-specific limitations with available workarounds.
 * Corrected the $R^2$ guidance: it is preserved by the replication only when the harmonised category is *not* used as a covariate; with occupation fixed effects the inflation is real and `summary_c2c()` does not repair it.
 * Roxygen for `cat2cat()` and `cat2cat_agg()` trimmed - argument documentation kept, conceptual material moved to the vignettes where it belongs.

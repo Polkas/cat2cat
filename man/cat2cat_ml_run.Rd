@@ -13,8 +13,9 @@ cat2cat_ml_run(mappings, ml, ...)
 \item{mappings}{`named list` with 3 fields `trans`, `direction` and
 optional `freqs_df`.}
 
-\item{ml}{`named list` (optional) with up to 5 fields
-`data`, `cat_var`, `method`, `features` and optional `args`.}
+\item{ml}{`named list` (optional) with fields
+`data`, `cat_var`, `method`, `features` and optional `args`,
+`on_fail`, `fail_warn`.}
 
 \item{...}{other arguments (currently unused).}
 
@@ -79,6 +80,14 @@ table) the function:
 
 Groups with fewer than 5 observations or only one candidate category are
 skipped (their accuracy is recorded as \code{NA}).
+
+\subsection{Baseline-Only Diagnostics}{
+To inspect only baseline diagnostics (\code{naive}, \code{freq}, and their
+Brier/mean-probability variants), pass empty model and feature vectors:
+\code{ml$method = character(0)} and \code{ml$features = character(0)}.
+In this mode, no ML models are trained, but baseline diagnostics are still
+computed for each mapping group.
+}
 
 \subsection{Understanding the Metrics}{
 Three complementary metrics evaluate model quality:
@@ -150,6 +159,16 @@ print(res)
 # and wei_freq_c2c may be safer. Use cross_c2c() to ensemble.
 
 # High failure rate is normal - most groups have <5 observations
+
+# Baseline-only diagnostics (no ML models):
+ml_baseline <- list(
+  data = rbind(occup_2006, occup_2008),
+  cat_var = "code",
+  method = character(0),
+  features = character(0)
+)
+baseline_cv <- cat2cat_ml_run(mappings, ml_baseline)
+print(baseline_cv)
 }
 
 }

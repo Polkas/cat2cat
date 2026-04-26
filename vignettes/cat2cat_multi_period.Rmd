@@ -16,7 +16,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette assumes you've read [Get Started](cat2cat.html) and understand the basic `cat2cat()` workflow. Here we tackle chaining across multiple periods.
+This vignette assumes you've read [Get Started](cat2cat.html) and understand the basic `cat2cat()` workflow. 
+Here we tackle chaining across multiple periods.
 
 ```{r load-data}
 library(cat2cat)
@@ -212,7 +213,7 @@ panel_fwd <- bind_rows(
 
 ### Adding ML to the chain
 
-ML weights slot in naturally. Define the ML setup once and reuse it:
+ML weights integrate naturally into this workflow. Define the ML setup once and reuse it:
 
 ```{r ml-chain}
 ml_setup <- list(
@@ -261,9 +262,3 @@ panel_pruned <- panel_back_ml %>%
 
 all.equal(nrow(panel_pruned), nrow(occup))
 ```
-
-## Next steps
-
-- [Sensitivity Analysis & Holdout Validation](cat2cat_validation.html) - check robustness of weight methods
-- [Regression on Replicated Data](cat2cat_regression.html) - SE correction with `summary_c2c()`
-- [Panel Data with Subject Identifiers](cat2cat_panel.html) - `id_var` for rotational panels

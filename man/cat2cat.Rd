@@ -19,8 +19,9 @@ cat2cat(
 \item{mappings}{`named list` with 3 fields `trans`, `direction` and
 optional `freqs_df`.}
 
-\item{ml}{`named list` (optional) with up to 5 fields
-`data`, `cat_var`, `method`, `features` and optional `args`.}
+\item{ml}{`named list` (optional) with fields
+`data`, `cat_var`, `method`, `features` and optional `args`,
+`on_fail`, `fail_warn`.}
 }
 \value{
 `named list` with 2 fields old and new - 2 data.frames.
@@ -62,7 +63,7 @@ data args
   directly (no replication, \code{wei_freq_c2c = 1, rep_c2c = 1}).
   Only subjects absent from the base period enter the replication path.
   This assumes a subject's true category does not change between adjacent
-  waves. See \code{vignette("cat2cat_panel")} for details on when
+  waves. See \code{vignette("cat2cat_advanced")} for details on when
   this assumption is and is not satisfied.
  }
  \item{"multiplier_var"}{
@@ -78,8 +79,8 @@ mappings args
  \item{"trans"}{ data.frame with 2 columns - mapping (transition) table -
   all categories for cat_var in old and new datasets have to be included.
   First column contains an old encoding and second a new one.
-  The mapping (transition) table should to have a candidate for each category
-  from the targeted for an update period.
+  The mapping (transition) table should include a candidate for each category
+  in the period being harmonised.
 }
  \item{"direction"}{ character(1) direction - "backward" or "forward"}
  \item{"freqs_df"}{
@@ -107,10 +108,17 @@ Optional ml args
  have to be numeric or logical
  }
  \item{"args"}{ optional - list parameters: knn: k ; rf: ntree  }
+ \item{"on_fail"}{ optional character(1) controlling failed ML weights:
+ \code{"freq"} (default) uses \code{wei_freq_c2c}, \code{"naive"} uses
+ \code{wei_naive_c2c}, \code{"na"} leaves failed weights as \code{NA},
+ and \code{"error"} stops when failed weights are detected.}
+ \item{"fail_warn"}{ optional logical(1), default \code{TRUE}; warn when
+ failed ML weights are replaced or retained as \code{NA}.}
 }
 
 Without the \code{ml} argument, only frequency-based weights are computed.
-If an ML model fails, frequency weights are used as fallback.
+If an ML model fails, \code{ml$on_fail} controls whether frequency weights,
+naive weights, \code{NA}, or an error are used.
 The \code{knn} method is recommended for smaller datasets.
 }
 \note{
@@ -154,7 +162,10 @@ ml_setup <- list(
     cat_var = "code",
     method = "knn",
     features = c("age", "sex", "edu", "exp", "parttime", "salary"),
-    args = list(k = 10)
+    args = list(k = 10),
+    # defaults for failed ML weights
+    on_fail = "freq",
+    fail_warn = TRUE
 )
 
 # ml model performance check
@@ -168,6 +179,15 @@ occup_ml <- cat2cat(
   mappings = mappings,
   ml = ml_setup
 )
+
+# strict mode: stop when any ML weights cannot be produced
+ml_setup_strict <- ml_setup
+ml_setup_strict$on_fail <- "error"
+
+# diagnostic mode: keep failed ML weights as NA and silence warnings
+ml_setup_diag <- ml_setup
+ml_setup_diag$on_fail <- "na"
+ml_setup_diag$fail_warn <- FALSE
 }
 
 }

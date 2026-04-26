@@ -141,5 +141,5 @@ agg \%>\%
   )
 }
 \seealso{
-\code{vignette("cat2cat_aggregated")} for a complete workflow example.
+\code{vignette("cat2cat_advanced")} for a complete workflow example.
 }

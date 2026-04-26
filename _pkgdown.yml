@@ -11,26 +11,17 @@ navbar:
       menu:
       - text: Get Started with cat2cat
         href: articles/cat2cat.html
-      - text: Sensitivity Analysis & Holdout Validation
+      - text: Choosing Weights and Validating ML
         href: articles/cat2cat_validation.html
-      - text: Multi-Period Chaining
-        href: articles/cat2cat_multi_period.html
-      - text: Aggregated Data & Special Cases
-        href: articles/cat2cat_aggregated.html
-      - text: Regression on Replicated Data
-        href: articles/cat2cat_regression.html
-      - text: Panel Data with Subject Identifiers
-        href: articles/cat2cat_panel.html
+      - text: Advanced Workflows
+        href: articles/cat2cat_advanced.html
 
 articles:
 - title: Vignettes
   contents:
   - cat2cat
   - cat2cat_validation
-  - cat2cat_multi_period
-  - cat2cat_aggregated
-  - cat2cat_regression
-  - cat2cat_panel
+  - cat2cat_advanced
 
 reference:
 - title: main functions

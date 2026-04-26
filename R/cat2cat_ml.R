@@ -7,7 +7,7 @@
 #' in the target period.
 #' @keywords internal
 cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
-  validate_ml(ml)
+  ml <- validate_ml(ml)
 
   stopifnot(
     "All `ml$features` must be columns in target_data" =
@@ -30,7 +30,7 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
   methods <- unique(ml$method)
   ml_names <- paste0("wei_", methods, "_c2c")
 
-  target_data[, ml_names] <- target_data["wei_freq_c2c"]
+  target_data[ml_names] <- rep(list(NA_real_), length(ml_names))
 
   cat_ml_year_g <- split(
     ml$data[, c(features, ml$cat_var), drop = FALSE],
@@ -160,23 +160,61 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
   target_data <- target_data[order(target_data[["index_c2c"]]), ]
   grp_id <- match(target_data[["index_c2c"]], unique(target_data[["index_c2c"]]))
 
-  fallback <- target_data[["wei_freq_c2c"]]
-  target_data[ml_names] <- lapply(
-    target_data[ml_names],
-    function(col, fallback, groups) {
-      missing <- is.na(col)
-      if (any(missing)) {
-        col[missing] <- fallback[missing]
+  if (ml$on_fail == "freq") {
+    fallback <- target_data[["wei_freq_c2c"]]
+  } else if (ml$on_fail == "naive") {
+    fallback <- target_data[["wei_naive_c2c"]]
+  } else {
+    fallback <- rep(NA_real_, nrow(target_data))
+  }
+
+  for (ml_name in ml_names) {
+    col <- target_data[[ml_name]]
+    failed <- is.na(col) | !is.finite(col)
+
+    if (any(failed)) {
+      n_rows <- sum(failed)
+      n_obs <- length(unique(target_data[["index_c2c"]][failed]))
+      total_rows <- length(col)
+      total_obs <- length(unique(target_data[["index_c2c"]]))
+      pct_rows <- 100 * n_rows / total_rows
+      pct_obs <- 100 * n_obs / total_obs
+
+      if (ml$on_fail == "error") {
+        stop(sprintf(
+          paste0(
+            "ML weights failed for method '%s': ",
+            "%.1f%% rows (%d/%d) and %.1f%% observations (%d/%d)."
+          ),
+          sub("^wei_(.*)_c2c$", "\\1", ml_name),
+          pct_rows, n_rows, total_rows,
+          pct_obs, n_obs, total_obs
+        ))
       }
-      sum_by_group <- as.numeric(rowsum(col, groups, reorder = FALSE)[, 1])
-      scale_factor <- sum_by_group[groups]
-      can_scale <- is.finite(scale_factor) & scale_factor > 0
-      col[can_scale] <- col[can_scale] / scale_factor[can_scale]
-      col
-    },
-    fallback = fallback,
-    groups = grp_id
-  )
+
+      if (isTRUE(ml$fail_warn)) {
+        warning(sprintf(
+          paste0(
+            "ML weights failed for method '%s': ",
+            "%.1f%% rows (%d/%d) and %.1f%% observations (%d/%d); ",
+            "on_fail = '%s' was applied."
+          ),
+          sub("^wei_(.*)_c2c$", "\\1", ml_name),
+          pct_rows, n_rows, total_rows,
+          pct_obs, n_obs, total_obs,
+          ml$on_fail
+        ), call. = FALSE)
+      }
+
+      col[failed] <- fallback[failed]
+    }
+
+    sum_by_group <- as.numeric(rowsum(col, grp_id, reorder = FALSE)[, 1])
+    scale_factor <- sum_by_group[grp_id]
+    can_scale <- is.finite(scale_factor) & scale_factor > 0
+    col[can_scale] <- col[can_scale] / scale_factor[can_scale]
+    target_data[[ml_name]] <- col
+  }
 
   list(target_data = target_data)
 }
@@ -184,6 +222,10 @@ cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
 # " Validate cat2cat ml
 #' @keywords internal
 validate_ml <- function(ml) {
+  if (is.null(ml$on_fail)) ml$on_fail <- "freq"
+  ml$on_fail <- tolower(ml$on_fail)
+  if (is.null(ml$fail_warn)) ml$fail_warn <- TRUE
+
   stopifnot(
     "`ml` must contain 'method', 'features', and 'data'" =
       all(c("method", "features", "data") %in% names(ml))
@@ -191,6 +233,15 @@ validate_ml <- function(ml) {
   stopifnot(
     "`ml$method` must be one or more of: 'knn', 'rf', 'lda', 'nb'" =
       all(ml$method %in% c("knn", "rf", "lda", "nb"))
+  )
+
+  stopifnot(
+    "`ml$on_fail` must be one of: 'freq', 'naive', 'na', 'error'" =
+      length(ml$on_fail) == 1 && ml$on_fail %in% c("freq", "naive", "na", "error")
+  )
+  stopifnot(
+    "`ml$fail_warn` must be TRUE or FALSE" =
+      is.logical(ml$fail_warn) && length(ml$fail_warn) == 1 && !is.na(ml$fail_warn)
   )
 
   if ("rf" %in% ml$method) {
@@ -229,6 +280,8 @@ validate_ml <- function(ml) {
         function(x) is.numeric(x) || is.logical(x), logical(1)
       ))
   )
+
+  ml
 }
 
 # " Delayed load of a package
@@ -268,6 +321,14 @@ delayed_package_load <- function(package, msg = sprintf("Please install %s packa
 #'
 #' Groups with fewer than 5 observations or only one candidate category are
 #' skipped (their accuracy is recorded as \code{NA}).
+#'
+#' \subsection{Baseline-Only Diagnostics}{
+#' To inspect only baseline diagnostics (\code{naive}, \code{freq}, and their
+#' Brier/mean-probability variants), pass empty model and feature vectors:
+#' \code{ml$method = character(0)} and \code{ml$features = character(0)}.
+#' In this mode, no ML models are trained, but baseline diagnostics are still
+#' computed for each mapping group.
+#' }
 #'
 #' \subsection{Understanding the Metrics}{
 #' Three complementary metrics evaluate model quality:
@@ -381,6 +442,16 @@ delayed_package_load <- function(package, msg = sprintf("Please install %s packa
 #' # and wei_freq_c2c may be safer. Use cross_c2c() to ensemble.
 #'
 #' # High failure rate is normal - most groups have <5 observations
+#'
+#' # Baseline-only diagnostics (no ML models):
+#' ml_baseline <- list(
+#'   data = rbind(occup_2006, occup_2008),
+#'   cat_var = "code",
+#'   method = character(0),
+#'   features = character(0)
+#' )
+#' baseline_cv <- cat2cat_ml_run(mappings, ml_baseline)
+#' print(baseline_cv)
 #' }
 #'
 cat2cat_ml_run <- function(mappings, ml, ...) {
