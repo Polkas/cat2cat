@@ -24,9 +24,9 @@ When one observed code can correspond to several target categories, **cat2cat** 
 
 **cat2cat** implements a **replication-and-weighting** algorithm that:
 
-1. Replicates each observation onto all candidate categories from the mapping table
-2. Assigns probability weights (summing to 1 per subject) based on category frequencies or ML predictions
-3. Preserves the central moments of non-mapped variables, so coefficients remain unbiased
+1. Replicates each observation onto all candidate categories from the mapping table for a specific direction (forward or backward)
+2. Assigns probability weights (summing to 1 per subject) based on category frequencies, naive or ML predictions
+3. Preserves mean and the central moments of non-mapped variables, so coefficients remain unbiased
 
 The result is a unified categorical variable across periods, ready for longitudinal analysis, subgroup comparisons, and trend studies.
 
