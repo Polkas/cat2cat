@@ -1,16 +1,23 @@
 testthat::test_that("get_freqs", {
+  expected_freqs <- function(x) {
+    tab <- table(x, useNA = "ifany")
+    data.frame(
+      input = names(tab),
+      Freq = as.integer(tab),
+      stringsAsFactors = FALSE
+    )
+  }
+
   input <- c("a", "a", "a", "c", "c", "b", "d", NA)
   expect_identical(
     get_freqs(input),
-    as.data.frame(table(input, useNA = "ifany"), stringsAsFactors = FALSE)
+    expected_freqs(input)
   )
   set.seed(1234)
   input_multiplier <- sample(1:10, length(input))
   elem1 <- get_freqs(input, multiplier = input_multiplier)
   input <- rep(input, times = input_multiplier)
-  elem2 <- as.data.frame(table(input, useNA = "ifany"),
-    stringsAsFactors = FALSE
-  )
+  elem2 <- expected_freqs(input)
   expect_identical(elem1, elem2)
 })
 

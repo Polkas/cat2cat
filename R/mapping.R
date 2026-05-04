@@ -97,7 +97,14 @@ get_freqs <- function(x, multiplier = NULL) {
   } else {
     x
   }
-  res <- as.data.frame(table(input, useNA = "ifany"), stringsAsFactors = FALSE)
+  # Build data.frame directly to avoid an r-devel regression in
+  # as.data.frame.table() when NA appears in table names.
+  tab <- table(input, useNA = "ifany")
+  res <- data.frame(
+    input = names(tab),
+    Freq = as.integer(tab),
+    stringsAsFactors = FALSE
+  )
   res
 }
 

@@ -24,6 +24,7 @@ This release incorporates feedback from the PhD dissertation reviewers: dr hab. 
 ## Bug fixes
 
 * Fixed the `nomnoml` diagram that previously mislabelled the base/target sides under forward mapping.
+* Fixed `get_freqs()` for `r-devel`/`R CMD check`: replaced `as.data.frame(table(...))` conversion with direct `data.frame(input = names(tab), Freq = as.integer(tab))` construction to avoid failures when `NA` appears in table names (`row names contain missing values`).
 
 # cat2cat 0.4.7
 
