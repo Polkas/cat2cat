@@ -1,0 +1,95 @@
+# verticals2 dataset
+
+verticals2 dataset
+
+## Usage
+
+``` r
+verticals2
+```
+
+## Format
+
+A data frame with 202 observations and 4 variables.
+
+- ean:
+
+  product ean
+
+- vertical:
+
+  character an certain sales vertical
+
+- sales:
+
+  numeric a size of sale
+
+- v_date:
+
+  character Date
+
+## Details
+
+random data - single products sales across e-commerce verticals
+
+## Examples
+
+``` r
+set.seed(1234)
+vert_old <- data.frame(
+  ean = 90000001:90000020,
+  vertical = sample(c(
+    "Electronics", "Kids1", "Kids2", "Automotive", "Books",
+    "Clothes", "Home", "Fashion", "Health", "Sport"
+  ), 20, replace = TRUE),
+  sales = rnorm(20, 100, 10),
+  v_date = rep("2020-04-01", 20), stringsAsFactors = FALSE
+)
+
+vert_old2 <- data.frame(
+  ean = 90000021:90000100,
+  vertical = sample(c(
+    "Electronics", "Kids1", "Kids2", "Automotive", "Books",
+    "Clothes", "Home", "Fashion", "Health", "Sport"
+  ), 80, replace = TRUE),
+  sales = rnorm(80, 100, 10),
+  v_date = rep("2020-04-01", 80), stringsAsFactors = FALSE
+)
+
+vert_new <- vert_old2
+vert_new$sales <- rnorm(nrow(vert_new), 80, 10)
+vert_new$v_date <- "2020-05-01"
+vert_new$vertical[vert_new$vertical %in% c("Kids1", "Kids2")] <- "Kids"
+vert_new$vertical[vert_new$vertical %in% c("Automotive")] <-
+  sample(
+    c("Automotive1", "Automotive2"),
+    sum(vert_new$vertical %in% c("Automotive")),
+    replace = TRUE
+  )
+vert_new$vertical[vert_new$vertical %in% c("Home")] <-
+  sample(
+    c("Home", "Supermarket"),
+    sum(vert_new$vertical %in% c("Home")),
+    replace = TRUE
+  )
+
+vert_new2 <- data.frame(
+  ean = 90000101:90000120,
+  vertical = sample(
+    c(
+      "Electronics", "Supermarket", "Kids", "Automotive1",
+      "Automotive2", "Books", "Clothes", "Home",
+      "Fashion", "Health", "Sport"
+    ), 20,
+    replace = TRUE
+  ),
+  sales = rnorm(20, 100, 10),
+  v_date = rep("2020-05-01", 20), stringsAsFactors = FALSE
+)
+
+verticals2 <- rbind(
+  rbind(vert_old, vert_old2),
+  rbind(vert_new, vert_new2)
+)
+verticals2$vertical <- as.character(verticals2$vertical)
+```

@@ -1,7 +1,11 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.8.3
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
+  cat2cat_advanced: cat2cat_advanced.html
+  cat2cat_validation: cat2cat_validation.html
   cat2cat: cat2cat.html
-last_built: 2024-01-22T22:19Z
-
+last_built: 2026-05-08T01:07Z
+urls:
+  reference: https://polkas.github.io/cat2cat/reference
+  article: https://polkas.github.io/cat2cat/articles
