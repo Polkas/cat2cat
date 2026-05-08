@@ -67,10 +67,19 @@ prune_c2c <- function(df,
                       column = "wei_freq_c2c",
                       method = "nonzero",
                       percent = 50) {
-  stopifnot(is.data.frame(df))
-  stopifnot(all(c(index, column) %in% colnames(df)))
-  stopifnot(isTRUE(method %in% c("nonzero", "highest", "highest1", "morethan")))
-  stopifnot(length(percent) == 1 && (percent >= 0 && percent < 100))
+  stopifnot("`df` must be a data.frame" = is.data.frame(df))
+  stopifnot(
+    "`index` and `column` must be columns in `df`" =
+      all(c(index, column) %in% colnames(df))
+  )
+  stopifnot(
+    "`method` must be one of: 'nonzero', 'highest', 'highest1', 'morethan'" =
+      isTRUE(method %in% c("nonzero", "highest", "highest1", "morethan"))
+  )
+  stopifnot(
+    "`percent` must be a single number between 0 and 100" =
+      length(percent) == 1 && (percent >= 0 && percent < 100)
+  )
 
   df <- df[order(df[[index]]), ]
 
@@ -149,10 +158,16 @@ cross_c2c <- function(df,
                       cols = colnames(df)[grepl("^wei_.*_c2c$", colnames(df))],
                       weis = rep(1 / length(cols), length(cols)),
                       na.rm = TRUE) {
-  stopifnot(is.data.frame(df))
-  stopifnot(all(cols %in% colnames(df)))
-  stopifnot(length(weis) == length(cols))
-  stopifnot(is.logical(na.rm))
+  stopifnot("`df` must be a data.frame" = is.data.frame(df))
+  stopifnot(
+    "All `cols` must be columns in `df`" =
+      all(cols %in% colnames(df))
+  )
+  stopifnot(
+    "`weis` must have same length as `cols`" =
+      length(weis) == length(cols)
+  )
+  stopifnot("`na.rm` must be TRUE or FALSE" = is.logical(na.rm))
 
   weis <- weis / sum(weis)
 
@@ -172,7 +187,7 @@ cross_c2c <- function(df,
 #' @param df `data.frame`.
 #' @param cat_var `character(1)` a categorical variable name.
 #' @param ml `character` vector of ml models applied,
-#' any of `c("knn", "rf", "lda")`.
+#' any of `c("knn", "rf", "lda", "nb")`.
 #' @return the provided `data.frame` with additional `cat2cat` like columns.
 #' @export
 #' @examples
@@ -185,12 +200,21 @@ cross_c2c <- function(df,
 #' dummy_c2c(occup_old, "code", "knn")
 #' }
 dummy_c2c <- function(df, cat_var, ml = NULL) {
-  stopifnot(is.data.frame(df))
-  stopifnot(length(cat_var) == 1 && is.character(cat_var))
-  stopifnot(isTRUE(cat_var %in% colnames(df)))
-  stopifnot(is.null(ml) ||
-    (all(ml %in% c("knn", "rf", "lda")) ||
-      all(ml %in% paste0("wei_", c("knn", "rf", "lda"), "_c2c"))))
+  stopifnot("`df` must be a data.frame" = is.data.frame(df))
+  stopifnot(
+    "`cat_var` must be a single character string" =
+      length(cat_var) == 1 && is.character(cat_var)
+  )
+  stopifnot(
+    "`cat_var` must be a column in `df`" =
+      isTRUE(cat_var %in% colnames(df))
+  )
+  stopifnot(
+    "`ml` must be NULL or contain valid ML method names (knn, rf, lda, nb)" =
+      is.null(ml) ||
+      (all(ml %in% c("knn", "rf", "lda", "nb")) ||
+       all(ml %in% paste0("wei_", c("knn", "rf", "lda", "nb"), "_c2c")))
+  )
 
   base_cols <- c(
     "index_c2c", "g_new_c2c", "wei_freq_c2c",

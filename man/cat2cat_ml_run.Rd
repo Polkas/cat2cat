@@ -3,7 +3,7 @@
 \name{cat2cat_ml_run}
 \alias{cat2cat_ml_run}
 \alias{print.cat2cat_ml_run}
-\title{Function to check cat2cat ml models performance}
+\title{Cross-validation diagnostics for cat2cat ML models}
 \usage{
 cat2cat_ml_run(mappings, ml, ...)
 
@@ -13,48 +13,166 @@ cat2cat_ml_run(mappings, ml, ...)
 \item{mappings}{`named list` with 3 fields `trans`, `direction` and
 optional `freqs_df`.}
 
-\item{ml}{`named list` (optional) with up to 5 fields
-`data`, `cat_var`, `method`, `features` and optional `args`.}
+\item{ml}{`named list` (optional) with fields
+`data`, `cat_var`, `method`, `features` and optional `args`,
+`on_fail`, `fail_warn`.}
 
-\item{...}{other arguments}
+\item{...}{other arguments (currently unused).}
 
-\item{x}{cat2cat_ml_run instance created with \code{\link{cat2cat_ml_run}} function.}
+\item{x}{\code{cat2cat_ml_run} instance created with
+\code{\link{cat2cat_ml_run}}.}
 }
 \value{
-argument x invisibly
+An object of class \code{"cat2cat_ml_run"} (a named list). Each
+  element corresponds to one mapping group and contains:
+  \describe{
+    \item{\code{naive}}{\code{numeric(1)} --- random-guess baseline accuracy
+      (1/k where k is number of categories). Theoretical lower bound.}
+    \item{\code{freq}}{\code{numeric(1)} --- most-frequent-category baseline
+      accuracy. A simple but often strong baseline.}
+    \item{\code{acc}}{Named \code{numeric} vector --- test-set accuracy for
+      each ML method. Higher is better; compare to \code{freq}.}
+    \item{\code{brier}}{Named \code{numeric} vector --- Brier score
+      for each ML method. Computed as \code{mean((1 - P(true))^2)}.
+      Lower is better; range is [0, 1].}
+    \item{\code{mean_prob}}{Named \code{numeric} vector --- average probability
+      assigned to the true class. Higher is better. This directly measures
+      the quality of probability weights used by cat2cat.}
+    \item{\code{naive_brier}}{\code{numeric(1)} --- Brier score for uniform
+      baseline (= (1 - 1/k)^2). Serves as a calibration reference.}
+    \item{\code{naive_mean_prob}}{\code{numeric(1)} --- mean P(true) for
+      uniform baseline (= 1/k). Equals \code{naive} by definition.}
+    \item{\code{freq_brier}}{\code{numeric(1)} --- Brier score using training
+      set category frequencies as probabilities.}
+    \item{\code{freq_mean_prob}}{\code{numeric(1)} --- mean P(true) using
+      training set category frequencies.}
+  }
+  The object also carries an \code{"ml_models"} attribute listing the
+  methods evaluated. Use \code{print()} for a human-readable summary.
+
+\code{print} returns \code{x} invisibly, after printing a summary
+  with average accuracy per method, baseline comparisons, and failure rates.
 }
 \description{
-ml and mappings arguments in \code{\link{cat2cat}} function can be used to run cross validation across all groups in ml data.
+Evaluates whether machine-learning models used in the \code{ml} argument of
+\code{\link{cat2cat}} actually improve category assignment over simpler
+baselines. The function runs a per-group train/test split across every
+mapping group defined by the transition table.
+}
+\details{
+For each mapping group (set of candidate categories linked by the transition
+table) the function:
+\enumerate{
+  \item Collects all observations from \code{ml$data} whose category belongs
+        to the group.
+  \item Randomly splits them into training (\code{1 - test_prop}) and test
+        (\code{test_prop}) sets.
+  \item Computes two baselines on the test set:
+        \itemize{
+          \item \strong{naive}: accuracy of a random guess (\eqn{1 / k}
+                where \eqn{k} is the number of candidate categories).
+          \item \strong{freq}: accuracy of always predicting the most
+                frequent category in the training set.
+        }
+  \item Trains each ML model specified in \code{ml$method} on the training
+        set and records its classification accuracy on the test set.
+}
+
+Groups with fewer than 5 observations or only one candidate category are
+skipped (their accuracy is recorded as \code{NA}).
+
+\subsection{Baseline-Only Diagnostics}{
+To inspect only baseline diagnostics (\code{naive}, \code{freq}, and their
+Brier/mean-probability variants), pass empty model and feature vectors:
+\code{ml$method = character(0)} and \code{ml$features = character(0)}.
+In this mode, no ML models are trained, but baseline diagnostics are still
+computed for each mapping group.
+}
+
+\subsection{Understanding the Metrics}{
+Three complementary metrics evaluate model quality:
+
+\strong{Accuracy} measures how often the model's top prediction matches
+the true category. Use this when you only care about the single most likely
+assignment. Higher is better; theoretical maximum is 1.0.
+
+\strong{Mean P(true class)} measures the average probability the model
+assigns to the correct category. This evaluates the full probability
+distribution, not just the top prediction. For cat2cat, where weights ARE
+probabilities distributed across candidates, this metric directly measures
+weight quality. Higher is better; range is \eqn{[0, 1]}.
+
+\strong{Brier score} measures the squared error between predicted
+probability and the true outcome: \eqn{(1 - P(true))^2}. Unlike log-loss,
+Brier score is bounded \eqn{[0, 1]} and does not explode when P(true)
+is near zero. Lower is better; 0 means perfect prediction. For k
+categories, the naive baseline (uniform 1/k) gives Brier = \eqn{(1 - 1/k)^2}.
+}
+
+\subsection{Choosing a Method}{
+\itemize{
+  \item If accuracy and mean P(true) are similar across methods, prefer
+        simpler methods (freq, lda) over complex ones (rf, knn).
+  \item If ML methods rarely beat the frequency baseline, use
+        \code{wei_freq_c2c} --- ML adds complexity without benefit.
+  \item If Brier score for ML is similar to or worse than naive, the model
+        is not well-calibrated. Consider \code{wei_freq_c2c} or a different ML method.
+  \item Use \code{\link{cross_c2c}} to ensemble multiple methods if no
+        single method dominates.
+}
+}
+
+Because the split is random, results will vary between runs. For more
+stable estimates, call the function several times or use a larger
+\code{ml$data} set (e.g. pool multiple survey waves).
 }
 \examples{
-\dontrun{
+\donttest{
 library("cat2cat")
 data("occup", package = "cat2cat")
 data("trans", package = "cat2cat")
 
 occup_2006 <- occup[occup$year == 2006, ]
 occup_2008 <- occup[occup$year == 2008, ]
-occup_2010 <- occup[occup$year == 2010, ]
-occup_2012 <- occup[occup$year == 2012, ]
 
-library("caret")
+# Forward direction: old encoding -> new encoding
+# Use data from OLD encoding periods (2006, 2008)
 ml_setup <- list(
-  data = rbind(occup_2010, occup_2012),
+  data = rbind(occup_2006, occup_2008),
   cat_var = "code",
-  method = c("knn", "rf", "lda"),
+  method = c("knn", "rf", "lda", "nb"),
   features = c("age", "sex", "edu", "exp", "parttime", "salary"),
   args = list(k = 10, ntree = 50)
 )
-data <- list(
-  old = occup_2008, new = occup_2010,
-  cat_var_old = "code", cat_var_new = "code", time_var = "year"
-)
-mappings <- list(trans = trans, direction = "backward")
+mappings <- list(trans = trans, direction = "forward")
+
+set.seed(1234)
 res <- cat2cat_ml_run(mappings, ml_setup, test_prop = 0.2)
-res
+print(res)
+
+# Typical good results show:
+# - ML accuracy > freq baseline (ML adds value)
+# - ML Brier < naive (well-calibrated probabilities)
+# - ML mean P(true) > freq (better probability weights)
+#
+# If Brier(ML) >= Brier(naive), the model is poorly calibrated
+# and wei_freq_c2c may be safer. Use cross_c2c() to ensemble.
+
+# High failure rate is normal - most groups have <5 observations
+
+# Baseline-only diagnostics (no ML models):
+ml_baseline <- list(
+  data = rbind(occup_2006, occup_2008),
+  cat_var = "code",
+  method = character(0),
+  features = character(0)
+)
+baseline_cv <- cat2cat_ml_run(mappings, ml_baseline)
+print(baseline_cv)
 }
 
 }
 \seealso{
-\code{\link{cat2cat}}
+\code{\link{cat2cat}} for the main mapping function,
+  \code{\link{cross_c2c}} for ensembling weights from multiple methods.
 }

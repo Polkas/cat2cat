@@ -17,3 +17,5 @@ TODO.md
 ^\revdep$
 codecov.yml
 ^codemeta\.json$
+^data-raw$
+^check.txt$

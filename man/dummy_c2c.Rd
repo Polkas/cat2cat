@@ -12,7 +12,7 @@ dummy_c2c(df, cat_var, ml = NULL)
 \item{cat_var}{`character(1)` a categorical variable name.}
 
 \item{ml}{`character` vector of ml models applied,
-any of `c("knn", "rf", "lda")`.}
+any of `c("knn", "rf", "lda", "nb")`.}
 }
 \value{
 the provided `data.frame` with additional `cat2cat` like columns.

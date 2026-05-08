@@ -1,3 +1,28 @@
+template:
+  bootstrap: 5
+url: https://polkas.github.io/cat2cat
+
+navbar:
+  structure:
+    left: [home, vignettes, reference]
+  components:
+    vignettes:
+      text: Vignettes
+      menu:
+      - text: Get Started with cat2cat
+        href: articles/cat2cat.html
+      - text: Choosing Weights and Validating ML
+        href: articles/cat2cat_validation.html
+      - text: Advanced Workflows
+        href: articles/cat2cat_advanced.html
+
+articles:
+- title: Vignettes
+  contents:
+  - cat2cat
+  - cat2cat_validation
+  - cat2cat_advanced
+
 reference:
 - title: main functions
 - contents:
@@ -10,6 +35,7 @@ reference:
 - contents:
   - occup
   - occup_small
+  - occup_panel
   - verticals
   - verticals2
   - trans

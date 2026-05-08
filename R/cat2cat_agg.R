@@ -1,34 +1,101 @@
 #' Manual mapping for an aggregated panel dataset
-#' @description Manual mapping of an inconsistently coded categorical variable
-#' according to the user provided mappings (equations).
-#' @param data list with 5 named fields
-#'  `old`, `new`, `cat_var`, `time_var`, `freq_var`.
-#' @param ... mapping equations where direction is set with any of,
-#'  `>`, `<`, `\%>\%`, `\%<\%`.
-#' @return `named list` with 2 fields old and new - 2 data.frames.
-#' There will be added additional columns to each.
-#' The new columns are added instead of the additional metadata as
-#' we are working with new datasets
-#' where observations could be replicated.
-#' For the transparency the probability and number of replications are part of
-#' each observation in the `data.frame`.
-#' @details data argument - list with fields
+#'
+#' @description
+#' Applies user-defined mapping equations to redistribute aggregated counts
+#' (and other numeric columns) when categorical encodings change between
+#' time periods. Unlike \code{\link{cat2cat}}, which works on micro-data,
+#' this function operates on pre-aggregated data where each row represents
+#' a category with associated counts/totals.
+#'
+#' @param data Named list with 5-6 fields describing the datasets:
 #' \describe{
-#'  \item{"old"}{ data.frame older time point in the panel}
-#'  \item{"new"}{ data.frame more recent time point in the panel}
-#'  \item{"cat_var"}{
-#'    character - deprecated - name of the categorical variable
-#'  }
-#'  \item{"cat_var_old"}{
-#'    character name of the categorical variable in the old period
-#'  }
-#'  \item{"cat_var_new"}{
-#'    character name of the categorical variable in the new period
-#'  }
-#'  \item{"time_var"}{ character name of time variable}
-#'  \item{"freq_var"}{ character name of frequency variable}
+#'   \item{\code{old}}{\code{data.frame} - older time period (one row per category).}
+#'   \item{\code{new}}{\code{data.frame} - newer time period (one row per category).}
+#'   \item{\code{cat_var}}{\code{character(1)} - (deprecated) category variable name
+#'     if identical in both periods. Use \code{cat_var_old}/\code{cat_var_new} instead.}
+#'   \item{\code{cat_var_old}}{\code{character(1)} - category variable name in old period.}
+#'   \item{\code{cat_var_new}}{\code{character(1)} - category variable name in new period.}
+#'   \item{\code{time_var}}{\code{character(1)} - time variable name.}
+#'   \item{\code{freq_var}}{\code{character(1)} - frequency/count variable used to
+#'     compute proportions when splitting one category into many.}
 #' }
-#' @note All mapping equations have to be valid ones.
+#'
+#' @param ... Mapping equations specifying how categories relate across periods.
+#'   See **Equation syntax** in Details.
+#'
+#' @return A named list with two elements:
+#' \describe{
+#'   \item{\code{$old}}{\code{data.frame} - old period with \code{prop_c2c} column added.
+#'     Categories may be replicated if split by backward equations.}
+#'   \item{\code{$new}}{\code{data.frame} - new period with \code{prop_c2c} column added.
+#'     Categories may be replicated if split by forward equations.}
+#' }
+#' The \code{prop_c2c} column contains the proportion (0-1) to apply when
+#' aggregating. For rows not affected by any equation, \code{prop_c2c = 1}.
+#' For split categories, proportions sum to 1 within the original category.
+#'
+#' @details
+#'
+#' \strong{Equation syntax}
+#'
+#' Each equation has the form:
+#' \preformatted{OLD_SIDE  DIRECTION  NEW_SIDE}
+#'
+#' where:
+#' \itemize{
+#'   \item \strong{OLD_SIDE} - one or more old-period category names
+#'     (use \code{c(A, B)} for multiple)
+#'   \item \strong{DIRECTION} - one of:
+#'     \itemize{
+#'       \item \code{\%>\%} or \code{>} - \strong{forward}: replicates the NEW period,
+#'         renaming/splitting new categories to match old encoding
+#'       \item \code{\%<\%} or \code{<} - \strong{backward}: replicates the OLD period,
+#'         renaming/splitting old categories to match new encoding
+#'     }
+#'   \item \strong{NEW_SIDE} - one or more new-period category names
+#' }
+#'
+#' \strong{How proportions are calculated}
+#'
+#' When one category maps to multiple:
+#' \itemize{
+#'   \item \strong{Backward} (\code{\%<\%}): proportions come from \code{freq_var}
+#'     in the \strong{new} period (the target encoding)
+#'   \item \strong{Forward} (\code{\%>\%}): proportions come from \code{freq_var}
+#'     in the \strong{old} period (the target encoding)
+#' }
+#'
+#' \strong{Examples of valid equations}
+#'
+#' \describe{
+#'   \item{\code{Automotive \%<\% c(Automotive1, Automotive2)}}{
+#'     Backward: the old "Automotive" row is split into two rows
+#'     ("Automotive1", "Automotive2") with proportions from new-period counts.}
+#'   \item{\code{c(Kids1, Kids2) \%>\% c(Kids)}}{
+#'     Forward: the new "Kids" row is split into two rows
+#'     ("Kids1", "Kids2") with proportions from old-period counts.}
+#'   \item{\code{Home \%>\% c(Home, Supermarket)}}{
+#'     Forward: the new "Home" and "Supermarket" rows are each renamed to
+#'     "Home" (1-to-many from new perspective; after aggregation they merge).}
+#' }
+#'
+#' \strong{Typical workflow}
+#'
+#' 1. Call \code{cat2cat_agg()} with all mapping equations.
+#' 2. Bind \code{$old} and \code{$new} together.
+#' 3. Group by time and the (now unified) category variable.
+#' 4. Summarise numeric columns as \code{sum(value * prop_c2c)}.
+#'
+#' @note
+#' \itemize{
+#'   \item All equations must be valid - unknown category names cause an error.
+#'   \item Each equation must have exactly one category on one side
+#'     (the "one" in one-to-many). Many-to-many within a single equation
+#'     is not allowed.
+#'   \item Each category in \code{old} and \code{new} must appear exactly once
+#'     (no duplicates allowed before mapping).
+#' }
+#' @seealso \code{vignette("cat2cat_advanced")} for a complete workflow example.
 #' @export
 #' @examples
 #' data("verticals", package = "cat2cat")
@@ -75,7 +142,8 @@ cat2cat_agg <- function(data = list(
     data$cat_var_new <- data$cat_var
   }
   stopifnot(
-    is.list(data) &&
+    "`data` must be a list with old, new, cat_var_old/new, time_var, freq_var; both old and new must be data.frames containing the specified columns" =
+      is.list(data) &&
       (length(data) >= 5 || length(data) <= 6) &&
       all(vapply(data, Negate(is.null), logical(1))) &&
       inherits(data$old, "data.frame") &&
@@ -93,10 +161,16 @@ cat2cat_agg <- function(data = list(
   d_old <- length(unique(data$old[[data$time_var]]))
   d_new <- length(unique(data$new[[data$time_var]]))
 
-  stopifnot((d_old == 1) && (d_new == 1))
+  stopifnot(
+    "Each period must have exactly one unique time value in `time_var`" =
+      (d_old == 1) && (d_new == 1)
+  )
 
-  stopifnot(all(table(data$old[[data$cat_var_old]]) == 1) &&
-    all(table(data$new[[data$cat_var_new]]) == 1))
+  stopifnot(
+    "Each category must appear exactly once per period (no duplicates)" =
+      all(table(data$old[[data$cat_var_old]]) == 1) &&
+      all(table(data$new[[data$cat_var_new]]) == 1)
+  )
 
   t <- as.list(substitute(list(...))[-1])
 
@@ -104,8 +178,14 @@ cat2cat_agg <- function(data = list(
   trans_map <- lapply(trans, format_trans)
   old_cats <- unlist(lapply(trans_map, function(x) x[["old"]]))
   new_cats <- unlist(lapply(trans_map, function(x) x[["new"]]))
-  stopifnot(all(old_cats %in% unique(data[["old"]][[data$cat_var_old]])))
-  stopifnot(all(new_cats %in% unique(data[["new"]][[data$cat_var_new]])))
+  stopifnot(
+    "All old categories in equations must exist in `data$old`" =
+      all(old_cats %in% unique(data[["old"]][[data$cat_var_old]]))
+  )
+  stopifnot(
+    "All new categories in equations must exist in `data$new`" =
+      all(new_cats %in% unique(data[["new"]][[data$cat_var_new]]))
+  )
 
   df_old <- data$old
   df_old$prop_c2c <- 1
@@ -116,14 +196,18 @@ cat2cat_agg <- function(data = list(
   col_df_new <- colnames(df_new)
 
   stopifnot(
-    identical(
-      setdiff(col_df_old, data$cat_var_old),
-      setdiff(col_df_new, data$cat_var_new)
-    )
+    "Old and new data.frames must have identical columns (except cat_var)" =
+      identical(
+        setdiff(col_df_old, data$cat_var_old),
+        setdiff(col_df_new, data$cat_var_new)
+      )
   )
 
   for (i in trans_map) {
-    stopifnot(((length(i[[2]]) == 1) || (length(i[[3]]) == 1)))
+    stopifnot(
+      "Each equation must have exactly one category on one side (one-to-many)" =
+        ((length(i[[2]]) == 1) || (length(i[[3]]) == 1))
+    )
 
     if (i$direction == "forward") {
       base <- df_new[!(df_new[, data$cat_var_new] %in% i[[3]]), ]

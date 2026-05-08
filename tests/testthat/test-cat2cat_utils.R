@@ -24,6 +24,13 @@ testthat::test_that("dummy_c2c backward", {
   )
 })
 
+testthat::test_that("dummy_c2c with nb method", {
+  expect_identical(
+    c(colnames(airquality), additional_cols, "wei_nb_c2c"),
+    colnames(dummy_c2c(airquality, "Month", ml = "nb"))
+  )
+})
+
 data("occup", package = "cat2cat")
 data("trans", package = "cat2cat")
 

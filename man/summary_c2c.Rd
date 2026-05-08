@@ -2,12 +2,12 @@
 % Please edit documentation in R/lms.R
 \name{summary_c2c}
 \alias{summary_c2c}
-\title{Adjusted summary for linear regression when based on replicated dataset}
+\title{Adjusted summary for regressions on replicated datasets}
 \usage{
 summary_c2c(x, df_old, df_new = x$df.residual)
 }
 \arguments{
-\item{x}{lm object}
+\item{x}{lm or glm object}
 
 \item{df_old}{integer number of d.f in original dataset. For bigger datasets
 `nrow` should be sufficient.}
@@ -16,19 +16,34 @@ summary_c2c(x, df_old, df_new = x$df.residual)
 Default: x$df.residual}
 }
 \value{
-data.frame with additional columns over a regular summary.lm output,
+data.frame with additional columns over a regular summary output,
 like correct and statistics adjusted by it.
 }
 \description{
-adjusting lm object results according to original number of
+adjusting lm/glm object results according to original number of
 degree of freedom.
-The standard errors, t statistics and p values have to be adjusted because of
- replicated observations.
+The standard errors, test statistics and p values have to be adjusted because of
+replicated observations.
 }
 \details{
-The size of the correction is equal to sqrt(df_new / df_old).
-Where standard errors are multiplied and t statistics divided by it.
-In most cases the default \code{df_new} value should be used.
+The replication step in \code{cat2cat} inflates the nominal sample
+size: the model sees \code{n_rep} rows but only \code{n_orig} are independent
+observations. Naive OLS therefore under-estimates standard errors.
+
+The correction factor is \code{sqrt(df_new / df_old)}, where \code{df_new} is
+the residual d.f. from the replicated model and \code{df_old} the residual
+d.f. from the original dataset. Standard errors are multiplied by this
+factor, test statistics divided by it, and p-values recomputed from the
+appropriate reference distribution: \code{t(df_old)} for t-based summaries
+and standard normal for z-based summaries.
+
+This is a pragmatic d.f. adjustment. It works well when per-subject
+weights sum to one and no extreme weights dominate.
+
+Note: Goodness-of-fit statistics (R-squared, AIC, BIC) from the replicated
+model are \strong{not meaningful} --- they reflect the inflated sample
+size, not explanatory power. Report only coefficient estimates and the
+corrected SEs/p-values from this function.
 }
 \examples{
 data("occup_small", package = "cat2cat")

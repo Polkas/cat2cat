@@ -9,3 +9,10 @@ R/preproc_data.R
 /Meta/
 .DS_Store
 Rplots
+data-raw/
+
+/.quarto/
+*.Rcheck
+check.txt
+/docs
+Rplots.pdf

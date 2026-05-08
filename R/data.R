@@ -79,6 +79,67 @@
 #' occup_small <- occup[sort(sample(nrow(occup), 8000)), ]
 "occup_small"
 
+#' Occupational panel dataset with BAEL-style quarterly rotation
+#'
+#' @details A simulated rotational panel derived from \code{occup}, inspired by
+#' the Polish BAEL (Badanie Aktywnosci Ekonomicznej Ludnosci - Labour Force
+#' Survey). Unlike the main \code{occup} dataset (repeated cross-sections), this
+#' dataset includes workers observed for 4 consecutive quarters, enabling
+#' demonstration of the \code{id_var} feature in \code{cat2cat()}.
+#'
+#' Panel design:
+#' \itemize{
+#'   \item 8 quarters: 2009Q1 through 2010Q4
+#'   \item Encoding change between 2009Q4 and 2010Q1
+#'   \item Each cohort enters quarterly and stays for 4 consecutive quarters
+#'   \item ~150 new subjects enter each quarter (1/4 rotation)
+#'   \item ~450 subjects observed across the encoding change
+#' }
+#'
+#' For subjects across quarters:
+#' \itemize{
+#'   \item \code{panel_id} is consistent across quarters
+#'   \item Occupation code is preserved (or mapped via \code{trans} at encoding change)
+#'   \item Age and experience increase annually (every 4 quarters)
+#'   \item Salary varies slightly between quarters (-1\% to +2\%)
+#' }
+#'
+#' @usage occup_panel
+#'
+#' @format A data frame with approximately 3900 observations and 15 variables.
+#' \describe{
+#' \item{id}{integer original row identifier from \code{occup}}
+#' \item{panel_id}{integer consistent person identifier across quarters}
+#' \item{cohort}{character entry quarter (e.g., "2009Q1")}
+#' \item{age}{numeric age of the worker}
+#' \item{sex}{numeric sex of the worker}
+#' \item{edu}{integer education level (1 = highest)}
+#' \item{exp}{numeric years of experience}
+#' \item{district}{integer district code}
+#' \item{parttime}{numeric contract type (1 = full-time)}
+#' \item{salary}{numeric annual salary}
+#' \item{code}{character occupational code (4-digit pre-2010, 6-digit post-2010)}
+#' \item{multiplier}{numeric survey weight}
+#' \item{quarter}{character survey quarter (e.g., "2009Q1", "2010Q2")}
+#' \item{code4}{character first 4 digits of occupational code}
+#' \item{year}{integer year extracted from quarter}
+#' \item{quarter_num}{integer quarter number (1-4)}
+#' }
+#' @seealso \code{\link{occup}} for the full repeated cross-section dataset,
+#'   \code{\link{trans}} for the transition table
+#' @examples
+#' data("occup_panel", package = "cat2cat")
+#'
+#' # Check panel structure
+#' table(occup_panel$quarter)
+#' table(table(occup_panel$panel_id))  # appearances per subject (target: 4)
+#'
+#' # Subjects observed across the encoding change (2009Q4 -> 2010Q1)
+#' panel_2009Q4 <- occup_panel[occup_panel$quarter == "2009Q4", ]
+#' panel_2010Q1 <- occup_panel[occup_panel$quarter == "2010Q1", ]
+#' length(intersect(panel_2009Q4$panel_id, panel_2010Q1$panel_id))
+"occup_panel"
+
 #' trans dataset containing mappings (transitions) between
 #' old (2008) and new (2010) occupational codes.
 #' This table could be used to map encodings in both directions.

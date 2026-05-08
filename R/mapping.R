@@ -17,8 +17,14 @@
 #' mappings$to_new[1:4]
 #' @export
 get_mappings <- function(x = data.frame()) {
-  stopifnot(is.data.frame(x) || is.matrix(x))
-  stopifnot(ncol(x) == 2)
+  stopifnot(
+    "`x` must be a data.frame or matrix" =
+      is.data.frame(x) || is.matrix(x)
+  )
+  stopifnot(
+    "`x` must have exactly 2 columns (old encoding, new encoding)" =
+      ncol(x) == 2
+  )
 
   x <- as.matrix(x)
 
@@ -80,15 +86,25 @@ get_mappings <- function(x = data.frame()) {
 #'   )
 #' )
 get_freqs <- function(x, multiplier = NULL) {
-  stopifnot(is.vector(x))
-  stopifnot(is.null(multiplier) || length(x) == length(multiplier))
+  stopifnot("`x` must be a vector" = is.vector(x))
+  stopifnot(
+    "`multiplier` must be NULL or same length as `x`" =
+      is.null(multiplier) || length(x) == length(multiplier)
+  )
 
   input <- if (!is.null(multiplier)) {
     rep(x, times = as.numeric(multiplier))
   } else {
     x
   }
-  res <- as.data.frame(table(input, useNA = "ifany"), stringsAsFactors = FALSE)
+  # Build data.frame directly to avoid an r-devel regression in
+  # as.data.frame.table() when NA appears in table names.
+  tab <- table(input, useNA = "ifany")
+  res <- data.frame(
+    input = names(tab),
+    Freq = as.integer(tab),
+    stringsAsFactors = FALSE
+  )
   res
 }
 
@@ -138,8 +154,11 @@ get_freqs <- function(x, multiplier = NULL) {
 #' head(data.frame(I(mappings$to_new), I(mapp_p)))
 #' @export
 cat_apply_freq <- function(to_x, freqs) {
-  stopifnot(is.list(to_x))
-  stopifnot(ncol(freqs) == 2)
+  stopifnot("`to_x` must be a list" = is.list(to_x))
+  stopifnot(
+    "`freqs` must have exactly 2 columns (category, frequency)" =
+      ncol(freqs) == 2
+  )
   res <- lapply(
     to_x,
     function(x) {
