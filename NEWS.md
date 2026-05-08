@@ -1,4 +1,4 @@
-# cat2cat 0.6.0.9000
+# cat2cat 0.6.1
 
 This release incorporates feedback from the PhD dissertation reviewers: dr hab. Andrzej Dudek, dr hab. Joanna Landmesser-Rusek, and dr hab. Paweł Andrzej Strzelecki.
 
