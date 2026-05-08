@@ -10,6 +10,7 @@ This release incorporates feedback from the PhD dissertation reviewers: dr hab. 
 * `cat2cat_ml_run()` now reports the Brier score and mean P(true class) in addition to accuracy. A proper scoring rule matters because `cat2cat` weights are *probabilities*, not classifications - a model can be accurate and still be poorly calibrated.
 * All `stopifnot()` assertions now carry descriptive messages, so failures point the user at the offending argument instead of printing the raw expression.
 * `cat2cat()` ML fallback is now configurable via `ml$on_fail` (`"freq"`, `"naive"`, `"na"`, `"error"`) with optional warning control via `ml$fail_warn`. Failed ML weights are now explicitly handled according to this policy instead of always silently falling back to frequency weights.
+* `cat2cat()` ML now accepts `factor` features in addition to numeric/logical: factor columns listed in `ml$features` are automatically one-hot encoded using the union of levels observed in `ml$data` and the target period.
 
 ## Documentation
 
