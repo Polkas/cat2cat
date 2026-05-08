@@ -7,6 +7,10 @@
 #' in the target period.
 #' @keywords internal
 cat2cat_ml <- function(ml, mapp, target_data, cat_var_target) {
+  encoded <- encode_factor_features(ml, target_data)
+  ml <- encoded$ml
+  target_data <- encoded$target_data
+
   ml <- validate_ml(ml)
 
   stopifnot(
@@ -294,6 +298,46 @@ delayed_package_load <- function(package, msg = sprintf("Please install %s packa
   if (isFALSE(suppressPackageStartupMessages(requireNamespace(package, quietly = TRUE)))) {
     stop(msg)
   }
+}
+
+# " One-hot encode factor features in `ml$data` and `target_data`
+#' @description Replaces any `factor` columns listed in `ml$features` with
+#' 0/1 indicator columns built from the union of levels observed in either
+#' dataset. Numeric/logical features are left unchanged. Character columns
+#' are not auto-encoded; convert them to `factor` explicitly.
+#' @keywords internal
+encode_factor_features <- function(ml, target_data) {
+  feats <- ml$features
+  is_factorish <- function(x) is.factor(x)
+
+  to_encode <- feats[vapply(feats, function(f) {
+    (f %in% colnames(ml$data) && is_factorish(ml$data[[f]])) ||
+      (f %in% colnames(target_data) && is_factorish(target_data[[f]]))
+  }, logical(1))]
+
+  if (length(to_encode) == 0) {
+    return(list(ml = ml, target_data = target_data))
+  }
+
+  new_features <- setdiff(feats, to_encode)
+  for (f in to_encode) {
+    train_vals <- if (f %in% colnames(ml$data)) as.character(ml$data[[f]]) else character(0)
+    target_vals <- if (f %in% colnames(target_data)) as.character(target_data[[f]]) else character(0)
+    lv <- unique(c(train_vals, target_vals))
+    lv <- lv[!is.na(lv)]
+    for (l in lv) {
+      col_name <- paste0(f, "_", l)
+      ml$data[[col_name]] <- as.integer(
+        !is.na(ml$data[[f]]) & as.character(ml$data[[f]]) == l
+      )
+      target_data[[col_name]] <- as.integer(
+        !is.na(target_data[[f]]) & as.character(target_data[[f]]) == l
+      )
+      new_features <- c(new_features, col_name)
+    }
+  }
+  ml$features <- new_features
+  list(ml = ml, target_data = target_data)
 }
 
 #' Cross-validation diagnostics for cat2cat ML models

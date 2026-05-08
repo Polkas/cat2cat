@@ -144,3 +144,115 @@ testthat::test_that("validate_ml rejects unsupported on_fail", {
     "`ml\\$on_fail` must be one of"
   )
 })
+
+testthat::test_that("encode_factor_features one-hot encodes factor features", {
+  train <- data.frame(
+    age = c(20, 30, 40),
+    grp = factor(c("a", "b", "a")),
+    code = c("1", "2", "3"),
+    stringsAsFactors = FALSE
+  )
+  target <- data.frame(
+    age = c(25, 35),
+    grp = factor(c("a", "c"), levels = c("a", "c")),
+    stringsAsFactors = FALSE
+  )
+
+  ml <- list(
+    data = train,
+    cat_var = "code",
+    method = "nb",
+    features = c("age", "grp")
+  )
+
+  out <- encode_factor_features(ml, target)
+
+  testthat::expect_setequal(
+    out$ml$features,
+    c("age", "grp_a", "grp_b", "grp_c")
+  )
+  testthat::expect_true(all(out$ml$features %in% colnames(out$ml$data)))
+  testthat::expect_true(all(out$ml$features %in% colnames(out$target_data)))
+
+  testthat::expect_equal(out$ml$data$grp_a, c(1L, 0L, 1L))
+  testthat::expect_equal(out$ml$data$grp_b, c(0L, 1L, 0L))
+  testthat::expect_equal(out$ml$data$grp_c, c(0L, 0L, 0L))
+  testthat::expect_equal(out$target_data$grp_a, c(1L, 0L))
+  testthat::expect_equal(out$target_data$grp_c, c(0L, 1L))
+
+  # original column preserved
+  testthat::expect_true(is.factor(out$ml$data$grp))
+})
+
+testthat::test_that("encode_factor_features is a no-op when no factor features", {
+  train <- data.frame(age = c(1, 2), x = c(TRUE, FALSE), code = c("a", "b"))
+  target <- data.frame(age = c(3, 4), x = c(FALSE, TRUE))
+  ml <- list(
+    data = train, cat_var = "code", method = "nb",
+    features = c("age", "x")
+  )
+  out <- encode_factor_features(ml, target)
+  testthat::expect_identical(out$ml$features, c("age", "x"))
+  testthat::expect_identical(colnames(out$ml$data), colnames(train))
+  testthat::expect_identical(colnames(out$target_data), colnames(target))
+})
+
+testthat::test_that("encode_factor_features does not auto-encode character columns", {
+  train <- data.frame(
+    age = c(1, 2),
+    region = c("n", "s"),
+    code = c("a", "b"),
+    stringsAsFactors = FALSE
+  )
+  target <- data.frame(age = c(3, 4), region = c("n", "s"), stringsAsFactors = FALSE)
+  ml <- list(
+    data = train, cat_var = "code", method = "nb",
+    features = c("age", "region")
+  )
+  out <- encode_factor_features(ml, target)
+  testthat::expect_identical(out$ml$features, c("age", "region"))
+})
+
+testthat::test_that("cat2cat with ml automatically one-hot encodes factor features", {
+  library("e1071")
+
+  occup_2008_f <- occup_2008
+  occup_2010_f <- occup_2010
+  occup_2012_f <- occup_2012
+
+  # Convert a numeric column into a factor
+  occup_2008_f$edu <- factor(occup_2008_f$edu)
+  occup_2010_f$edu <- factor(occup_2010_f$edu)
+  occup_2012_f$edu <- factor(occup_2012_f$edu)
+
+  test_data_f <- list(
+    old = occup_2008_f,
+    new = occup_2010_f,
+    cat_var = "code",
+    time_var = "year"
+  )
+
+  ml_nb <- list(
+    data = rbind(occup_2010_f, occup_2012_f),
+    cat_var = "code",
+    method = "nb",
+    features = c("age", "sex", "edu", "salary"),
+    fail_warn = FALSE
+  )
+
+  set.seed(1234)
+  result <- cat2cat(
+    data = test_data_f,
+    mappings = list(trans = trans, direction = "backward"),
+    ml = ml_nb
+  )
+
+  testthat::expect_s3_class(result$old, "data.frame")
+  testthat::expect_true("wei_nb_c2c" %in% colnames(result$old))
+  # original factor column preserved
+  testthat::expect_true(is.factor(result$old$edu))
+
+  non_na_wei <- result$old$wei_nb_c2c[!is.na(result$old$wei_nb_c2c)]
+  testthat::expect_gt(length(non_na_wei), 0)
+  testthat::expect_true(all(non_na_wei >= 0 & non_na_wei <= 1))
+})

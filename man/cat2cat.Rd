@@ -105,7 +105,9 @@ Optional ml args
  }
  \item{"features"}{
  character vector of features names where all
- have to be numeric or logical
+ have to be numeric, logical or factor.
+ Factor features are automatically one-hot encoded using the union of
+ levels observed in \code{ml$data} and the target period.
  }
  \item{"args"}{ optional - list parameters: knn: k ; rf: ntree  }
  \item{"on_fail"}{ optional character(1) controlling failed ML weights:
