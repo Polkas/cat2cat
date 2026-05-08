@@ -3,15 +3,7 @@ Title: Handling an Inconsistently Coded Categorical Variable in a Longitudinal D
 Version: 0.6.0.9000
 Authors@R: c(
     person("Maciej", "Nasinski", email = "nasinski.maciej@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0001-5236-8040")),
-    person("Krzysztof", "Gajowniczek", email = "krzysztof_gajowniczek@sggw.edu.pl", role = "ctb",
-           comment = c(ORCID = "0000-0001-6953-8907")),           
-    person("Andrzej", "Dudek", email = "andrzej.dudek@ue.wroc.pl", role = "ctb",
-           comment = c(ORCID = "0000-0002-4943-8703")),
-    person("Joanna", "Landmesser-Rusek", email = "joanna_landmesser@sggw.edu.pl", role = "ctb",
-           comment = c(ORCID = "0000-0001-7286-8536")),
-    person(c("Pawel", "Andrzej"), "Strzelecki", email = "pawel.strzelecki@sgh.waw.pl", role = "ctb",
-           comment = c(ORCID = "0000-0002-4318-8942"))
+           comment = c(ORCID = "0000-0001-5236-8040"))
     )
 Maintainer: Maciej Nasinski <nasinski.maciej@gmail.com>
 Description: 
