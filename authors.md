@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/Polkas/cat2cat/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/Polkas/cat2cat/blob/v0.6.1/inst/CITATION)
 
 Nasiński M, Gajowniczek K (2023). “Handling an inconsistently coded
 categorical variable in a longitudinal dataset with cat2cat.”
