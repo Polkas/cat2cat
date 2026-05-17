@@ -58,6 +58,10 @@ the frequency baseline in
 [`cat2cat_ml_run()`](https://polkas.github.io/cat2cat/reference/cat2cat_ml_run.md),
 the simpler `wei_freq_c2c` weights are usually the better choice.
 
+ML features must be numeric, logical, or factor columns. Factor columns
+are one-hot encoded automatically; character columns are not, so convert
+character categories to factors before listing them in `features`.
+
 ``` r
 
 ml_setup <- list(
@@ -94,18 +98,22 @@ Baseline-only diagnostics are also available:
 ``` r
 
 ml_baseline <- list(
-  data = bind_rows(occup_2008, occup_2010),
+  data = bind_rows(occup_2010, occup_2012),
   cat_var = "code",
   method = character(0),
   features = character(0)
 )
 
 cv_baseline <- cat2cat_ml_run(
-  mappings = list(trans = trans, direction = "forward"),
+  mappings = list(trans = trans, direction = "backward"),
   ml = ml_baseline
 )
 print(cv_baseline)
 ```
+
+Use the same `direction` in diagnostics as in the mapping workflow you
+want to evaluate, because the mapping groups and base-period frequencies
+differ by direction.
 
 If ML probabilities cannot be produced for some replicated rows, use
 `on_fail` and `fail_warn`:
@@ -550,6 +558,18 @@ scales naive standard errors by the replication factor:
 ``` math
 \text{SE}_{\text{corrected}} = \text{SE}_{\text{naive}} \times \sqrt{\frac{n_{\text{rep}}}{n_{\text{orig}}}}
 ```
+
+Report coefficient estimates with corrected standard errors and p-values
+from
+[`summary_c2c()`](https://polkas.github.io/cat2cat/reference/summary_c2c.md).
+Ordinary $`R^2`$ is preserved in this neutral setup because the response
+and covariates do not vary across replicated copies and the weights for
+each source observation sum to the original weight. Adjusted $`R^2`$,
+AIC, and BIC depend on sample-size and degrees-of-freedom conventions,
+so do not report their replicated-model values unless you recompute them
+on the intended original-observation scale. If the harmonised category
+itself enters the model, fit statistics are conditional on the chosen
+harmonisation weights.
 
 ### Fixed effects regression
 

@@ -80,8 +80,15 @@ Available ML methods:
   multivariate normality and equal covariance.
 - **rf**: Random Forest. Handles interactions well. Slower, needs
   `ntree` tuning.
-- **nb**: Naive Bayes via `e1071`. Fast, handles mixed types. Assumes
-  conditional independence of features.
+- **nb**: Naive Bayes via `e1071`. Fast, useful after
+  numeric/logical/factor preprocessing. Assumes conditional independence
+  of features.
+
+ML features must be numeric, logical, or factor columns. Factor columns
+are one-hot encoded automatically using levels observed in the training
+data and the target period. Character columns are not encoded
+automatically; convert them to factors first if they represent
+categories.
 
 You can run multiple methods at once and compare or combine them:
 
@@ -464,9 +471,9 @@ print(cv_knn)
 #>   knn: accuracy = 0.5144
 #> 
 #> BRIER SCORE (lower is better, range 0-1):
-#>   naive: 0.6834
-#>   freq: 0.4179
-#>   knn: brier = 0.4135
+#>   naive: 0.4097
+#>   freq: 0.3010
+#>   knn: brier = 0.3194
 #> 
 #> MEAN P(TRUE CLASS) (higher is better):
 #>   naive: 0.1805
@@ -487,9 +494,9 @@ The [`print()`](https://rdrr.io/r/base/print.html) summary reports:
   non-skipped groups. `naive (1/k)` is the random-guess baseline, `freq`
   is the majority-class baseline, and each ML line reports top-class
   accuracy for that method.
-- **BRIER SCORE** - average probability error across non-skipped groups.
-  Lower is better. This matters because `cat2cat` ultimately uses
-  probability weights, not just hard classifications.
+- **BRIER SCORE** - average full-vector probability error across
+  non-skipped groups. Lower is better. This matters because `cat2cat`
+  ultimately uses probability weights, not just hard classifications.
 - **MEAN P(TRUE CLASS)** - average probability assigned to the true
   category. Higher is better. This is often the most directly relevant
   metric for `cat2cat`, because it measures the quality of the
@@ -546,12 +553,12 @@ print(cv_all)
 #>   nb: accuracy = 0.3863
 #> 
 #> BRIER SCORE (lower is better, range 0-1):
-#>   naive: 0.6834
-#>   freq: 0.4104
-#>   knn: brier = 0.4064
-#>   lda: brier = 0.4039
-#>   rf: brier = 0.3931
-#>   nb: brier = 0.5174
+#>   naive: 0.4097
+#>   freq: 0.2958
+#>   knn: brier = 0.3142
+#>   lda: brier = 0.3239
+#>   rf: brier = 0.3044
+#>   nb: brier = 0.4703
 #> 
 #> MEAN P(TRUE CLASS) (higher is better):
 #>   naive: 0.1805
@@ -619,7 +626,7 @@ cv_all[[example_group]]
 #> 1.0000000        NA 0.9933333        NA 
 #> 
 #> $naive_brier
-#> [1] 0.4444444
+#> [1] 0.3333333
 #> 
 #> $naive_mean_prob
 #> [1] 0.3333333
@@ -660,7 +667,7 @@ threshold.
 | ML model performance \>\> freq across most groups | ML weights add genuine signal; use them |
 | ML model performance $`\approx`$ freq | ML is no better than frequency; prefer `wei_freq_c2c` (simpler, faster) |
 | ML model performance \< freq for many groups | ML is adding noise; do **not** use ML weights |
-| High failure rate (\>20%) | Features may have too many missing values or groups are too small |
+| High skipped-group rate (\>20%) | Features may have too many missing values, groups are too small, or method fitting is unstable |
 
 Because the train/test split is random, results vary between runs. For
 more stable estimates, pool more data into `ml$data` (e.g. multiple

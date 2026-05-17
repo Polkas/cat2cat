@@ -1,6 +1,6 @@
 # Changelog
 
-## cat2cat 0.6.0.9000
+## cat2cat 0.6.1
 
 This release incorporates feedback from the PhD dissertation reviewers:
 dr hab. Andrzej Dudek, dr hab. Joanna Landmesser-Rusek, and dr hab.
@@ -61,11 +61,12 @@ Paweł Andrzej Strzelecki.
 - Added a *When cat2cat won’t help* section distinguishing hard blockers
   (no mapping table, unobserved category) from method-specific
   limitations with available workarounds.
-- Corrected the $`R^2`$ guidance: it is preserved by the replication
-  only when the harmonised category is *not* used as a covariate; with
-  occupation fixed effects the inflation is real and
-  [`summary_c2c()`](https://polkas.github.io/cat2cat/reference/summary_c2c.md)
-  does not repair it.
+- Corrected the $`R^2`$ guidance: ordinary $`R^2`$ is preserved in
+  neutral replication cases when replicated copies keep the same
+  response/covariates and weights sum back to the source observation;
+  adjusted $`R^2`$, AIC, and BIC require original-scale
+  degrees-of-freedom care, and fit statistics with harmonised-category
+  covariates are conditional on the chosen weights.
 - Roxygen for
   [`cat2cat()`](https://polkas.github.io/cat2cat/reference/cat2cat.md)
   and

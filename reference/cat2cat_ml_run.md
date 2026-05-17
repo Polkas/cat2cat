@@ -58,8 +58,8 @@ corresponds to one mapping group and contains:
 
 - `brier`:
 
-  Named `numeric` vector — Brier score for each ML method. Computed as
-  `mean((1 - P(true))^2)`. Lower is better; range is \[0, 1\].
+  Named `numeric` vector — Brier score for each ML method, computed from
+  the full probability vector. Lower is better; range is \[0, 1\].
 
 - `mean_prob`:
 
@@ -69,7 +69,7 @@ corresponds to one mapping group and contains:
 
 - `naive_brier`:
 
-  `numeric(1)` — Brier score for uniform baseline (= (1 - 1/k)^2).
+  `numeric(1)` — Brier score for uniform baseline (= (1 - 1/k) / 2).
   Serves as a calibration reference.
 
 - `naive_mean_prob`:
@@ -140,11 +140,12 @@ distribution, not just the top prediction. For cat2cat, where weights
 ARE probabilities distributed across candidates, this metric directly
 measures weight quality. Higher is better; range is \\\[0, 1\]\\.
 
-**Brier score** measures the squared error between predicted probability
-and the true outcome: \\(1 - P(true))^2\\. Unlike log-loss, Brier score
-is bounded \\\[0, 1\]\\ and does not explode when P(true) is near zero.
-Lower is better; 0 means perfect prediction. For k categories, the naive
-baseline (uniform 1/k) gives Brier = \\(1 - 1/k)^2\\.
+**Brier score** measures the squared error between predicted
+probabilities and the one-hot encoded true outcome, normalized to \\\[0,
+1\]\\. Unlike log-loss, Brier score is bounded and does not explode when
+P(true) is near zero. Lower is better; 0 means perfect prediction. For k
+categories, the naive baseline (uniform 1/k) gives Brier = \\(1 - 1/k) /
+2\\.
 
 ### Choosing a Method
 
@@ -208,12 +209,12 @@ print(res)
 #>   nb: accuracy = 0.6870
 #> 
 #> BRIER SCORE (lower is better, range 0-1):
-#>   naive: 0.3277
-#>   freq: 0.2512
-#>   knn: brier = 0.2687
-#>   rf: brier = 0.2191
-#>   lda: brier = 0.2141
-#>   nb: brier = 0.2414
+#>   naive: 0.2810
+#>   freq: 0.2268
+#>   knn: brier = 0.2479
+#>   rf: brier = 0.1996
+#>   lda: brier = 0.1956
+#>   nb: brier = 0.2277
 #> 
 #> MEAN P(TRUE CLASS) (higher is better):
 #>   naive: 0.4380
@@ -265,8 +266,8 @@ print(baseline_cv)
 #>   freq (most common): 0.7045
 #> 
 #> BRIER SCORE (lower is better, range 0-1):
-#>   naive: 0.3277
-#>   freq: 0.2194
+#>   naive: 0.2810
+#>   freq: 0.1958
 #> 
 #> MEAN P(TRUE CLASS) (higher is better):
 #>   naive: 0.4380
