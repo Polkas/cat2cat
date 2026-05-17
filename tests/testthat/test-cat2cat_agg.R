@@ -1,3 +1,5 @@
+set.seed(1234)
+
 agg_old <- data.frame(
   vertical = c(
     "Electronics", "Kids1", "Kids2", "Automotive", "Books",

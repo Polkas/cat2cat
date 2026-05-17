@@ -79,6 +79,48 @@ testthat::test_that("cat2cat_ml_run supports naive bayes metrics", {
   testthat::expect_true(avg_acc_nb > 0 && avg_acc_nb <= 1)
 })
 
+testthat::test_that("cat2cat_ml_run one-hot encodes factor features", {
+  library("e1071")
+  mappings <- list(trans = trans, direction = "backward")
+  occup_2010_f <- occup_2010
+  occup_2012_f <- occup_2012
+  occup_2010_f$edu <- factor(occup_2010_f$edu)
+  occup_2012_f$edu <- factor(occup_2012_f$edu)
+
+  ml_nb <- list(
+    data = rbind(occup_2010_f, occup_2012_f),
+    cat_var = "code",
+    method = "nb",
+    features = c("age", "sex", "edu", "salary")
+  )
+
+  set.seed(1234)
+  res <- cat2cat_ml_run(mappings, ml_nb)
+  non_na_idx <- which(!is.na(vapply(res, function(g) g$acc["nb"], numeric(1))))
+  testthat::expect_true(length(non_na_idx) > 0)
+})
+
+testthat::test_that("cat2cat_ml_run computes baseline-only diagnostics", {
+  mappings <- list(trans = trans, direction = "backward")
+  ml_baseline <- list(
+    data = rbind(occup_2010, occup_2012),
+    cat_var = "code",
+    method = character(0),
+    features = character(0)
+  )
+
+  set.seed(1234)
+  res <- cat2cat_ml_run(mappings, ml_baseline)
+  non_na_freq <- vapply(res, function(g) !is.na(g$freq), logical(1))
+  testthat::expect_true(any(non_na_freq))
+
+  first_group <- res[[which(non_na_freq)[1]]]
+  testthat::expect_true(is.numeric(first_group$naive_brier))
+  testthat::expect_true(is.numeric(first_group$freq_brier))
+  testthat::expect_true(first_group$naive_brier >= 0 && first_group$naive_brier <= 1)
+  testthat::expect_true(first_group$freq_brier >= 0 && first_group$freq_brier <= 1)
+})
+
 testthat::test_that("cat2cat_ml_run method skips are independent across methods", {
   mappings <- list(trans = trans, direction = "backward")
   ml_features <- c("age", "sex", "edu", "exp", "parttime", "salary")

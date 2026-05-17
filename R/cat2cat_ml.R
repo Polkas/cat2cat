@@ -300,12 +300,34 @@ delayed_package_load <- function(package, msg = sprintf("Please install %s packa
   }
 }
 
+# " Normalized multiclass Brier score
+#' @keywords internal
+brier_score <- function(prob_matrix, true_cats, classes = colnames(prob_matrix)) {
+  prob_matrix <- as.data.frame(prob_matrix)
+  classes <- as.character(classes)
+  true_cats <- as.character(true_cats)
+
+  missing_classes <- setdiff(classes, colnames(prob_matrix))
+  if (length(missing_classes)) {
+    prob_matrix[missing_classes] <- 0
+  }
+  prob_matrix <- as.matrix(prob_matrix[, classes, drop = FALSE])
+
+  truth <- matrix(0, nrow = length(true_cats), ncol = length(classes))
+  colnames(truth) <- classes
+  matched <- match(true_cats, classes)
+  truth[cbind(seq_along(true_cats), matched)] <- 1
+
+  mean(rowSums((prob_matrix - truth)^2) / 2)
+}
+
 # " One-hot encode factor features in `ml$data` and `target_data`
 #' @description Replaces any `factor` columns listed in `ml$features` with
 #' 0/1 indicator columns built from the union of levels observed in either
 #' dataset. Numeric/logical features are left unchanged. Character columns
 #' are not auto-encoded; convert them to `factor` explicitly.
 #' @keywords internal
+#' @noRd
 encode_factor_features <- function(ml, target_data) {
   feats <- ml$features
   is_factorish <- function(x) is.factor(x)
@@ -392,10 +414,10 @@ encode_factor_features <- function(ml, target_data) {
 #' weight quality. Higher is better; range is \eqn{[0, 1]}.
 #'
 #' \strong{Brier score} measures the squared error between predicted
-#' probability and the true outcome: \eqn{(1 - P(true))^2}. Unlike log-loss,
-#' Brier score is bounded \eqn{[0, 1]} and does not explode when P(true)
-#' is near zero. Lower is better; 0 means perfect prediction. For k
-#' categories, the naive baseline (uniform 1/k) gives Brier = \eqn{(1 - 1/k)^2}.
+#' probabilities and the one-hot encoded true outcome, normalized to
+#' \eqn{[0, 1]}. Unlike log-loss, Brier score is bounded and does not explode
+#' when P(true) is near zero. Lower is better; 0 means perfect prediction. For k
+#' categories, the naive baseline (uniform 1/k) gives Brier = \eqn{(1 - 1/k) / 2}.
 #' }
 #'
 #' \subsection{Choosing a Method}{
@@ -437,13 +459,13 @@ encode_factor_features <- function(ml, target_data) {
 #'     \item{\code{acc}}{Named \code{numeric} vector --- test-set accuracy for
 #'       each ML method. Higher is better; compare to \code{freq}.}
 #'     \item{\code{brier}}{Named \code{numeric} vector --- Brier score
-#'       for each ML method. Computed as \code{mean((1 - P(true))^2)}.
+#'       for each ML method, computed from the full probability vector.
 #'       Lower is better; range is [0, 1].}
 #'     \item{\code{mean_prob}}{Named \code{numeric} vector --- average probability
 #'       assigned to the true class. Higher is better. This directly measures
 #'       the quality of probability weights used by cat2cat.}
 #'     \item{\code{naive_brier}}{\code{numeric(1)} --- Brier score for uniform
-#'       baseline (= (1 - 1/k)^2). Serves as a calibration reference.}
+#'       baseline (= (1 - 1/k) / 2). Serves as a calibration reference.}
 #'     \item{\code{naive_mean_prob}}{\code{numeric(1)} --- mean P(true) for
 #'       uniform baseline (= 1/k). Equals \code{naive} by definition.}
 #'     \item{\code{freq_brier}}{\code{numeric(1)} --- Brier score using training
@@ -505,6 +527,8 @@ encode_factor_features <- function(ml, target_data) {
 cat2cat_ml_run <- function(mappings, ml, ...) {
   stopifnot("`ml` must be a list" = is.list(ml))
   stopifnot("`mappings` must be a list" = is.list(mappings))
+
+  ml <- encode_factor_features(ml, ml$data)$ml
 
   elargs <- list(...)
   if (is.null(elargs$test_prop)) elargs$test_prop <- 0.2
@@ -580,14 +604,18 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
         res[[cat_nam]][["naive"]] <- 1 / n_categories
         # Naive baseline: uniform probability = 1/k for each category
         res[[cat_nam]][["naive_mean_prob"]] <- 1 / n_categories
-        res[[cat_nam]][["naive_brier"]] <- (1 - 1 / n_categories)^2
+        res[[cat_nam]][["naive_brier"]] <- (1 - 1 / n_categories) / 2
 
         index_tt <- sample(c(0, 1),
                            nrow(data_small_g),
                            prob = c(1 - elargs$test_prop, elargs$test_prop), replace = TRUE)
-        data_test_small <- data_small_g[index_tt == 1, ]
-        data_train_small <- data_small_g[index_tt == 0, ]
-        cc <- complete.cases(data_test_small[, features])
+        data_test_small <- data_small_g[index_tt == 1, , drop = FALSE]
+        data_train_small <- data_small_g[index_tt == 0, , drop = FALSE]
+        if (length(features) == 0) {
+          cc <- rep(TRUE, nrow(data_test_small))
+        } else {
+          cc <- complete.cases(data_test_small[, features])
+        }
 
         if (isTRUE(nrow(data_test_small[cc, ]) == 0 || nrow(data_train_small) < 5)) {
           next
@@ -604,7 +632,20 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
           if (tc %in% names(train_freqs)) train_freqs[[tc]] else 0
         }, numeric(1))
         res[[cat_nam]][["freq_mean_prob"]] <- mean(freq_probs)
-        res[[cat_nam]][["freq_brier"]] <- mean((1 - freq_probs)^2)
+        freq_prob_matrix <- matrix(
+          rep(0, length(true_cats_test) * length(matched_cat)),
+          nrow = length(true_cats_test),
+          dimnames = list(NULL, matched_cat)
+        )
+        freq_prob_matrix[, names(train_freqs)] <- rep(
+          train_freqs,
+          each = length(true_cats_test)
+        )
+        res[[cat_nam]][["freq_brier"]] <- brier_score(
+          freq_prob_matrix,
+          true_cats_test,
+          matched_cat
+        )
 
         for (m in methods) {
           try(
@@ -684,7 +725,11 @@ cat2cat_ml_run <- function(mappings, ml, ...) {
                 if (tc %in% colnames(prob_matrix)) prob_matrix[i, tc] else 0
               }, numeric(1))
               res[[cat_nam]][["mean_prob"]][m] <- mean(prob_true)
-              res[[cat_nam]][["brier"]][m] <- mean((1 - prob_true)^2)
+              res[[cat_nam]][["brier"]][m] <- brier_score(
+                prob_matrix,
+                true_cats,
+                matched_cat
+              )
             },
             silent = TRUE
           )

@@ -70,7 +70,12 @@ Available ML methods:
 - **knn**: k-Nearest Neighbours. A non-parametric method that handles non-linear boundaries. Sensitive to the choice of `k`.
 - **lda**: Linear Discriminant Analysis. Fast, interpretable. Assumes multivariate normality and equal covariance.
 - **rf**: Random Forest. Handles interactions well. Slower, needs `ntree` tuning.
-- **nb**: Naive Bayes via `e1071`. Fast, handles mixed types. Assumes conditional independence of features.
+- **nb**: Naive Bayes via `e1071`. Fast, useful after numeric/logical/factor preprocessing. Assumes conditional independence of features.
+
+ML features must be numeric, logical, or factor columns. Factor columns are
+one-hot encoded automatically using levels observed in the training data and
+the target period. Character columns are not encoded automatically; convert
+them to factors first if they represent categories.
 
 You can run multiple methods at once and compare or combine them:
 
@@ -343,7 +348,7 @@ print(cv_knn)
 The `print()` summary reports:
 
 - **ACCURACY** - average held-out classification accuracy across non-skipped groups. `naive (1/k)` is the random-guess baseline, `freq` is the majority-class baseline, and each ML line reports top-class accuracy for that method.
-- **BRIER SCORE** - average probability error across non-skipped groups. Lower is better. This matters because `cat2cat` ultimately uses probability weights, not just hard classifications.
+- **BRIER SCORE** - average full-vector probability error across non-skipped groups. Lower is better. This matters because `cat2cat` ultimately uses probability weights, not just hard classifications.
 - **MEAN P(TRUE CLASS)** - average probability assigned to the true category. Higher is better. This is often the most directly relevant metric for `cat2cat`, because it measures the quality of the probability weights themselves.
 - **ACCURACY: ML vs BASELINES** - the share of groups in which the ML method beats `naive` or beats `freq` on accuracy. This is a win-rate summary, not an average accuracy gap.
 - **SKIPPED GROUPS** - the percentage of mapping groups for which that ML method has no reported result because the group had only one candidate category, fewer than 5 observations, or the model could not be fit for that group.
@@ -416,7 +421,7 @@ The key question is whether ML beats the *frequency* baseline, not whether it re
 | ML model performance >> freq across most groups | ML weights add genuine signal; use them |
 | ML model performance $\approx$ freq | ML is no better than frequency; prefer `wei_freq_c2c` (simpler, faster) |
 | ML model performance < freq for many groups | ML is adding noise; do **not** use ML weights |
-| High failure rate (>20%) | Features may have too many missing values or groups are too small |
+| High skipped-group rate (>20%) | Features may have too many missing values, groups are too small, or method fitting is unstable |
 
 Because the train/test split is random, results vary between runs. For more stable estimates, pool more data into `ml$data` (e.g. multiple survey waves) or run `cat2cat_ml_run()` several times and average the summaries.
 
