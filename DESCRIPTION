@@ -29,9 +29,11 @@ Suggests:
     magrittr,
     randomForest,
     rmarkdown,
+    spelling,
     testthat (>= 3.0.0),
     tidyr
 LazyData: true
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
+Language: en-US
