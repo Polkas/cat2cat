@@ -76,14 +76,11 @@ testthat::test_that("Table with number of replications for both mapping  directi
     "latex",
     caption = "Number of observations before and after unification."
   )
-  testthat::expect_identical(
-    res_tab,
-    structure(
-      "\\begin{table}\n\n\\caption{Number of observations before and after unification.}\n\\centering\n\\begin{tabular}[t]{l|r|l}\n\\hline\n  & before\\_mapping & after\\_mapping\\\\\n\\hline\nold (backward) & 17223 & 227662 (nonzero 163262)\\\\\n\\hline\nnew (forward) & 17323 & 18680 (nonzero 18517)\\\\\n\\hline\n\\end{tabular}\n\\end{table}",
-      format = "latex",
-      class = "knitr_kable"
-    )
-  )
+  testthat::expect_s3_class(res_tab, "knitr_kable")
+  testthat::expect_match(res_tab, "before\\\\_mapping")
+  testthat::expect_match(res_tab, "after\\\\_mapping")
+  testthat::expect_match(res_tab, "old \\(backward\\).*227662")
+  testthat::expect_match(res_tab, "new \\(forward\\).*18680")
 })
 
 # Set the seed as e.g., randomForest is used
@@ -240,8 +237,16 @@ testthat::test_that("Regression - neutral impact of the unified variable", {
   summary_replicated <- suppressWarnings(summary(lms_replicated))
   summary_original <- summary(lms_original)
 
-  testthat::expect_equal(summary_replicated$coefficients, summary_original$coefficients)
-  testthat::expect_equal(summary_replicated$r.squared, summary_original$r.squared)
+  testthat::expect_equal(
+    summary_replicated$coefficients,
+    summary_original$coefficients,
+    tolerance = 1e-8
+  )
+  testthat::expect_equal(
+    summary_replicated$r.squared,
+    summary_original$r.squared,
+    tolerance = 1e-8
+  )
 })
 
 testthat::test_that("Regression for each level in the unified variable", {

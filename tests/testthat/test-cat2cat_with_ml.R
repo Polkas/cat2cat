@@ -213,6 +213,28 @@ testthat::test_that("encode_factor_features does not auto-encode character colum
   testthat::expect_identical(out$ml$features, c("age", "region"))
 })
 
+testthat::test_that("brier_score uses the full multiclass probability vector", {
+  probs <- data.frame(
+    a = c(0.8, 0.1),
+    b = c(0.1, 0.6),
+    c = c(0.1, 0.3)
+  )
+
+  expected <- mean(c(
+    ((0.8 - 1)^2 + 0.1^2 + 0.1^2) / 2,
+    (0.1^2 + (0.6 - 1)^2 + 0.3^2) / 2
+  ))
+
+  testthat::expect_equal(brier_score(probs, c("a", "b"), c("a", "b", "c")), expected)
+
+  same_true_prob_1 <- data.frame(a = 0.6, b = 0.2, c = 0.2)
+  same_true_prob_2 <- data.frame(a = 0.6, b = 0.4, c = 0.0)
+  testthat::expect_gt(
+    brier_score(same_true_prob_2, "a", c("a", "b", "c")),
+    brier_score(same_true_prob_1, "a", c("a", "b", "c"))
+  )
+})
+
 testthat::test_that("cat2cat with ml automatically one-hot encodes factor features", {
   library("e1071")
 

@@ -1,3 +1,5 @@
+set.seed(1234)
+
 aa <- airquality
 aa2 <- rbind(aa, aa)
 
@@ -8,7 +10,7 @@ testthat::test_that("summary_c2c is properly adjust the std error", {
   ll2 <- lm(Ozone ~ ., aa2)
   ss2 <- summary_c2c(ll2, ll$df.residual, ll2$df.residual)
 
-  expect_equal(unname(ss$coefficients[, 3]), ss2[, 7])
+  expect_equal(unname(ss$coefficients[, 3]), ss2[, 7], tolerance = 1e-8)
 })
 
 data("occup", package = "cat2cat")

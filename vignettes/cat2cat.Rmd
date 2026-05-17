@@ -392,6 +392,12 @@ pooled_summary[c("factor(year)2010", "age", "avg_age_g_new_c2c"),
 ```
 
 This is the value added of `cat2cat`: you can estimate a period effect after controlling for one harmonised occupation structure instead of running separate regressions under incompatible code systems.
+Use the corrected coefficient table for inference. Ordinary $R^2$ is preserved
+in neutral replication cases like this, where the response and covariates do not
+vary across replicated copies and the weights for each source observation sum to
+the original weight. Adjusted $R^2$, AIC, and BIC depend on sample-size and
+degrees-of-freedom conventions, so do not report their replicated-model values
+unless you recompute them on the intended original-observation scale.
 
 ## Diagnostic Plot
 

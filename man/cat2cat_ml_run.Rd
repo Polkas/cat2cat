@@ -33,13 +33,13 @@ An object of class \code{"cat2cat_ml_run"} (a named list). Each
     \item{\code{acc}}{Named \code{numeric} vector --- test-set accuracy for
       each ML method. Higher is better; compare to \code{freq}.}
     \item{\code{brier}}{Named \code{numeric} vector --- Brier score
-      for each ML method. Computed as \code{mean((1 - P(true))^2)}.
+      for each ML method, computed from the full probability vector.
       Lower is better; range is [0, 1].}
     \item{\code{mean_prob}}{Named \code{numeric} vector --- average probability
       assigned to the true class. Higher is better. This directly measures
       the quality of probability weights used by cat2cat.}
     \item{\code{naive_brier}}{\code{numeric(1)} --- Brier score for uniform
-      baseline (= (1 - 1/k)^2). Serves as a calibration reference.}
+      baseline (= (1 - 1/k) / 2). Serves as a calibration reference.}
     \item{\code{naive_mean_prob}}{\code{numeric(1)} --- mean P(true) for
       uniform baseline (= 1/k). Equals \code{naive} by definition.}
     \item{\code{freq_brier}}{\code{numeric(1)} --- Brier score using training
@@ -103,10 +103,10 @@ probabilities distributed across candidates, this metric directly measures
 weight quality. Higher is better; range is \eqn{[0, 1]}.
 
 \strong{Brier score} measures the squared error between predicted
-probability and the true outcome: \eqn{(1 - P(true))^2}. Unlike log-loss,
-Brier score is bounded \eqn{[0, 1]} and does not explode when P(true)
-is near zero. Lower is better; 0 means perfect prediction. For k
-categories, the naive baseline (uniform 1/k) gives Brier = \eqn{(1 - 1/k)^2}.
+probabilities and the one-hot encoded true outcome, normalized to
+\eqn{[0, 1]}. Unlike log-loss, Brier score is bounded and does not explode
+when P(true) is near zero. Lower is better; 0 means perfect prediction. For k
+categories, the naive baseline (uniform 1/k) gives Brier = \eqn{(1 - 1/k) / 2}.
 }
 
 \subsection{Choosing a Method}{

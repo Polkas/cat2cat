@@ -1,4 +1,4 @@
-# cat2cat 0.6.0.9000
+# cat2cat 0.6.1
 
 This release incorporates feedback from the PhD dissertation reviewers: dr hab. Andrzej Dudek, dr hab. Joanna Landmesser-Rusek, and dr hab. Paweł Andrzej Strzelecki.
 
@@ -19,7 +19,7 @@ This release incorporates feedback from the PhD dissertation reviewers: dr hab. 
 * *Choosing Weights and Validating ML* is now structured as a decision guide: understanding weight assumptions, checking robustness across methods, validating ML against naive/frequency baselines, and handling failed ML predictions.
 * *Advanced Workflows* now collects ML setup, multi-period chaining, rotational panels with `id_var`, aggregated-data workflows, hierarchical-code mappings, and regression/inference after harmonisation into one better-structured advanced reference.
 * Added a *When cat2cat won't help* section distinguishing hard blockers (no mapping table, unobserved category) from method-specific limitations with available workarounds.
-* Corrected the $R^2$ guidance: it is preserved by the replication only when the harmonised category is *not* used as a covariate; with occupation fixed effects the inflation is real and `summary_c2c()` does not repair it.
+* Corrected the $R^2$ guidance: ordinary $R^2$ is preserved in neutral replication cases when replicated copies keep the same response/covariates and weights sum back to the source observation; adjusted $R^2$, AIC, and BIC require original-scale degrees-of-freedom care, and fit statistics with harmonised-category covariates are conditional on the chosen weights.
 * Roxygen for `cat2cat()` and `cat2cat_agg()` trimmed - argument documentation kept, conceptual material moved to the vignettes where it belongs.
 
 ## Bug fixes

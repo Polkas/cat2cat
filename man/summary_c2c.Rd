@@ -40,10 +40,14 @@ and standard normal for z-based summaries.
 This is a pragmatic d.f. adjustment. It works well when per-subject
 weights sum to one and no extreme weights dominate.
 
-Note: Goodness-of-fit statistics (R-squared, AIC, BIC) from the replicated
-model are \strong{not meaningful} --- they reflect the inflated sample
-size, not explanatory power. Report only coefficient estimates and the
-corrected SEs/p-values from this function.
+Note: Ordinary R-squared can be interpreted in neutral replication cases
+where the response and covariates do not vary across replicated copies and
+per-observation weights sum to the original observation weight. Adjusted
+R-squared, AIC, and BIC depend on sample-size and degrees-of-freedom
+conventions, so the values from the replicated model should not be reported
+without recomputing them on the intended original-observation scale. If the
+harmonised category itself enters the model, all fit statistics are
+conditional on the chosen harmonisation weights.
 }
 \examples{
 data("occup_small", package = "cat2cat")
